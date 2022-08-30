@@ -1,13 +1,11 @@
-# Sample Hardhat Project
+# Naffles smart contracts 
+this repository contains all the smart contracts for Naffles.
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+## Tests
+All smart contracts should be covered by unit tests.
 
-Try running some of the following tasks:
+Tests can be run using `npx hardhat test`
 
-```shell
-npx hardhat help
-npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+
+## Scripts
+Scripts such as deploy scripts can be run using `npx hardhat run srcipts/..`
