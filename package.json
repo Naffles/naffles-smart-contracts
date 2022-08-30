@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Naffles/naffles-smart-contracts/issues"
   },
-  "homepage": "https://github.com/Naffles/naffles-smart-contracts#readme"
+  "homepage": "https://github.com/Naffles/naffles-smart-contracts#readme",
+  "devDependencies": {
+    "hardhat": "^2.10.2"
+  }
 }
