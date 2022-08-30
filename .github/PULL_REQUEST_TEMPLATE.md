@@ -1,5 +1,8 @@
 ## NAFFLES PULL REQUEST
 
+## Issue 
+https://github.com/Naffles/naffles-smart-contracts/issues/
+
 ## Description
 _Please give a description of the pull request._
 
