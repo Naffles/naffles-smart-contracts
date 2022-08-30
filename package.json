@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/Naffles/naffles-smart-contracts#readme",
   "devDependencies": {
+    "@openzeppelin/contracts": "^4.7.3",
+    "erc721a": "^4.2.2",
     "hardhat": "^2.10.2"
   }
 }
