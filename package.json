@@ -1,0 +1,19 @@
+{
+  "name": "naffles-smart-contracts",
+  "version": "0.0.1",
+  "description": "Naffles smart contracts",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Naffles/naffles-smart-contracts.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Naffles/naffles-smart-contracts/issues"
+  },
+  "homepage": "https://github.com/Naffles/naffles-smart-contracts#readme"
+}
