@@ -14,7 +14,8 @@ error InsufficientFunds(uint256 funds, uint256 cost);
 error UnableToSendChange(uint256 cashChange);
 error UnableToWithdraw(uint256 amount);
 error CallerIsContract(address address_);
-error NonPositiveMintAmount(uint32 amount);
+error NonPositiveMintAmount(uint16 amount);
+error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
 
 contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     using Address for address;
@@ -26,6 +27,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
 
     uint16 public maxSupply;
     uint16 public reservedTokens;
+    uint16 public maxPerWallet;
     uint256 public mintPrice;
     uint256 public whitelistMintStartTime;
 
@@ -36,17 +38,19 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     mapping (address => uint16) public addressMintCount;
 
     constructor(
-        uint16 maxSupply_,
-        uint16 reservedTokens_,
-        uint256 whitelistMintStartTime_,
-        uint256 publicMintStartTime_,
+        uint16 _maxSupply,
+        uint16 _reservedTokens,
+        uint16 _maxPerWallet,
+        uint256 _whitelistMintStartTime,
+        uint256 _publicMintStartTime
     ) ERC721A("Naffles OmnipotentNFT", "NFLS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
-        maxSupply = maxSupply_;             
-        reservedTokens = reservedTokens_;
-        whitelistMintStartTime = whitelistMintStartTime_;
-        publicMintStartTime = publicMintStartTime_;
+        maxSupply = _maxSupply;             
+        reservedTokens = _reservedTokens;
+        whitelistMintStartTime = _whitelistMintStartTime;
+        publicMintStartTime = _publicMintStartTime;
+        maxPerWallet_ = _maxPerWallet;
     }
     
     function _startTokenId() internal pure override returns (uint256) {
@@ -62,15 +66,24 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         delete whitelists[allocation];
     }
 
-    function whitelistMint() payable {
-         
+    function mint(uint16 _amount, bytes32[] calldata _proof) public payable {
+        if (_amount < 1) { revert NonPostivieMintAmount({amount: _amount});
+        if (_numberMinter(msg.sender) + _amount >= maxPerWallet) {
+            revert ExceedingMaxTokensPerWallet(
+                walletLimit: maxPerWallet
+            )
+        };
     }
 
-    function publicMint(uint256 _amount) payable {
+
+    function whitelistMint(uint16 _amount, bytes32[] calldata _proof) internal {
+        
+    }
+
+    function publicMint(uint256 _amount) internal {
         uint256 totalCharge = mintPrice * _amount;
         if (msg.value < totalCharge) { revert InsufficientFunds(msg.value, mintPrice); }
 
-        // Refund the caller's excess payment if they overpaid.
         if (msg.value > totalCharge) {
           uint256 excess = msg.value - totalCharge;
           (bool returned, ) = payable(_msgSender()).call{ value: excess }("");
