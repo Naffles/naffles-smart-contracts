@@ -10,9 +10,19 @@ error ReservedTokensExceedsRemainingSupply(
     uint256 remainingSupply,
     uint16 newReservedTokens
 );
+error InsufficientFunds(uint256 funds, uint256 cost);
+error UnableToSendChange(uint256 cashChange);
+error UnableToWithdraw(uint256 amount);
+error CallerIsContract(address address_);
+error NonPositiveMintAmount(uint32 amount);
 
 contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     using Address for address;
+
+    struct Whitelist {
+        bytes32 root;
+        uint16 allocation;
+    } 
 
     uint16 public maxSupply;
     uint16 public reservedTokens;
@@ -23,12 +33,8 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     
     // Maps allocation count to the whitelist object.
     mapping(uint16 => Whitelist) public whitelists;
+    mapping (address => uint16) public addressMintCount;
 
-    struct Whitelist {
-        bytes32 root;
-        uint16 allocation;
-    }
-    
     constructor(
         uint16 maxSupply_,
         uint16 reservedTokens_,
@@ -37,10 +43,10 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     ) ERC721A("Naffles OmnipotentNFT", "NFLS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
-        maxSupply = maxSupply_              
-        reservedTokens = reservedTokens_
-        whitelistMintStartTime = whitelistMintStartTime_
-        publicMintStartTime = publicMintStartTime_
+        maxSupply = maxSupply_;             
+        reservedTokens = reservedTokens_;
+        whitelistMintStartTime = whitelistMintStartTime_;
+        publicMintStartTime = publicMintStartTime_;
     }
     
     function _startTokenId() internal pure override returns (uint256) {
@@ -56,12 +62,20 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         delete whitelists[allocation];
     }
 
-    function whitelistMint() {
-
+    function whitelistMint() payable {
+         
     }
 
-    function publicMint() {
+    function publicMint(uint256 _amount) payable {
+        uint256 totalCharge = mintPrice * _amount;
+        if (msg.value < totalCharge) { revert InsufficientFunds(msg.value, mintPrice); }
 
+        // Refund the caller's excess payment if they overpaid.
+        if (msg.value > totalCharge) {
+          uint256 excess = msg.value - totalCharge;
+          (bool returned, ) = payable(_msgSender()).call{ value: excess }("");
+          if (!returned) { revert UnableToSendChange(); }
+        }
     }
 
     function exists(uint32 tokenId) external view returns (bool) {
