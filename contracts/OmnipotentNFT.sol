@@ -18,7 +18,16 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     uint16 public reservedTokens;
     uint256 public mintPrice;
     uint256 public whitelistMintStartTime;
+
     string public baseURI = "";
+    
+    // Maps allocation count to the whitelist object.
+    mapping(uint16 => Whitelist) public whitelists;
+
+    struct Whitelist {
+        bytes32 root;
+        uint16 allocation;
+    }
     
     constructor(
         uint16 maxSupply_,
@@ -38,25 +47,40 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         return 1;
     }
 
+    function createWhitelist(bytes32 _root, uint16 _allocation) onlyRole(DEFAULT_AMDIN_ROLE)
+    {
+        whitelists[allocation] = Whitelist(_root, _allocation);
+    }
+
+    function removeWhitelist(uint16 _allocation) onlyRole(DEFAULT_ADMIN_ROLE) {
+        delete whitelists[allocation];
+    }
+
     function whitelistMint() {
+
     }
 
     function publicMint() {
+
     }
 
     function exists(uint32 tokenId) external view returns (bool) {
         return _exists(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(bytes4 _interfaceId)
         public
         view
         virtual
         override(ERC721A, AccessControl)
         returns (bool)
     {
-        return (ERC721A.supportsInterface(interfaceId) ||
-            AccessControl.supportsInterface(interfaceId));
+        return (ERC721A.supportsInterface(_interfaceId) ||
+            AccessControl.supportsInterface(_interfaceId));
+    }
+
+    function withdraw() external onlyRole(WITHDRAW_ROLE) {
+        payable(msg.sender).transfer(address(this).balance);
     }
 
     function _baseURI() internal view override returns (string memory) {
