@@ -3,19 +3,23 @@ pragma solidity ^0.8.9;
 
 import "erc721a/contracts/ERC721A.sol";
 import "openzeppelin/contracts/AccessControl";
-import "openzeppelin/contracts/utils/Address";
 import "openzeppelin/contracts/ReentrancyGuard.sol";
+import "openzeppelin/contracts/utils/Address";
+import "openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
+error CallerIsContract(address address_);
+error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
+error ExceedingWhitelistAllowance(uint16 whitelistAllowance);
+error InsufficientFunds(uint256 funds, uint256 cost);
+error InsufficientSupplyAvailable(uint256 availableSupply);
+error NonPositiveMintAmount(uint16 amount);
+error NotWhitelisted();
 error ReservedTokensExceedsRemainingSupply(
     uint256 remainingSupply,
     uint16 newReservedTokens
 );
-error InsufficientFunds(uint256 funds, uint256 cost);
 error UnableToSendChange(uint256 cashChange);
 error UnableToWithdraw(uint256 amount);
-error CallerIsContract(address address_);
-error NonPositiveMintAmount(uint16 amount);
-error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
 
 contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     using Address for address;
@@ -25,6 +29,11 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint16 allocation;
     } 
 
+    struct WhitelistProof {
+        uint16 allowance;
+        bytes32[] proof;
+    }
+
     uint16 public maxSupply;
     uint16 public reservedTokens;
     uint16 public maxPerWallet;
@@ -33,10 +42,12 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
 
     string public baseURI = "";
     
-    // Maps allocation count to the whitelist object.
+    // Maps allowance count to the whitelist object.
     mapping(uint16 => Whitelist) public whitelists;
     mapping (address => uint16) public addressMintCount;
 
+    bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
+    
     constructor(
         uint16 _maxSupply,
         uint16 _reservedTokens,
@@ -45,7 +56,8 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint256 _publicMintStartTime
     ) ERC721A("Naffles OmnipotentNFT", "NFLS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-
+        _setupRole(WITHDRAW_ROLE, msg.sender);
+        
         maxSupply = _maxSupply;             
         reservedTokens = _reservedTokens;
         whitelistMintStartTime = _whitelistMintStartTime;
@@ -67,17 +79,37 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     }
 
     function mint(uint16 _amount, bytes32[] calldata _proof) public payable {
-        if (_amount < 1) { revert NonPostivieMintAmount({amount: _amount});
-        if (_numberMinter(msg.sender) + _amount >= maxPerWallet) {
-            revert ExceedingMaxTokensPerWallet(
-                walletLimit: maxPerWallet
-            )
+        if (_amount < 1) { 
+            revert NonPostivieMintAmount({
+                amount: _amount
+            });
         };
+        if (_numberMinter(msg.sender) + _amount >= maxPerWallet) {
+            revert ExceedingMaxTokensPerWallet({
+                walletLimit: maxPerWallet
+            );
+        };
+        if (_amount + _totalMinted() > maxSupply) {
+            revert InsufficientSupplyAvailable({
+                maxSupply: maxSupply    
+            });
+        };
+
+        if (block.timestamp >= starttime) {
+            publicMint(_amount);
+        } else {
+            whitelistMint(_amount, _proof);
+        }
     }
 
+    function whitelistMint(uint16 _amount, WhitelistProof calldata _whitelistProof) internal {
+        if (!MerkleProof.verify(_whitelistProof.proof, whitelists[_whitelistProof.allowance].root, keccak256(abi.encodePacked(msg.sender)))) {
+            revert NotWhitelisted()
+        }
 
-    function whitelistMint(uint16 _amount, bytes32[] calldata _proof) internal {
-        
+        if (_numberMinted(msg.sender) + _amount > _whitelist.allowance) {
+            revert ExceedingWhitelistAllowance({allowance: _whitelist.allowance});
+        }
     }
 
     function publicMint(uint256 _amount) internal {
