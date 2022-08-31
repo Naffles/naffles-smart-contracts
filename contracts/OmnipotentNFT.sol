@@ -100,6 +100,8 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         } else {
             whitelistMint(_amount, _proof);
         }
+
+        _mint(msg.sender, _amount);
     }
 
     function whitelistMint(uint16 _amount, WhitelistProof calldata _whitelistProof) internal {
