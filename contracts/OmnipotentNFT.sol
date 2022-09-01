@@ -12,7 +12,8 @@ error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
 error ExceedingWhitelistAllowance(uint16 whitelistAllowance);
 error InsufficientFunds(uint256 funds, uint256 cost);
 error InsufficientSupplyAvailable(uint256 availableSupply);
-error NonPositiveMintAmount(uint16 amount);
+error InvalidWhitelistId();
+error InvalidWhitelistTime();
 error NotWhitelisted();
 error ReservedTokensExceedsRemainingSupply(
     uint256 remainingSupply,
@@ -26,24 +27,26 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
 
     struct Whitelist {
         bytes32 root;
-        uint16 allocation;
-    } 
+        uint256 startTime;
+        uint256 endTime;
+    }
 
     struct WhitelistProof {
-        uint16 allowance;
+        uint8 whitelist_id;
         bytes32[] proof;
     }
 
+    uint8 public whitelist_id = 1;
+    uint8 public waitlist_id = 2;
     uint16 public maxSupply;
     uint16 public reservedTokens;
     uint16 public maxPerWallet;
     uint256 public mintPrice;
-    uint256 public whitelistMintStartTime;
 
     string public baseURI = "";
     
-    // Maps allowance count to the whitelist object.
-    mapping(uint16 => Whitelist) public whitelists;
+    // maps whitelist_id / waitlist_id to whitelist object.
+    mapping(uint8 => Whitelist) public whitelists;
     mapping (address => uint16) public addressMintCount;
 
     bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
@@ -52,7 +55,6 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint16 _maxSupply,
         uint16 _reservedTokens,
         uint16 _maxPerWallet,
-        uint256 _whitelistMintStartTime,
         uint256 _publicMintStartTime
     ) ERC721A("Naffles OmnipotentNFT", "NFLS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -60,7 +62,6 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         
         maxSupply = _maxSupply;             
         reservedTokens = _reservedTokens;
-        whitelistMintStartTime = _whitelistMintStartTime;
         publicMintStartTime = _publicMintStartTime;
         maxPerWallet_ = _maxPerWallet;
     }
@@ -69,27 +70,28 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         return 1;
     }
 
-    function createWhitelist(bytes32 _root, uint16 _allocation) onlyRole(DEFAULT_AMDIN_ROLE)
+    function createWhitelist(bytes32 _root, uint8 _whitelist_id, uint256 _startTime, uint256 _endTime) onlyRole(DEFAULT_AMDIN_ROLE)
     {
-        whitelists[allocation] = Whitelist(_root, _allocation);
+        if (_id != whitelist_id || _id != waitlist_id) {
+            revert InvalidWhitelistId();
+        }
+        if (_startTime >= publicMintStartTime || endTime >= publicMintStartTime) {
+            revert InvalidWhitelistTime();
+        }
+        whitelists[whitelist_id] = Whitelist(_root, _startTime, _endtime);
     }
 
-    function removeWhitelist(uint16 _allocation) onlyRole(DEFAULT_ADMIN_ROLE) {
-        delete whitelists[allocation];
+    function removeWhitelist(uint16 _id) onlyRole(DEFAULT_ADMIN_ROLE) {
+        delete whitelists[_id];
     }
 
-    function mint(uint16 _amount, bytes32[] calldata _proof) public payable {
-        if (_amount < 1) { 
-            revert NonPostivieMintAmount({
-                amount: _amount
-            });
-        };
-        if (_numberMinter(msg.sender) + _amount >= maxPerWallet) {
+    function mint(bytes32[] calldata _proof) public payable {
+        if (_numberMinter(msg.sender) + 1 >= maxPerWallet) {
             revert ExceedingMaxTokensPerWallet({
                 walletLimit: maxPerWallet
             );
         };
-        if (_amount + _totalMinted() > maxSupply) {
+        if (_totalMinted() == maxSupply) {
             revert InsufficientSupplyAvailable({
                 maxSupply: maxSupply    
             });
@@ -104,8 +106,8 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         _mint(msg.sender, _amount);
     }
 
-    function whitelistMint(uint16 _amount, WhitelistProof calldata _whitelistProof) internal {
-        if (!MerkleProof.verify(_whitelistProof.proof, whitelists[_whitelistProof.allowance].root, keccak256(abi.encodePacked(msg.sender)))) {
+    function whitelistMint( WhitelistProof calldata _whitelistProof) internal {
+        if (!MerkleProof.verify(_whitelistProof.proof, whitelists[_whitelistProof.whitelist_id].root, keccak256(abi.encodePacked(msg.sender)))) {
             revert NotWhitelisted()
         }
 
