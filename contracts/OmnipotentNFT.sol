@@ -19,6 +19,7 @@ error ReservedTokensExceedsRemainingSupply(
     uint256 remainingSupply,
     uint16 newReservedTokens
 );
+error SaleNotActive();
 error UnableToSendChange(uint256 cashChange);
 error UnableToWithdraw(uint256 amount);
 
@@ -47,7 +48,8 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     
     // maps whitelist_id / waitlist_id to whitelist object.
     mapping(uint8 => Whitelist) public whitelists;
-    mapping (address => uint16) public addressMintCount;
+    mapping(address => uint16) public addressMintCount;
+    mapping(address => bool public whitelistMinted;
 
     bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
     
@@ -85,46 +87,55 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         delete whitelists[_id];
     }
 
-    function mint(bytes32[] calldata _proof) public payable {
-        if (_numberMinter(msg.sender) + 1 >= maxPerWallet) {
-            revert ExceedingMaxTokensPerWallet({
-                walletLimit: maxPerWallet
-            );
-        };
+    function mint(WhitelistProof calldata _proof) public payable {
         if (_totalMinted() == maxSupply) {
             revert InsufficientSupplyAvailable({
                 maxSupply: maxSupply    
             });
         };
-
-        if (block.timestamp >= starttime) {
-            publicMint(_amount);
-        } else {
-            whitelistMint(_amount, _proof);
+        if (_numberMinter(msg.sender) + 1 >= maxPerWallet) {
+            revert ExceedingMaxTokensPerWallet({
+                walletLimit: maxPerWallet
+            );
+        };
+        
+        if (block.timestamp >= publicMintStartTime) {
+            _publicMint(_amount);
+        } 
+        else if (block.timestamp => _proof.startTime && block.timestamp <= _proof.endTime) {
+            _whitelistMint(_proof);
+        }
+        else {
+            revert SaleNotActive();
         }
 
-        _mint(msg.sender, _amount);
+        _internalMint();
     }
 
-    function whitelistMint( WhitelistProof calldata _whitelistProof) internal {
+    function 
+
+    function _WhitelistMint(WhitelistProof calldata _whitelistProof) internal {
         if (!MerkleProof.verify(_whitelistProof.proof, whitelists[_whitelistProof.whitelist_id].root, keccak256(abi.encodePacked(msg.sender)))) {
-            revert NotWhitelisted()
+            revert NotWhitelisted();
         }
-
-        if (_numberMinted(msg.sender) + _amount > _whitelist.allowance) {
-            revert ExceedingWhitelistAllowance({allowance: _whitelist.allowance});
+        if (whietlistMinted[msg.sender]) {
+            revert ExceedingWhitelistAllowance({allowance: 1});
         }
+        whitelistMinted[msg.sender] = true; 
     }
 
-    function publicMint(uint256 _amount) internal {
-        uint256 totalCharge = mintPrice * _amount;
-        if (msg.value < totalCharge) { revert InsufficientFunds(msg.value, mintPrice); }
+    function _internalMint() internal {
+        if (msg.value < mintPrice) { 
+            revert InsufficientFunds(msg.value, mintPrice); 
+        }
 
-        if (msg.value > totalCharge) {
-          uint256 excess = msg.value - totalCharge;
+        if (msg.value > mintPrice) {
+          uint256 excess = msg.value - mintPrice;
           (bool returned, ) = payable(_msgSender()).call{ value: excess }("");
           if (!returned) { revert UnableToSendChange(); }
         }
+
+        _mint(msg.sender, _amount);
     }
 
     function exists(uint32 tokenId) external view returns (bool) {
