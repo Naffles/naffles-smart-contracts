@@ -20,6 +20,7 @@ error ReservedTokensExceedsRemainingSupply(
     uint16 newReservedTokens
 );
 error SaleNotActive();
+error URIQueryForNonexistentToken();
 error UnableToSendChange(uint256 cashChange);
 error UnableToWithdraw(uint256 amount);
 
@@ -116,8 +117,6 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         _internalMint();
     }
 
-    function 
-
     function _WhitelistMint(WhitelistProof calldata _whitelistProof) internal {
         if (!MerkleProof.verify(_whitelistProof.proof, whitelists[_whitelistProof.whitelist_id].root, keccak256(abi.encodePacked(msg.sender)))) {
             revert NotWhitelisted();
@@ -155,6 +154,25 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     {
         return (ERC721A.supportsInterface(_interfaceId) ||
             AccessControl.supportsInterface(_interfaceId));
+    }
+
+    function tokenURI(uint16 tokenId)
+        public
+        view
+        override
+        returns (string memory)
+    {
+        if (!_exists(tokenId)) { 
+            revert URIQueryForNonexistentToken();
+        }
+
+        return
+            bytes(baseURI).length != 0
+                ? string(
+                    abi.encodePacked(baseURI, _toString(tokenId), ".json")
+                )
+                : "";
+        }
     }
 
     function withdraw() external onlyRole(WITHDRAW_ROLE) {
