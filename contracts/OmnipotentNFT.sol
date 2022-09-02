@@ -57,6 +57,8 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint16 _maxSupply,
         uint16 _reservedTokens,
         uint16 _maxPerWallet,
+        uint16 _internalMintAmount,
+        address _internalMintAddress,
         uint256 _publicMintStartTime
     ) ERC721A("Naffles OmnipotentNFT", "NFLS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -66,6 +68,8 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         reservedTokens = _reservedTokens;
         publicMintStartTime = _publicMintStartTime;
         maxPerWallet_ = _maxPerWallet;
+
+        _safeMint(_internalMintAddress, _internMintAmount);
     }
     
     function _startTokenId() internal pure override returns (uint256) {
