@@ -96,3 +96,6 @@ typings/
 
 
 docs/.env.example
+
+# extra
+typechain-types/
