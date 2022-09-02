@@ -154,7 +154,10 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     }
 
     function withdraw() external onlyRole(WITHDRAW_ROLE) {
-        payable(msg.sender).transfer(address(this).balance);
+        (bool success, ) = msg.sender.call{value: address(this).balance}("");
+        if (!success) {
+            revert UnableToWithdraw({amount: address(this).balance});
+        }
     }
 
     function _baseURI() internal view override returns (string memory) {
