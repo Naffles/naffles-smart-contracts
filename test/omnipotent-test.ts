@@ -91,8 +91,8 @@ describe("Omnipotent create whitelist", function () {
         const [owner, ] = await ethers.getSigners();
         const tree = createTree([owner.address])
         await expect(
-            await contract.createWhitelist(tree.getHexRoot(), 3, startTime, endTime)
-        ).to.revertedWithCustomError(contract, "InvalidWhitelistId");
+            contract.createWhitelist(tree.getHexRoot(), 3, startTime, endTime)
+        ).to.revertedWithCustomError(contract,"InvalidWhitelistId")
     });
 
     it("Should raise InvalidWhitelistTime invalid end time", async function () {
@@ -102,8 +102,8 @@ describe("Omnipotent create whitelist", function () {
         const [owner, _] = await ethers.getSigners();
         const tree = createTree([owner.address])
         await expect(
-            await contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
-        ).to.revertedWithCustomError(contract, "InvalidWhitelistTime");
+            contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
+        ).to.revertedWithCustomError(contract,"InvalidWhitelistTime")
     });
 
     it("Should raise InvalidWhitelistTime invalid start time", async function () {
@@ -113,7 +113,7 @@ describe("Omnipotent create whitelist", function () {
         const [owner, _] = await ethers.getSigners();
         const tree = createTree([owner.address])
         await expect(
-            await contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
+            contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
         ).to.revertedWithCustomError(contract, "InvalidWhitelistTime");
     });
 
@@ -123,11 +123,11 @@ describe("Omnipotent create whitelist", function () {
         const [owner, _] = await ethers.getSigners();
         const tree = createTree([owner.address])
         await expect(
-            await contract.createWhitelist(tree.getHexRoot(), 1, startTime, startTime)
+            contract.createWhitelist(tree.getHexRoot(), 1, startTime, startTime)
         ).to.revertedWithCustomError(contract, "InvalidWhitelistTime");
 
         await expect(
-            await contract.createWhitelist(tree.getHexRoot(), 1, startTime, startTime + 100000)
+            contract.createWhitelist(tree.getHexRoot(), 1, startTime, startTime + 100000)
         ).to.revertedWithCustomError(contract, "InvalidWhitelistTime");
     });
 });
@@ -158,8 +158,8 @@ describe("Omnipotent mint", function () {
    it("Should raise InsufficientSupplyAvailable", async function() {
          const contract = await deployContract(MAX_SUPPLY);
          const [_, user] = await ethers.getSigners();
-         expect(
-             await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
+         await expect(
+             contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
          ).to.be.revertedWithCustomError(contract, "InsufficientSupplyAvailable");
    })
 
@@ -167,15 +167,15 @@ describe("Omnipotent mint", function () {
         const contract = await deployContract(RESERVED_TOKENS, 1);
         const [admin, user] = await ethers.getSigners();
         contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
-        expect(
-            await contract.mint({value: ethers.utils.parseEther("0.1")})
-        ).to.be.revertedWithCustomError(contract, "InsufficientSupplyAvailable");
+        await expect(
+            contract.mint({value: ethers.utils.parseEther("0.1")})
+        ).to.be.revertedWithCustomError(contract, "ExceedingMaxTokensPerWallet");
     })
 
     it("Should raise SaleNotActive", async function() {
         const contract = await deployContract();
         const [_, user] = await ethers.getSigners();
-        expect(
+        await expect(
             contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
         ).to.be.revertedWithCustomError(contract, "SaleNotActive");
     });
@@ -191,6 +191,6 @@ describe("Omnipotent mint", function () {
         )
         const proof = tree.getHexProof(user.address);
         await contract.connect(user).whitelistMint({whitelist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.1")});
-        expect(await contract.balanceOf(user.address)).to.equal(1);
+        await expect(contract.balanceOf(user.address)).to.equal(1);
     });
 });
