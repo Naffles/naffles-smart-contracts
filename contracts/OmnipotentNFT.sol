@@ -12,7 +12,7 @@ error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
 error ExceedingWhitelistAllowance(uint16 whitelistAllowance);
 error InsufficientFunds(uint256 funds, uint256 cost);
 error InsufficientSupplyAvailable(uint256 maxSupply);
-error InvalidWhitelistId();
+error InvalidWhitelistId(uint8 whitelistId);
 error InvalidWhitelistTime();
 error NotWhitelisted();
 error ReservedTokensExceedsRemainingSupply(
@@ -83,13 +83,13 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint256 _startTime, 
         uint256 _endTime) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        if (_whitelist_id != whitelist_id || _whitelist_id != waitlist_id) {
-            revert InvalidWhitelistId();
+        if (_whitelist_id != whitelist_id && _whitelist_id != waitlist_id) {
+            revert InvalidWhitelistId({whitelistId: _whitelist_id});
         }
         if (_startTime >= publicMintStartTime || _endTime >= publicMintStartTime) {
             revert InvalidWhitelistTime();
         }
-        whitelists[whitelist_id] = Whitelist(_root, _startTime, _endTime);
+        whitelists[_whitelist_id] = Whitelist(_root, _startTime, _endTime);
     }
 
     function removeWhitelist(uint8 _id) public onlyRole(DEFAULT_ADMIN_ROLE) {
