@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/contracts/OmnipotentNFT.sol": {
-      "lastModificationDate": 1662131495787,
-      "contentHash": "aa2ad1462d1fbc787e12b7cdfbac13c7",
+      "lastModificationDate": 1662189803385,
+      "contentHash": "aa36fd156445de30c2771cd25a73fd64",
       "sourceName": "contracts/OmnipotentNFT.sol",
       "solcConfig": {
         "version": "0.8.9",
@@ -25,6 +25,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -43,7 +46,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/erc721a/contracts/ERC721A.sol": {
-      "lastModificationDate": 1661886679066,
+      "lastModificationDate": 1662131680458,
       "contentHash": "3bc4758921849ea6614cf36ea0b8f5ad",
       "sourceName": "erc721a/contracts/ERC721A.sol",
       "solcConfig": {
@@ -66,6 +69,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -81,7 +87,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/@openzeppelin/contracts/access/AccessControl.sol": {
-      "lastModificationDate": 1661886679521,
+      "lastModificationDate": 1662131682117,
       "contentHash": "e6ef731d275b1e7b2995f00fa56d9dab",
       "sourceName": "@openzeppelin/contracts/access/AccessControl.sol",
       "solcConfig": {
@@ -104,6 +110,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -121,7 +130,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
-      "lastModificationDate": 1661886679613,
+      "lastModificationDate": 1662131682595,
       "contentHash": "92f9448b23a90ea3bb932ee55cc3ccce",
       "sourceName": "@openzeppelin/contracts/security/ReentrancyGuard.sol",
       "solcConfig": {
@@ -144,6 +153,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -156,7 +168,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1661886679524,
+      "lastModificationDate": 1662131682123,
       "contentHash": "c476b3895a94798b88a4bb97399e6dfe",
       "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -179,6 +191,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -191,7 +206,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/@openzeppelin/contracts/utils/cryptography/MerkleProof.sol": {
-      "lastModificationDate": 1661886679609,
+      "lastModificationDate": 1662131682579,
       "contentHash": "04d20a7656ab3b219a40d6dad3669ab5",
       "sourceName": "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol",
       "solcConfig": {
@@ -214,6 +229,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -226,7 +244,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/erc721a/contracts/IERC721A.sol": {
-      "lastModificationDate": 1661886679069,
+      "lastModificationDate": 1662131680658,
       "contentHash": "38297ddeff334e5257e03294f1b40daa",
       "sourceName": "erc721a/contracts/IERC721A.sol",
       "solcConfig": {
@@ -249,6 +267,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -261,7 +282,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/@openzeppelin/contracts/access/IAccessControl.sol": {
-      "lastModificationDate": 1661886679589,
+      "lastModificationDate": 1662131682496,
       "contentHash": "57c84298234411cea19c7c284d86be8b",
       "sourceName": "@openzeppelin/contracts/access/IAccessControl.sol",
       "solcConfig": {
@@ -284,6 +305,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -296,7 +320,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1661886679538,
+      "lastModificationDate": 1662131682147,
       "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -319,6 +343,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -331,7 +358,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1661886679616,
+      "lastModificationDate": 1662131682608,
       "contentHash": "cf46906c4035f51639a22265066a9e78",
       "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
       "solcConfig": {
@@ -354,6 +381,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -366,7 +396,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1661886679568,
+      "lastModificationDate": 1662131682237,
       "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -389,6 +419,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
@@ -403,7 +436,7 @@
       ]
     },
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1661886679597,
+      "lastModificationDate": 1662131682524,
       "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -426,6 +459,9 @@
                 "ast"
               ]
             }
+          },
+          "metadata": {
+            "useLiteralContent": false
           }
         }
       },
