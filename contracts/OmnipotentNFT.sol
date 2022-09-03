@@ -59,6 +59,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint16 _maxSupply,
         uint16 _reservedTokens,
         uint16 _maxPerWallet,
+        uint256 _mintPrice,
         address _internalMintAddress,
         uint256 _publicMintStartTime
     ) ERC721A("Naffles OmnipotentNFT", "NFLS") {
@@ -68,9 +69,24 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         maxSupply = _maxSupply;             
         reservedTokens = _reservedTokens;
         publicMintStartTime = _publicMintStartTime;
+        mintPrice = _mintPrice;
         maxPerWallet = _maxPerWallet;
 
         _mint(_internalMintAddress, _reservedTokens);
+    }
+
+    modifier validateMint() {
+        if (_totalMinted() == maxSupply) {
+            revert InsufficientSupplyAvailable({
+                maxSupply: maxSupply
+            });
+        }
+        if (_numberMinted(msg.sender) + 1 >= maxPerWallet) {
+            revert ExceedingMaxTokensPerWallet({
+                maxPerWallet: maxPerWallet
+            });
+        }
+        _;
     }
     
     function _startTokenId() internal pure override returns (uint256) {
@@ -86,7 +102,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         if (_whitelist_id != whitelist_id && _whitelist_id != waitlist_id) {
             revert InvalidWhitelistId({whitelistId: _whitelist_id});
         }
-        if (_startTime >= publicMintStartTime || _endTime >= publicMintStartTime || _startTime <= _endTime) {
+        if (_startTime >= publicMintStartTime || _endTime >= publicMintStartTime || _startTime >= _endTime) {
             revert InvalidWhitelistTime();
         }
         whitelists[_whitelist_id] = Whitelist(_root, _startTime, _endTime);
@@ -96,17 +112,14 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         delete whitelists[_id];
     }
 
-    function mint(WhitelistProof calldata _proof) public payable nonReentrant {
-        if (_totalMinted() == maxSupply) {
-            revert InsufficientSupplyAvailable({
-                maxSupply: maxSupply    
-            });
+    function mint() public payable validateMint nonReentrant {
+        if (block.timestamp < publicMintStartTime) {
+            revert SaleNotActive();
         }
-        if (_numberMinted(msg.sender) + 1 >= maxPerWallet) {
-            revert ExceedingMaxTokensPerWallet({
-                maxPerWallet: maxPerWallet
-            });
-        }
+        _internalMint();
+    }
+
+    function whitelistMint(WhitelistProof calldata _proof) public payable validateMint nonReentrant {
         Whitelist memory whitelist = whitelists[_proof.whitelist_id]; 
         if (block.timestamp >= whitelist.startTime && block.timestamp <= whitelist.endTime) {
             _whitelistMint(_proof, whitelist.root);

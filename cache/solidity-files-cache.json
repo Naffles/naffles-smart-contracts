@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/rikvanderwerf/Personal/naffles/naffles-smart-contracts/contracts/OmnipotentNFT.sol": {
-      "lastModificationDate": 1662200527424,
-      "contentHash": "07f84bb4589766799ab10951bcce1818",
+      "lastModificationDate": 1662207414321,
+      "contentHash": "246855cc0576f1c0f16985f6f868f653",
       "sourceName": "contracts/OmnipotentNFT.sol",
       "solcConfig": {
         "version": "0.8.9",
