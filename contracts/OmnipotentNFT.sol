@@ -86,7 +86,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         if (_whitelist_id != whitelist_id && _whitelist_id != waitlist_id) {
             revert InvalidWhitelistId({whitelistId: _whitelist_id});
         }
-        if (_startTime >= publicMintStartTime || _endTime >= publicMintStartTime) {
+        if (_startTime >= publicMintStartTime || _endTime >= publicMintStartTime || _startTime <= _endTime) {
             revert InvalidWhitelistTime();
         }
         whitelists[_whitelist_id] = Whitelist(_root, _startTime, _endTime);

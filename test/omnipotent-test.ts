@@ -1,10 +1,8 @@
 import { expect } from "chai";
 import hre, {ethers} from "hardhat";
-import {Contract} from "hardhat/internal/hardhat-network/stack-traces/model";
 import {address} from "hardhat/internal/core/config/config-validation";
 import {OmnipotentNFT} from "../typechain-types";
 import { MerkleTree } from "merkletreejs";
-import {BigNumber} from "ethers";
 const SHA256 = require('crypto-js/sha256')
 
 const MAX_SUPPLY = 500;
@@ -54,23 +52,27 @@ describe("Omnipotent Constructor", function() {
     })
 });
 
-async function createWhitelist(
-    id: number,
-    startTime: number,
-    endTime: number,
-    whitelisted_address: string,
-    contract: OmnipotentNFT
-): Promise<MerkleTree> {
-    let leaves = [];
-    if (whitelisted_address) {
-        leaves = [whitelisted_address].map(x => SHA256(x))
-    }
-    const tree = new MerkleTree(leaves, SHA256);
-    await contract.createWhitelist(tree.getHexRoot(), id, startTime, endTime);
-    return tree
-}
-
 describe("Omnipotent create whitelist", function () {
+    async function createWhitelist(
+        id: number,
+        startTime: number,
+        endTime: number,
+        whitelisted_address: string,
+        contract: OmnipotentNFT
+    ): Promise<MerkleTree> {
+        const tree = createTree(whitelisted_address);
+        await contract.createWhitelist(tree.getHexRoot(), id, startTime, endTime);
+        return tree
+    }
+
+    function createTree(whitelisted_address: string): MerkleTree {
+        let leaves = [];
+        if (whitelisted_address) {
+            leaves = [whitelisted_address].map(x => SHA256(x))
+        }
+        return new MerkleTree(leaves, SHA256);
+    }
+
     it("Should create whitelist", async function () {
         const startTime = getTimeSinceEpoch() - 1000;
         const endTime = startTime - 500;
@@ -81,5 +83,52 @@ describe("Omnipotent create whitelist", function () {
         expect(whitelist["root"]).to.equal(tree.getHexRoot())
         expect(whitelist["startTime"]).to.equal(startTime)
         expect(whitelist["endTime"]).to.equal(endTime)
+    });
+
+    it("Should raise InvalidWhitelistId", async function () {
+        const startTime = getTimeSinceEpoch() - 1000;
+        const endTime = startTime - 500;
+        const contract = await deployContract();
+        const [owner, _] = await ethers.getSigners();
+        const tree = createTree(owner.address)
+        await expect(
+            contract.createWhitelist(tree.getHexRoot(), 3, startTime, endTime)
+        ).to.reverted;
+    });
+
+    it("Should raise InvalidWhitelistTime invalid end time", async function () {
+        const startTime = getTimeSinceEpoch() - 1000;
+        const endTime = startTime + 1000;
+        const contract = await deployContract();
+        const [owner, _] = await ethers.getSigners();
+        const tree = createTree(owner.address)
+        await expect(
+            contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
+        ).to.reverted;
+    });
+
+    it("Should raise InvalidWhitelistTime invalid start time", async function () {
+        const startTime = getTimeSinceEpoch();
+        const endTime = startTime + 1;
+        const contract = await deployContract();
+        const [owner, _] = await ethers.getSigners();
+        const tree = createTree(owner.address)
+        await expect(
+            contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
+        ).to.reverted;
+    });
+
+    it("Should raise InvalidWhitelistTime invalid start and end date", async function () {
+        const startTime = getTimeSinceEpoch();
+        const contract = await deployContract();
+        const [owner, _] = await ethers.getSigners();
+        const tree = createTree(owner.address)
+        await expect(
+            contract.createWhitelist(tree.getHexRoot(), 1, startTime, startTime)
+        ).to.reverted;
+
+        await expect(
+            contract.createWhitelist(tree.getHexRoot(), 1, startTime, startTime - 100)
+        ).to.reverted;
     });
 });
