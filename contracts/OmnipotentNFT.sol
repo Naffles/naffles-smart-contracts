@@ -81,7 +81,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
                 maxSupply: maxSupply
             });
         }
-        if (_numberMinted(msg.sender) + 1 >= maxPerWallet) {
+        if (_numberMinted(msg.sender) == maxPerWallet) {
             revert ExceedingMaxTokensPerWallet({
                 maxPerWallet: maxPerWallet
             });

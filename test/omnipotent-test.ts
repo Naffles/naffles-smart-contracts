@@ -2,7 +2,7 @@ import { expect } from "chai";
 import hre, {ethers} from "hardhat";
 import {OmnipotentNFT} from "../typechain-types";
 import { MerkleTree } from "merkletreejs";
-const SHA256 = require('crypto-js/sha256')
+import keccak256 from "keccak256";
 
 const MAX_SUPPLY = 500;
 const RESERVED_TOKENS = 50;
@@ -12,7 +12,11 @@ function getTimeSinceEpoch(): number {
     return Math.round(new Date().getTime() / 1000)
 }
 
-async function deployContract(reservedTokens: number = RESERVED_TOKENS, maxPerWallet: number = MAX_PER_WALLET): Promise<OmnipotentNFT> {
+async function deployContract(
+    reservedTokens: number = RESERVED_TOKENS,
+    maxPerWallet: number = MAX_PER_WALLET,
+    publicSaleStartTime: number = getTimeSinceEpoch(),
+): Promise<OmnipotentNFT> {
     const contract_factory = await hre.ethers.getContractFactory("OmnipotentNFT");
     const [owner, _] = await ethers.getSigners();
     const price = ethers.utils.parseEther("0.1")
@@ -22,7 +26,7 @@ async function deployContract(reservedTokens: number = RESERVED_TOKENS, maxPerWa
         maxPerWallet,
         price,
         owner.address,
-        getTimeSinceEpoch()
+        publicSaleStartTime
     );
 }
 
@@ -39,11 +43,11 @@ async function createWhitelist(
 }
 
 function createTree(whitelisted_address: [string]): MerkleTree {
-    let leaves = [];
+    let leaves: any[] = [];
     if (whitelisted_address) {
-        leaves = whitelisted_address.map(x => SHA256(x))
+        leaves = whitelisted_address.map(x => keccak256(x));
     }
-    return new MerkleTree(leaves, SHA256);
+    return new MerkleTree(leaves, keccak256, { sortPairs: true });
 }
 
 describe("Omnipotent Constructor", function() {
@@ -165,15 +169,20 @@ describe("Omnipotent mint", function () {
 
     it("Should raise ExceedingMaxTokensPerWallet", async function() {
         const contract = await deployContract(RESERVED_TOKENS, 1);
-        const [admin, user] = await ethers.getSigners();
-        contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
-        await expect(
-            contract.mint({value: ethers.utils.parseEther("0.1")})
-        ).to.be.revertedWithCustomError(contract, "ExceedingMaxTokensPerWallet");
-    })
+        const [_, user] = await ethers.getSigners();
+        await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")}).then(async () => {
+            await expect(
+                contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "ExceedingMaxTokensPerWallet");
+        });
+    });
 
     it("Should raise SaleNotActive", async function() {
-        const contract = await deployContract();
+        const contract = await deployContract(
+             RESERVED_TOKENS,
+             MAX_PER_WALLET,
+             getTimeSinceEpoch() + 1000000,
+        );
         const [_, user] = await ethers.getSigners();
         await expect(
             contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
@@ -181,16 +190,32 @@ describe("Omnipotent mint", function () {
     });
 
     it("Should whitelist mint", async function () {
-        const contract = await deployContract();
+        const contract = await deployContract(
+            RESERVED_TOKENS,
+            MAX_PER_WALLET,
+            getTimeSinceEpoch() + 1000000,
+        );
         const [_, user] = await ethers.getSigners();
-        const tree = await createWhitelist(
-            1, getTimeSinceEpoch() - 1000000,
-            getTimeSinceEpoch() - 500000,
+
+        const startTime = getTimeSinceEpoch();
+
+        await createWhitelist(
+            1,
+            startTime,
+            startTime + 100000,
             [user.address],
             contract
-        )
-        const proof = tree.getHexProof(user.address);
-        await contract.connect(user).whitelistMint({whitelist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.1")});
-        await expect(contract.balanceOf(user.address)).to.equal(1);
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(tree.verify(proof, user.address, tree.getHexRoot()));
+            const whitelist = await contract.whitelists(1);
+
+            expect(whitelist["root"]).to.equal(tree.getHexRoot());
+
+            await contract.connect(user).whitelistMint(
+                {whitelist_id: 1, proof: proof},
+                {value: ethers.utils.parseEther("0.1")});
+        });
+        expect(await contract.balanceOf(user.address)).to.equal(1);
     });
 });
