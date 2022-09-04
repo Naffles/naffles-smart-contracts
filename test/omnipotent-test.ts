@@ -218,4 +218,68 @@ describe("Omnipotent mint", function () {
         });
         expect(await contract.balanceOf(user.address)).to.equal(1);
     });
+
+
+    it("Should raise NotWhitelisted", async function () {
+        const contract = await deployContract(
+            RESERVED_TOKENS,
+            MAX_PER_WALLET,
+            getTimeSinceEpoch() + 1000000,
+        );
+        const [admin, user] = await ethers.getSigners();
+        const startTime = getTimeSinceEpoch();
+
+        await createWhitelist(
+            1,
+            startTime,
+            startTime + 100000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            await expect(
+                contract.connect(admin).whitelistMint(
+                {whitelist_id: 1, proof: proof},
+                {value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "NotWhitelisted");
+        });
+        expect(await contract.balanceOf(user.address)).to.equal(0);
+    });
+
+
+    it("Exceed max allowance", async function () {
+        const contract = await deployContract(
+            RESERVED_TOKENS,
+            MAX_PER_WALLET,
+            getTimeSinceEpoch() + 1000000,
+        );
+        const [_, user] = await ethers.getSigners();
+
+        const startTime = getTimeSinceEpoch();
+
+        await createWhitelist(
+            1,
+            startTime,
+            startTime + 100000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(tree.verify(proof, user.address, tree.getHexRoot()));
+            const whitelist = await contract.whitelists(1);
+
+            expect(whitelist["root"]).to.equal(tree.getHexRoot());
+
+            await contract.connect(user).whitelistMint(
+                {whitelist_id: 1, proof: proof},
+                {value: ethers.utils.parseEther("0.1")}).then(async () => {
+                await expect(
+                    contract.connect(user).whitelistMint(
+                        {whitelist_id: 1, proof: proof},
+                        {value: ethers.utils.parseEther("0.1")})
+                ).to.be.revertedWithCustomError(contract, "ExceedingWhitelistAllowance");
+            });
+        });
+        expect(await contract.balanceOf(user.address)).to.equal(1);
+    });
 });
