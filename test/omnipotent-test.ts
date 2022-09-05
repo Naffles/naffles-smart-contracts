@@ -159,6 +159,15 @@ describe("Omnipotent mint", function () {
        expect(await contract.balanceOf(user.address)).to.equal(1);
    });
 
+    it("Should raise InsufficientFunds", async function () {
+        const contract = await deployContract();
+        const [_, user] = await ethers.getSigners();
+        await expect(
+            contract.connect(user).mint({value: ethers.utils.parseEther("0.05")})
+        ).to.revertedWithCustomError(contract, "InsufficientFunds");
+        expect(await contract.balanceOf(user.address)).to.equal(0);
+    });
+
    it("Should raise InsufficientSupplyAvailable", async function() {
          const contract = await deployContract(MAX_SUPPLY);
          const [_, user] = await ethers.getSigners();
@@ -187,6 +196,65 @@ describe("Omnipotent mint", function () {
         await expect(
             contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
         ).to.be.revertedWithCustomError(contract, "SaleNotActive");
+    });
+
+    it("Should raise SaleNotActive", async function() {
+        const contract = await deployContract();
+        const [_, user] = await ethers.getSigners();
+
+        const startTime = getTimeSinceEpoch();
+
+        await createWhitelist(
+            1,
+            startTime - 100000,
+            startTime - 50000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(tree.verify(proof, user.address, tree.getHexRoot()));
+            const whitelist = await contract.whitelists(1);
+
+            expect(whitelist["root"]).to.equal(tree.getHexRoot());
+            await expect(
+                contract.connect(user).whitelistMint(
+                    {whitelist_id: 1, proof: proof},
+                    {value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "SaleNotActive");
+        });
+        expect(await contract.balanceOf(user.address)).to.equal(0);
+    });
+
+
+    it("Should raise SaleNotActive too early", async function() {
+        const contract = await deployContract(
+            RESERVED_TOKENS,
+            MAX_PER_WALLET,
+            getTimeSinceEpoch() + 1000000,
+        );
+        const [_, user] = await ethers.getSigners();
+
+        const startTime = getTimeSinceEpoch();
+
+        await createWhitelist(
+            1,
+            startTime + 10000,
+            startTime + 20000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(tree.verify(proof, user.address, tree.getHexRoot()));
+            const whitelist = await contract.whitelists(1);
+
+            expect(whitelist["root"]).to.equal(tree.getHexRoot());
+            await expect(
+                contract.connect(user).whitelistMint(
+                    {whitelist_id: 1, proof: proof},
+                    {value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "SaleNotActive");
+        });
+        expect(await contract.balanceOf(user.address)).to.equal(0);
     });
 
     it("Should whitelist mint", async function () {
@@ -267,7 +335,6 @@ describe("Omnipotent mint", function () {
             const proof = tree.getHexProof(user.address);
             expect(tree.verify(proof, user.address, tree.getHexRoot()));
             const whitelist = await contract.whitelists(1);
-
             expect(whitelist["root"]).to.equal(tree.getHexRoot());
 
             await contract.connect(user).whitelistMint(
@@ -281,5 +348,122 @@ describe("Omnipotent mint", function () {
             });
         });
         expect(await contract.balanceOf(user.address)).to.equal(1);
+    });
+
+    it("Should have withdrawn money", async function () {
+        const contract = await deployContract();
+        const [_, user] = await ethers.getSigners();
+        const oldBalance = await ethers.provider.getBalance(user.address);
+        await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")});
+        const newBalance = await ethers.provider.getBalance(user.address);
+        const expectedBalance = oldBalance.sub(ethers.utils.parseEther("0.1"));
+        // minus gas
+        expect(newBalance).to.lt(expectedBalance);
+    });
+
+    it("Should send back money", async function () {
+        const contract = await deployContract();
+        const [_, user] = await ethers.getSigners();
+        const oldBalance = await ethers.provider.getBalance(user.address);
+        await contract.connect(user).mint({value: ethers.utils.parseEther("0.2")}).then(async () => {
+            const newBalance = await ethers.provider.getBalance(user.address);
+            const expectedBalance = oldBalance.sub(ethers.utils.parseEther("0.1"));
+            // Minus gas cost
+            expect(newBalance).to.lt(expectedBalance);
+        });
+    });
+});
+
+describe("exists", function() {
+    it("Should return true", async function() {
+        const contract = await deployContract();
+        const [_, user] = await ethers.getSigners();
+        await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")});
+        expect(await contract.exists(RESERVED_TOKENS + 1)).to.equal(true);
+    });
+
+    it("Should return false", async function() {
+        const contract = await deployContract();
+        expect(await contract.exists(RESERVED_TOKENS + 1)).to.equal(false);
+    });
+})
+
+describe("tokenURI", function () {
+    it("Should return token URI", async function () {
+        const contract = await deployContract();
+        const [admin, _] = await ethers.getSigners();
+        await contract.connect(admin).setBaseURI("https://example.com/");
+        expect(await contract.tokenURI(1)).to.equal("https://example.com/1.json");
+    });
+
+
+    it("Should return empty string", async function () {
+        const contract = await deployContract();
+        expect(await contract.tokenURI(1)).to.equal("");
+    })
+
+    it("Should raise URIQueryForNonexistentToken", async function () {
+        const contract = await deployContract();
+        await expect(contract.tokenURI(RESERVED_TOKENS + 1)).to.be.revertedWithCustomError(contract, "URIQueryForNonexistentToken");
+    });
+})
+
+describe("Set base URI", function () {
+    it("Should set base URI", async function () {
+        const contract = await deployContract();
+        const [admin, _] = await ethers.getSigners();
+        await contract.connect(admin).setBaseURI("https://example.com");
+        expect(await contract.baseURI()).to.equal("https://example.com");
+    });
+
+    it("Should revert because of auth", async function () {
+        const contract = await deployContract();
+        const [_, user] = await ethers.getSigners();
+        await expect(
+            contract.connect(user).setBaseURI("https://example.com")
+        ).to.be.reverted
+    });
+});
+
+describe("Withdraw", function () {
+    it("Should withdraw", async function () {
+        const contract = await deployContract();
+        const [admin, user] = await ethers.getSigners();
+        const oldBalance = await ethers.provider.getBalance(admin.address);
+        await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")});
+        await contract.connect(admin).withdraw();
+        const newBalance = await ethers.provider.getBalance(admin.address);
+        expect(newBalance).to.be.gt(oldBalance);
+    });
+
+    it("Should revert no admin", async function () {
+        const contract = await deployContract();
+        const [_, user] = await ethers.getSigners();
+        await expect(
+            contract.connect(user).withdraw()
+        ).to.be.reverted
+    });
+
+    it("Should allow withdraw role", async function () {
+        const contract = await deployContract();
+        const [admin, user] = await ethers.getSigners();
+        await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")});
+        await contract.connect(admin).grantRole(contract.WITHDRAW_ROLE(), user.address);
+        const oldBalance = await ethers.provider.getBalance(user.address);
+        await contract.connect(user).withdraw();
+        const newBalance = await ethers.provider.getBalance(user.address);
+        expect(newBalance).to.be.gt(oldBalance);
+    })
+})
+
+describe("SupportsInterface", function () {
+    it("Should return true", async function () {
+        const contract = await deployContract();
+        expect(await contract.supportsInterface("0x80ac58cd")).to.equal(true);
+    });
+
+    it("Should return false", async function () {
+        const contract = await deployContract();
+        expect(await contract.supportsInterface("0x80ac58ce")).to.equal(false);
     });
 });

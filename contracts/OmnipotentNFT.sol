@@ -120,14 +120,11 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     }
 
     function whitelistMint(WhitelistProof calldata _proof) public payable validateMint nonReentrant {
-        Whitelist memory whitelist = whitelists[_proof.whitelist_id]; 
-        if (block.timestamp >= whitelist.startTime && block.timestamp <= whitelist.endTime) {
-            _whitelistMint(_proof, whitelist.root);
-        }
-        else if (block.timestamp < publicMintStartTime) {
+        Whitelist memory whitelist = whitelists[_proof.whitelist_id];
+        if (block.timestamp >= publicMintStartTime || block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
             revert SaleNotActive();
         }
-
+        _whitelistMint(_proof, whitelist.root);
         _internalMint();
     }
 
@@ -148,7 +145,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
 
         if (msg.value > mintPrice) {
           uint256 excess = msg.value - mintPrice;
-          (bool returned, ) = payable(_msgSender()).call{ value: excess }("");
+          (bool returned, ) = msg.sender.call{ value: excess }("");
           if (!returned) { revert UnableToSendChange({cashChange: excess}); }
         }
 
@@ -181,7 +178,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         }
 
         return
-            bytes(baseURI).length != 0
+            bytes(_baseURI()).length != 0
                 ? string(
                     abi.encodePacked(baseURI, _toString(tokenId), ".json")
                 )
@@ -190,9 +187,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
 
     function withdraw() external onlyRole(WITHDRAW_ROLE) {
         (bool success, ) = msg.sender.call{value: address(this).balance}("");
-        if (!success) {
-            revert UnableToWithdraw({amount: address(this).balance});
-        }
+        if (!success) { revert UnableToWithdraw({amount: address(this).balance});}
     }
 
     function _baseURI() internal view override returns (string memory) {
