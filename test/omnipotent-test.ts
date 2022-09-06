@@ -405,6 +405,21 @@ describe("Set base URI", function () {
     });
 });
 
+describe("Set base Extension", function () {
+    it("Should set base extension", async function () {
+        const { contract, owner } = await getContractAndUsers();
+        await contract.connect(owner).setBaseExtension("");
+        expect(await contract.baseExtension()).to.equal("");
+    });
+
+    it("Should revert because of auth", async function () {
+        const { contract, user } = await getContractAndUsers();
+        await expect(
+            contract.connect(user).setBaseExtension(".json")
+        ).to.be.reverted
+    });
+})
+
 describe("Withdraw", function () {
     it("Should withdraw", async function () {
         const { contract, owner, user} = await getContractAndUsers();

@@ -47,6 +47,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     uint256 public publicMintStartTime;
 
     string public baseURI = "";
+    string public baseExtension = ".json";
     
     // maps whitelist_id / waitlist_id to whitelist object.
     mapping(uint8 => Whitelist) public whitelists;
@@ -180,7 +181,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         return
             bytes(_baseURI()).length != 0
                 ? string(
-                    abi.encodePacked(baseURI, _toString(tokenId), ".json")
+                    abi.encodePacked(baseURI, _toString(tokenId), baseExtension)
                 )
                 : "";
     }
@@ -194,11 +195,18 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         return baseURI;
     }
 
-    function setBaseURI(string memory newBaseURI)
+    function setBaseURI(string memory _newBaseURI)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        baseURI = newBaseURI;
+        baseURI = _newBaseURI;
+    }
+
+    function setBaseExtension(string memory _baseExtension)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        baseExtension = _baseExtension;
     }
 }
 
