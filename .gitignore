@@ -1,8 +1,8 @@
-llow a dummy project in this directory for testing purposes
-myproject
-
 /node_modules
 /.idea
+
+cache/
+artifacts/
 *.tsbuildinfo
 
 # VS Code workspace config
@@ -99,3 +99,4 @@ docs/.env.example
 
 # extra
 typechain-types/
+
