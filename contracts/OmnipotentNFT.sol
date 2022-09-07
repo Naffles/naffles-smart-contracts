@@ -31,28 +31,46 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         bytes32 root;
         uint256 startTime;
         uint256 endTime;
+        uint256 price;
+        uint8 allowance;
     }
 
     struct WhitelistProof {
         uint8 whitelist_id;
         bytes32[] proof;
+        uint8 allowance;
     }
 
     uint8 public whitelist_id = 1;
     uint8 public waitlist_id = 2;
+    uint8 public whitelist_founder_mint_id = 3;
+    uint8 public waitlist_founder_mint_id = 4;
+
+    // Max amount addresses can mint during the whitelist period.
+    uint8 public maxOmnipotentMintPerWlWalet = 1;
+    uint8 public maxFoundersMintPerWlWalet = 2;
+
+    // Max amount addresses can mint in total during this phase (Includes wl mints).
+    uint8 public maxOmnipotentMintsPerWallet = 2;
+    uint8 public maxFoundersMintsPerWallet = 5;
+
+
     uint16 public maxSupply;
     uint16 public reservedTokens;
     uint16 public maxPerWallet;
     uint256 public mintPrice;
-    uint256 public publicMintStartTime;
+    uint256 public omnipotentPublicMintStartTime;
+    uint256 public foundersPublicMintStartTime;
+
 
     string public baseURI = "";
     string public baseExtension = ".json";
     
     // maps whitelist_id / waitlist_id to whitelist object.
     mapping(uint8 => Whitelist) public whitelists;
-    mapping(address => uint16) public addressMintCount;
-    mapping(address => bool) public whitelistMinted;
+    mapping(address => uint8) public addressOmnipotentMintAmountMapping;
+    mapping(address => uint8 public addressFoundersMintAmountMapping;
+
 
     bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
     
@@ -62,22 +80,24 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint16 _maxPerWallet,
         uint256 _mintPrice,
         address _internalMintAddress,
-        uint256 _publicMintStartTime
+        uint256 _omnipotentPublicMintStartTime
+        uint256 _founderPublicMintStartTime
     ) ERC721A("Naffles OmnipotentNFT", "NFLS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(WITHDRAW_ROLE, msg.sender);
         
         maxSupply = _maxSupply;             
         reservedTokens = _reservedTokens;
-        publicMintStartTime = _publicMintStartTime;
+        omnipotentPublicMintStartTime = _onmipotentPiblicMintStartTime;
+        foundersPublicMintStartTime = _foundersPublicMintStartTime;
         mintPrice = _mintPrice;
         maxPerWallet = _maxPerWallet;
 
         _mint(_internalMintAddress, _reservedTokens);
     }
 
-    modifier validateMint() {
-        if (_totalMinted() == maxSupply) {
+    modifier validateMint(uint16 _mintAmount) {
+        if (_totalMinted() + _mintAmount > maxSupply) {
             revert InsufficientSupplyAvailable({
                 maxSupply: maxSupply
             });
@@ -98,45 +118,102 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         bytes32 _root, 
         uint8 _whitelist_id, 
         uint256 _startTime, 
-        uint256 _endTime) public onlyRole(DEFAULT_ADMIN_ROLE)
+        uint256 _endTime, 
+        uint16 _allowance) public onlyRole(DEFAULT_ADMIN_ROLE)
     {
-        if (_whitelist_id != whitelist_id && _whitelist_id != waitlist_id) {
+        if (_whitelist_id != whitelist_id && _whitelist_id != waitlist_id && _whitelist_id != whitelist_founder_mint_id && _whitelist_id != waitlist_founder_mint_id) {
             revert InvalidWhitelistId({whitelistId: _whitelist_id});
         }
         if (_startTime >= publicMintStartTime || _endTime >= publicMintStartTime || _startTime >= _endTime) {
             revert InvalidWhitelistTime();
         }
-        whitelists[_whitelist_id] = Whitelist(_root, _startTime, _endTime);
+        whitelists[_whitelist_id] = Whitelist(_root, _startTime, _endTime, allowance);
     }
 
     function removeWhitelist(uint8 _id) public onlyRole(DEFAULT_ADMIN_ROLE) {
         delete whitelists[_id];
     }
 
-    function mint() public payable validateMint nonReentrant {
-        if (block.timestamp < publicMintStartTime) {
+    function omnipotentMint(uint8 _mintAmount) public payable validateMint nonReentrant {
+        addressOmnipotentMintAmountMapping[msg.sender] += _mintAmount;
+        if (addressOmnipotentMintAmountMapping[msg.sender] > maxOmnipotentMintsPerWallet) {
+            revert ExceedingMaxTokensPerWallet({
+                maxPerWallet: maxOmnipotentMintsPerWallet
+            });
+        }
+        if (block.timestamp < publicOmnipotentMintStartTime) {
             revert SaleNotActive();
         }
-        _internalMint();
+        _internalMint(_mintAmount);
     }
 
-    function whitelistMint(WhitelistProof calldata _proof) public payable validateMint nonReentrant {
+    function foundersMint(uint8 _mintAmount) public payable validateMint nonReentrant {
+        addressFoundersMintAmountMapping[msg.sender] += _mintAmount;
+        if (addressFoundersMintAmountMapping[msg.sender] > maxFoundersMintsPerWallet) {
+            revert ExceedingMaxTokensPerWallet({
+                maxPerWallet: maxFoundersMintsPerWallet
+            });
+        }
+        if (block.timestamp < publicFoundersMintStartTime) {
+            revert SaleNotActive();
+        }
+        _internalMint(_mintAmount);
+    }
+
+    function omnipotentWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint nonReentrant {
         Whitelist memory whitelist = whitelists[_proof.whitelist_id];
-        if (block.timestamp >= publicMintStartTime || block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
+
+        if (block.timestamp >= omnipotentPublicMintStartTime || block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
             revert SaleNotActive();
         }
-        _whitelistMint(_proof, whitelist.root);
-        _internalMint();
+
+        if (whitelist.id == 1 || whitelist.id == 2) {
+            _omnipotentWhitelistMint(_mintAmount);
+        } else {
+            revert InvalidWhitelistId({whitelistId: _proof.whitelist_id});
+        }
+        _whitelistCheckAndMint(_mintAmount, _proof);
     }
 
-    function _whitelistMint(WhitelistProof calldata _whitelistProof, bytes32 root) internal {
-        if (!MerkleProof.verify(_whitelistProof.proof, root, keccak256(abi.encodePacked(msg.sender)))) {
+
+    function foundersWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint nonReentrant {
+        Whitelist memory whitelist = whitelists[_proof.whitelist_id];
+
+        if (block.timestamp >= foundersPublicMintStartTime || block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
+            revert SaleNotActive();
+        } 
+
+        if (whitelist_id == 3 || whitelist_id == 4) {
+            _foundersWhitelistMint(_mintAmount);
+        } else {
+            revert InvalidWhitelistId({whitelistId: _proof.whitelist_id});
+        }
+        
+        _whitelistCheckAndMint(_mintAmount, _proof);
+    }
+
+    function _whitelistCheckAndMint(uint8 _mintAmount, WhitelistProof calldata _proof) internal {
+        if (!MerkleProof.verify(_whitelistProof.proof, whitelist.root, keccak256(abi.encodePacked(msg.sender)))) {
             revert NotWhitelisted();
         }
-        if (whitelistMinted[msg.sender]) {
+
+        _internalMint(_mintAmount);
+    }
+
+    function _omnipotentWhitelistMint(uint8 _mintAmount) internal {
+        addressOmnipotentMintAmountMapping[msg.sender] += _mintAmount;
+
+        if (addressOmnipotentMintAmountMapping[msg.sender] > maxOmnipotentMintPerWlWalet) {
             revert ExceedingWhitelistAllowance({whitelistAllowance: 1});
         }
-        whitelistMinted[msg.sender] = true; 
+    }
+
+    function _foundersWhitelistMint(uint8 _mintAmount) internal {
+        addressFoundersMintAmountMapping[msg.sender] += _mintAmount;
+
+        if (addressFoundersMintAmountMapping[msg.sender] > maxFoundersMintPerWLWallet) {
+            revert ExceedingWhitelistAllowance({whitelistAllowance: 1});
+        }
     }
 
     function _internalMint() internal {
