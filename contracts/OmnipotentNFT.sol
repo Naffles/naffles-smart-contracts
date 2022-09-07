@@ -302,7 +302,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     function setTokenTypeMapping(uint8[] _tokenTypes) external onlyRole(DEFAULT_ADMIN_ROLE) {
         startNumber = maxOmnipotentSupply + 1;
         endNumber = startNumber + _tokenTypes.length;
-        for (uint8 i = startNumber; i < endNumber; i++) {
+        for (uint8 i = startNumber; i < endNumber.length; i++) {
             tokenTypeMapping[i] = _tokenTypes[i];
         }
     }
