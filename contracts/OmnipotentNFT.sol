@@ -14,6 +14,7 @@ error InsufficientFunds(uint256 funds, uint256 cost);
 error InsufficientSupplyAvailable(uint256 maxSupply);
 error InvalidWhitelistId(uint8 whitelistId);
 error InvalidWhitelistTime();
+error tokenDoesNotExist(uint16 tokenId);
 error NotWhitelisted();
 error ReservedTokensExceedsRemainingSupply(
     uint256 remainingSupply,
@@ -41,6 +42,11 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint8 allowance;
     }
 
+    uint8 public constant OMNIPOTENT_FOUNDERS_PASS = 1;
+    uint8 public constant EDGE_FOUNDERS_PASS = 2;
+    uint8 public constant PLATINUM_FOUNDERS_PASS = 3;
+    uint8 public constant BLACK_FOUNDERS_PASS = 4;
+
     uint8 public whitelist_id = 1;
     uint8 public waitlist_id = 2;
     uint8 public whitelist_founder_mint_id = 3;
@@ -55,7 +61,8 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     uint8 public maxFoundersMintsPerWallet = 5;
 
 
-    uint16 public maxSupply;
+    uint16 public maxOmnipotentSupply = 300;
+    uint16 public maxTotalSupply;
     uint16 public reservedTokens;
     uint16 public maxPerWallet;
     uint256 public mintPrice;
@@ -75,7 +82,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
     
     constructor(
-        uint16 _maxSupply,
+        uint16 _maxTotalSupply,
         uint16 _reservedTokens,
         uint16 _maxPerWallet,
         uint256 _mintPrice,
@@ -86,7 +93,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(WITHDRAW_ROLE, msg.sender);
         
-        maxSupply = _maxSupply;             
+        maxTotalSupply = _maxTotalSupply;             
         reservedTokens = _reservedTokens;
         omnipotentPublicMintStartTime = _onmipotentPiblicMintStartTime;
         foundersPublicMintStartTime = _foundersPublicMintStartTime;
@@ -96,10 +103,10 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         _mint(_internalMintAddress, _reservedTokens);
     }
 
-    modifier validateMint(uint16 _mintAmount) {
-        if (_totalMinted() + _mintAmount > maxSupply) {
+    modifier validateMint(uint16 _mintAmount, uint16 _maxSupply) {
+        if (_totalMinted() + _mintAmount > _maxSupply) {
             revert InsufficientSupplyAvailable({
-                maxSupply: maxSupply
+                maxSupply: _maxSupply
             });
         }
         if (_numberMinted(msg.sender) == maxPerWallet) {
@@ -134,7 +141,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         delete whitelists[_id];
     }
 
-    function omnipotentMint(uint8 _mintAmount) public payable validateMint nonReentrant {
+    function omnipotentMint(uint8 _mintAmount) public payable validateMint(_mintAmount, maxOmnipotentSupply) nonReentrant {
         addressOmnipotentMintAmountMapping[msg.sender] += _mintAmount;
         if (addressOmnipotentMintAmountMapping[msg.sender] > maxOmnipotentMintsPerWallet) {
             revert ExceedingMaxTokensPerWallet({
@@ -147,7 +154,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         _internalMint(_mintAmount);
     }
 
-    function foundersMint(uint8 _mintAmount) public payable validateMint nonReentrant {
+    function foundersMint(uint8 _mintAmount) public payable validateMint(_mintAmount, maxTotalSupply) nonReentrant {
         addressFoundersMintAmountMapping[msg.sender] += _mintAmount;
         if (addressFoundersMintAmountMapping[msg.sender] > maxFoundersMintsPerWallet) {
             revert ExceedingMaxTokensPerWallet({
@@ -157,7 +164,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         if (block.timestamp < publicFoundersMintStartTime) {
             revert SaleNotActive();
         }
-        _internalMint(_mintAmount);
+        _internalMint(_mintAmount, maxTotalSupply);
     }
 
     function omnipotentWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint nonReentrant {
@@ -270,6 +277,13 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
 
     function _baseURI() internal view override returns (string memory) {
         return baseURI;
+    }
+
+    function tokenType(uint16 _tokenId) public view returns(uint8) {
+        if (!_exists(tokenId)) { 
+            revert TokenDoesNotExist({tokenId: _tokenId});
+        }
+        if (_tokenId <= 
     }
 
     function setBaseURI(string memory _newBaseURI)
