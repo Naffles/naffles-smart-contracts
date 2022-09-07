@@ -78,6 +78,8 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     mapping(address => uint8) public addressOmnipotentMintAmountMapping;
     mapping(address => uint8 public addressFoundersMintAmountMapping;
 
+    // maps token id to token type, will be filled after reveal.
+    mapping(uint26 => uint8) public tokenTypeMapping;
 
     bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
     
@@ -167,7 +169,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         _internalMint(_mintAmount, maxTotalSupply);
     }
 
-    function omnipotentWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint nonReentrant {
+    function omnipotentWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint(_mintAmount, maxOmnipotentSupply) nonReentrant {
         Whitelist memory whitelist = whitelists[_proof.whitelist_id];
 
         if (block.timestamp >= omnipotentPublicMintStartTime || block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
@@ -183,7 +185,7 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     }
 
 
-    function foundersWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint nonReentrant {
+    function foundersWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint(_mintAmount, maxTotalSupply) nonReentrant {
         Whitelist memory whitelist = whitelists[_proof.whitelist_id];
 
         if (block.timestamp >= foundersPublicMintStartTime || block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
@@ -283,7 +285,11 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         if (!_exists(tokenId)) { 
             revert TokenDoesNotExist({tokenId: _tokenId});
         }
-        if (_tokenId <= 
+        if (_tokenId <= maxOmnipotentSupply) {
+            return OMNIPOTENT_FOUNDERS_PASS;
+        } else {
+            return tokenTypeMapping[_tokenId];
+        }
     }
 
     function setBaseURI(string memory _newBaseURI)
@@ -291,6 +297,14 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         baseURI = _newBaseURI;
+    }
+
+    function setTokenTypeMapping(uint8[] _tokenTypes) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        startNumber = maxOmnipotentSupply + 1;
+        endNumber = startNumber + _tokenTypes.length;
+        for (uint8 i = startNumber; i < endNumber; i++) {
+            tokenTypeMapping[i] = _tokenTypes[i];
+        }
     }
 
     function setBaseExtension(string memory _baseExtension)
