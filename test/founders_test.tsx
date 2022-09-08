@@ -42,6 +42,7 @@ async function deployContract(
         price,
         owner.address,
         publicSaleStartTime
+        publicSaleStartTime
     );
 }
 
@@ -75,10 +76,17 @@ describe("Omnipotent Constructor", function() {
     });
 
     it("Should setup constructor values on deploy", async function () {
-        const contract = await deployContract()
-        expect(await contract.maxSupply()).to.equal(MAX_SUPPLY);
+        const publicSaleStartTime = getTimeSinceEpoch();
+        const contract = await deployContract(
+            RESERVED_TOKENS,
+            MAX_PER_WALLET,
+            publicSaleStartTime);
+            
+        expect(await contract.maxTotalSupply()).to.equal(MAX_SUPPLY);
         expect(await contract.reservedTokens()).to.equal(RESERVED_TOKENS);
         expect(await contract.maxPerWallet()).to.equal(MAX_PER_WALLET);
+        expect(await contract.publicSaleStartTime()).to.equal(publicSaleStartTime);
+        expect(await contract.price().to.equal(ethers.utils.parseEther("0.1")));
     });
 
     it("Should mint reserved tokens", async function () {
