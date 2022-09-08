@@ -15,6 +15,7 @@ error InsufficientSupplyAvailable(uint256 maxSupply);
 error InvalidWhitelistId(uint8 whitelistId);
 error InvalidWhitelistTime();
 error tokenDoesNotExist(uint16 tokenId);
+error MaxTotalSupplyCannotBeLessThanAlreadyMined();
 error NotWhitelisted();
 error ReservedTokensExceedsRemainingSupply(
     uint256 remainingSupply,
@@ -33,13 +34,11 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint256 startTime;
         uint256 endTime;
         uint256 price;
-        uint8 allowance;
     }
 
     struct WhitelistProof {
         uint8 whitelist_id;
         bytes32[] proof;
-        uint8 allowance;
     }
 
     uint8 public constant OMNIPOTENT_FOUNDERS_PASS = 1;
@@ -326,5 +325,31 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
     {
         baseExtension = _baseExtension;
     }
+
+    function setMaxFoundersMintsPerWallet(uint8 _maxFoundersMintsPerWallet)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        maxFoundersMintsPerWallet = _maxFoundersMintsPerWallet;
+    }
+
+    function setMaxOmnipotentMintsPerWallet(uint8 _maxOmnipotentMintsPerWallet)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        maxOmnipotentMintsPerWallet = _maxOmnipotentMintsPerWallet;
+    }
+
+    function setMaxTotalSupply(uint32 _maxTotalSupply)
+        external
+        onlyRole(DEFAULT_ADMIN_ROLE)
+    {
+        if (_maxTotalSupply <= _totalMinted()) {
+            revert MaxTotalSupplyCannotBeLessThanAlreadyMined();
+        }
+        maxTotalSupply = _maxTotalSupply;
+    }
+
+    
 }
 
