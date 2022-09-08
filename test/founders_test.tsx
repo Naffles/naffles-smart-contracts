@@ -5,7 +5,7 @@ import { MerkleTree } from "merkletreejs";
 import keccak256 from "keccak256";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/src/signers";
 
-const MAX_SUPPLY = 500;
+const MAX_SUPPLY = 300;
 const RESERVED_TOKENS = 50;
 const MAX_PER_WALLET = 2;
 
