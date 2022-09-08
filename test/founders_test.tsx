@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import hre, {ethers} from "hardhat";
-import {OmnipotentNFT} from "../typechain-types";
+import {FoundersNFT, OmnipotentNFT} from "../typechain-types";
 import { MerkleTree } from "merkletreejs";
 import keccak256 from "keccak256";
 import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/src/signers";
@@ -23,16 +23,16 @@ async function getContractAndUsers(
         maxPerWallet,
         publicSaleStartTime
     );
-    const [owner, user] = await ethers.getSigners();
-    return { contract, owner, user };
+    const [owner, user, alternative_user] = await ethers.getSigners();
+    return { contract, owner, user, alternative_user };
 }
 
 async function deployContract(
     reservedTokens: number = RESERVED_TOKENS,
     maxPerWallet: number = MAX_PER_WALLET,
     publicSaleStartTime: number = getTimeSinceEpoch(),
-): Promise<OmnipotentNFT> {
-    const contract_factory = await hre.ethers.getContractFactory("OmnipotentNFT");
+): Promise<FoundersNFT> {
+    const contract_factory = await hre.ethers.getContractFactory("FoundersNFT");
     const [owner, _] = await ethers.getSigners();
     const price = ethers.utils.parseEther("0.1")
     return await contract_factory.deploy(
@@ -41,7 +41,7 @@ async function deployContract(
         maxPerWallet,
         price,
         owner.address,
-        publicSaleStartTime
+        publicSaleStartTime,
         publicSaleStartTime
     );
 }
@@ -51,7 +51,7 @@ async function createWhitelist(
     startTime: number,
     endTime: number,
     whitelisted_addresses: [string],
-    contract: OmnipotentNFT
+    contract: FoundersNFT
 ): Promise<MerkleTree> {
     const tree = createTree(whitelisted_addresses);
     await contract.createWhitelist(tree.getHexRoot(), id, startTime, endTime);
@@ -85,8 +85,9 @@ describe("Omnipotent Constructor", function() {
         expect(await contract.maxTotalSupply()).to.equal(MAX_SUPPLY);
         expect(await contract.reservedTokens()).to.equal(RESERVED_TOKENS);
         expect(await contract.maxPerWallet()).to.equal(MAX_PER_WALLET);
-        expect(await contract.publicSaleStartTime()).to.equal(publicSaleStartTime);
-        expect(await contract.price().to.equal(ethers.utils.parseEther("0.1")));
+        expect(await contract.foundersPublicMintStartTime()).to.equal(publicSaleStartTime);
+        expect(await contract.omnipotentPublicMintStartTime()).to.equal(publicSaleStartTime);
+        expect(await contract.mintPrice()).to.equal(ethers.utils.parseEther("0.1"));
     });
 
     it("Should mint reserved tokens", async function () {
@@ -96,7 +97,31 @@ describe("Omnipotent Constructor", function() {
     });
 });
 
-describe("Omnipotent create whitelist", function () {
+describe("adminMint", function() {
+    it("Should mint tokens", async function () {
+        const { contract, owner, user } = await getContractAndUsers();
+        const mint_amount = 10;
+        await contract.adminMint(user.address, mint_amount);
+        expect(await contract.totalSupply()).to.equal(RESERVED_TOKENS + mint_amount);
+        expect(await contract.balanceOf(user.address)).to.equal(mint_amount);
+    });
+
+    it("Should revert if not admin", async function () {
+        const { contract, owner, user} = await getContractAndUsers();
+        const mint_amount = 10;
+        await expect(contract.connect(user).adminMint(user.address, mint_amount)).to.be.reverted;
+    });
+
+    it("Should revert if minting more than max supply", async function () {
+        const { contract, owner } = await getContractAndUsers();
+        const mint_amount = MAX_SUPPLY + 1;
+        await expect(contract.adminMint(owner.address, mint_amount)).to.be.revertedWithCustomError(
+            contract, "InsufficientSupplyAvailable"
+        );
+    });
+})
+
+describe("Create whitelist", function () {
     it("Should create whitelist", async function () {
         const startTime = getTimeSinceEpoch() - 1000000;
         const endTime = startTime + 1;
@@ -108,13 +133,30 @@ describe("Omnipotent create whitelist", function () {
         expect(whitelist["endTime"]).to.equal(endTime)
     });
 
+    it ("Should create multiple whitelists within same timeframe", async function () {
+        const startTime = getTimeSinceEpoch() - 1000000;
+        const endTime = startTime + 10000;
+        const { contract, owner, user, alternative_user} = await getContractAndUsers();
+        const tree = await createWhitelist(1, startTime, endTime, [user.address], contract)
+        const tree2 = await createWhitelist(
+            2, startTime, endTime, [alternative_user.address], contract)
+        const whitelist = await contract.whitelists(1);
+        const whitelist2 = await contract.whitelists(2);
+        expect(whitelist["root"]).to.equal(tree.getHexRoot());
+        expect(whitelist["startTime"]).to.equal(startTime)
+        expect(whitelist["endTime"]).to.equal(endTime)
+        expect(whitelist2["root"]).to.equal(tree2.getHexRoot());
+        expect(whitelist2["startTime"]).to.equal(startTime)
+        expect(whitelist2["endTime"]).to.equal(endTime)
+    });
+
     it("Should raise InvalidWhitelistId", async function () {
         const startTime = getTimeSinceEpoch() - 1000000;
         const endTime = getTimeSinceEpoch() + 50000;
         const { contract, owner } = await getContractAndUsers();
         const tree = createTree([owner.address])
         await expect(
-            contract.createWhitelist(tree.getHexRoot(), 3, startTime, endTime)
+            contract.createWhitelist(tree.getHexRoot(), 6, startTime, endTime)
         ).to.revertedWithCustomError(contract,"InvalidWhitelistId")
     });
 
@@ -169,14 +211,14 @@ describe("Omnipotent remove whitelist", async function () {
 describe("Omnipotent mint", function () {
    it("Should public mint", async function () {
        const { contract, user} = await getContractAndUsers();
-       await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")});
+       await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
        expect(await contract.balanceOf(user.address)).to.equal(1);
    });
 
     it("Should raise InsufficientFunds", async function () {
         const { contract, user } = await getContractAndUsers();
         await expect(
-            contract.connect(user).mint({value: ethers.utils.parseEther("0.05")})
+            contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.05")})
         ).to.revertedWithCustomError(contract, "InsufficientFunds");
         expect(await contract.balanceOf(user.address)).to.equal(0);
     });
@@ -184,15 +226,15 @@ describe("Omnipotent mint", function () {
    it("Should raise InsufficientSupplyAvailable", async function() {
        const { contract, user } = await getContractAndUsers(MAX_SUPPLY);
        await expect(
-           contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
+           contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
        ).to.be.revertedWithCustomError(contract, "InsufficientSupplyAvailable");
    })
 
     it("Should raise ExceedingMaxTokensPerWallet", async function() {
         const { contract, user } = await getContractAndUsers(RESERVED_TOKENS, 1);
-        await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")}).then(async () => {
+        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")}).then(async () => {
             await expect(
-                contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
+                contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
             ).to.be.revertedWithCustomError(contract, "ExceedingMaxTokensPerWallet");
         });
     });
@@ -202,7 +244,7 @@ describe("Omnipotent mint", function () {
             MAX_PER_WALLET,
             getTimeSinceEpoch() + 1000000)
         await expect(
-            contract.connect(user).mint({value: ethers.utils.parseEther("0.1")})
+            contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
         ).to.be.revertedWithCustomError(contract, "SaleNotActive");
     });
 

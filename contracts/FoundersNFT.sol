@@ -45,10 +45,10 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     uint8 public constant PLATINUM_FOUNDERS_PASS = 3;
     uint8 public constant BLACK_FOUNDERS_PASS = 4;
 
-    uint8 public whitelist_id = 1;
-    uint8 public waitlist_id = 2;
-    uint8 public whitelist_founder_mint_id = 3;
-    uint8 public waitlist_founder_mint_id = 4;
+    uint8 public constant WHITELIST_ID = 1;
+    uint8 public constant WAITLIST_ID = 2;
+    uint8 public constant WHITELIST_FOUNDER_MINT_ID = 3;
+    uint8 public constant WAITLIST_FOUNDER_MINT_ID = 4;
 
     // Max amount addresses can mint during the whitelist period.
     uint8 public maxOmnipotentMintPerWlWallet = 1;
@@ -135,9 +135,11 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         bytes32 _root, 
         uint8 _whitelist_id, 
         uint256 _startTime, 
-        uint256 _endTime) public onlyRole(DEFAULT_ADMIN_ROLE)
-    {
-        if (_whitelist_id != whitelist_id && _whitelist_id != waitlist_id && _whitelist_id != whitelist_founder_mint_id && _whitelist_id != waitlist_founder_mint_id) {
+        uint256 _endTime) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (_whitelist_id != WHITELIST_ID &&
+            _whitelist_id != WAITLIST_ID &&
+            _whitelist_id != WHITELIST_FOUNDER_MINT_ID &&
+            _whitelist_id != WAITLIST_FOUNDER_MINT_ID) {
             revert InvalidWhitelistId({whitelistId: _whitelist_id});
         }
         if (_startTime >= _endTime) {
@@ -183,7 +185,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
             revert SaleNotActive();
         }
 
-        if (_proof.whitelist_id == whitelist_id || _proof.whitelist_id == waitlist_id) {
+        if (_proof.whitelist_id == WHITELIST_ID || _proof.whitelist_id == WAITLIST_ID) {
             _omnipotentWhitelistMint(_mintAmount);
         } else {
             revert InvalidWhitelistId({whitelistId: _proof.whitelist_id});
@@ -199,7 +201,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
             revert SaleNotActive();
         } 
 
-        if (whitelist_id == whitelist_founder_mint_id || whitelist_id == waitlist_founder_mint_id) {
+        if (WHITELIST_ID == WHITELIST_FOUNDER_MINT_ID || WHITELIST_ID == WAITLIST_FOUNDER_MINT_ID) {
             _foundersWhitelistMint(_mintAmount);
         } else {
             revert InvalidWhitelistId({whitelistId: _proof.whitelist_id});
