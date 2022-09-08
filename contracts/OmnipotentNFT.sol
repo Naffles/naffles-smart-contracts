@@ -119,6 +119,19 @@ contract OmnipotentNFT is ERC721A, AccessControl, ReentrancyGuard {
         _;
     }
     
+    function adminMint(
+        address _to,
+        uint16 _mintAmount,
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (_totalMinted() + _mintAmount > maxTotalSupply) {
+            revert InsufficientSupplyAvailable({
+                maxSupply: maxTotalSupply
+            });
+        }
+        _safeMint(_to, _mintAmount);
+    }
+
+
     function _startTokenId() internal pure override returns (uint256) {
         return 1;
     }
