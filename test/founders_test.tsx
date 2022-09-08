@@ -1,9 +1,8 @@
-import { expect } from "chai";
+import {expect} from "chai";
 import hre, {ethers} from "hardhat";
 import {FoundersNFT, OmnipotentNFT} from "../typechain-types";
-import { MerkleTree } from "merkletreejs";
+import {MerkleTree} from "merkletreejs";
 import keccak256 from "keccak256";
-import {SignerWithAddress} from "@nomiclabs/hardhat-ethers/src/signers";
 
 const MAX_SUPPLY = 300;
 const RESERVED_TOKENS = 50;
@@ -24,7 +23,7 @@ async function getContractAndUsers(
         publicSaleStartTime
     );
     const [owner, user, alternative_user] = await ethers.getSigners();
-    return { contract, owner, user, alternative_user };
+    return {contract, owner, user, alternative_user};
 }
 
 async function deployContract(
@@ -63,12 +62,12 @@ function createTree(whitelisted_address: [string]): MerkleTree {
     if (whitelisted_address) {
         leaves = whitelisted_address.map(x => keccak256(x));
     }
-    return new MerkleTree(leaves, keccak256, { sortPairs: true });
+    return new MerkleTree(leaves, keccak256, {sortPairs: true});
 }
 
-describe("Omnipotent Constructor", function() {
+describe("Omnipotent Constructor", function () {
     it("Should setup roles on deploy", async function () {
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         const has_role = await contract.hasRole(await contract.DEFAULT_ADMIN_ROLE(), owner.address)
         const has_withdraw_role = await contract.hasRole(await contract.WITHDRAW_ROLE(), owner.address)
         expect(has_role).to.equal(true)
@@ -81,7 +80,7 @@ describe("Omnipotent Constructor", function() {
             RESERVED_TOKENS,
             MAX_PER_WALLET,
             publicSaleStartTime);
-            
+
         expect(await contract.maxTotalSupply()).to.equal(MAX_SUPPLY);
         expect(await contract.reservedTokens()).to.equal(RESERVED_TOKENS);
         expect(await contract.maxPerWallet()).to.equal(MAX_PER_WALLET);
@@ -91,15 +90,15 @@ describe("Omnipotent Constructor", function() {
     });
 
     it("Should mint reserved tokens", async function () {
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         expect(await contract.totalSupply()).to.equal(RESERVED_TOKENS);
         expect(await contract.balanceOf(owner.address)).to.equal(RESERVED_TOKENS);
     });
 });
 
-describe("adminMint", function() {
+describe("adminMint", function () {
     it("Should mint tokens", async function () {
-        const { contract, owner, user } = await getContractAndUsers();
+        const {contract, owner, user} = await getContractAndUsers();
         const mint_amount = 10;
         await contract.adminMint(user.address, mint_amount);
         expect(await contract.totalSupply()).to.equal(RESERVED_TOKENS + mint_amount);
@@ -107,13 +106,13 @@ describe("adminMint", function() {
     });
 
     it("Should revert if not admin", async function () {
-        const { contract, owner, user} = await getContractAndUsers();
+        const {contract, owner, user} = await getContractAndUsers();
         const mint_amount = 10;
         await expect(contract.connect(user).adminMint(user.address, mint_amount)).to.be.reverted;
     });
 
     it("Should revert if minting more than max supply", async function () {
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         const mint_amount = MAX_SUPPLY + 1;
         await expect(contract.adminMint(owner.address, mint_amount)).to.be.revertedWithCustomError(
             contract, "InsufficientSupplyAvailable"
@@ -125,7 +124,7 @@ describe("Create whitelist", function () {
     it("Should create whitelist", async function () {
         const startTime = getTimeSinceEpoch() - 1000000;
         const endTime = startTime + 1;
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         const tree = await createWhitelist(1, startTime, endTime, [owner.address], contract)
         const whitelist = await contract.whitelists(1);
         expect(whitelist["root"]).to.equal(tree.getHexRoot());
@@ -133,10 +132,10 @@ describe("Create whitelist", function () {
         expect(whitelist["endTime"]).to.equal(endTime)
     });
 
-    it ("Should create multiple whitelists within same timeframe", async function () {
+    it("Should create multiple whitelists within same timeframe", async function () {
         const startTime = getTimeSinceEpoch() - 1000000;
         const endTime = startTime + 10000;
-        const { contract, owner, user, alternative_user} = await getContractAndUsers();
+        const {contract, owner, user, alternative_user} = await getContractAndUsers();
         const tree = await createWhitelist(1, startTime, endTime, [user.address], contract)
         const tree2 = await createWhitelist(
             2, startTime, endTime, [alternative_user.address], contract)
@@ -153,27 +152,27 @@ describe("Create whitelist", function () {
     it("Should raise InvalidWhitelistId", async function () {
         const startTime = getTimeSinceEpoch() - 1000000;
         const endTime = getTimeSinceEpoch() + 50000;
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         const tree = createTree([owner.address])
         await expect(
             contract.createWhitelist(tree.getHexRoot(), 6, startTime, endTime)
-        ).to.revertedWithCustomError(contract,"InvalidWhitelistId")
+        ).to.revertedWithCustomError(contract, "InvalidWhitelistId")
     });
 
     it("Should raise InvalidWhitelistTime invalid end time", async function () {
         const startTime = getTimeSinceEpoch() - 1000000;
         const endTime = startTime - 1000000;
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         const tree = createTree([owner.address])
         await expect(
             contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
-        ).to.revertedWithCustomError(contract,"InvalidWhitelistTime")
+        ).to.revertedWithCustomError(contract, "InvalidWhitelistTime")
     });
 
     it("Should raise InvalidWhitelistTime invalid start time", async function () {
         const startTime = getTimeSinceEpoch();
         const endTime = startTime - 1;
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         const tree = createTree([owner.address])
         await expect(
             contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
@@ -181,7 +180,7 @@ describe("Create whitelist", function () {
     });
 
     it("Should raise InvalidWhitelistTime invalid start and end date", async function () {
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         const startTime = getTimeSinceEpoch();
         const tree = createTree([owner.address])
         await expect(
@@ -198,7 +197,7 @@ describe("Omnipotent remove whitelist", async function () {
     it("Should remove whitelist", async function () {
         const startTime = getTimeSinceEpoch() - 1000000000;
         const endTime = startTime + 500000;
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         await createWhitelist(1, startTime, endTime, [owner.address], contract)
         await contract.removeWhitelist(1);
         const whitelist = await contract.whitelists(1);
@@ -209,38 +208,47 @@ describe("Omnipotent remove whitelist", async function () {
 });
 
 describe("Omnipotent mint", function () {
-   it("Should public mint", async function () {
-       const { contract, user} = await getContractAndUsers();
-       await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
-       expect(await contract.balanceOf(user.address)).to.equal(1);
-   });
+    it("Should public mint", async function () {
+        const {contract, user} = await getContractAndUsers();
+        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
+        expect(await contract.balanceOf(user.address)).to.equal(1);
+    });
+
+    it("Should public mint twice", async function () {
+        const {contract, user} = await getContractAndUsers();
+        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
+        expect(await contract.balanceOf(user.address)).to.equal(1);
+        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
+        expect(await contract.balanceOf(user.address)).to.equal(2);
+    });
 
     it("Should raise InsufficientFunds", async function () {
-        const { contract, user } = await getContractAndUsers();
+        const {contract, user} = await getContractAndUsers();
         await expect(
             contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.05")})
         ).to.revertedWithCustomError(contract, "InsufficientFunds");
         expect(await contract.balanceOf(user.address)).to.equal(0);
     });
 
-   it("Should raise InsufficientSupplyAvailable", async function() {
-       const { contract, user } = await getContractAndUsers(MAX_SUPPLY);
-       await expect(
-           contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
-       ).to.be.revertedWithCustomError(contract, "InsufficientSupplyAvailable");
-   })
+    it("Should raise InsufficientSupplyAvailable", async function () {
+        const {contract, user} = await getContractAndUsers(MAX_SUPPLY);
+        await expect(
+            contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
+        ).to.be.revertedWithCustomError(contract, "InsufficientSupplyAvailable");
+    })
 
-    it("Should raise ExceedingMaxTokensPerWallet", async function() {
-        const { contract, user } = await getContractAndUsers(RESERVED_TOKENS, 1);
-        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")}).then(async () => {
+    it("Should raise ExceedingMaxTokensPerWallet", async function () {
+        const {contract, user} = await getContractAndUsers(RESERVED_TOKENS, 1);
+        await contract.connect(user).omnipotentMint(
+            2, {value: ethers.utils.parseEther("0.1")}).then(async () => {
             await expect(
                 contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
             ).to.be.revertedWithCustomError(contract, "ExceedingMaxTokensPerWallet");
         });
     });
 
-    it("Should raise SaleNotActive", async function() {
-        const { contract, user } = await getContractAndUsers(RESERVED_TOKENS,
+    it("Should raise SaleNotActive", async function () {
+        const {contract, user} = await getContractAndUsers(RESERVED_TOKENS,
             MAX_PER_WALLET,
             getTimeSinceEpoch() + 1000000)
         await expect(
@@ -248,7 +256,7 @@ describe("Omnipotent mint", function () {
         ).to.be.revertedWithCustomError(contract, "SaleNotActive");
     });
 
-    async function checkSaleNotActive(tree: MerkleTree, contract: OmnipotentNFT, user: any) {
+    async function checkSaleNotActive(tree: MerkleTree, contract: FoundersNFT, user: any) {
         const proof = tree.getHexProof(user.address);
         expect(tree.verify(proof, user.address, tree.getHexRoot()));
         const whitelist = await contract.whitelists(1);
@@ -260,8 +268,8 @@ describe("Omnipotent mint", function () {
         ).to.be.revertedWithCustomError(contract, "SaleNotActive");
     }
 
-    it("Should raise SaleNotActive", async function() {
-        const { contract, user } = await getContractAndUsers();
+    it("Should raise SaleNotActive", async function () {
+        const {contract, user} = await getContractAndUsers();
         const startTime = getTimeSinceEpoch();
 
         await createWhitelist(
@@ -277,8 +285,8 @@ describe("Omnipotent mint", function () {
     });
 
 
-    it("Should raise SaleNotActive too early", async function() {
-        const { contract, user } = await getContractAndUsers(
+    it("Should raise SaleNotActive too early", async function () {
+        const {contract, user} = await getContractAndUsers(
             RESERVED_TOKENS,
             MAX_PER_WALLET,
             getTimeSinceEpoch() + 1000000,
@@ -298,7 +306,7 @@ describe("Omnipotent mint", function () {
     });
 
     it("Should whitelist mint", async function () {
-        const { contract, user } = await getContractAndUsers(
+        const {contract, user} = await getContractAndUsers(
             RESERVED_TOKENS,
             MAX_PER_WALLET,
             getTimeSinceEpoch() + 1000000,
@@ -328,7 +336,7 @@ describe("Omnipotent mint", function () {
 
 
     it("Should raise NotWhitelisted", async function () {
-        const { contract, owner, user } = await getContractAndUsers(
+        const {contract, owner, user} = await getContractAndUsers(
             RESERVED_TOKENS,
             MAX_PER_WALLET,
             getTimeSinceEpoch() + 1000000,
@@ -345,8 +353,8 @@ describe("Omnipotent mint", function () {
             const proof = tree.getHexProof(user.address);
             await expect(
                 contract.connect(owner).whitelistMint(
-                {whitelist_id: 1, proof: proof},
-                {value: ethers.utils.parseEther("0.1")})
+                    {whitelist_id: 1, proof: proof},
+                    {value: ethers.utils.parseEther("0.1")})
             ).to.be.revertedWithCustomError(contract, "NotWhitelisted");
         });
         expect(await contract.balanceOf(user.address)).to.equal(0);
@@ -354,7 +362,7 @@ describe("Omnipotent mint", function () {
 
 
     it("Exceed max allowance", async function () {
-        const { contract, user } = await getContractAndUsers(
+        const {contract, user} = await getContractAndUsers(
             RESERVED_TOKENS,
             MAX_PER_WALLET,
             getTimeSinceEpoch() + 1000000
@@ -387,7 +395,7 @@ describe("Omnipotent mint", function () {
     });
 
     it("Should have withdrawn money", async function () {
-        const { contract, user } = await getContractAndUsers();
+        const {contract, user} = await getContractAndUsers();
         const oldBalance = await ethers.provider.getBalance(user.address);
         await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")});
         const newBalance = await ethers.provider.getBalance(user.address);
@@ -397,7 +405,7 @@ describe("Omnipotent mint", function () {
     });
 
     it("Should send back money", async function () {
-        const { contract, user } = await getContractAndUsers();
+        const {contract, user} = await getContractAndUsers();
         const oldBalance = await ethers.provider.getBalance(user.address);
         await contract.connect(user).mint({value: ethers.utils.parseEther("0.2")}).then(async () => {
             const newBalance = await ethers.provider.getBalance(user.address);
@@ -408,14 +416,14 @@ describe("Omnipotent mint", function () {
     });
 });
 
-describe("exists", function() {
-    it("Should return true", async function() {
-        const { contract, user } = await getContractAndUsers();
+describe("exists", function () {
+    it("Should return true", async function () {
+        const {contract, user} = await getContractAndUsers();
         await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")});
         expect(await contract.exists(RESERVED_TOKENS + 1)).to.equal(true);
     });
 
-    it("Should return false", async function() {
+    it("Should return false", async function () {
         const contract = await deployContract();
         expect(await contract.exists(RESERVED_TOKENS + 1)).to.equal(false);
     });
@@ -423,7 +431,7 @@ describe("exists", function() {
 
 describe("tokenURI", function () {
     it("Should return token URI", async function () {
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         await contract.connect(owner).setBaseURI("https://example.com/");
         expect(await contract.tokenURI(1)).to.equal("https://example.com/1.json");
     });
@@ -442,13 +450,13 @@ describe("tokenURI", function () {
 
 describe("Set base URI", function () {
     it("Should set base URI", async function () {
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         await contract.connect(owner).setBaseURI("https://example.com");
         expect(await contract.baseURI()).to.equal("https://example.com");
     });
 
     it("Should revert because of auth", async function () {
-        const { contract, user } = await getContractAndUsers();
+        const {contract, user} = await getContractAndUsers();
         await expect(
             contract.connect(user).setBaseURI("https://example.com")
         ).to.be.reverted
@@ -457,13 +465,13 @@ describe("Set base URI", function () {
 
 describe("Set base Extension", function () {
     it("Should set base extension", async function () {
-        const { contract, owner } = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         await contract.connect(owner).setBaseExtension("");
         expect(await contract.baseExtension()).to.equal("");
     });
 
     it("Should revert because of auth", async function () {
-        const { contract, user } = await getContractAndUsers();
+        const {contract, user} = await getContractAndUsers();
         await expect(
             contract.connect(user).setBaseExtension(".json")
         ).to.be.reverted
@@ -472,7 +480,7 @@ describe("Set base Extension", function () {
 
 describe("Withdraw", function () {
     it("Should withdraw", async function () {
-        const { contract, owner, user} = await getContractAndUsers();
+        const {contract, owner, user} = await getContractAndUsers();
         const oldBalance = await ethers.provider.getBalance(owner.address);
         await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")});
         await contract.connect(owner).withdraw();
@@ -481,14 +489,14 @@ describe("Withdraw", function () {
     });
 
     it("Should revert no admin", async function () {
-        const { contract, user } = await getContractAndUsers();
+        const {contract, user} = await getContractAndUsers();
         await expect(
             contract.connect(user).withdraw()
         ).to.be.reverted
     });
 
     it("Should allow withdraw role", async function () {
-        const { contract, owner, user } = await getContractAndUsers();
+        const {contract, owner, user} = await getContractAndUsers();
         await contract.connect(user).mint({value: ethers.utils.parseEther("0.1")});
         await contract.connect(owner).grantRole(contract.WITHDRAW_ROLE(), user.address);
         const oldBalance = await ethers.provider.getBalance(user.address);
