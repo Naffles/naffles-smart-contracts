@@ -55,7 +55,6 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     uint8 public maxOmnipotentSupply;
     uint16 public maxTotalSupply;
     uint16 public reservedTokens;
-    uint16 public maxPerWallet;
     uint256 public mintPrice;
     uint256 public omnipotentPublicMintStartTime;
     uint256 public foundersPublicMintStartTime;
@@ -77,7 +76,6 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint8 _maxOmnipotentSupply,
         uint16 _maxTotalSupply,
         uint16 _reservedTokens,
-        uint16 _maxPerWallet,
         uint256 _mintPrice,
         address _internalMintAddress,
         uint256 _omnipotentPublicMintStartTime,
@@ -88,7 +86,6 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
 
         maxOmnipotentSupply = _maxOmnipotentSupply;
         maxTotalSupply = _maxTotalSupply;
-        maxPerWallet = _maxPerWallet;
         mintPrice = _mintPrice;
         omnipotentPublicMintStartTime = _omnipotentPublicMintStartTime;
         foundersPublicMintStartTime = _foundersPublicMintStartTime;
