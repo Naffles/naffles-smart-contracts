@@ -69,7 +69,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     mapping(address => uint8) public addressFoundersMintAmountMapping;
 
     // maps token id to token type, will be filled after reveal.
-    mapping(uint256 => uint8) public tokenTypeMapping;
+    mapping(uint256 => uint8) private tokenTypeMapping;
 
     bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
     
