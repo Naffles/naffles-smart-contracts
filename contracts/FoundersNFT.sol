@@ -19,10 +19,6 @@ error InvalidWhitelistTime();
 error TokenDoesNotExist(uint16 tokenId);
 error MaxTotalSupplyCannotBeLessThanAlreadyMined();
 error NotWhitelisted();
-error ReservedTokensExceedsRemainingSupply(
-    uint256 remainingSupply,
-    uint16 newReservedTokens
-);
 error SaleNotActive();
 error URIQueryForNonexistentToken();
 error UnableToSendChange(uint256 cashChange);
@@ -56,7 +52,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     uint8 public maxOmnipotentMintsPerWallet = 2;
     uint8 public maxFoundersMintsPerWallet = 5;
 
-    uint16 public maxOmnipotentSupply = 300;
+    uint8 public maxOmnipotentSupply;
     uint16 public maxTotalSupply;
     uint16 public reservedTokens;
     uint16 public maxPerWallet;
@@ -78,6 +74,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
     
     constructor(
+        uint8 _maxOmnipotentSupply,
         uint16 _maxTotalSupply,
         uint16 _reservedTokens,
         uint16 _maxPerWallet,
@@ -88,9 +85,9 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     ) ERC721A("Naffles", "NFLS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(WITHDRAW_ROLE, msg.sender);
-        
-        maxTotalSupply = _maxTotalSupply;             
-        reservedTokens = _reservedTokens;
+
+        maxOmnipotentSupply = _maxOmnipotentSupply;
+        maxTotalSupply = _maxTotalSupply;
         maxPerWallet = _maxPerWallet;
         mintPrice = _mintPrice;
         omnipotentPublicMintStartTime = _omnipotentPublicMintStartTime;
