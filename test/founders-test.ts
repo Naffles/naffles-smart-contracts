@@ -4,9 +4,9 @@ import {FoundersNFT} from "../typechain-types";
 import {MerkleTree} from "merkletreejs";
 import keccak256 from "keccak256";
 
-const MAX_SUPPLY = 300;
+const MAX_SUPPLY = 500;
 const RESERVED_TOKENS = 50;
-const MAX_PER_WALLET = 2;
+const MAX_OMNIPOTENT_SUPPLY = 300;
 
 function getTimeSinceEpoch(): number {
     return Math.round(new Date().getTime() / 1000)
@@ -14,12 +14,12 @@ function getTimeSinceEpoch(): number {
 
 async function getContractAndUsers(
     reservedTokens: number = RESERVED_TOKENS,
-    maxPerWallet: number = MAX_PER_WALLET,
+    maxOmnipotentSupply: number = MAX_OMNIPOTENT_SUPPLY,
     publicSaleStartTime: number = getTimeSinceEpoch(),
 ) {
     const contract = await deployContract(
         reservedTokens,
-        maxPerWallet,
+        maxOmnipotentSupply,
         publicSaleStartTime
     );
     const [owner, user, alternative_user] = await ethers.getSigners();
@@ -28,16 +28,16 @@ async function getContractAndUsers(
 
 async function deployContract(
     reservedTokens: number = RESERVED_TOKENS,
-    maxPerWallet: number = MAX_PER_WALLET,
+    maxOmnipotentSupply: number = MAX_OMNIPOTENT_SUPPLY,
     publicSaleStartTime: number = getTimeSinceEpoch(),
 ): Promise<FoundersNFT> {
     const contract_factory = await hre.ethers.getContractFactory("FoundersNFT");
     const [owner, _] = await ethers.getSigners();
     const price = ethers.utils.parseEther("0.1")
     return await contract_factory.deploy(
+        maxOmnipotentSupply,
         MAX_SUPPLY,
         reservedTokens,
-        maxPerWallet,
         price,
         owner.address,
         publicSaleStartTime,
@@ -47,13 +47,15 @@ async function deployContract(
 
 async function createWhitelist(
     id: number,
+    allowance: number,
+    mintPhase: number,
     startTime: number,
     endTime: number,
     whitelisted_addresses: [string],
     contract: FoundersNFT
 ): Promise<MerkleTree> {
     const tree = createTree(whitelisted_addresses);
-    await contract.createWhitelist(tree.getHexRoot(), id, startTime, endTime);
+    await contract.createWhitelist(tree.getHexRoot(), id, allowance, mintPhase, startTime, endTime);
     return tree
 }
 
@@ -78,12 +80,11 @@ describe("Omnipotent Constructor", function () {
         const publicSaleStartTime = getTimeSinceEpoch();
         const contract = await deployContract(
             RESERVED_TOKENS,
-            MAX_PER_WALLET,
+            MAX_OMNIPOTENT_SUPPLY,
             publicSaleStartTime);
 
         expect(await contract.maxTotalSupply()).to.equal(MAX_SUPPLY);
         expect(await contract.reservedTokens()).to.equal(RESERVED_TOKENS);
-        expect(await contract.maxPerWallet()).to.equal(MAX_PER_WALLET);
         expect(await contract.foundersPublicMintStartTime()).to.equal(publicSaleStartTime);
         expect(await contract.omnipotentPublicMintStartTime()).to.equal(publicSaleStartTime);
         expect(await contract.mintPrice()).to.equal(ethers.utils.parseEther("0.1"));
@@ -125,39 +126,46 @@ describe("Create whitelist", function () {
         const startTime = getTimeSinceEpoch() - 1000000;
         const endTime = startTime + 1;
         const {contract, owner} = await getContractAndUsers();
-        const tree = await createWhitelist(1, startTime, endTime, [owner.address], contract)
+        const tree = await createWhitelist(1, 3, 1, startTime, endTime, [owner.address], contract)
         const whitelist = await contract.whitelists(1);
         expect(whitelist["root"]).to.equal(tree.getHexRoot());
         expect(whitelist["startTime"]).to.equal(startTime)
         expect(whitelist["endTime"]).to.equal(endTime)
+        expect(whitelist["allowance"]).to.equal(3)
+        expect(whitelist["mintPhase"]).to.equal(1)
     });
 
     it("Should create multiple whitelists within same timeframe", async function () {
         const startTime = getTimeSinceEpoch() - 1000000;
         const endTime = startTime + 10000;
         const {contract, user, alternative_user} = await getContractAndUsers();
-        const tree = await createWhitelist(1, startTime, endTime, [user.address], contract)
+        const tree = await createWhitelist(1, 2, 1, startTime, endTime, [user.address], contract)
         const tree2 = await createWhitelist(
-            2, startTime, endTime, [alternative_user.address], contract)
+            2, 1, 2, startTime, endTime, [alternative_user.address], contract)
         const whitelist = await contract.whitelists(1);
         const whitelist2 = await contract.whitelists(2);
         expect(whitelist["root"]).to.equal(tree.getHexRoot());
         expect(whitelist["startTime"]).to.equal(startTime)
         expect(whitelist["endTime"]).to.equal(endTime)
+        expect(whitelist["allowance"]).to.equal(2)
+        expect(whitelist["mintPhase"]).to.equal(1)
+
         expect(whitelist2["root"]).to.equal(tree2.getHexRoot());
         expect(whitelist2["startTime"]).to.equal(startTime)
         expect(whitelist2["endTime"]).to.equal(endTime)
+        expect(whitelist2["allowance"]).to.equal(1)
+        expect(whitelist2["mintPhase"]).to.equal(2)
     });
 
-    it("Should raise InvalidWhitelistId", async function () {
-        const startTime = getTimeSinceEpoch() - 1000000;
-        const endTime = getTimeSinceEpoch() + 50000;
-        const {contract, owner} = await getContractAndUsers();
-        const tree = createTree([owner.address])
-        await expect(
-            contract.createWhitelist(tree.getHexRoot(), 6, startTime, endTime)
-        ).to.revertedWithCustomError(contract, "InvalidWhitelistId")
-    });
+    // it("Should raise InvalidWhitelistId", async function () {
+    //     const startTime = getTimeSinceEpoch() - 1000000;
+    //     const endTime = getTimeSinceEpoch() + 50000;
+    //     const {contract, owner} = await getContractAndUsers();
+    //     const tree = createTree([owner.address])
+    //     await expect(
+    //         contract.createWhitelist(tree.getHexRoot(), 6, 1, 1, startTime, endTime)
+    //     ).to.revertedWithCustomError(contract, "InvalidWhitelistId")
+    // });
 
     it("Should raise InvalidWhitelistTime invalid end time", async function () {
         const startTime = getTimeSinceEpoch() - 1000000;
@@ -165,7 +173,7 @@ describe("Create whitelist", function () {
         const {contract, owner} = await getContractAndUsers();
         const tree = createTree([owner.address])
         await expect(
-            contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
+            contract.createWhitelist(tree.getHexRoot(), 1, 1, 1, startTime, endTime)
         ).to.revertedWithCustomError(contract, "InvalidWhitelistTime")
     });
 
@@ -175,7 +183,7 @@ describe("Create whitelist", function () {
         const {contract, owner} = await getContractAndUsers();
         const tree = createTree([owner.address])
         await expect(
-            contract.createWhitelist(tree.getHexRoot(), 1, startTime, endTime)
+            contract.createWhitelist(tree.getHexRoot(), 1, 1, 1, startTime, endTime)
         ).to.revertedWithCustomError(contract, "InvalidWhitelistTime");
     });
 
@@ -184,11 +192,11 @@ describe("Create whitelist", function () {
         const startTime = getTimeSinceEpoch();
         const tree = createTree([owner.address])
         await expect(
-            contract.createWhitelist(tree.getHexRoot(), 1, startTime, startTime)
+            contract.createWhitelist(tree.getHexRoot(), 1, 1, 1, startTime, startTime)
         ).to.revertedWithCustomError(contract, "InvalidWhitelistTime");
 
         await expect(
-            contract.createWhitelist(tree.getHexRoot(), 1, startTime, startTime + 100000)
+            contract.createWhitelist(tree.getHexRoot(), 1, 1, 1, startTime, startTime + 100000)
         ).to.revertedWithCustomError(contract, "InvalidWhitelistTime");
     });
 });
@@ -198,12 +206,14 @@ describe("Omnipotent remove whitelist", async function () {
         const startTime = getTimeSinceEpoch() - 1000000000;
         const endTime = startTime + 500000;
         const {contract, owner} = await getContractAndUsers();
-        await createWhitelist(1, startTime, endTime, [owner.address], contract)
+        await createWhitelist(1, 1, 2, startTime, endTime, [owner.address], contract)
         await contract.removeWhitelist(1);
         const whitelist = await contract.whitelists(1);
         expect(whitelist["root"]).to.equal("0x0000000000000000000000000000000000000000000000000000000000000000")
         expect(whitelist["startTime"]).to.equal(0)
         expect(whitelist["endTime"]).to.equal(0)
+        expect(whitelist["allowance"]).to.equal(0)
+        expect(whitelist["mintPhase"]).to.equal(0)
     });
 });
 
@@ -248,9 +258,7 @@ describe("Omnipotent mint", function () {
     });
 
     it("Should raise SaleNotActive", async function () {
-        const {contract, user} = await getContractAndUsers(RESERVED_TOKENS,
-            MAX_PER_WALLET,
-            getTimeSinceEpoch() + 1000000)
+        const {contract, user} = await getContractAndUsers(RESERVED_TOKENS, MAX_OMNIPOTENT_SUPPLY, getTimeSinceEpoch() + 1000000)
         await expect(
             contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
         ).to.be.revertedWithCustomError(contract, "SaleNotActive");
@@ -275,6 +283,8 @@ describe("Omnipotent mint", function () {
 
         await createWhitelist(
             1,
+            1,
+            1,
             startTime - 100000,
             startTime - 50000,
             [user.address],
@@ -288,12 +298,14 @@ describe("Omnipotent mint", function () {
     it("Should raise SaleNotActive too early", async function () {
         const {contract, user} = await getContractAndUsers(
             RESERVED_TOKENS,
-            MAX_PER_WALLET,
+            MAX_OMNIPOTENT_SUPPLY,
             getTimeSinceEpoch() + 1000000,
         );
         const startTime = getTimeSinceEpoch();
 
         await createWhitelist(
+            1,
+            1,
             1,
             startTime + 10000,
             startTime + 20000,
@@ -308,13 +320,15 @@ describe("Omnipotent mint", function () {
     it("Should whitelist mint", async function () {
         const {contract, user} = await getContractAndUsers(
             RESERVED_TOKENS,
-            MAX_PER_WALLET,
+            MAX_OMNIPOTENT_SUPPLY,
             getTimeSinceEpoch() + 1000000,
         );
 
         const startTime = getTimeSinceEpoch();
 
         await createWhitelist(
+            1,
+            1,
             1,
             startTime,
             startTime + 100000,
@@ -335,16 +349,17 @@ describe("Omnipotent mint", function () {
         expect(await contract.balanceOf(user.address)).to.equal(1);
     });
 
-
     it("Should raise NotWhitelisted", async function () {
         const {contract, owner, user} = await getContractAndUsers(
             RESERVED_TOKENS,
-            MAX_PER_WALLET,
+            MAX_OMNIPOTENT_SUPPLY,
             getTimeSinceEpoch() + 1000000,
         );
         const startTime = getTimeSinceEpoch();
 
         await createWhitelist(
+            1,
+            1,
             1,
             startTime,
             startTime + 100000,
@@ -366,12 +381,14 @@ describe("Omnipotent mint", function () {
     it("Exceed max allowance", async function () {
         const {contract, user} = await getContractAndUsers(
             RESERVED_TOKENS,
-            MAX_PER_WALLET,
+            MAX_OMNIPOTENT_SUPPLY,
             getTimeSinceEpoch() + 1000000
         );
         const startTime = getTimeSinceEpoch();
 
         await createWhitelist(
+            1,
+            1,
             1,
             startTime,
             startTime + 100000,
