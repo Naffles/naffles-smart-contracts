@@ -200,17 +200,6 @@ describe("Create whitelist", function () {
         ).to.be.revertedWithCustomError(contract, "InvalidWhitelistTime");
     });
 
-    it("Should create whitelist", async function () {
-        const {contract, user} = await getContractAndUsers();
-        const startTime = getTimeSinceEpoch();
-        const tree = createTree([user.address]);
-        await contract.createWhitelist(tree.getHexRoot(), 1, 1, 1, startTime, startTime + 10000)
-        expect(await contract.whitelists(1)).to.equal({
-
-            }
-        );
-    });
-
     it("Should raise InvalidWhitelistPhase", async function () {
         const {contract, user} = await getContractAndUsers();
         const startTime = getTimeSinceEpoch();
@@ -916,38 +905,26 @@ describe("foundersWhitelistMint", function () {
             expect(await contract.balanceOf(user.address)).to.equal(2);
         });
     });
-
-    // it("Should send back money", async function () {
-    //     const {contract, user} = await getContractAndUsers();
-    //     const startTime = getTimeSinceEpoch();
-    //     const oldBalance = await ethers.provider.getBalance(user.address);
-    //     await createWhitelist(
-    //         1,
-    //         2,
-    //         2,
-    //         startTime,
-    //         startTime + 50000,
-    //         [user.address],
-    //         contract
-    //     ).then(async (tree) => {
-    //         const proof = tree.getHexProof(user.address);
-    //         expect(!tree.verify(proof, user.address, tree.getHexRoot()));
-    //         await contract.connect(user).foundersWhitelistMint(2,{whitelist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.25")})
-    //
-    //         const newBalance = await ethers.provider.getBalance(user.address);
-    //         const expectedBalance = oldBalance.sub(ethers.utils.parseEther("0.2"));
-    //         // Minus gas cost
-    //         expect(newBalance).to.lt(expectedBalance);
-    //         expect(newBalance).to.gt(expectedBalance.sub(ethers.utils.parseEther("0.05")));
-    //     });
-    // });
 });
 
 describe("adminMint", function () {
     it("Should raise InsufficientSupplyAvailable", async function () {
-        const {contract, user, owner} = await getContractAndUsers();
+        const {contract, owner} = await getContractAndUsers();
         await expect(
-            contract.connect(user).adminMint(user.address, 10000)
+            contract.connect(owner).adminMint(owner.address, 10000)
         ).to.be.revertedWithCustomError(contract, "InsufficientSupplyAvailable");
     });
-}
+
+    it("Should mint", async function () {
+        const {contract, user, owner} = await getContractAndUsers();
+        await contract.connect(owner).adminMint(user.address, 200);
+        expect(await contract.balanceOf(user.address)).to.equal(200);
+    });
+
+    it("Should revert when not admin", async function () {
+        const {contract, user} = await getContractAndUsers();
+        await expect(
+            contract.connect(user).adminMint(user.address, 200)
+        ).to.be.reverted
+    })
+});
