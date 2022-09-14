@@ -17,7 +17,7 @@ error InvalidWhitelistPhase(uint8 whitelistPhase);
 error InvalidWhitelistAllowance(uint8 whitelistAllowance);
 error InvalidWhitelistTime();
 error TokenDoesNotExist(uint16 tokenId);
-error MaxTotalSupplyCannotBeLessThanAlreadyMined();
+error MaxTotalSupplyCannotBeLessThanAlreadyMinted();
 error NotWhitelisted();
 error SaleNotActive();
 error URIQueryForNonexistentToken();
@@ -134,13 +134,15 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
                     whitelistAllowance: _allowance
                 });
             }
-        } else if (mintPhase == FOUNDERS_MINT) {
+        }
+        else if (mintPhase == FOUNDERS_MINT) {
             if (_allowance > maxFoundersMintsPerWallet) {
                 revert InvalidWhitelistAllowance({
                     whitelistAllowance: _allowance
                 });
             }
-        } else {
+        }
+        else {
             revert InvalidWhitelistPhase({
                 whitelistPhase: mintPhase
             });
@@ -187,6 +189,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         if (whitelist.mintPhase == OMNIPOTENT_MINT) {
             _omnipotentWhitelistMintCheck(_mintAmount, whitelist.allowance);
         } else {
+            // This shouldn't be possible but is here for extra security measure.
             revert InvalidWhitelistId({whitelistId: _proof.whitelist_id});
         }
         _whitelistCheckAndMint(_mintAmount, whitelist.root, _proof);
@@ -233,7 +236,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
 
     function _internalMint(uint8 _mintAmount) internal {
         uint256 totalPrice = _mintAmount * mintPrice;
-        if (msg.value < mintPrice) { 
+        if (msg.value < totalPrice) {
             revert InsufficientFunds(msg.value, totalPrice);
         }
 
@@ -306,11 +309,11 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         baseURI = _newBaseURI;
     }
 
-    function setTokenTypeMapping(uint8[] memory _tokenTypes) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    // Sets the token type id for the founders passes. Starts at index maxOmnipotentSupply + 1 because we can't set the type for the first x maxOmnipotentSupply tokens.
+    function setTokenTypeMappingForFoundersPasses(uint8[] memory _tokenTypes) external onlyRole(DEFAULT_ADMIN_ROLE) {
         uint256 startNumber = maxOmnipotentSupply + 1;
-        uint256 endNumber = startNumber + _tokenTypes.length;
-        for (uint256 i = startNumber; i < endNumber; i++) {
-            tokenTypeMapping[i] = _tokenTypes[i];
+        for (uint256 i = 0; i < _tokenTypes.length; i++) {
+            tokenTypeMapping[i + startNumber] = _tokenTypes[i];
         }
     }
 
@@ -340,7 +343,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         onlyRole(DEFAULT_ADMIN_ROLE)
     {
         if (_maxTotalSupply <= _totalMinted()) {
-            revert MaxTotalSupplyCannotBeLessThanAlreadyMined();
+            revert MaxTotalSupplyCannotBeLessThanAlreadyMinted();
         }
         maxTotalSupply = _maxTotalSupply;
     }

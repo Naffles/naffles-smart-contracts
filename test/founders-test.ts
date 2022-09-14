@@ -158,16 +158,6 @@ describe("Create whitelist", function () {
         expect(whitelist2["mintPhase"]).to.equal(2)
     });
 
-    // it("Should raise InvalidWhitelistId", async function () {
-    //     const startTime = getTimeSinceEpoch() - 1000000;
-    //     const endTime = getTimeSinceEpoch() + 50000;
-    //     const {contract, owner} = await getContractAndUsers();
-    //     const tree = createTree([owner.address])
-    //     await expect(
-    //         contract.createWhitelist(tree.getHexRoot(), 6, 1, 1, startTime, endTime)
-    //     ).to.revertedWithCustomError(contract, "InvalidWhitelistId")
-    // });
-
     it("Should raise InvalidWhitelistTime invalid end time", async function () {
         const startTime = getTimeSinceEpoch() - 1000000;
         const endTime = startTime - 1000000;
@@ -224,14 +214,6 @@ describe("Omnipotent mint", function () {
         await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
         expect(await contract.balanceOf(user.address)).to.equal(1);
     });
-
-    // it("Should public mint twice", async function () {
-    //     const {contract, user} = await getContractAndUsers();
-    //     await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
-    //     expect(await contract.balanceOf(user.address)).to.equal(1);
-    //     await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
-    //     expect(await contract.balanceOf(user.address)).to.equal(2);
-    // });
 
     it("Should raise InsufficientFunds", async function () {
         const {contract, user} = await getContractAndUsers();
@@ -547,5 +529,275 @@ describe("SupportsInterface", function () {
     it("Should return false", async function () {
         const contract = await deployContract();
         expect(await contract.supportsInterface("0x80ac58ce")).to.equal(false);
+    });
+});
+
+describe("setFoundersPublicMintStartTime", function () {
+    it("Should set founders public mint start time", async function () {
+        const {contract, owner} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch() + 1000;
+        await contract.connect(owner).setFoundersPublicMintStartTime(startTime);
+        expect(await contract.foundersPublicMintStartTime()).to.equal(startTime);
+    });
+
+    it("Should revert because of auth", async function () {
+        const {contract, user} = await getContractAndUsers();
+        await expect(
+            contract.connect(user).setFoundersPublicMintStartTime(0)
+        ).to.be.reverted
+    });
+});
+
+describe("setOmnipotentPublicMintStartTime", function () {
+    it("Should set omnipotent public mint start time", async function () {
+        const {contract, owner} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch() + 1000;
+        await contract.connect(owner).setOmnipotentPublicMintStartTime(startTime);
+        expect(await contract.omnipotentPublicMintStartTime()).to.equal(startTime);
+    });
+
+    it("Should revert because of auth", async function () {
+        const {contract, user} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch() + 1000;
+        await expect(
+            contract.connect(user).setOmnipotentPublicMintStartTime(startTime)
+        ).to.be.reverted
+    });
+});
+
+describe("setMintPrice", function () {
+    it("Should set mint price", async function () {
+        const {contract, owner} = await getContractAndUsers();
+        const price = ethers.utils.parseEther("1");
+        await contract.connect(owner).setMintPrice(price);
+        expect(await contract.mintPrice()).to.equal(price);
+    });
+
+    it("Should revert because of auth", async function () {
+        const {contract, user} = await getContractAndUsers();
+        const price = ethers.utils.parseEther("1");
+        await expect(
+            contract.connect(user).setMintPrice(price)
+        ).to.be.reverted
+    });
+});
+
+describe("setMaxTotalSupply", function () {
+    it("Should set max total supply", async function () {
+        const {contract, owner} = await getContractAndUsers();
+        await contract.connect(owner).setMaxTotalSupply(100);
+        expect(await contract.maxTotalSupply()).to.equal(100);
+    });
+
+    it("Should revert because of auth", async function () {
+        const {contract, user} = await getContractAndUsers();
+        await expect(
+            contract.connect(user).setMaxTotalSupply(100)
+        ).to.be.reverted
+    });
+    it('Should revert with MaxTotalSupplyCannotBeLessThanAlreadyMinted', async function () {
+        const {contract, owner} = await getContractAndUsers();
+        await expect(contract.connect(owner).setMaxTotalSupply(
+            10)
+        ).to.be.revertedWithCustomError(contract, "MaxTotalSupplyCannotBeLessThanAlreadyMinted");
+    });
+});
+
+describe("setMaxOmnipotentMintsPerWallet", function () {
+    it("Should set max omnipotent mints per wallet", async function () {
+        const {contract, owner} = await getContractAndUsers();
+        await contract.connect(owner).setMaxOmnipotentMintsPerWallet(100);
+        expect(await contract.maxOmnipotentMintsPerWallet()).to.equal(100);
+    });
+
+    it("Should revert because of auth", async function () {
+        const {contract, user} = await getContractAndUsers();
+        await expect(
+            contract.connect(user).setMaxOmnipotentMintsPerWallet(100)
+        ).to.be.reverted
+    });
+});
+
+describe("setMaxFoundersMintsPerWallet", function () {
+    it("Should set max founders mints per wallet", async function () {
+        const {contract, owner} = await getContractAndUsers();
+        await contract.connect(owner).setMaxFoundersMintsPerWallet(100);
+        expect(await contract.maxFoundersMintsPerWallet()).to.equal(100);
+    });
+
+    it("Should revert because of auth", async function () {
+        const {contract, user} = await getContractAndUsers();
+        await expect(
+            contract.connect(user).setMaxFoundersMintsPerWallet(100)
+        ).to.be.reverted
+    });
+});
+
+describe("setTokenTypeMappingForFoundersPasses", function () {
+    it("Should set token type mapping", async function () {
+        const {contract, owner} = await getContractAndUsers(
+            2,
+            2
+        );
+        await contract.connect(owner).adminMint(owner.address, 5);
+        await contract.connect(owner).setTokenTypeMappingForFoundersPasses([2,2,3,3,4]);
+        expect(await contract.tokenType(1)).to.equal(1);
+        expect(await contract.tokenType(2)).to.equal(1);
+        expect(await contract.tokenType(3)).to.equal(2);
+        expect(await contract.tokenType(4)).to.equal(2);
+        expect(await contract.tokenType(5)).to.equal(3);
+        expect(await contract.tokenType(6)).to.equal(3);
+        expect(await contract.tokenType(7)).to.equal(4);
+    });
+
+    it("Should revert because of auth", async function () {
+        const {contract, user} = await getContractAndUsers();
+        await expect(
+            contract.connect(user).setTokenTypeMappingForFoundersPasses([1])
+        ).to.be.reverted
+    });
+});
+
+describe("tokenType", function () {
+   it("Should return token type of omnipotent", async function () {
+         const {contract, owner} = await getContractAndUsers();
+         await contract.connect(owner).adminMint(owner.address, 1);
+         expect(await contract.tokenType(1)).to.equal(1);
+   });
+
+   it("Should return token type of 2", async function () {
+        const {contract, owner} = await getContractAndUsers(1,1);
+       await contract.connect(owner).setTokenTypeMappingForFoundersPasses([2]);
+        await contract.connect(owner).adminMint(owner.address, 1);
+        expect(await contract.tokenType(2)).to.equal(2);
+   });
+
+   it("Should revert because of token not minted", async function () {
+       const {contract, owner} = await getContractAndUsers(1);
+       await expect(
+           contract.connect(owner).tokenType(2)
+       ).to.be.reverted
+   });
+});
+
+describe("foundersWhitelistMint", function () {
+    it("Should raise SaleNotActive", async function () {
+        const {contract, user} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch();
+        await createWhitelist(
+            1,
+            2,
+            2,
+            startTime - 100000,
+            startTime - 50000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(tree.verify(proof, user.address, tree.getHexRoot()));
+            await expect(
+                contract.connect(user).foundersWhitelistMint(2,{whitelist_id: 1, proof: proof})
+            ).to.be.revertedWithCustomError(contract, "SaleNotActive");
+        });
+    });
+
+    it("Should raise SaleNotActive because of invalid ID", async function () {
+        const {contract, user} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch();
+        await createWhitelist(
+            1,
+            2,
+            2,
+            startTime,
+            startTime + 10000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(tree.verify(proof, user.address, tree.getHexRoot()));
+            await expect(
+                contract.connect(user).foundersWhitelistMint(2,{whitelist_id: 2, proof: proof}, {value: ethers.utils.parseEther("0.2")})
+            ).to.be.revertedWithCustomError(contract, "SaleNotActive");
+        });
+    });
+
+    it("Should raise ExceedingWhitelistAllowance", async function () {
+        const {contract, user} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch();
+        await createWhitelist(
+            1,
+            2,
+            2,
+            startTime,
+            startTime + 50000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(tree.verify(proof, user.address, tree.getHexRoot()));
+            await contract.connect(user).foundersWhitelistMint(2,{whitelist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.2")})
+            await expect(
+                contract.connect(user).foundersWhitelistMint(1,{whitelist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "ExceedingWhitelistAllowance");
+        });
+    });
+
+    it("Should raise not whitelisted", async function () {
+        const {contract, user, owner} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch();
+        await createWhitelist(
+            1,
+            2,
+            2,
+            startTime,
+            startTime + 50000,
+            [owner.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(!tree.verify(proof, user.address, tree.getHexRoot()));
+            await expect(
+                contract.connect(user).foundersWhitelistMint(1,{whitelist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "NotWhitelisted");
+        });
+    });
+
+    it("Should raise InsufficientFunds", async function () {
+        const {contract, user, owner} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch();
+        await createWhitelist(
+            1,
+            2,
+            2,
+            startTime,
+            startTime + 50000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(!tree.verify(proof, user.address, tree.getHexRoot()));
+            await expect(
+                contract.connect(user).foundersWhitelistMint(2,{whitelist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "InsufficientFunds");
+        });
+    });
+
+    it("Should mint", async function () {
+        const {contract, user, owner} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch();
+        await createWhitelist(
+            1,
+            2,
+            2,
+            startTime,
+            startTime + 50000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(!tree.verify(proof, user.address, tree.getHexRoot()));
+            await contract.connect(user).foundersWhitelistMint(2,{whitelist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.2")})
+            expect(await contract.balanceOf(user.address)).to.equal(2);
+        });
     });
 });
