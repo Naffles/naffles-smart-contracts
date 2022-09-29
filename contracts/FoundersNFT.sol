@@ -48,7 +48,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     uint8 public constant PLATINUM_FOUNDERS_PASS = 3;
     uint8 public constant BLACK_FOUNDERS_PASS = 4;
 
-    // Max amount addresses can mint in total during this phase (Includes wl mints and public).
+    // Max amount of tokens addresses can mint in total during this phase (Includes wl mints and public).
     uint8 public maxOmnipotentMintsPerWallet = 1;
     uint8 public maxFoundersMintsPerWallet = 5;
 
@@ -104,19 +104,24 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     function adminMint(
         address _to,
         uint16 _mintAmount
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        if (_totalMinted() + _mintAmount > maxTotalSupply) {
-            revert InsufficientSupplyAvailable({
-                maxSupply: maxTotalSupply
-            });
-        }
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) validateMint(_mintAmount, maxTotalSupply) {
         _safeMint(_to, _mintAmount);
     }
 
     function _startTokenId() internal pure override returns (uint256) {
         return 1;
     }
-
+    
+    /** 
+     * @dev Create whitelist with a an allocation for either of the whitelist phases.
+     * @dev The same id as another whitelist can be given to overide the previous whitelist.
+     * @param _whitelistId The id of the whitelist.
+     * @param _root The merkle root of the whitelist.
+     * @param _startTime The start time of the whitelist.
+     * @param _endTime The end time of the whitelist.
+     * @param _allowance The amount of tokens a whitelisted address can mint.
+     * @param _mintPhase The phase the whitelist is for.
+    */
     function createWhitelist(
         bytes32 _root, 
         uint8 _whitelist_id,
@@ -154,6 +159,10 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         delete whitelists[_id];
     }
 
+    /**
+     * @notice Public mint function for omnipotent key mint phase
+     * @param _mintAmount The amount of tokens to mint.
+     */
     function omnipotentMint(uint8 _mintAmount) public payable validateMint(_mintAmount, maxOmnipotentSupply) nonReentrant {
         addressOmnipotentMintAmountMapping[msg.sender] += _mintAmount;
         if (addressOmnipotentMintAmountMapping[msg.sender] > maxOmnipotentMintsPerWallet) {
@@ -167,6 +176,10 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         _internalMint(_mintAmount);
     }
 
+    /**
+     * @notice Public mint function for founders key mint phase
+     * @param _mintAmount The amount of tokens to mint.
+     */
     function foundersMint(uint8 _mintAmount) public payable validateMint(_mintAmount, maxTotalSupply) nonReentrant {
         addressFoundersMintAmountMapping[msg.sender] += _mintAmount;
         if (addressFoundersMintAmountMapping[msg.sender] > maxFoundersMintsPerWallet) {
@@ -180,6 +193,11 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         _internalMint(_mintAmount);
     }
 
+    /**
+     * @notice Whilitest mint for the omnipotent key mint phase.
+     * @param _mintAmount The amount of tokens to mint.
+     * @param _proof The whitelist proof of sender address.
+     */
     function omnipotentWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint(_mintAmount, maxOmnipotentSupply) nonReentrant {
         Whitelist memory whitelist = whitelists[_proof.whitelist_id];
         if (block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
@@ -195,6 +213,11 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         _whitelistCheckAndMint(_mintAmount, whitelist.root, _proof);
     }
 
+    /**
+     * @notice Whilitest mint for the founders key mint phase.
+     * @param _mintAmount The amount of tokens to mint.
+     * @param _proof The whitelist proof of sender address.
+     */
     function foundersWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint(_mintAmount, maxTotalSupply) nonReentrant {
         Whitelist memory whitelist = whitelists[_proof.whitelist_id];
         if (block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
@@ -291,6 +314,9 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         return baseURI;
     }
 
+    /**
+     * @dev checks if the token id is <= the omnipotent supply because the first maxOmnipotentSupply tokens are reserved for the omnipotent key.
+     */
     function tokenType(uint16 _tokenId) public view returns(uint8) {
         if (!_exists(_tokenId)) { 
             revert TokenDoesNotExist({tokenId: _tokenId});
@@ -309,7 +335,9 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         baseURI = _newBaseURI;
     }
 
-    // Sets the token type id for the founders passes. Starts at index maxOmnipotentSupply + 1 because we can't set the type for the first x maxOmnipotentSupply tokens.
+    /**
+     * Sets the token type id for the founders passes. Starts at index maxOmnipotentSupply + 1 because we can't set the type for the first x maxOmnipotentSupply tokens.
+     */
     function setTokenTypeMappingForFoundersPasses(uint8[] memory _tokenTypes) external onlyRole(DEFAULT_ADMIN_ROLE) {
         uint256 startNumber = maxOmnipotentSupply + 1;
         for (uint256 i = 0; i < _tokenTypes.length; i++) {
