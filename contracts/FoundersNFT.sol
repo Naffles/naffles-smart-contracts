@@ -79,7 +79,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         address _internalMintAddress,
         uint256 _omnipotentPublicMintStartTime,
         uint256 _foundersPublicMintStartTime
-    ) ERC721A("Naffles Founders Pass", "NFLS") {
+    ) ERC721A("Naffles Founders Keys", "NFLS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(WITHDRAW_ROLE, msg.sender);
 
