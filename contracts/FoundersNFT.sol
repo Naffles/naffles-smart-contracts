@@ -115,32 +115,32 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     /** 
      * @dev Create whitelist with a an allocation for either of the whitelist phases.
      * @dev The same id as another whitelist can be given to overide the previous whitelist.
-     * @param _whitelistId The id of the whitelist.
      * @param _root The merkle root of the whitelist.
-     * @param _startTime The start time of the whitelist.
-     * @param _endTime The end time of the whitelist.
+     * @param _whitelistId The id of the whitelist.
      * @param _allowance The amount of tokens a whitelisted address can mint.
      * @param _mintPhase The phase the whitelist is for.
+     * @param _startTime The start time of the whitelist.
+     * @param _endTime The end time of the whitelist.
     */
     function createWhitelist(
         bytes32 _root, 
-        uint8 _whitelist_id,
+        uint8 _whitelistId,
         uint8 _allowance,
-        uint8 mintPhase,
+        uint8 _mintPhase,
         uint256 _startTime,
         uint256 _endTime
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         if (_startTime >= _endTime) {
             revert InvalidWhitelistTime();
         }
-        if (mintPhase == OMNIPOTENT_MINT) {
+        if (_mintPhase == OMNIPOTENT_MINT) {
             if (_allowance > maxOmnipotentMintsPerWallet) {
                 revert InvalidWhitelistAllowance({
                     whitelistAllowance: _allowance
                 });
             }
         }
-        else if (mintPhase == FOUNDERS_MINT) {
+        else if (_mintPhase == FOUNDERS_MINT) {
             if (_allowance > maxFoundersMintsPerWallet) {
                 revert InvalidWhitelistAllowance({
                     whitelistAllowance: _allowance
@@ -149,10 +149,10 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         }
         else {
             revert InvalidWhitelistPhase({
-                whitelistPhase: mintPhase
+                whitelistPhase: _mintPhase
             });
         }
-        whitelists[_whitelist_id] = Whitelist(_root, _startTime, _endTime, _allowance, mintPhase);
+        whitelists[_whitelistId] = Whitelist(_root, _startTime, _endTime, _allowance, _mintPhase);
     }
 
     function removeWhitelist(uint8 _id) public onlyRole(DEFAULT_ADMIN_ROLE) {
