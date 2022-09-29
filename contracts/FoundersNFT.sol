@@ -9,16 +9,16 @@ import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 error CallerIsContract(address address_);
 error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
-error ExceedingWhitelistAllowance(uint16 whitelistAllowance);
+error ExceedingAllowlistAllowance(uint16 allowlistAllowance);
 error InsufficientFunds(uint256 funds, uint256 cost);
 error InsufficientSupplyAvailable(uint256 maxSupply);
-error InvalidWhitelistId(uint8 whitelistId);
-error InvalidWhitelistPhase(uint8 whitelistPhase);
-error InvalidWhitelistAllowance(uint8 whitelistAllowance);
-error InvalidWhitelistTime();
+error InvalidAllowlistId(uint8 allowlistId);
+error InvalidAllowlistPhase(uint8 allowlistPhase);
+error InvalidAllowlistAllowance(uint8 allowlistAllowance);
+error InvalidAllowlistTime();
 error TokenDoesNotExist(uint16 tokenId);
 error MaxTotalSupplyCannotBeLessThanAlreadyMinted();
-error NotWhitelisted();
+error NotAllowlisted();
 error SaleNotActive();
 error URIQueryForNonexistentToken();
 error UnableToSendChange(uint256 cashChange);
@@ -27,7 +27,7 @@ error UnableToWithdraw(uint256 amount);
 contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     using Address for address;
 
-    struct Whitelist {
+    struct Allowlist {
         bytes32 root;
         uint256 startTime;
         uint256 endTime;
@@ -35,8 +35,8 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         uint8 mintPhase;
     }
 
-    struct WhitelistProof {
-        uint8 whitelist_id;
+    struct AllowlistProof {
+        uint8 allowlist_id;
         bytes32[] proof;
     }
 
@@ -61,12 +61,12 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     string public baseURI = "";
     string public baseExtension = ".json";
     
-    // maps whitelist_id / waitlist_id to whitelist object.
-    mapping(uint8 => Whitelist) public whitelists;
+    // Maps allowlist_id / waitlist_id to allowlist object.
+    mapping(uint8 => Allowlist) public allowlists;
     mapping(address => uint8) public addressOmnipotentMintAmountMapping;
     mapping(address => uint8) public addressFoundersMintAmountMapping;
 
-    // maps token id to token type, will be filled after reveal.
+    // Maps token id to token type, will be filled after reveal.
     mapping(uint256 => uint8) private tokenTypeMapping;
 
     bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
@@ -113,50 +113,50 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     }
     
     /** 
-     * @dev Create whitelist with a an allocation for either of the whitelist phases.
-     * @dev The same id as another whitelist can be given to overide the previous whitelist.
-     * @param _root The merkle root of the whitelist.
-     * @param _whitelistId The id of the whitelist.
-     * @param _allowance The amount of tokens a whitelisted address can mint.
-     * @param _mintPhase The phase the whitelist is for.
-     * @param _startTime The start time of the whitelist.
-     * @param _endTime The end time of the whitelist.
+     * @dev Create allowlist with a an allocation for either of the allowlist phases.
+     * @dev The same id as another allowlist can be given to overide the previous allowlist.
+     * @param _root The merkle root of the allowlist.
+     * @param _allowlistId The id of the allowlist.
+     * @param _allowance The amount of tokens a allowlisted address can mint.
+     * @param _mintPhase The phase the allowlist is for.
+     * @param _startTime The start time of the allowlist.
+     * @param _endTime The end time of the allowlist.
     */
-    function createWhitelist(
+    function createAllowlist(
         bytes32 _root, 
-        uint8 _whitelistId,
+        uint8 _allowlistId,
         uint8 _allowance,
         uint8 _mintPhase,
         uint256 _startTime,
         uint256 _endTime
     ) public onlyRole(DEFAULT_ADMIN_ROLE) {
         if (_startTime >= _endTime) {
-            revert InvalidWhitelistTime();
+            revert InvalidAllowlistTime();
         }
         if (_mintPhase == OMNIPOTENT_MINT) {
             if (_allowance > maxOmnipotentMintsPerWallet) {
-                revert InvalidWhitelistAllowance({
-                    whitelistAllowance: _allowance
+                revert InvalidAllowlistAllowance({
+                    allowlistAllowance: _allowance
                 });
             }
         }
         else if (_mintPhase == FOUNDERS_MINT) {
             if (_allowance > maxFoundersMintsPerWallet) {
-                revert InvalidWhitelistAllowance({
-                    whitelistAllowance: _allowance
+                revert InvalidAllowlistAllowance({
+                    allowlistAllowance: _allowance
                 });
             }
         }
         else {
-            revert InvalidWhitelistPhase({
-                whitelistPhase: _mintPhase
+            revert InvalidAllowlistPhase({
+                allowlistPhase: _mintPhase
             });
         }
-        whitelists[_whitelistId] = Whitelist(_root, _startTime, _endTime, _allowance, _mintPhase);
+        allowlists[_allowlistId] = Allowlist(_root, _startTime, _endTime, _allowance, _mintPhase);
     }
 
-    function removeWhitelist(uint8 _id) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        delete whitelists[_id];
+    function removeAllowlist(uint8 _id) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        delete allowlists[_id];
     }
 
     /**
@@ -196,64 +196,64 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     /**
      * @notice Whilitest mint for the omnipotent key mint phase.
      * @param _mintAmount The amount of tokens to mint.
-     * @param _proof The whitelist proof of sender address.
+     * @param _proof The allowlist proof of sender address.
      */
-    function omnipotentWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint(_mintAmount, maxOmnipotentSupply) nonReentrant {
-        Whitelist memory whitelist = whitelists[_proof.whitelist_id];
-        if (block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
+    function omnipotentAllowlistMint(uint8 _mintAmount, AllowlistProof calldata _proof) public payable validateMint(_mintAmount, maxOmnipotentSupply) nonReentrant {
+        Allowlist memory allowlist = allowlists[_proof.allowlist_id];
+        if (block.timestamp >= allowlist.endTime || block.timestamp < allowlist.startTime ) {
             revert SaleNotActive();
         }
 
-        if (whitelist.mintPhase == OMNIPOTENT_MINT) {
-            _omnipotentWhitelistMintCheck(_mintAmount, whitelist.allowance);
+        if (allowlist.mintPhase == OMNIPOTENT_MINT) {
+            _omnipotentAllowlistMintCheck(_mintAmount, allowlist.allowance);
         } else {
             // This shouldn't be possible but is here for extra security measure.
-            revert InvalidWhitelistId({whitelistId: _proof.whitelist_id});
+            revert InvalidAllowlistId({allowlistId: _proof.allowlist_id});
         }
-        _whitelistCheckAndMint(_mintAmount, whitelist.root, _proof);
+        _allowlistCheckAndMint(_mintAmount, allowlist.root, _proof);
     }
 
     /**
      * @notice Whilitest mint for the founders key mint phase.
      * @param _mintAmount The amount of tokens to mint.
-     * @param _proof The whitelist proof of sender address.
+     * @param _proof The allowlist proof of sender address.
      */
-    function foundersWhitelistMint(uint8 _mintAmount, WhitelistProof calldata _proof) public payable validateMint(_mintAmount, maxTotalSupply) nonReentrant {
-        Whitelist memory whitelist = whitelists[_proof.whitelist_id];
-        if (block.timestamp >= whitelist.endTime || block.timestamp < whitelist.startTime ) {
+    function foundersAllowlistMint(uint8 _mintAmount, AllowlistProof calldata _proof) public payable validateMint(_mintAmount, maxTotalSupply) nonReentrant {
+        Allowlist memory allowlist = allowlists[_proof.allowlist_id];
+        if (block.timestamp >= allowlist.endTime || block.timestamp < allowlist.startTime ) {
             revert SaleNotActive();
         }
 
-        if (whitelist.mintPhase == FOUNDERS_MINT) {
-            _foundersWhitelistMintCheck(_mintAmount, whitelist.allowance);
+        if (allowlist.mintPhase == FOUNDERS_MINT) {
+            _foundersAllowlistMintCheck(_mintAmount, allowlist.allowance);
         } else {
-            revert InvalidWhitelistId({whitelistId: _proof.whitelist_id});
+            revert InvalidAllowlistId({allowlistId: _proof.allowlist_id});
         }
 
-        _whitelistCheckAndMint(_mintAmount, whitelist.root, _proof);
+        _allowlistCheckAndMint(_mintAmount, allowlist.root, _proof);
     }
 
-    function _whitelistCheckAndMint(uint8 _mintAmount, bytes32 _root, WhitelistProof calldata _proof) internal {
+    function _allowlistCheckAndMint(uint8 _mintAmount, bytes32 _root, AllowlistProof calldata _proof) internal {
         if (!MerkleProof.verify(_proof.proof, _root, keccak256(abi.encodePacked(msg.sender)))) {
-            revert NotWhitelisted();
+            revert NotAllowlisted();
         }
 
         _internalMint(_mintAmount);
     }
 
-    function _omnipotentWhitelistMintCheck(uint8 _mintAmount, uint8 _allowance) internal {
+    function _omnipotentAllowlistMintCheck(uint8 _mintAmount, uint8 _allowance) internal {
         addressOmnipotentMintAmountMapping[msg.sender] += _mintAmount;
 
         if (addressOmnipotentMintAmountMapping[msg.sender] > _allowance) {
-            revert ExceedingWhitelistAllowance({whitelistAllowance: _allowance});
+            revert ExceedingAllowlistAllowance({allowlistAllowance: _allowance});
         }
     }
 
-    function _foundersWhitelistMintCheck(uint8 _mintAmount, uint8 _allowance) internal {
+    function _foundersAllowlistMintCheck(uint8 _mintAmount, uint8 _allowance) internal {
         addressFoundersMintAmountMapping[msg.sender] += _mintAmount;
 
         if (addressFoundersMintAmountMapping[msg.sender] > _allowance) {
-            revert ExceedingWhitelistAllowance({whitelistAllowance: _allowance});
+            revert ExceedingAllowlistAllowance({allowlistAllowance: _allowance});
         }
     }
 
