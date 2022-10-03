@@ -114,7 +114,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     
     /** 
      * @dev Create allowlist with a an allocation for either of the allowlist phases.
-     * @dev The same id as another allowlist can be given to overide the previous allowlist.
+     * @dev The same id as another allowlist can be given to override the previous allowlist.
      * @param _root The merkle root of the allowlist.
      * @param _allowlistId The id of the allowlist.
      * @param _allowance The amount of tokens a allowlisted address can mint.
