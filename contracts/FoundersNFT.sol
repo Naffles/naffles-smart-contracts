@@ -63,8 +63,6 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     
     // Maps allowlist_id / waitlist_id to allowlist object.
     mapping(uint8 => Allowlist) public allowlists;
-    mapping(address => uint8) public addressOmnipotentMintAmountMapping;
-    mapping(address => uint8) public addressFoundersMintAmountMapping;
 
     // Maps token id to token type, will be filled after reveal.
     mapping(uint256 => uint8) private tokenTypeMapping;
@@ -161,11 +159,9 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
 
     /**
      * @notice Public mint function for omnipotent key mint phase
-     * @param _mintAmount The amount of tokens to mint.
      */
-    function omnipotentMint(uint8 _mintAmount) public payable validateMint(_mintAmount, maxOmnipotentSupply) nonReentrant {
-        addressOmnipotentMintAmountMapping[msg.sender] += _mintAmount;
-        if (addressOmnipotentMintAmountMapping[msg.sender] > maxOmnipotentMintsPerWallet) {
+    function omnipotentMint() public payable validateMint(1, maxOmnipotentSupply) nonReentrant {
+        if (_numberMinted(msg.sender) >= maxOmnipotentMintsPerWallet) {
             revert ExceedingMaxTokensPerWallet({
                 maxPerWallet: maxOmnipotentMintsPerWallet
             });
@@ -173,7 +169,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         if (block.timestamp < omnipotentPublicMintStartTime) {
             revert SaleNotActive();
         }
-        _internalMint(_mintAmount);
+        _internalMint(1);
     }
 
     /**
@@ -181,8 +177,8 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
      * @param _mintAmount The amount of tokens to mint.
      */
     function foundersMint(uint8 _mintAmount) public payable validateMint(_mintAmount, maxTotalSupply) nonReentrant {
-        addressFoundersMintAmountMapping[msg.sender] += _mintAmount;
-        if (addressFoundersMintAmountMapping[msg.sender] > maxFoundersMintsPerWallet) {
+        _setAux(msg.sender, _getAux(msg.sender) + _mintAmount);
+        if (_getAux(msg.sender) > maxFoundersMintsPerWallet) {
             revert ExceedingMaxTokensPerWallet({
                 maxPerWallet: maxFoundersMintsPerWallet
             });
@@ -195,22 +191,21 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
 
     /**
      * @notice Whilitest mint for the omnipotent key mint phase.
-     * @param _mintAmount The amount of tokens to mint.
      * @param _proof The allowlist proof of sender address.
      */
-    function omnipotentAllowlistMint(uint8 _mintAmount, AllowlistProof calldata _proof) public payable validateMint(_mintAmount, maxOmnipotentSupply) nonReentrant {
+    function omnipotentAllowlistMint(AllowlistProof calldata _proof) public payable validateMint(1, maxOmnipotentSupply) nonReentrant {
         Allowlist memory allowlist = allowlists[_proof.allowlist_id];
         if (block.timestamp >= allowlist.endTime || block.timestamp < allowlist.startTime ) {
             revert SaleNotActive();
         }
 
         if (allowlist.mintPhase == OMNIPOTENT_MINT) {
-            _omnipotentAllowlistMintCheck(_mintAmount, allowlist.allowance);
+            _omnipotentAllowlistMintCheck();
         } else {
             // This shouldn't be possible but is here for extra security measure.
             revert InvalidAllowlistId({allowlistId: _proof.allowlist_id});
         }
-        _allowlistCheckAndMint(_mintAmount, allowlist.root, _proof);
+        _allowlistCheckAndMint(1, allowlist.root, _proof);
     }
 
     /**
@@ -241,18 +236,16 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         _internalMint(_mintAmount);
     }
 
-    function _omnipotentAllowlistMintCheck(uint8 _mintAmount, uint8 _allowance) internal {
-        addressOmnipotentMintAmountMapping[msg.sender] += _mintAmount;
-
-        if (addressOmnipotentMintAmountMapping[msg.sender] > _allowance) {
-            revert ExceedingAllowlistAllowance({allowlistAllowance: _allowance});
+    function _omnipotentAllowlistMintCheck() internal view {
+        if (_numberMinted(msg.sender) >= 1) {
+            revert ExceedingAllowlistAllowance({allowlistAllowance: 1});
         }
     }
 
     function _foundersAllowlistMintCheck(uint8 _mintAmount, uint8 _allowance) internal {
-        addressFoundersMintAmountMapping[msg.sender] += _mintAmount;
+        _setAux(msg.sender, (_getAux(msg.sender) + _mintAmount));
 
-        if (addressFoundersMintAmountMapping[msg.sender] > _allowance) {
+        if (_getAux(msg.sender) > _allowance) {
             revert ExceedingAllowlistAllowance({allowlistAllowance: _allowance});
         }
     }

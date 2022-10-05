@@ -316,14 +316,14 @@ describe("Founders mint", function () {
 describe("Omnipotent mint", function () {
     it("Should public mint", async function () {
         const {contract, user} = await getContractAndUsers();
-        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
+        await contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")});
         expect(await contract.balanceOf(user.address)).to.equal(1);
     });
 
     it("Should raise InsufficientFunds", async function () {
         const {contract, user} = await getContractAndUsers();
         await expect(
-            contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.05")})
+            contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.05")})
         ).to.revertedWithCustomError(contract, "InsufficientFunds");
         expect(await contract.balanceOf(user.address)).to.equal(0);
     });
@@ -331,16 +331,16 @@ describe("Omnipotent mint", function () {
     it("Should raise InsufficientSupplyAvailable", async function () {
         const {contract, user} = await getContractAndUsers(MAX_SUPPLY);
         await expect(
-            contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
+            contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")})
         ).to.be.revertedWithCustomError(contract, "InsufficientSupplyAvailable");
     })
 
     it("Should raise ExceedingMaxTokensPerWallet", async function () {
         const {contract, user} = await getContractAndUsers();
         await contract.connect(user).omnipotentMint(
-            1, {value: ethers.utils.parseEther("0.1")}).then(async () => {
+            {value: ethers.utils.parseEther("0.1")}).then(async () => {
             await expect(
-                contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
+                contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")})
             ).to.be.revertedWithCustomError(contract, "ExceedingMaxTokensPerWallet");
         });
     });
@@ -348,9 +348,9 @@ describe("Omnipotent mint", function () {
     it("Should raise InsufficientSupplyAvailable", async function () {
         const {contract, user, owner} = await getContractAndUsers(1, 2);
         await contract.connect(user).omnipotentMint(
-            1, {value: ethers.utils.parseEther("0.1")}).then(async () => {
+            {value: ethers.utils.parseEther("0.1")}).then(async () => {
             await expect(
-                contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
+                contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")})
             ).to.be.revertedWithCustomError(contract, "InsufficientSupplyAvailable");
         });
     });
@@ -358,7 +358,7 @@ describe("Omnipotent mint", function () {
     it("Should raise SaleNotActive", async function () {
         const {contract, user} = await getContractAndUsers(RESERVED_TOKENS, MAX_OMNIPOTENT_SUPPLY, getTimeSinceEpoch() + 1000000)
         await expect(
-            contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")})
+            contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")})
         ).to.be.revertedWithCustomError(contract, "SaleNotActive");
     });
 
@@ -369,7 +369,6 @@ describe("Omnipotent mint", function () {
         expect(allowlist["root"]).to.equal(tree.getHexRoot());
         await expect(
             contract.connect(user).omnipotentAllowlistMint(
-                1,
                 {allowlist_id: 1, proof: proof},
                 {value: ethers.utils.parseEther("0.1")})
         ).to.be.revertedWithCustomError(contract, "SaleNotActive");
@@ -440,7 +439,6 @@ describe("Omnipotent mint", function () {
             expect(allowlist["root"]).to.equal(tree.getHexRoot());
 
             await contract.connect(user).omnipotentAllowlistMint(
-                1,
                 {allowlist_id: 1, proof: proof},
                 {value: ethers.utils.parseEther("0.1")});
         });
@@ -448,7 +446,7 @@ describe("Omnipotent mint", function () {
     });
 
     it("Should raise NotAllowlisted", async function () {
-        const {contract, owner, user} = await getContractAndUsers(
+        const {contract, owner, user, alternative_user} = await getContractAndUsers(
             RESERVED_TOKENS,
             MAX_OMNIPOTENT_SUPPLY,
             getTimeSinceEpoch() + 1000000,
@@ -466,11 +464,37 @@ describe("Omnipotent mint", function () {
         ).then(async (tree) => {
             const proof = tree.getHexProof(user.address);
             await expect(
-                contract.connect(owner).omnipotentAllowlistMint(
-                    1,
+                contract.connect(alternative_user).omnipotentAllowlistMint(
                     {allowlist_id: 1, proof: proof},
                     {value: ethers.utils.parseEther("0.1")})
             ).to.be.revertedWithCustomError(contract, "NotAllowlisted");
+        });
+        expect(await contract.balanceOf(user.address)).to.equal(0);
+    });
+
+    it("Invalid whitelist id", async function () {
+        const {contract, owner, user, alternative_user} = await getContractAndUsers(
+            RESERVED_TOKENS,
+            MAX_OMNIPOTENT_SUPPLY,
+            getTimeSinceEpoch() + 1000000,
+        );
+        const startTime = getTimeSinceEpoch();
+
+        await createAllowlist(
+            1,
+            1,
+            1,
+            startTime,
+            startTime + 100000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            await expect(
+                contract.connect(alternative_user).omnipotentAllowlistMint(
+                    {allowlist_id: 3, proof: proof},
+                    {value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "SaleNotActive");
         });
         expect(await contract.balanceOf(user.address)).to.equal(0);
     });
@@ -499,12 +523,10 @@ describe("Omnipotent mint", function () {
             expect(allowlist["root"]).to.equal(tree.getHexRoot());
 
             await contract.connect(user).omnipotentAllowlistMint(
-                1,
                 {allowlist_id: 1, proof: proof},
                 {value: ethers.utils.parseEther("0.1")}).then(async () => {
                 await expect(
                     contract.connect(user).omnipotentAllowlistMint(
-                        1,
                         {allowlist_id: 1, proof: proof},
                         {value: ethers.utils.parseEther("0.1")})
                 ).to.be.revertedWithCustomError(contract, "ExceedingAllowlistAllowance");
@@ -516,7 +538,7 @@ describe("Omnipotent mint", function () {
     it("Should have withdrawn money", async function () {
         const {contract, user} = await getContractAndUsers();
         const oldBalance = await ethers.provider.getBalance(user.address);
-        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
+        await contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")});
         const newBalance = await ethers.provider.getBalance(user.address);
         const expectedBalance = oldBalance.sub(ethers.utils.parseEther("0.1"));
         // minus gas cost
@@ -526,7 +548,7 @@ describe("Omnipotent mint", function () {
     it("Should send back money", async function () {
         const {contract, user} = await getContractAndUsers();
         const oldBalance = await ethers.provider.getBalance(user.address);
-        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.2")}).then(async () => {
+        await contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.2")}).then(async () => {
             const newBalance = await ethers.provider.getBalance(user.address);
             const expectedBalance = oldBalance.sub(ethers.utils.parseEther("0.1"));
             // Minus gas cost
@@ -538,7 +560,7 @@ describe("Omnipotent mint", function () {
 describe("exists", function () {
     it("Should return true", async function () {
         const {contract, user} = await getContractAndUsers();
-        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
+        await contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")});
         expect(await contract.exists(RESERVED_TOKENS + 1)).to.equal(true);
     });
 
@@ -601,7 +623,7 @@ describe("Withdraw", function () {
     it("Should withdraw", async function () {
         const {contract, owner, user} = await getContractAndUsers();
         const oldBalance = await ethers.provider.getBalance(owner.address);
-        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
+        await contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")});
         await contract.connect(owner).withdraw();
         const newBalance = await ethers.provider.getBalance(owner.address);
         expect(newBalance).to.be.gt(oldBalance);
@@ -616,7 +638,7 @@ describe("Withdraw", function () {
 
     it("Should allow withdraw role", async function () {
         const {contract, owner, user} = await getContractAndUsers();
-        await contract.connect(user).omnipotentMint(1, {value: ethers.utils.parseEther("0.1")});
+        await contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")});
         await contract.connect(owner).grantRole(contract.WITHDRAW_ROLE(), user.address);
         const oldBalance = await ethers.provider.getBalance(user.address);
         await contract.connect(user).withdraw();
@@ -826,6 +848,80 @@ describe("foundersAllowlistMint", function () {
         });
     });
 
+    it("Invalid whitelist id", async function () {
+        const {contract, owner, user, alternative_user} = await getContractAndUsers(
+            RESERVED_TOKENS,
+            MAX_OMNIPOTENT_SUPPLY,
+            getTimeSinceEpoch() + 1000000,
+        );
+        const startTime = getTimeSinceEpoch();
+
+        await createAllowlist(
+            1,
+            1,
+            1,
+            startTime,
+            startTime + 100000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            await expect(
+                contract.connect(alternative_user).foundersAllowlistMint(
+                    1,
+                    {allowlist_id: 3, proof: proof},
+                    {value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "SaleNotActive");
+        });
+        expect(await contract.balanceOf(user.address)).to.equal(0);
+    });
+
+    it("Should raise ExceedingAllowlistAllowance 2", async function () {
+        const {contract, user} = await getContractAndUsers();
+        const startTime = getTimeSinceEpoch();
+
+        await createAllowlist(
+            1,
+            1,
+            1,
+            startTime,
+            startTime + 100000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(tree.verify(proof, user.address, tree.getHexRoot()));
+            const allowlist = await contract.allowlists(1);
+            expect(allowlist["root"]).to.equal(tree.getHexRoot());
+
+            await contract.connect(user).omnipotentAllowlistMint(
+                {allowlist_id: 1, proof: proof},
+                {value: ethers.utils.parseEther("0.1")}).then(async () => {
+            });
+        });
+
+        expect(await contract.balanceOf(user.address)).to.equal(1);
+
+        await createAllowlist(
+            1,
+            5,
+            2,
+            startTime,
+            startTime + 50000,
+            [user.address],
+            contract
+        ).then(async (tree) => {
+            const proof = tree.getHexProof(user.address);
+            expect(tree.verify(proof, user.address, tree.getHexRoot()));
+            await contract.connect(user).foundersAllowlistMint(2,{allowlist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.2")})
+            await contract.connect(user).foundersAllowlistMint(3,{allowlist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.3")})
+            expect(await contract.balanceOf(user.address)).to.equal(6);
+            await expect(
+                contract.connect(user).foundersAllowlistMint(1,{allowlist_id: 1, proof: proof}, {value: ethers.utils.parseEther("0.1")})
+            ).to.be.revertedWithCustomError(contract, "ExceedingAllowlistAllowance");
+        });
+    });
+
     it("Should raise ExceedingAllowlistAllowance", async function () {
         const {contract, user} = await getContractAndUsers();
         const startTime = getTimeSinceEpoch();
@@ -852,7 +948,7 @@ describe("foundersAllowlistMint", function () {
         const startTime = getTimeSinceEpoch();
         await createAllowlist(
             1,
-            2,
+            5,
             2,
             startTime,
             startTime + 50000,
