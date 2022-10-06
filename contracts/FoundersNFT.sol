@@ -7,22 +7,22 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-error CallerIsContract(address address_);
-error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
-error ExceedingAllowlistAllowance(uint16 allowlistAllowance);
-error InsufficientFunds(uint256 funds, uint256 cost);
-error InsufficientSupplyAvailable(uint256 maxSupply);
-error InvalidAllowlistId(uint8 allowlistId);
-error InvalidAllowlistPhase(uint8 allowlistPhase);
-error InvalidAllowlistAllowance(uint8 allowlistAllowance);
-error InvalidAllowlistTime();
-error TokenDoesNotExist(uint16 tokenId);
-error MaxTotalSupplyCannotBeLessThanAlreadyMinted();
-error NotAllowlisted();
-error SaleNotActive();
-error URIQueryForNonexistentToken();
-error UnableToSendChange(uint256 cashChange);
-error UnableToWithdraw(uint256 amount);
+    error CallerIsContract(address address_);
+    error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
+    error ExceedingAllowlistAllowance(uint16 allowlistAllowance);
+    error InsufficientFunds(uint256 funds, uint256 cost);
+    error InsufficientSupplyAvailable(uint256 maxSupply);
+    error InvalidAllowlistId(uint8 allowlistId);
+    error InvalidAllowlistPhase(uint8 allowlistPhase);
+    error InvalidAllowlistAllowance(uint8 allowlistAllowance);
+    error InvalidAllowlistTime();
+    error TokenDoesNotExist(uint16 tokenId);
+    error MaxTotalSupplyCannotBeLessThanAlreadyMinted();
+    error NotAllowlisted();
+    error SaleNotActive();
+    error URIQueryForNonexistentToken();
+    error UnableToSendChange(uint256 cashChange);
+    error UnableToWithdraw(uint256 amount);
 
 contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     using Address for address;
@@ -60,7 +60,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
 
     string public baseURI = "";
     string public baseExtension = ".json";
-    
+
     // Maps allowlist_id / waitlist_id to allowlist object.
     mapping(uint8 => Allowlist) public allowlists;
 
@@ -68,7 +68,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     mapping(uint256 => uint8) private tokenTypeMapping;
 
     bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
-    
+
     constructor(
         uint16 _maxOmnipotentSupply,
         uint16 _maxTotalSupply,
@@ -93,12 +93,12 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     modifier validateMint(uint16 _mintAmount, uint16 _maxSupply) {
         if (_totalMinted() + _mintAmount > _maxSupply) {
             revert InsufficientSupplyAvailable({
-                maxSupply: _maxSupply
+            maxSupply: _maxSupply
             });
         }
         _;
     }
-    
+
     function adminMint(
         address _to,
         uint16 _mintAmount
@@ -109,7 +109,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     function _startTokenId() internal pure override returns (uint256) {
         return 1;
     }
-    
+
     /** 
      * @dev Create allowlist with a an allocation for either of the allowlist phases.
      * @dev The same id as another allowlist can be given to override the previous allowlist.
@@ -121,7 +121,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
      * @param _endTime The end time of the allowlist.
     */
     function createAllowlist(
-        bytes32 _root, 
+        bytes32 _root,
         uint8 _allowlistId,
         uint8 _allowance,
         uint8 _mintPhase,
@@ -134,20 +134,20 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         if (_mintPhase == OMNIPOTENT_MINT) {
             if (_allowance > maxOmnipotentMintsPerWallet) {
                 revert InvalidAllowlistAllowance({
-                    allowlistAllowance: _allowance
+                allowlistAllowance: _allowance
                 });
             }
         }
         else if (_mintPhase == FOUNDERS_MINT) {
             if (_allowance > maxFoundersMintsPerWallet) {
                 revert InvalidAllowlistAllowance({
-                    allowlistAllowance: _allowance
+                allowlistAllowance: _allowance
                 });
             }
         }
         else {
             revert InvalidAllowlistPhase({
-                allowlistPhase: _mintPhase
+            allowlistPhase: _mintPhase
             });
         }
         allowlists[_allowlistId] = Allowlist(_root, _startTime, _endTime, _allowance, _mintPhase);
@@ -163,7 +163,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     function omnipotentMint() public payable validateMint(1, maxOmnipotentSupply) nonReentrant {
         if (_numberMinted(msg.sender) >= maxOmnipotentMintsPerWallet) {
             revert ExceedingMaxTokensPerWallet({
-                maxPerWallet: maxOmnipotentMintsPerWallet
+            maxPerWallet: maxOmnipotentMintsPerWallet
             });
         }
         if (block.timestamp < omnipotentPublicMintStartTime) {
@@ -180,7 +180,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         _setAux(msg.sender, _getAux(msg.sender) + _mintAmount);
         if (_getAux(msg.sender) > maxFoundersMintsPerWallet) {
             revert ExceedingMaxTokensPerWallet({
-                maxPerWallet: maxFoundersMintsPerWallet
+            maxPerWallet: maxFoundersMintsPerWallet
             });
         }
         if (block.timestamp < foundersPublicMintStartTime) {
@@ -199,12 +199,12 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
             revert SaleNotActive();
         }
 
-        if (allowlist.mintPhase == OMNIPOTENT_MINT) {
-            _omnipotentAllowlistMintCheck();
-        } else {
+        if (allowlist.mintPhase != OMNIPOTENT_MINT) {
             // This shouldn't be possible but is here for extra security measure.
             revert InvalidAllowlistId({allowlistId: _proof.allowlist_id});
         }
+
+        _omnipotentAllowlistMintCheck();
         _allowlistCheckAndMint(1, allowlist.root, _proof);
     }
 
@@ -219,12 +219,11 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
             revert SaleNotActive();
         }
 
-        if (allowlist.mintPhase == FOUNDERS_MINT) {
-            _foundersAllowlistMintCheck(_mintAmount, allowlist.allowance);
-        } else {
+        if (allowlist.mintPhase != FOUNDERS_MINT) {
             revert InvalidAllowlistId({allowlistId: _proof.allowlist_id});
         }
 
+        _foundersAllowlistMintCheck(_mintAmount, allowlist.allowance);
         _allowlistCheckAndMint(_mintAmount, allowlist.root, _proof);
     }
 
@@ -270,32 +269,32 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     }
 
     function supportsInterface(bytes4 _interfaceId)
-        public
-        view
-        virtual
-        override(ERC721A, AccessControl)
-        returns (bool)
+    public
+    view
+    virtual
+    override(ERC721A, AccessControl)
+    returns (bool)
     {
         return (ERC721A.supportsInterface(_interfaceId) ||
-            AccessControl.supportsInterface(_interfaceId));
+        AccessControl.supportsInterface(_interfaceId));
     }
 
     function tokenURI(uint256 tokenId)
-        public
-        view
-        override
-        returns (string memory)
+    public
+    view
+    override
+    returns (string memory)
     {
-        if (!_exists(tokenId)) { 
+        if (!_exists(tokenId)) {
             revert URIQueryForNonexistentToken();
         }
 
         return
-            bytes(_baseURI()).length != 0
-                ? string(
-                    abi.encodePacked(baseURI, _toString(tokenId), baseExtension)
-                )
-                : "";
+        bytes(_baseURI()).length != 0
+        ? string(
+            abi.encodePacked(baseURI, _toString(tokenId), baseExtension)
+        )
+        : "";
     }
 
     function withdraw() external onlyRole(WITHDRAW_ROLE) {
@@ -311,7 +310,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
      * @dev checks if the token id is <= the omnipotent supply because the first maxOmnipotentSupply tokens are reserved for the omnipotent key.
      */
     function tokenType(uint16 _tokenId) public view returns(uint8) {
-        if (!_exists(_tokenId)) { 
+        if (!_exists(_tokenId)) {
             revert TokenDoesNotExist({tokenId: _tokenId});
         }
         if (_tokenId <= maxOmnipotentSupply) {
@@ -322,8 +321,8 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     }
 
     function setBaseURI(string memory _newBaseURI)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    external
+    onlyRole(DEFAULT_ADMIN_ROLE)
     {
         baseURI = _newBaseURI;
     }
@@ -339,29 +338,29 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     }
 
     function setBaseExtension(string memory _baseExtension)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    external
+    onlyRole(DEFAULT_ADMIN_ROLE)
     {
         baseExtension = _baseExtension;
     }
 
     function setMaxFoundersMintsPerWallet(uint8 _maxFoundersMintsPerWallet)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    external
+    onlyRole(DEFAULT_ADMIN_ROLE)
     {
         maxFoundersMintsPerWallet = _maxFoundersMintsPerWallet;
     }
 
     function setMaxOmnipotentMintsPerWallet(uint8 _maxOmnipotentMintsPerWallet)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    external
+    onlyRole(DEFAULT_ADMIN_ROLE)
     {
         maxOmnipotentMintsPerWallet = _maxOmnipotentMintsPerWallet;
     }
 
     function setMaxTotalSupply(uint16 _maxTotalSupply)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    external
+    onlyRole(DEFAULT_ADMIN_ROLE)
     {
         if (_maxTotalSupply <= _totalMinted()) {
             revert MaxTotalSupplyCannotBeLessThanAlreadyMinted();
@@ -370,22 +369,22 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     }
 
     function setMintPrice(uint256 _mintPrice)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    external
+    onlyRole(DEFAULT_ADMIN_ROLE)
     {
         mintPrice = _mintPrice;
     }
 
     function setOmnipotentPublicMintStartTime(uint256 _omnipotentPublicMintStartTime)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    external
+    onlyRole(DEFAULT_ADMIN_ROLE)
     {
         omnipotentPublicMintStartTime = _omnipotentPublicMintStartTime;
     }
 
     function setFoundersPublicMintStartTime(uint256 _foundersPublicMintStartTime)
-        external
-        onlyRole(DEFAULT_ADMIN_ROLE)
+    external
+    onlyRole(DEFAULT_ADMIN_ROLE)
     {
         foundersPublicMintStartTime = _foundersPublicMintStartTime;
     }
@@ -394,4 +393,3 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
         return _numberMinted(_address);
     }
 }
-
