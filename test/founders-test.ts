@@ -335,10 +335,19 @@ describe("Omnipotent mint", function () {
         ).to.be.revertedWithCustomError(contract, "InsufficientSupplyAvailable");
     })
 
+    it("Should allow extra public mint", async function () {
+        const {contract, user} = await getContractAndUsers();
+        await contract.connect(user).omnipotentMint(
+            {value: ethers.utils.parseEther("0.1")}).then(async () => {
+             await contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")})
+        });
+    });
+
     it("Should raise ExceedingMaxTokensPerWallet", async function () {
         const {contract, user} = await getContractAndUsers();
         await contract.connect(user).omnipotentMint(
             {value: ethers.utils.parseEther("0.1")}).then(async () => {
+            await contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")})
             await expect(
                 contract.connect(user).omnipotentMint({value: ethers.utils.parseEther("0.1")})
             ).to.be.revertedWithCustomError(contract, "ExceedingMaxTokensPerWallet");

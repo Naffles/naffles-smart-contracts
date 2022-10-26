@@ -7,22 +7,22 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-    error CallerIsContract(address address_);
-    error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
-    error ExceedingAllowlistAllowance(uint16 allowlistAllowance);
-    error InsufficientFunds(uint256 funds, uint256 cost);
-    error InsufficientSupplyAvailable(uint256 maxSupply);
-    error InvalidAllowlistId(uint8 allowlistId);
-    error InvalidAllowlistPhase(uint8 allowlistPhase);
-    error InvalidAllowlistAllowance(uint8 allowlistAllowance);
-    error InvalidAllowlistTime();
-    error TokenDoesNotExist(uint16 tokenId);
-    error MaxTotalSupplyCannotBeLessThanAlreadyMinted();
-    error NotAllowlisted();
-    error SaleNotActive();
-    error URIQueryForNonexistentToken();
-    error UnableToSendChange(uint256 cashChange);
-    error UnableToWithdraw(uint256 amount);
+error CallerIsContract(address address_);
+error ExceedingMaxTokensPerWallet(uint16 maxPerWallet);
+error ExceedingAllowlistAllowance(uint16 allowlistAllowance);
+error InsufficientFunds(uint256 funds, uint256 cost);
+error InsufficientSupplyAvailable(uint256 maxSupply);
+error InvalidAllowlistId(uint8 allowlistId);
+error InvalidAllowlistPhase(uint8 allowlistPhase);
+error InvalidAllowlistAllowance(uint8 allowlistAllowance);
+error InvalidAllowlistTime();
+error TokenDoesNotExist(uint16 tokenId);
+error MaxTotalSupplyCannotBeLessThanAlreadyMinted();
+error NotAllowlisted();
+error SaleNotActive();
+error URIQueryForNonexistentToken();
+error UnableToSendChange(uint256 cashChange);
+error UnableToWithdraw(uint256 amount);
 
 contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     using Address for address;
@@ -49,7 +49,7 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
     uint8 public constant BLACK_FOUNDERS_PASS = 4;
 
     // Max amount of tokens addresses can mint in total during this phase (Includes wl mints and public).
-    uint8 public maxOmnipotentMintsPerWallet = 1;
+    uint8 public maxOmnipotentMintsPerWallet = 2;
     uint8 public maxFoundersMintsPerWallet = 5;
 
     uint16 public maxOmnipotentSupply;
@@ -132,22 +132,22 @@ contract FoundersNFT is ERC721A, AccessControl, ReentrancyGuard {
             revert InvalidAllowlistTime();
         }
         if (_mintPhase == OMNIPOTENT_MINT) {
-            if (_allowance > maxOmnipotentMintsPerWallet) {
+            if (_allowance > 1) {
                 revert InvalidAllowlistAllowance({
-                allowlistAllowance: _allowance
+                    allowlistAllowance: _allowance
                 });
             }
         }
         else if (_mintPhase == FOUNDERS_MINT) {
             if (_allowance > maxFoundersMintsPerWallet) {
                 revert InvalidAllowlistAllowance({
-                allowlistAllowance: _allowance
+                    allowlistAllowance: _allowance
                 });
             }
         }
         else {
             revert InvalidAllowlistPhase({
-            allowlistPhase: _mintPhase
+                allowlistPhase: _mintPhase
             });
         }
         allowlists[_allowlistId] = Allowlist(_root, _startTime, _endTime, _allowance, _mintPhase);
