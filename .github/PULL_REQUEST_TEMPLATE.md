@@ -1,8 +1,5 @@
 ## NAFFLES PULL REQUEST
 
-## Linear
-_Please link the corresponding Linear ticket._
-
 ## Description
 _Please give a description of the pull request._
 
