@@ -1,53 +1,34 @@
 import pytest
-from brownie import Contract
-from scripts.helpers import facetCutAction, getSelectors
+from brownie import (
+    accounts, 
+    NaffleDiamond,
+    TestValueFacet,
+    TestValueStorage
+)
 
 
-@pytest.fixture(scope="module")
-def deployed_contracts(
-    accounts,
-    Diamond,
-    DiamondInit,
-    DiamondCutFacet,
-    DiamondLoupeFacet,
-    OwnershipFacet,
-    Test1Facet,
-    Test2Facet,
-):
-    owner = accounts[0]
+@pytest.fixture
+def admin():
+    return accounts[0]
 
-    diamondCutFacet = DiamondCutFacet.deploy({"from": owner})
-    diamondLoupeFacet = DiamondLoupeFacet.deploy({"from": owner})
-    ownershipFacet = OwnershipFacet.deploy({"from": owner})
-    test1Facet = Test1Facet.deploy({"from": owner})
-    test2Facet = Test2Facet.deploy({"from": owner})
 
-    diamondInit = DiamondInit.deploy({"from": owner})
-    diamond = Diamond.deploy(owner, diamondCutFacet.address, {"from": owner})
+@pytest.fixture
+def from_admin(admin):
+    return {'from': admin}
 
-    cut = [
-        [
-            diamondLoupeFacet.address,
-            facetCutAction["Add"],
-            getSelectors(DiamondLoupeFacet),
-        ],
-        [ownershipFacet.address, facetCutAction["Add"], getSelectors(OwnershipFacet)],
-    ]
 
-    # DiamondCutFacet at diamond.address
-    diamondCut = Contract.from_abi("DiamondCut", diamond.address, diamondCutFacet.abi)
+@pytest.fixture()
+def deployed_naffle_diamond(from_admin):
+    diamond = NaffleDiamond.deploy(from_admin)
+    return diamond
 
-    # DiamondInit has only one function, init()
-    initSelector = getSelectors(DiamondInit)[0]
 
-    # Cutting the Diamond
-    diamondCut.diamondCut(cut, diamondInit.address, initSelector, {"from": owner})
+@pytest.fixture()
+def deployed_test_facet(from_admin):
+    facet = TestValueFacet.deploy(from_admin)
+    return facet 
 
-    return (
-        diamond,
-        diamondCutFacet,
-        diamondLoupeFacet,
-        ownershipFacet,
-        test1Facet,
-        test2Facet,
-    )
+@pytest.fixture()
+def deployed_test_storage(from_admin):
+    storage = TestValueStorage.deploy(from_admin)
+    return storage
