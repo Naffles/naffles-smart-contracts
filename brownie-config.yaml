@@ -1,21 +1,11 @@
 networks:
     default: development
-    development:
-        gas_limit: max
-        gas_buffer: 1
-        gas_price: 0
-        reverting_tx_gas_limit: max
-        default_contract_owner: true
 dependencies:
     - chiru-labs/ERC721A@4.2.3
     - OpenZeppelin/openzeppelin-contracts@4.8.0
 compiler:
-    evm_version: null
     solc:
         version: 0.8.17
-        optimizer:
-            enabled: true
-            runs: 200
         remappings:
             - '@ERC721A=chiru-labs/ERC721A@4.2.3'
             - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0'
