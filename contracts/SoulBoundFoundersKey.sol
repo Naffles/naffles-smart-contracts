@@ -14,17 +14,17 @@ error NotOwnerOfToken(uint256 tokenId);
 contract SoulBoundFoundersKey ERC721, Ownable, AccessControl {
     using Address for address;
     address public foundersKeysAddress;
-    bytes32 public constant STAKING_CONTRACT = keccak256("STAKING_CONTRACT");
+    bytes32 public constant STAKING_CONTRACT_ROLE = keccak256("STAKING_CONTRACT");
 
     Event Minted(uint256 tokenId, address owner);
     Event Burned(uint256 tokenId);
     
     constructor(address _stakingAddress, address _foundersKeysAddress) ERC721("Souldbound Naffles Founders Keys", "SBNFLS") {
       foundersKeysAddress = _foundersKeysAddress;
-      _setupRole(STAKING_CONTRACT, _stakingAddress);
+      _setupRole(STAKING_CONTRACT_ROLE, _stakingAddress);
     }
 
-    function safeMint(address _to, uint256 _tokenId) public onlyRole(STAKING_CONTRACT) {
+    function safeMint(address _to, uint256 _tokenId) public onlyRole(STAKING_CONTRACT_ROLE) {
       if (IERC721A(foundersKeysAddress).ownerOf(_tokenId) != _to) {
         revert NotOwnerOfToken(_tokenId);
       };
@@ -56,5 +56,9 @@ contract SoulBoundFoundersKey ERC721, Ownable, AccessControl {
 
     function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
       return IERC721A(foundersKeysAddress).tokenURI(tokenId);
+    }
+
+    function setFoundersKeysAddress(address _foundersKeysAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
+      foundersKeysAddress = _foundersKeysAddress;
     }
 }
