@@ -3,7 +3,7 @@ from brownie import (
     accounts, 
     NaffleDiamond,
     TestValueFacet,
-    TestValueStorage
+    TestValueFacetUpgraded,
 )
 
 
@@ -29,6 +29,7 @@ def deployed_test_facet(from_admin):
     return facet 
 
 @pytest.fixture()
-def deployed_test_storage(from_admin):
-    storage = TestValueStorage.deploy(from_admin)
-    return storage
+def deployed_test_facet_upgraded(from_admin):
+    facet = TestValueFacetUpgraded.deploy(from_admin)
+    return facet 
+
