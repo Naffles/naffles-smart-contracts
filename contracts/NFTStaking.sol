@@ -62,5 +62,7 @@ contract FoundersKeyStaking is ERC721Holder {
         }
     }
 
-    // TODO: Function to see if an address staked for a specific duration up until now.
+    function checkUserStakeDuration(address _userAddress, uint256 _duration) public view returns (bool) {
+        return block.timestamp - userStakeInfo[_userAddress].stakedTime >= _duration;
+    }
 }
