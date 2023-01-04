@@ -33,7 +33,9 @@ compiler:
         optimizer:
             enabled: true
             runs: 200
-        remappings: null
+        remappings:
+            - '@ERC721A=chiru-labs/ERC721A@4.2.3'
+            - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0'
     vyper:
         version: null
 
@@ -62,5 +64,7 @@ hypothesis:
         shrink: true
 
 autofetch_sources: false
-dependencies: null
+dependencies:
+    - chiru-labs/ERC721A@4.2.3
+    - OpenZeppelin/openzeppelin-contracts@4.8.0
 dev_deployment_artifacts: false
