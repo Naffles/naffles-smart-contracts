@@ -3,10 +3,11 @@ pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IFoundersKey.sol";
 import "../interfaces/ISoulBoundFoundersKey.sol";
 
-contract FoundersKeyStaking is ERC721Holder {
+contract FoundersKeyStaking is ERC721Holder, Ownable {
     address public FoundersKeyAddress;
     address public SoulBoundFoundersKeyAddress;
 
@@ -73,5 +74,15 @@ contract FoundersKeyStaking is ERC721Holder {
 
     function checkUserStakeDuration(address _userAddress, uint256 _duration) public view returns (bool) {
         return block.timestamp - userStakeInfo[_userAddress].stakedTime >= _duration;
+    }
+
+    function setFoundersKeyAddress(address _foundersKeyAddress) external onlyOwner {
+        require(_foundersKeyAddress != address(0), "can't use address 0");
+        FoundersKeyAddress = _foundersKeyAddress;
+    }
+
+    function setSoulBoundFoundersKeyAddress(address _soulBoundFoundersKeyAddress) external onlyOwner {
+        require(_soulBoundFoundersKeyAddress != address(0), "can't use address 0");
+        SoulBoundFoundersKeyAddress = _soulBoundFoundersKeyAddress;
     }
 }
