@@ -8,7 +8,13 @@ class FacetCutAction(Enum):
     REMOVE = 2
 
 
-def getSelectors(contract):
+def get_selectors(contract):
+    print("signatures")
     print(contract.signatures)
+    print("selectors")
     print(contract.selectors)
     return list(contract.signatures.values())
+
+
+def get_selector_by_name(contract, name):
+    return contract.signatures[name]
