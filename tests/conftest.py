@@ -5,6 +5,7 @@ from brownie import (
     NaffleDiamond,
     TestValueFacet,
     TestValueFacetUpgraded,
+    NaffleTicketFacet
 )
 
 
@@ -33,6 +34,11 @@ def deployed_test_facet(from_admin):
 @pytest.fixture()
 def deployed_test_facet_upgraded(from_admin):
     facet = TestValueFacetUpgraded.deploy(from_admin)
+    return facet
+
+
+def deployed_naffle_ticket_facet(from_admin):
+    facet = NaffleTicketFacet.deploy(from_admin)
     return facet
 
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-library TestValueStorage {
+library NaffleTicketStorage {
     bytes32 internal constant STORAGE_SLOT = keccak256("naffles.contracts.tokens.zksync.NaffleTicketStorage");
 
     struct Storage {
