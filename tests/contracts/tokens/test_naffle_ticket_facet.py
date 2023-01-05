@@ -2,22 +2,22 @@ import json
 
 from brownie import NaffleTicketFacet, Contract 
 
-from scripts.util import FacetCutAction, get_selectors
-from tests.contracts.test_naffle_diamond import NULL_ADDRESS
+from scripts.util import FacetCutAction, get_selectors, NULL_ADDRESS
+
 
 def _create_diamond(
     diamond, 
     facet,
     from_admin
 ):
-    cut = [[facet.address, FacetCutAction.Add.value, get_selectors(NaffleTicketFacet)]]
+    cut = [[facet.address, FacetCutAction.ADD.value, get_selectors(NaffleTicketFacet)]]
     diamond.diamondCut(cut, NULL_ADDRESS, b"", from_admin)
 
 
 def _get_diamond_proxy(root_directory, diamond, filename="NaffleTicketFacet.json"):
     file = open(f"{root_directory}/build/contracts/{filename}")
     data = json.load(file)
-    return Contract.from_abi("NaffleTicketFacet", data["abi"])
+    return Contract.from_abi("NaffleTicketFacet", diamond.address, data["abi"])
 
 def test_naffle_ticket_facet_exists(
         deployed_naffle_diamond, 

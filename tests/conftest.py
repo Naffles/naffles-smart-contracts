@@ -37,6 +37,7 @@ def deployed_test_facet_upgraded(from_admin):
     return facet
 
 
+@pytest.fixture()
 def deployed_naffle_ticket_facet(from_admin):
     facet = NaffleTicketFacet.deploy(from_admin)
     return facet

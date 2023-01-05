@@ -2,6 +2,7 @@ from enum import Enum
 
 from brownie import Contract
 
+NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 class FacetCutAction(Enum):
     ADD = 0

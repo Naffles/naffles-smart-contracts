@@ -33,4 +33,16 @@ contract NaffleTicketFacet is ERC721AUpgradeable, NaffleTicketFacetInternal, Acc
     function setBaseURI(string memory baseURI) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _setBaseURI(baseURI);
     }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721AUpgradeable, AccessControlUpgradeable)
+        returns (bool)
+    {
+        return
+            interfaceId == type(IERC721AUpgradeable).interfaceId ||
+            interfaceId == type(AccessControlUpgradeable).interfaceId;
+    }
 }
