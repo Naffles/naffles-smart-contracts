@@ -90,5 +90,3 @@ def test_supports_interface(deployed_soulbound, from_admin):
         "0x5b5e139f", from_admin) == True
     assert deployed_soulbound.supportsInterface(
         "0x01ffc9a7", from_admin) == True
-
-
