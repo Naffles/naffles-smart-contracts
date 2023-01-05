@@ -1,7 +1,7 @@
 import os
 import pytest
 from brownie import (
-    accounts, 
+    accounts,
     NaffleDiamond,
     TestValueFacet,
     TestValueFacetUpgraded,
@@ -15,7 +15,7 @@ def admin():
 
 @pytest.fixture
 def from_admin(admin):
-    return {'from': admin}
+    return {"from": admin}
 
 
 @pytest.fixture()
@@ -27,13 +27,13 @@ def deployed_naffle_diamond(from_admin):
 @pytest.fixture()
 def deployed_test_facet(from_admin):
     facet = TestValueFacet.deploy(from_admin)
-    return facet 
+    return facet
 
 
 @pytest.fixture()
 def deployed_test_facet_upgraded(from_admin):
     facet = TestValueFacetUpgraded.deploy(from_admin)
-    return facet 
+    return facet
 
 
 @pytest.fixture()
