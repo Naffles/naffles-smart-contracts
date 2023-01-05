@@ -7,11 +7,11 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@ERC721A/contracts/interfaces/IERC721A.sol";
 
-error SouldBound();
+error Soulbound();
 error AlreadyMinted(uint256 tokenId);
 error NotOwnerOfToken(uint256 tokenId);
 
-contract SoulBoundFoundersKey is ERC721, Ownable, AccessControl {
+contract SoulboundFoundersKey is ERC721, Ownable, AccessControl {
     using Address for address;
     IERC721A public FoundersKeysAddress;
     bytes32 public constant STAKING_CONTRACT_ROLE = keccak256("STAKING_CONTRACT");
@@ -19,7 +19,7 @@ contract SoulBoundFoundersKey is ERC721, Ownable, AccessControl {
     event Minted(uint256 tokenId, address owner);
     event Burned(uint256 tokenId);
     
-    constructor(address _stakingAddress, address _foundersKeysAddress) ERC721("Souldbound Naffles Founders Keys", "SBNFLS") {
+    constructor(address _stakingAddress, address _foundersKeysAddress) ERC721("SoulBound Naffles Founders Keys", "SBNFLS") {
       FoundersKeysAddress = IERC721A(_foundersKeysAddress);
 
       _setupRole(STAKING_CONTRACT_ROLE, _stakingAddress);
@@ -47,7 +47,7 @@ contract SoulBoundFoundersKey is ERC721, Ownable, AccessControl {
       override(ERC721)
     {
       if(from != address(0) && to != address(0)) {
-        revert SouldBound();
+        revert SoulBound();
       }
       super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
