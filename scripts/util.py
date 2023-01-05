@@ -9,10 +9,6 @@ class FacetCutAction(Enum):
 
 
 def get_selectors(contract):
-    print("signatures")
-    print(contract.signatures)
-    print("selectors")
-    print(contract.selectors)
     return list(contract.signatures.values())
 
 
