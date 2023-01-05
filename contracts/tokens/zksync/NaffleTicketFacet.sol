@@ -25,11 +25,6 @@ contract NaffleTicketFacet is ERC721AUpgradable, NaffleTicketFacetInternal, Acce
         return bytes(_baseURI()).length != 0 ? _getBaseURI()): "";
     }
 
-    function withdraw() external onlyRole(WITHDRAW_ROLE) {
-        (bool success, ) = msg.sender.call{value: address(this).balance}("");
-        if (!success) { revert UnableToWithdraw({amount: address(this).balance});}
-    }
-
     function _baseURI() internal view override returns (string memory) {
       return _getBaseURI();
     }
