@@ -1,10 +1,10 @@
 
-import "@chire-labs/contracts/ERC721AUpgradable.sol";
-import "@openzeppelin-upgradable/contracts/access/AccessControlUpgradable.sol";
+import "@chiru-labs/contracts/ERC721AUpgradeable.sol";
+import "@openzeppelin-upgradable/contracts/access/AccessControlUpgradeable.sol";
 
 error UnableToWithdraw(uint256 amount);
 
-contract NaffleTicketFacet is ERC721AUpgradable, NaffleTicketFacetInternal, AccessControlUpgradable {
+contract NaffleTicketFacet is ERC721AUpgreadable, NaffleTicketFacetInternal, AccessControlUpgradeable {
     function initialize() initializerERC721A initializer public {
         __ERC721A_init('Naffle Ticket', 'TICKET');
         __AccessControl_init();
@@ -22,7 +22,7 @@ contract NaffleTicketFacet is ERC721AUpgradable, NaffleTicketFacetInternal, Acce
         override
         returns (string memory)
     {
-        return bytes(_baseURI()).length != 0 ? _getBaseURI()): "";
+        return bytes(_baseURI()).length != 0 ? _getBaseURI() : "";
     }
 
     function _baseURI() internal view override returns (string memory) {

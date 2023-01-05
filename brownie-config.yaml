@@ -3,7 +3,7 @@ networks:
 dependencies:
     - solidstate-network/solidstate-solidity@0.0.51
     - OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.0
-    - chiru-labs/ERC721A-Upgradable@4.2.3
+    - chiru-labs/ERC721A-Upgradeable@4.2.3
 compiler:
     evm_version: null
     solc:
@@ -11,5 +11,5 @@ compiler:
         remappings:
             - '@solidstate=solidstate-network/solidstate-solidity@0.0.51'
             - '@chiru-labs=chiru-labs/ERC721A-Upgradable@4.2.3'
-            - '@openzeppeling-upgradable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.0'
+            - '@openzeppelin-upgradable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.0'
 
