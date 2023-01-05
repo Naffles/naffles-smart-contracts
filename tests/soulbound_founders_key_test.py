@@ -14,6 +14,7 @@ def test_safe_mint_not_owner_of_token(deployed_soulbound, address, from_admin):
 
 def test_safe_mint_success(deployed_soulbound, address, from_admin):
     soulbound_founders_key, erc721a_mock = deployed_soulbound
+    erc721a_mock.mint(address, 1, from_admin)
     soulbound_founders_key.safeMint(address, 1, from_admin)
     assert soulbound_founders_key.ownerOf(1) == erc721a_mock.ownerOf(1)
     assert soulbound_founders_key.ownerOf(1) == address
