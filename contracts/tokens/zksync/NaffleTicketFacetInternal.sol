@@ -12,7 +12,7 @@ contract NaffleTicketFacetInternal {
         return _storage().baseURI;
     }
 
-    function setBaseURI(string memory baseURI) internal {
+    function _setBaseURI(string memory baseURI) internal {
         _storage().baseURI = baseURI;
     }
 }

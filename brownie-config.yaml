@@ -10,6 +10,6 @@ compiler:
         version: 0.8.17
         remappings:
             - '@solidstate=solidstate-network/solidstate-solidity@0.0.51'
-            - '@chiru-labs=chiru-labs/ERC721A-Upgradable@4.2.3'
-            - '@openzeppelin-upgradable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.0'
+            - '@chiru-labs-upgradeable=chiru-labs/ERC721A-Upgradeable@4.2.3'
+            - '@openzeppelin-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.0'
 
