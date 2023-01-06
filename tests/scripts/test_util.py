@@ -1,6 +1,6 @@
-from scripts.util import get_selectors, get_selector_by_name
-
 from brownie import TestValueFacet
+
+from scripts.util import get_selectors, get_selector_by_name
 
 
 def test_get_selectors():
