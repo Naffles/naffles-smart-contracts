@@ -1,16 +1,15 @@
 
 import "@chiru-labs-upgradeable/contracts/ERC721AUpgradeable.sol";
-import "@openzeppelin-upgradeable/contracts/access/AccessControlUpgradeable.sol";
+import "@solidstate/contracts/access/access_control/AccessControl.sol";
+import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "./NaffleTicketFacetInternal.sol";
 
 error UnableToWithdraw(uint256 amount);
 
-contract NaffleTicketFacet is ERC721AUpgradeable, NaffleTicketFacetInternal, AccessControlUpgradeable {
-    function initialize() initializerERC721A initializer public {
+contract NaffleTicketFacet is ERC721AUpgradeable, NaffleTicketFacetInternal, AccessControl {
+    function initialize() initializerERC721A public {
         __ERC721A_init('Naffle Ticket', 'TICKET');
-        __AccessControl_init();
-
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(AccessControlStorage.DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     function exists(uint32 tokenId) external view returns (bool) {
@@ -30,7 +29,10 @@ contract NaffleTicketFacet is ERC721AUpgradeable, NaffleTicketFacetInternal, Acc
       return _getBaseURI();
     }
 
-    function setBaseURI(string memory baseURI) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function setBaseURI(string memory baseURI) 
+        external 
+        onlyRole(AccessControlStorage.DEFAULT_ADMIN_ROLE)
+    {
         _setBaseURI(baseURI);
     }
 
@@ -38,11 +40,11 @@ contract NaffleTicketFacet is ERC721AUpgradeable, NaffleTicketFacetInternal, Acc
         public
         view
         virtual
-        override(ERC721AUpgradeable, AccessControlUpgradeable)
+        override(ERC721AUpgradeable)
         returns (bool)
     {
         return
             interfaceId == type(IERC721AUpgradeable).interfaceId ||
-            interfaceId == type(AccessControlUpgradeable).interfaceId;
+            interfaceId == bytes4(bytes("0x7965db0b")); // AccessControl
     }
 }

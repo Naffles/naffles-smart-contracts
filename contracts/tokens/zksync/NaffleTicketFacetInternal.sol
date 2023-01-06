@@ -2,6 +2,7 @@
 pragma solidity ^0.8.17;
 
 import "./NaffleTicketStorage.sol";
+import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 
 contract NaffleTicketFacetInternal {
     function _storage() internal pure returns (NaffleTicketStorage.Storage storage s) {
