@@ -14,9 +14,7 @@ def _create_diamond(
     # already present in the diamond
     selectors.remove(get_selector_by_name(facet, "supportsInterface"))
     cut = [[facet.address, FacetCutAction.ADD.value, selectors]] 
-    
     diamond.diamondCut(cut, NULL_ADDRESS, b"", from_admin)
-
 
 def _get_diamond_proxy(root_directory, diamond, filename="NaffleTicketFacet.json"):
     file = open(f"{root_directory}/build/contracts/{filename}")

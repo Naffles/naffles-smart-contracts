@@ -6,11 +6,11 @@ import "./NaffleTicketFacetInternal.sol";
 
 error UnableToWithdraw(uint256 amount);
 
-contract NaffleTicketFacet is ERC721AUpgradeable, NaffleTicketFacetInternal, AccessControl {
+contract NaffleTicketFacet is ERC721AUpgradeable, NaffleTicketFacetInternal, AccessControl{
     function initialize() initializerERC721A public {
         __ERC721A_init('Naffle Ticket', 'TICKET');
         _grantRole(AccessControlStorage.DEFAULT_ADMIN_ROLE, msg.sender);
-    }
+     }
 
     function exists(uint32 tokenId) external view returns (bool) {
         return _exists(tokenId);
@@ -35,6 +35,4 @@ contract NaffleTicketFacet is ERC721AUpgradeable, NaffleTicketFacetInternal, Acc
     {
         _setBaseURI(baseURI);
     }
-
-    //interfaceId == bytes4(bytes("0x7965db0b")); // AccessControl
 }

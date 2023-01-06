@@ -3,8 +3,9 @@ pragma solidity ^0.8.17;
 
 import "./NaffleTicketStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
+import "@solidstate/contract/introspection/base/ERC165BaseInternal.sol";
 
-contract NaffleTicketFacetInternal {
+contract NaffleTicketFacetInternal is ERC165BaseInternal {
     function _storage() internal pure returns (NaffleTicketStorage.Storage storage s) {
         s = NaffleTicketStorage.layout();
     }
@@ -15,5 +16,12 @@ contract NaffleTicketFacetInternal {
 
     function _setBaseURI(string memory baseURI) internal {
         _storage().baseURI = baseURI;
+    }
+
+    function _setupSupportsInterface() internal {
+        _setSupportsInterface(0x01ffc9a7, true);
+        _setSupportsInterface(0x80ac58cd, true);
+        _setSupportsInterface(0x5b5e139f, true);
+        _setSupportsInterface(0x7965db0b, true);
     }
 }
