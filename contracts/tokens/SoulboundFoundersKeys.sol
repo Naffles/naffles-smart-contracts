@@ -7,25 +7,27 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@ERC721A/contracts/interfaces/IERC721A.sol";
 
-error SouldBound();
+error Soulbound();
 error AlreadyMinted(uint256 tokenId);
 error NotOwnerOfToken(uint256 tokenId);
 
-contract SoulBoundFoundersKey is ERC721, Ownable, AccessControl {
+contract SoulboundFoundersKey is ERC721, Ownable, AccessControl {
     using Address for address;
-    address public foundersKeysAddress;
+    IERC721A public FoundersKeysAddress;
     bytes32 public constant STAKING_CONTRACT_ROLE = keccak256("STAKING_CONTRACT");
 
     event Minted(uint256 tokenId, address owner);
     event Burned(uint256 tokenId);
     
-    constructor(address _stakingAddress, address _foundersKeysAddress) ERC721("Souldbound Naffles Founders Keys", "SBNFLS") {
-      foundersKeysAddress = _foundersKeysAddress;
+    constructor(address _stakingAddress, address _foundersKeysAddress) ERC721("Soulbound Naffles Founders Keys", "SBNFLS") {
+      FoundersKeysAddress = IERC721A(_foundersKeysAddress);
+
       _setupRole(STAKING_CONTRACT_ROLE, _stakingAddress);
+      _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     function safeMint(address _to, uint256 _tokenId) public onlyRole(STAKING_CONTRACT_ROLE) {
-      if (IERC721A(foundersKeysAddress).ownerOf(_tokenId) != _to) {
+      if (FoundersKeysAddress.ownerOf(_tokenId) != _to) {
         revert NotOwnerOfToken(_tokenId);
       }
       _safeMint(_to, _tokenId);
@@ -44,8 +46,8 @@ contract SoulBoundFoundersKey is ERC721, Ownable, AccessControl {
       virtual
       override(ERC721)
     {
-      if(from != address(0) || to != address(0)) {
-        revert SouldBound();
+      if(from != address(0) && to != address(0)) {
+        revert Soulbound();
       }
       super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
@@ -55,11 +57,11 @@ contract SoulBoundFoundersKey is ERC721, Ownable, AccessControl {
     }
 
     function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
-      return IERC721A(foundersKeysAddress).tokenURI(tokenId);
+      return FoundersKeysAddress.tokenURI(tokenId);
     }
 
     function setFoundersKeysAddress(address _foundersKeysAddress) external onlyRole(DEFAULT_ADMIN_ROLE) {
-      foundersKeysAddress = _foundersKeysAddress;
+      FoundersKeysAddress = IERC721A(_foundersKeysAddress);
     }
 
     function supportsInterface(bytes4 _interfaceId)
