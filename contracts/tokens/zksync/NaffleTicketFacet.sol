@@ -36,15 +36,5 @@ contract NaffleTicketFacet is ERC721AUpgradeable, NaffleTicketFacetInternal, Acc
         _setBaseURI(baseURI);
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC721AUpgradeable)
-        returns (bool)
-    {
-        return
-            interfaceId == type(IERC721AUpgradeable).interfaceId ||
-            interfaceId == bytes4(bytes("0x7965db0b")); // AccessControl
-    }
+    //interfaceId == bytes4(bytes("0x7965db0b")); // AccessControl
 }

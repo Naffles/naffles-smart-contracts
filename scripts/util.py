@@ -16,3 +16,7 @@ def get_selectors(contract):
 
 def get_selector_by_name(contract, name):
     return contract.signatures[name]
+
+
+def get_name_by_selector(contract, selector):
+    return contract.selectors[str(selector)]
