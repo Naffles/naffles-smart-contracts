@@ -4,76 +4,100 @@ pragma solidity 0.8.17;
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "../interfaces/IFoundersKey.sol";
 import "../interfaces/ISoulBoundFoundersKey.sol";
 
-contract FoundersKeyStaking is ERC721Holder, Ownable {
+contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     address public FoundersKeyAddress;
     address public SoulBoundFoundersKeyAddress;
 
+    enum StakingPeriond { ONE_MONTH, THREE_MONTHS, SIX_MONTHS, TWELVE_MONTHS }
+
+    uint256 public constant ONE_MONTH = 30 days;
+    uint256 public constant THREE_MONTHS = 90 days;
+    uint256 public constant SIX_MONTHS = 180 days;
+    uint256 public constant TWELVE_MONTHS = 365 days;
+
     struct StakeInfo {
         uint16 nftId;
-        uint256 stakedTime;
-        uint256 unstakedTime;
+        uint256 stakedSince;
+        uint256 unstakedSince;
+        StakingPeriond stakingPeriod;
     }
 
-    mapping(address => StakeInfo) public userStakeInfo;
-    mapping(address => bool) public isUserStaked;
+    mapping(address => mapping(uint16 => uint)) public nftIdToIndex;
+    mapping(address => uint16[]) public stakedNFTIds;
+    mapping(address => StakeInfo[]) public userStakeInfo;
 
     event UserStaked(address userAddress, uint16 nftId, uint256 stakeTime);
     event UserUnstaked(address userAddress, uint16 nftId, uint256 unstakeTime);
 
-    constructor(address _foundersKeyAddress, address _soulBoundFoundersKeyAddress) {
+    constructor(
+        address _foundersKeyAddress, 
+        address _soulBoundFoundersKeyAddress
+    ) {
         FoundersKeyAddress = _foundersKeyAddress;
         SoulBoundFoundersKeyAddress = _soulBoundFoundersKeyAddress;
     }
 
-    function stake(uint16 _nftId) external {
-        require(!isUserStaked[msg.sender], "You already staked 1 NFT!");
-
-        // SafeMint SoulBoundNFT
+    function stake(uint16 _nftId, StakingPeriod _stakingPeriod) external whenNotPaused {
         ISoulBoundFoundersKey(SoulBoundFoundersKeyAddress).safeMint(msg.sender, _nftId);
-
         IERC721(FoundersKeyAddress).transferFrom(msg.sender, address(this), _nftId);
-        isUserStaked[msg.sender] = true;
-        userStakeInfo[msg.sender] = StakeInfo(_nftId, block.timestamp, 0);
+        StakeInfo memory stakeInfo = StakeInfo(_nftId, bytes32(block.timestamp), 0, _stakingPeriod);
+
+        userStakeInfo[msg.sender].push(stakeInfo);
+        stakedNFTIds[msg.sender].push(_nftId);
+        nftIdToIndex[msg.sender][_nftId] = stakedNFTIds[msg.sender].length - 1;
 
         emit UserStaked(msg.sender, _nftId, block.timestamp);
     }
 
-    function unstake() external {
-        require(isUserStaked[msg.sender], "You didn't stake NFT!");
+    function unstake(uint16 _nftId) external {
+        require(_nftId != 0, "NFT ID can't be 0!");
+        StakeInfo storage stakeInfo = userStakeInfo[msg.sender][_nftId];
+        require(stakeInfos[index].nftId != 0, "You didn't stake NFT!");
+        require(stakeInfo.stakedSince + getStakingPeriod(stakeInfo.stakingPeriod) < block.timestamp, "NFT is still locked!");
 
-        uint16 nftId = userStakeInfo[msg.sender].nftId;
-        IERC721(FoundersKeyAddress).transferFrom(address(this), msg.sender, nftId);
-        isUserStaked[msg.sender] = false;
-        userStakeInfo[msg.sender].unstakedTime = block.timestamp;
-        
-        ISoulBoundFoundersKey(SoulBoundFoundersKeyAddress).burn(nftId);
+        IERC721(FoundersKeyAddress).transferFrom(address(this), msg.sender, _nftId);
+        stakeInfos[index].unstakedSince = bytes32(block.timestamp);
+        ISoulBoundFoundersKey(SoulBoundFoundersKeyAddress).burn(_nftId);
 
-        emit UserUnstaked(msg.sender, nftId, block.timestamp);
+        uint16[] storage stakedNFTIds = stakedNFTIds[msg.sender];
+        delete stakedNFTIds[index];
+
+        emit UserUnstaked(msg.sender, _nftId, block.timestamp);
     }
 
-    // We want to get the type of key that is staked (use the type function on our founders key contract).
-    function getUserStakedNFTType(address _userAddress) public view returns(uint8) {
-        if (isUserStaked[_userAddress]) {
-            return IFoundersKey(FoundersKeyAddress).tokenType(userStakeInfo[_userAddress].nftId);
+    function getStakingPeriodInDays(StakingPeriod _stakingPeriod) public pure returns (uint256) {
+        if (_stakingPeriod == StakingPeriod.ONE_MONTH) {
+            return ONE_MONTH;
+        } else if (_stakingPeriod == StakingPeriod.THREE_MONTHS) {
+            return THREE_MONTHS;
+        } else if (_stakingPeriod == StakingPeriod.SIX_MONTHS) {
+            return SIX_MONTHS;
+        } else if (_stakingPeriod == StakingPeriod.TWELVE_MONTHS) {
+            return TWELVE_MONTHS;
         } else {
-            return 0;
+            revert("Invalid staking period!");
         }
     }
 
-    // Function to see if an address staked before a certain date.
-    function isUserStakedBefore(uint256 _time, address _userAddress) public view returns (bool) {
-        if (isUserStaked[_userAddress]) {
-            return userStakeInfo[_userAddress].stakedTime < _time;
-        } else {
-            return false;
+    // returns the staked info for the best pass types currently staked.
+    function getBestStakedNFTInfos(address _userAddress) external view returns(StakedInfo[] memory) {
+        uint16 bestStakedType = 0;
+        StakedInfos[] memory bestStakedInfos;
+        uint16[] storage stakedNFTIds = stakedNFTIds[_userAddress];
+        for (uint i = 0; i < stakedNFTIds.length; i++) {
+            uint16 nftId = stakedNFTIds[i];
+            StakedInfo memory stakedInfo = userStakeInfo[_userAddress][nftId];
+            uint16 tokenType = IFoundersKey(FoundersKeyAddress).tokenType(nftId);
+            if (tokenType >= bestStakedType) {
+                bestStakedType = tokenType;
+                bestStakedInfos.push = stakedInfo;
+            } 
         }
-    }
-
-    function checkUserStakeDuration(address _userAddress, uint256 _duration) public view returns (bool) {
-        return block.timestamp - userStakeInfo[_userAddress].stakedTime >= _duration;
+        return bestStakedInfos;
     }
 
     function setFoundersKeyAddress(address _foundersKeyAddress) external onlyOwner {
@@ -84,5 +108,9 @@ contract FoundersKeyStaking is ERC721Holder, Ownable {
     function setSoulBoundFoundersKeyAddress(address _soulBoundFoundersKeyAddress) external onlyOwner {
         require(_soulBoundFoundersKeyAddress != address(0), "can't use address 0");
         SoulBoundFoundersKeyAddress = _soulBoundFoundersKeyAddress;
+    }
+
+    function setBonusStakeTimeLimit(uint256 _bonusStakeTimeLimit) external onlyOwner {
+        bonusStakeTimeLimit = _bonusStakeTimeLimit;
     }
 }
