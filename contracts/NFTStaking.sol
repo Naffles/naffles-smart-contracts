@@ -87,11 +87,11 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     // returns the staked info for the best pass types currently staked.
     function getBestStakedNFTInfos(address _userAddress) external view returns(StakeInfo[] memory) {
         uint16 bestStakedType = 0;
-        StakeInfo[] storage bestStakedInfos;
+        StakeInfo[] memory bestStakedInfos = new StakeInfo[];
         uint16[] storage stakedNFTIdsForAddress = stakedNFTIds[_userAddress];
         for (uint i = 0; i < stakedNFTIdsForAddress.length; i++) {
             uint16 nftId = stakedNFTIdsForAddress[i];
-            StakeInfo storage stakedInfo = userStakeInfo[_userAddress][nftId];
+            StakeInfo memory stakedInfo = userStakeInfo[_userAddress][nftId];
             uint16 tokenType = FoundersKeyAddress.tokenType(nftId);
             if (tokenType >= bestStakedType) {
                 bestStakedType = tokenType;
