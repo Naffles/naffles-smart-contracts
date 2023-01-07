@@ -56,6 +56,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     function unstake(uint16 _nftId) external {
         require(_nftId != 0, "NFT ID can't be 0!");
         StakeInfo storage stakeInfo = userStakeInfo[msg.sender][_nftId];
+        require(stakeInfo.unstakedSince == 0, "NFT is already unstaked!");
         require(stakeInfos[index].nftId != 0, "You didn't stake NFT!");
         require(stakeInfo.stakedSince + getStakingPeriod(stakeInfo.stakingPeriod) < block.timestamp, "NFT is still locked!");
 
