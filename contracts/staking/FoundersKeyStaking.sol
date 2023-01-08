@@ -58,6 +58,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
                 revert NFTAlreadyStaked(_nftId);
             }
             stakeInfo.stakedSince = block.timestamp;
+            stakeInfo.unstakedSince = 0;
         } else {
             StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, 0, _stakingPeriod);
             userStakeInfo[msg.sender].push(stakeInfo);
