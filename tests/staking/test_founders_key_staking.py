@@ -47,9 +47,6 @@ def test_founders_key_staking_stake(
     assert info[0] == 1
     assert info[1] >= curent_time
     assert info[2] == 0
-    assert info[3] == 0
-
-    assert staking.nftStakedOnce(address.address, 1) 
 
 
 def test_founders_key_staking_stake_multiple_times_same_nft(
@@ -80,13 +77,17 @@ def test_founders_key_staking_stake_multiple_times_same_nft(
     )
     assert soulbound.ownerOf(1) == address.address
     assert erc721a.ownerOf(1) == staking.address
-    assert staking.stakedNFTIds(address.address, 0) == 1
-    assert staking.nftStakedOnce(address.address, 1) 
+    assert staking.stakedNFTIds(address.address, 0) == 0
+    assert staking.stakedNFTIds(address.address, 1) == 1
     info = staking.userStakeInfo(address.address, 0) 
+    assert info[0] == 0
+    assert info[1] == 0 
+    assert info[2] == 0
+    info = staking.userStakeInfo(address.address, 1) 
     assert info[0] == 1
     assert info[1] >= curent_time
     assert info[2] == 0
-    assert info[3] == 0
+
 
 
 def test_founders_key_staking_stake_no_owner(
@@ -184,8 +185,6 @@ def test_unstake(
         assert soulbound.ownerOf(1) == address.address
     assert erc721a.ownerOf(1) == address.address
     assert staking.stakedNFTIds(address.address, 0) == 0
-    info = staking.userStakeInfo(address.address, 0) 
-    assert info[2] >= curent_time
 
 
 def test_unstake_still_locked(

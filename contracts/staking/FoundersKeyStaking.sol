@@ -9,9 +9,7 @@ import "../../interfaces/IFoundersKey.sol";
 import "../../interfaces/ISoulboundFoundersKey.sol";
 
 error NFTAlreadyStaked(uint16 nftId);
-error NFTNotStaked(uint16 nftId);
 error NFTLocked(uint16 nftId, uint256 unlockTime);
-
 
 contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     IFoundersKey public FoundersKeyAddress;
@@ -27,11 +25,9 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     struct StakeInfo {
         uint16 nftId;
         uint256 stakedSince;
-        uint256 unstakedSince;
         StakingPeriod stakingPeriod;
     }
 
-    mapping(address => mapping(uint16 => bool)) public nftStakedOnce;
     mapping(uint16 => uint) private nftIdToIndex;
     mapping(address => uint16[]) public stakedNFTIds;
     mapping(address => StakeInfo[]) public userStakeInfo;
@@ -51,40 +47,24 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         SoulboundFoundersKeyAddress.safeMint(msg.sender, _nftId);
         FoundersKeyAddress.transferFrom(msg.sender, address(this), _nftId);
 
-        // FIX double staking
-        // If users stakes the same nft twice
-        if (nftStakedOnce[msg.sender][_nftId]) {
-            StakeInfo storage stakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
-            if (stakeInfo.unstakedSince == 0) {
-                revert NFTAlreadyStaked(_nftId);
-            }
-            stakeInfo.stakedSince = block.timestamp;
-            stakeInfo.unstakedSince = 0;
-        } else {
-            StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, 0, _stakingPeriod);
-            userStakeInfo[msg.sender].push(stakeInfo);
-            stakedNFTIds[msg.sender].push(_nftId);
-            nftIdToIndex[_nftId] = stakedNFTIds[msg.sender].length - 1;
-            nftStakedOnce[msg.sender][_nftId] = true;
-        }
-         
+        StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, _stakingPeriod);
+        userStakeInfo[msg.sender].push(stakeInfo);
+        stakedNFTIds[msg.sender].push(_nftId);
+        nftIdToIndex[_nftId] = stakedNFTIds[msg.sender].length - 1;
+     
         emit UserStaked(msg.sender, _nftId, block.timestamp);
     }
 
     function unstake(uint16 _nftId) external {
         StakeInfo storage stakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
-        if (stakeInfo.unstakedSince != 0) {
-            revert NFTNotStaked(_nftId);
-        }
         if (stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod) > block.timestamp) {
             revert NFTLocked(_nftId, stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod));
         }
         FoundersKeyAddress.transferFrom(address(this), msg.sender, _nftId);
-        stakeInfo.unstakedSince = block.timestamp;
         SoulboundFoundersKeyAddress.burn(_nftId);
-
-        uint16[] storage stakedNFTIdsForAddress = stakedNFTIds[msg.sender];
-        delete stakedNFTIdsForAddress[nftIdToIndex[_nftId]];
+        delete userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
+        delete stakedNFTIds[msg.sender][nftIdToIndex[_nftId]];
+        delete nftIdToIndex[_nftId];
 
         emit UserUnstaked(msg.sender, _nftId, block.timestamp);
     }
