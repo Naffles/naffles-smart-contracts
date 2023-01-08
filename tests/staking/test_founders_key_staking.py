@@ -1,6 +1,6 @@
 import time 
 
-from brownie import reverts
+from brownie import reverts, chain 
 
 def _mint_and_stake(
     staking,
@@ -129,6 +129,7 @@ def test_unstake(
     from_address,
 ):
     staking, soulbound, erc721a = deployed_founders_key_staking
+    curent_time = time.time()
     _mint_and_stake(
         staking,
         erc721a,
@@ -137,17 +138,66 @@ def test_unstake(
         address,
         1
     )
+    # rpc sleep for 1 month
+    chain.sleep(60 * 60 * 24 * 31)
     staking.unstake(1, from_address)
-    assert soulbound.ownerOf(1) == address.address
+    with reverts():
+        assert soulbound.ownerOf(1) == address.address
     assert erc721a.ownerOf(1) == address.address
     assert staking.stakedNFTIds(address.address, 0) == 0
     info = staking.userStakeInfo(address.address, 0) 
-    assert info[0] == 0
-    assert info[1] == 0
-    assert info[2] == 0
-    assert info[3] == 0
+    assert info[2] >= curent_time
 
 
+def test_unstake_still_locked(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    staking, _, erc721a = deployed_founders_key_staking
+    _mint_and_stake(
+        staking,
+        erc721a,
+        from_admin,
+        from_address,
+        address,
+        1
+    )
+    with reverts():
+        staking.unstake(1, from_address)
 
 
+def test_unstake_id_does_not_exist(
+    deployed_founders_key_staking,
+    from_address,
+):
+    staking, _, _ = deployed_founders_key_staking
+    with reverts():
+        staking.unstake(1, from_address)
 
+
+def test_unstake_id_not_staked(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    staking, _, erc721a = deployed_founders_key_staking
+    erc721a.mint(address.address, 1, from_admin)
+    with reverts():
+        staking.unstake(1, from_address)
+
+
+def test_unstake_id_not_staked_by_user(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    staking, _, erc721a = deployed_founders_key_staking
+    erc721a.mint(address.address, 1, from_admin)
+    erc721a.approve(staking.address, 1, from_address)
+    staking.stake(1, 0, from_address)
+    with reverts():
+        staking.unstake(1, from_admin)
