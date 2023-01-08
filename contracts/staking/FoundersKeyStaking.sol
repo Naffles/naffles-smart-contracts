@@ -50,10 +50,9 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         SoulboundFoundersKeyAddress.safeMint(msg.sender, _nftId);
         FoundersKeyAddress.transferFrom(msg.sender, address(this), _nftId);
 
-        StakeInfo memory existingStakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
-        if (existingStakeInfo.nftId == _nftId && existingStakeInfo.unstakedSince == 0) {
-            revert NFTAlreadyStaked(_nftId);
-        } 
+
+        // todo fix if users stakes the same nft twice
+        
 
         StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, 0, _stakingPeriod);
         userStakeInfo[msg.sender].push(stakeInfo);
@@ -65,10 +64,12 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
 
     function unstake(uint16 _nftId) external {
         StakeInfo storage stakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
-        require(stakeInfo.unstakedSince == 0, "NFT is already unstaked!");
-        require(stakeInfo.nftId != 0, "You didn't stake NFT!");
-        require(stakeInfo.stakedSince + _getStakingPeriodInDays(stakeInfo.stakingPeriod) < block.timestamp, "NFT is still locked!");
-
+        if (stakeInfo.unstakedSince != 0) {
+            revert NFTNotStaked(_nftId);
+        }
+        if (stakeInfo.stakedSince + getStakingPeriod(stakeInfo.stakingPeriod) > block.timestamp) {
+            revert NFTLocked(_nftId, stakeInfo.stakedSince + getStakingPeriod(stakeInfo.stakingPeriod));
+        }
         FoundersKeyAddress.transferFrom(address(this), msg.sender, _nftId);
         stakeInfo.unstakedSince = block.timestamp;
         SoulboundFoundersKeyAddress.burn(_nftId);
