@@ -8,6 +8,11 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "../../interfaces/IFoundersKey.sol";
 import "../../interfaces/ISoulboundFoundersKey.sol";
 
+error NFTAlreadyStaked(uint16 nftId);
+error NFTNotStaked(uint16 nftId);
+error NFTLocked(uint16 nftId, uint256 unlockTime);
+
+
 contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     IFoundersKey public FoundersKeyAddress;
     ISoulboundFoundersKey public SoulboundFoundersKeyAddress;
@@ -44,8 +49,13 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     function stake(uint16 _nftId, StakingPeriod _stakingPeriod) external whenNotPaused {
         SoulboundFoundersKeyAddress.safeMint(msg.sender, _nftId);
         FoundersKeyAddress.transferFrom(msg.sender, address(this), _nftId);
-        StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, 0, _stakingPeriod);
 
+        StakeInfo memory existingStakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
+        if (existingStakeInfo.nftId == _nftId && existingStakeInfo.unstakedSince == 0) {
+            revert NFTAlreadyStaked(_nftId);
+        } 
+
+        StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, 0, _stakingPeriod);
         userStakeInfo[msg.sender].push(stakeInfo);
         stakedNFTIds[msg.sender].push(_nftId);
         nftIdToIndex[_nftId] = stakedNFTIds[msg.sender].length - 1;
