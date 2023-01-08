@@ -1,7 +1,11 @@
 import pytest
 
-from brownie import SoulboundFoundersKey, accounts, ERC721AMock
-
+from brownie import (
+    SoulboundFoundersKey, 
+    FoundersKeyStaking,
+    accounts, ERC721AMock,
+)
+        
 
 @pytest.fixture
 def admin():
@@ -12,9 +16,11 @@ def admin():
 def from_admin(admin):
     return {'from': admin}
 
+
 @pytest.fixture
 def address():
     return accounts[1]
+
 
 @pytest.fixture
 def from_address(address):
@@ -33,3 +39,13 @@ def deployed_soulbound(deployed_erc721a_mock, admin, from_admin):
         deployed_erc721a_mock.address,
         from_admin
     ), deployed_erc721a_mock
+
+
+@pytest.fixture
+def deployed_founders_key_staking(deployed_soulbound, from_admin):
+    return FoundersKeyStaking.deploy(
+        deployed_soulbound[1].address,
+        deployed_soulbound[0].address,
+        from_admin
+    ), deployed_soulbound[0], deployed_soulbound[1]
+
