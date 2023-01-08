@@ -105,7 +105,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         FoundersKeyAddress = IFoundersKey(_foundersKeyAddress);
     }
 
-    function setSoulBoundFoundersKeyAddress(address _soulboundFoundersKeyAddress) external onlyOwner {
+    function setSoulboundFoundersKeyAddress(address _soulboundFoundersKeyAddress) external onlyOwner {
         require(_soulboundFoundersKeyAddress != address(0), "can't use address 0");
         SoulboundFoundersKeyAddress = ISoulboundFoundersKey(_soulboundFoundersKeyAddress);
     }

@@ -240,3 +240,41 @@ def test_unstake_id_not_staked_by_user(
         staking.unstake(1, from_admin)
 
 
+def testSetFoundersKeyAddressNoAdmin(
+    deployed_founders_key_staking,
+    from_address,
+    address,
+):
+    staking, _, _ = deployed_founders_key_staking
+    with reverts():
+        staking.setFoundersKeyAddress(address.address, from_address)
+
+
+def testSetFoundersKeyAddress(
+    deployed_founders_key_staking,
+    deployed_erc721a_mock,
+    from_admin,
+):
+    staking, _, _ = deployed_founders_key_staking
+    staking.setFoundersKeyAddress(deployed_erc721a_mock.address, from_admin)
+    assert staking.FoundersKeyAddress() == deployed_erc721a_mock.address
+
+
+def testSetSoulboundFoundersKeyAddressNoAdmin(
+    deployed_founders_key_staking,
+    from_address,
+    address,
+):
+    staking, _, _ = deployed_founders_key_staking
+    with reverts():
+        staking.setSoulboundFoundersKeyAddress(address.address, from_address)
+
+
+def testSetSoulboundFoundersKeyAddress(
+    deployed_founders_key_staking,
+    deployed_soulbound,
+    from_admin,
+):
+    staking, _, _ = deployed_founders_key_staking
+    staking.setSoulboundFoundersKeyAddress(deployed_soulbound[0].address, from_admin)
+    assert staking.SoulboundFoundersKeyAddress() == deployed_soulbound[0].address
