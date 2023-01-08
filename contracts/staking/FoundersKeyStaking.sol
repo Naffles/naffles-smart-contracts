@@ -51,6 +51,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         SoulboundFoundersKeyAddress.safeMint(msg.sender, _nftId);
         FoundersKeyAddress.transferFrom(msg.sender, address(this), _nftId);
 
+        // FIX double staking
         // If users stakes the same nft twice
         if (nftStakedOnce[msg.sender][_nftId]) {
             StakeInfo storage stakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];

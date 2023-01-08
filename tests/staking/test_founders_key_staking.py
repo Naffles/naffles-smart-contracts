@@ -49,6 +49,45 @@ def test_founders_key_staking_stake(
     assert info[2] == 0
     assert info[3] == 0
 
+    assert staking.nftStakedOnce(address.address, 1) 
+
+
+def test_founders_key_staking_stake_multiple_times_same_nft(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    staking, soulbound, erc721a = deployed_founders_key_staking
+    curent_time = time.time()
+    _mint_and_stake(
+        staking,
+        erc721a,
+        from_admin,
+        from_address,
+        address,
+        1
+    )
+    chain.sleep(60 * 60 * 24 * 31)
+    staking.unstake(1, from_address)
+    _mint_and_stake(
+        staking,
+        erc721a,
+        from_admin,
+        from_address,
+        address,
+        1
+    )
+    assert soulbound.ownerOf(1) == address.address
+    assert erc721a.ownerOf(1) == staking.address
+    assert staking.stakedNFTIds(address.address, 0) == 1
+    assert staking.nftStakedOnce(address.address, 1) 
+    info = staking.userStakeInfo(address.address, 0) 
+    assert info[0] == 1
+    assert info[1] >= curent_time
+    assert info[2] == 0
+    assert info[3] == 0
+
 
 def test_founders_key_staking_stake_no_owner(
     deployed_founders_key_staking,
@@ -201,3 +240,5 @@ def test_unstake_id_not_staked_by_user(
     staking.stake(1, 0, from_address)
     with reverts():
         staking.unstake(1, from_admin)
+
+
