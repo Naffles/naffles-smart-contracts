@@ -162,14 +162,13 @@ def test_founders_key_staking_stake_id_not_approved(
         staking.stake(1, 0, from_address)
 
 
-def test_unstake(
+def test_unstake_after_lock(
     deployed_founders_key_staking,
     from_admin,
     address,
     from_address,
 ):
     staking, soulbound, erc721a = deployed_founders_key_staking
-    curent_time = time.time()
     _mint_and_stake(
         staking,
         erc721a,
