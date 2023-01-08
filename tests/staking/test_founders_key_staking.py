@@ -2,6 +2,17 @@ import time
 
 from brownie import reverts
 
+def _mint_and_stake(
+    staking,
+    erc721a,
+    from_admin,
+    from_address,
+    address,
+    id,
+):
+    erc721a.mint(address.address, id, from_admin)
+    erc721a.approve(staking.address, id, from_address)
+    staking.stake(id, 0, from_address)
 
 def test_founders_key_staking_constructor(
     deployed_founders_key_staking
@@ -20,9 +31,15 @@ def test_founders_key_staking_stake(
     staking, soulbound, erc721a = deployed_founders_key_staking
     curent_time = time.time()
 
-    erc721a.mint(address.address, 1, from_admin)
-    erc721a.approve(staking.address, 1, from_address)
-    staking.stake(1, 0, from_address)
+    _mint_and_stake(
+        staking,
+        erc721a,
+        from_admin,
+        from_address,
+        address,
+        1
+    )
+
     assert soulbound.ownerOf(1) == address.address
     assert erc721a.ownerOf(1) == staking.address
     assert staking.stakedNFTIds(address.address, 0) == 1
@@ -53,3 +70,84 @@ def test_founders_key_staking_stake_id_does_not_exist(
     staking, _, _ = deployed_founders_key_staking
     with reverts():
         staking.stake(1, 0, from_admin)
+
+
+def test_founders_key_staking_stake_id_already_staked(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    staking, _ , erc721a = deployed_founders_key_staking
+    _mint_and_stake(
+        staking,
+        erc721a,
+        from_admin,
+        from_address,
+        address,
+        1
+    )
+    with reverts():
+        staking.stake(1, 0, from_address)
+
+
+def test_founders_key_staking_stake_id_already_staked_by_other(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    staking, _ , erc721a = deployed_founders_key_staking
+    _mint_and_stake(
+        staking,
+        erc721a,
+        from_admin,
+        from_address,
+        address,
+        1
+    ) 
+    with reverts():
+        staking.stake(1, 0, from_admin)
+
+
+def test_founders_key_staking_stake_id_not_approved(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address
+):
+    staking, _, erc721a = deployed_founders_key_staking
+    erc721a.mint(address.address, 1, from_admin)
+    with reverts():
+        staking.stake(1, 0, from_address)
+
+
+def test_unstake(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    staking, soulbound, erc721a = deployed_founders_key_staking
+    _mint_and_stake(
+        staking,
+        erc721a,
+        from_admin,
+        from_address,
+        address,
+        1
+    )
+    staking.unstake(1, from_address)
+    assert soulbound.ownerOf(1) == address.address
+    assert erc721a.ownerOf(1) == address.address
+    assert staking.stakedNFTIds(address.address, 0) == 0
+    info = staking.userStakeInfo(address.address, 0) 
+    assert info[0] == 0
+    assert info[1] == 0
+    assert info[2] == 0
+    assert info[3] == 0
+
+
+
+
+
