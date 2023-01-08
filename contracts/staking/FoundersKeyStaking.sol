@@ -83,7 +83,6 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         }
     }
 
-    // returns the staked info for the best pass types currently staked.
     function getBestStakedNFTInfos(address _userAddress) external view returns(StakeInfo[] memory) {
         uint16 bestStakedType = 0;
         StakeInfo[] memory bestStakedInfos;
@@ -98,6 +97,14 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
             } 
         }
         return bestStakedInfos;
+    }
+
+    function getStakedNFTInfos(address _userAddress) external view returns(StakeInfo[] memory) {
+        return userStakeInfo[_userAddress];
+    }
+
+    function getStakedInfoForNFtId(address _userAddress, uint16 _nftId) external view returns(StakeInfo memory) {
+        return userStakeInfo[_userAddress][nftIdToIndex[_nftId]];
     }
 
     function setFoundersKeyAddress(address _foundersKeyAddress) external onlyOwner {

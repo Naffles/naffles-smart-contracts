@@ -278,3 +278,25 @@ def testSetSoulboundFoundersKeyAddress(
     staking, _, _ = deployed_founders_key_staking
     staking.setSoulboundFoundersKeyAddress(deployed_soulbound[0].address, from_admin)
     assert staking.SoulboundFoundersKeyAddress() == deployed_soulbound[0].address
+
+
+def testGetStakedInfo(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    staking, _, erc721a = deployed_founders_key_staking
+    erc721a.mint(address.address, 1, from_admin)
+    erc721a.approve(staking.address, 1, from_address)
+    staking.stake(1, 0, from_address)
+    erc721a.mint(address.address, 2, from_admin)
+    erc721a.approve(staking.address, 2, from_address)
+    staking.stake(2, 1, from_address)
+
+    info = staking.getStakedNFTInfos(address, from_address)
+    
+    assert info[0][0] == 1
+    assert info[0][2] == 0
+    assert info[1][0] == 2
+    assert info[1][2] == 1
