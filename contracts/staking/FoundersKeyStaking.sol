@@ -5,12 +5,12 @@ import "@openzeppelin/contracts/interfaces/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "../interfaces/IFoundersKey.sol";
-import "../interfaces/ISoulBoundFoundersKey.sol";
+import "../../interfaces/IFoundersKey.sol";
+import "../../interfaces/ISoulboundFoundersKey.sol";
 
 contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
-    IFoundersKey FoundersKeyAddress;
-    ISoulBoundFoundersKey SoulBoundFoundersKeyAddress;
+    IFoundersKey public FoundersKeyAddress;
+    ISoulboundFoundersKey public SoulboundFoundersKeyAddress;
 
     enum StakingPeriod { ONE_MONTH, THREE_MONTHS, SIX_MONTHS, TWELVE_MONTHS }
 
@@ -26,7 +26,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         StakingPeriod stakingPeriod;
     }
 
-    mapping(uint16 => uint) public nftIdToIndex;
+    mapping(uint16 => uint) nftIdToIndex;
     mapping(address => uint16[]) public stakedNFTIds;
     mapping(address => StakeInfo[]) public userStakeInfo;
 
@@ -35,14 +35,14 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
 
     constructor(
         address _foundersKeyAddress, 
-        address _soulBoundFoundersKeyAddress
+        address _soulboundFoundersKeyAddress
     ) {
         FoundersKeyAddress = IFoundersKey(_foundersKeyAddress);
-        SoulBoundFoundersKeyAddress = ISoulBoundFoundersKey(_soulBoundFoundersKeyAddress);
+        SoulboundFoundersKeyAddress = ISoulboundFoundersKey(_soulboundFoundersKeyAddress);
     }
 
     function stake(uint16 _nftId, StakingPeriod _stakingPeriod) external whenNotPaused {
-        SoulBoundFoundersKeyAddress.safeMint(msg.sender, _nftId);
+        SoulboundFoundersKeyAddress.safeMint(msg.sender, _nftId);
         FoundersKeyAddress.transferFrom(msg.sender, address(this), _nftId);
         StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, 0, _stakingPeriod);
 
@@ -62,7 +62,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
 
         FoundersKeyAddress.transferFrom(address(this), msg.sender, _nftId);
         stakeInfo.unstakedSince = block.timestamp;
-        SoulBoundFoundersKeyAddress.burn(_nftId);
+        SoulboundFoundersKeyAddress.burn(_nftId);
 
         uint16[] storage stakedNFTIdsForAddress = stakedNFTIds[msg.sender];
         delete stakedNFTIdsForAddress[nftIdToIndex[_nftId]];
@@ -106,8 +106,8 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         FoundersKeyAddress = IFoundersKey(_foundersKeyAddress);
     }
 
-    function setSoulBoundFoundersKeyAddress(address _soulBoundFoundersKeyAddress) external onlyOwner {
-        require(_soulBoundFoundersKeyAddress != address(0), "can't use address 0");
-        SoulBoundFoundersKeyAddress = ISoulBoundFoundersKey(_soulBoundFoundersKeyAddress);
+    function setSoulBoundFoundersKeyAddress(address _soulboundFoundersKeyAddress) external onlyOwner {
+        require(_soulboundFoundersKeyAddress != address(0), "can't use address 0");
+        SoulboundFoundersKeyAddress = ISoulboundFoundersKey(_soulboundFoundersKeyAddress);
     }
 }
