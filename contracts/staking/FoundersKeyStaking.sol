@@ -31,6 +31,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         StakingPeriod stakingPeriod;
     }
 
+    mapping(address => mapping(uint16 => bool)) public nftStakedOnce;
     mapping(uint16 => uint) private nftIdToIndex;
     mapping(address => uint16[]) public stakedNFTIds;
     mapping(address => StakeInfo[]) public userStakeInfo;
@@ -50,15 +51,20 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         SoulboundFoundersKeyAddress.safeMint(msg.sender, _nftId);
         FoundersKeyAddress.transferFrom(msg.sender, address(this), _nftId);
 
-
-        // todo fix if users stakes the same nft twice
+        // If users stakes the same nft twice
+        if (nftStakedOnce[msg.sender][_nftId]) {
+            StakeInfo storage stakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
+            if (stakeInfo.unstakedSince == 0) {
+                revert NFTAlreadyStaked(_nftId);
+            }
+            stakeInfo.stakedSince = block.timestamp;
+        } else {
+            StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, 0, _stakingPeriod);
+            userStakeInfo[msg.sender].push(stakeInfo);
+            stakedNFTIds[msg.sender].push(_nftId);
+            nftIdToIndex[_nftId] = stakedNFTIds[msg.sender].length - 1;
+        }
         
-
-        StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, 0, _stakingPeriod);
-        userStakeInfo[msg.sender].push(stakeInfo);
-        stakedNFTIds[msg.sender].push(_nftId);
-        nftIdToIndex[_nftId] = stakedNFTIds[msg.sender].length - 1;
-
         emit UserStaked(msg.sender, _nftId, block.timestamp);
     }
 
@@ -67,8 +73,8 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         if (stakeInfo.unstakedSince != 0) {
             revert NFTNotStaked(_nftId);
         }
-        if (stakeInfo.stakedSince + getStakingPeriod(stakeInfo.stakingPeriod) > block.timestamp) {
-            revert NFTLocked(_nftId, stakeInfo.stakedSince + getStakingPeriod(stakeInfo.stakingPeriod));
+        if (stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod) > block.timestamp) {
+            revert NFTLocked(_nftId, stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod));
         }
         FoundersKeyAddress.transferFrom(address(this), msg.sender, _nftId);
         stakeInfo.unstakedSince = block.timestamp;
@@ -80,7 +86,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         emit UserUnstaked(msg.sender, _nftId, block.timestamp);
     }
 
-    function _getStakingPeriodInDays(StakingPeriod _stakingPeriod) internal pure returns (uint256) {
+    function _getStakingPeriod(StakingPeriod _stakingPeriod) internal pure returns (uint256) {
         if (_stakingPeriod == StakingPeriod.ONE_MONTH) {
             return ONE_MONTH;
         } else if (_stakingPeriod == StakingPeriod.THREE_MONTHS) {
