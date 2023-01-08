@@ -1,5 +1,7 @@
 import time 
 
+from brownie import reverts
+
 
 def test_founders_key_staking_constructor(
     deployed_founders_key_staking
@@ -29,3 +31,25 @@ def test_founders_key_staking_stake(
     assert info[1] >= curent_time
     assert info[2] == 0
     assert info[3] == 0
+
+
+def test_founders_key_staking_stake_no_owner(
+    deployed_founders_key_staking,
+    from_admin,
+    admin,
+    from_address,
+):
+    staking, _, erc721a = deployed_founders_key_staking
+    erc721a.mint(admin.address, 1, from_admin)
+    erc721a.approve(staking.address, 1, from_admin)
+    with reverts():
+        staking.stake(1, 0, from_address)
+
+
+def test_founders_key_staking_stake_id_does_not_exist(
+    deployed_founders_key_staking,
+    from_admin,
+):
+    staking, _, _ = deployed_founders_key_staking
+    with reverts():
+        staking.stake(1, 0, from_admin)
