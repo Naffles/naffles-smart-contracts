@@ -83,27 +83,37 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         }
     }
 
-    function getBestStakedNFTInfos(address _userAddress) external view returns(StakeInfo[] memory) {
-        uint16 bestStakedType = 0;
-        StakeInfo[] memory bestStakedInfos;
+    function getBestStakedNFTInfo(address _userAddress) external view returns(uint8, uint16, uint256) {
+        uint8 bestStakedType = 0;
+        uint16 amountStakedOfBestType = 0;
+        uint256 earliestTimeStakedOfBestType = 0;
+
         uint16[] storage stakedNFTIdsForAddress = stakedNFTIds[_userAddress];
+        StakeInfo[] storage stakedInfos = userStakeInfo[_userAddress];
+
         for (uint i = 0; i < stakedNFTIdsForAddress.length; i++) {
             uint16 nftId = stakedNFTIdsForAddress[i];
-            StakeInfo storage stakedInfo = userStakeInfo[_userAddress][nftId];
-            uint16 tokenType = FoundersKeyAddress.tokenType(nftId);
-            if (tokenType >= bestStakedType) {
-                bestStakedType = tokenType;
-                bestStakedInfos[bestStakedInfos.length] = stakedInfo;
-            } 
+            StakeInfo storage stakedInfo = stakedInfos[nftIdToIndex[nftId]];
+            uint8 tokenType = FoundersKeyAddress.tokenType(nftId);
+
+            if (tokenType == bestStakedType) {
+                amountStakedOfBestType++;
+                if (earliestTimeStakedOfBestType > stakedInfo.stakedSince) {
+                  earliestTimeStakedOfBestType = stakedInfo.stakedSince;
+                }
+            } else if (tokenType > bestStakedType) {
+                amountStakedOfBestType = 1;
+                earliestTimeStakedOfBestType = stakedInfo.stakedSince;
+            }
         }
-        return bestStakedInfos;
+        return (bestStakedType, amountStakedOfBestType, earliestTimeStakedOfBestType);
     }
 
     function getStakedNFTInfos(address _userAddress) external view returns(StakeInfo[] memory) {
         return userStakeInfo[_userAddress];
     }
 
-    function getStakedInfoForNFtId(address _userAddress, uint16 _nftId) external view returns(StakeInfo memory) {
+    function getStakedInfoForNFTId(address _userAddress, uint16 _nftId) external view returns(StakeInfo memory) {
         return userStakeInfo[_userAddress][nftIdToIndex[_nftId]];
     }
 

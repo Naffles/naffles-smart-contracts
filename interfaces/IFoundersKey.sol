@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/interfaces/IERC721.sol";
+import "@ERC721A/contracts/interfaces/IERC721A.sol";
 
-interface IFoundersKey is IERC721 {
+interface IFoundersKey is IERC721A {
     function tokenType(uint16 _tokenId) external view returns(uint8);
 }

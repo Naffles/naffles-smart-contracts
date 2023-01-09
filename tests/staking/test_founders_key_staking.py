@@ -300,3 +300,49 @@ def testGetStakedInfo(
     assert info[0][2] == 0
     assert info[1][0] == 2
     assert info[1][2] == 1
+
+
+def test_get_staked_info_for_nft_id(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    staking, _, erc721a = deployed_founders_key_staking
+    erc721a.mint(address.address, 1, from_admin)
+    erc721a.approve(staking.address, 1, from_address)
+    staking.stake(1, 0, from_address)
+    erc721a.mint(address.address, 2, from_admin)
+    erc721a.approve(staking.address, 2, from_address)
+    staking.stake(2, 1, from_address)
+
+    info = staking.getStakedInfoForNFTId(address, 1, from_address)
+    
+    assert info[0] == 1
+    assert info[2] == 0
+
+
+def test_get_best_staked_nft_infos(
+    deployed_founders_key_staking,
+    from_admin,
+    address,
+    from_address,
+):
+    import time
+    current_time = time.time()
+    staking, _, erc721a = deployed_founders_key_staking
+    erc721a.mint(address.address, 1, from_admin)
+    erc721a.approve(staking.address, 1, from_address)
+    staking.stake(1, 0, from_address)
+    erc721a.mint(address.address, 2, from_admin)
+    erc721a.approve(staking.address, 2, from_address)
+    staking.stake(2, 1, from_address)
+    erc721a.mint(address.address, 3, from_admin)
+    erc721a.approve(staking.address, 3, from_address)
+    staking.stake(3, 1, from_address)
+
+
+    best_type, amount, best_date = staking.getBestStakedNFTInfo(address, from_address)
+    assert best_type == 4
+    assert amount == 2
+    assert best_date >= current_time
