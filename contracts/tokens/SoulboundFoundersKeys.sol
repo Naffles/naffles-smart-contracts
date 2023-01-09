@@ -19,10 +19,9 @@ contract SoulboundFoundersKey is ERC721, Ownable, AccessControl {
     event Minted(uint256 tokenId, address owner);
     event Burned(uint256 tokenId);
     
-    constructor(address _stakingAddress, address _foundersKeysAddress) ERC721("Soulbound Naffles Founders Keys", "SBNFLS") {
+    constructor(address _foundersKeysAddress) ERC721("Soulbound Naffles Founders Keys", "SBNFLS") {
       FoundersKeysAddress = IERC721A(_foundersKeysAddress);
 
-      _setupRole(STAKING_CONTRACT_ROLE, _stakingAddress);
       _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
