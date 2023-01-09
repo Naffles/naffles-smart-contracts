@@ -102,6 +102,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
                   earliestTimeStakedOfBestType = stakedInfo.stakedSince;
                 }
             } else if (tokenType > bestStakedType) {
+                bestStakedType = tokenType;
                 amountStakedOfBestType = 1;
                 earliestTimeStakedOfBestType = stakedInfo.stakedSince;
             }
