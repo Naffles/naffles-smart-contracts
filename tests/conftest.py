@@ -40,13 +40,12 @@ def deployed_erc721a_mock(from_admin) -> ERC721AMock:
 
 
 @pytest.fixture
-def deployed_soulbound(deployed_erc721a_mock, from_admin, admin) -> SoulboundFoundersKey:
-    soulbound = SoulboundFoundersKey.deploy(
-        deployed_erc721a_mock.address,
-        from_admin
-    ) 
+def deployed_soulbound(
+    deployed_erc721a_mock, from_admin, admin
+) -> SoulboundFoundersKey:
+    soulbound = SoulboundFoundersKey.deploy(deployed_erc721a_mock.address, from_admin)
 
-    soulbound.grantRole(soulbound.STAKING_CONTRACT_ROLE(),  admin.address, from_admin)
+    soulbound.grantRole(soulbound.STAKING_CONTRACT_ROLE(), admin.address, from_admin)
     return soulbound, deployed_erc721a_mock
 
 
