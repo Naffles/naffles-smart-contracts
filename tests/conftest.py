@@ -15,6 +15,11 @@ def admin() -> Account:
 
 
 @pytest.fixture
+def private_key() -> str:
+    return "0b1ce493b94b0ebb664d355548c097f4bab74b5cb55fc5feb4c5fcddb67484e8"
+
+
+@pytest.fixture
 def from_admin(admin) -> dict:
     return {"from": admin}
 
