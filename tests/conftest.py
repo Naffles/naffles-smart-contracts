@@ -1,10 +1,6 @@
 import pytest
 
-from brownie import (
-    SoulboundFoundersKey, 
-    accounts, 
-    ERC721AMock
-)
+from brownie import SoulboundFoundersKey, accounts, ERC721AMock
 from brownie.network.account import Account
 
 
@@ -15,7 +11,7 @@ def admin() -> Account:
 
 @pytest.fixture
 def from_admin(admin) -> dict:
-    return {'from': admin}
+    return {"from": admin}
 
 
 @pytest.fixture
@@ -25,7 +21,7 @@ def address() -> Account:
 
 @pytest.fixture
 def from_address(address) -> dict:
-    return {'from': address}
+    return {"from": address}
 
 
 @pytest.fixture
@@ -34,11 +30,10 @@ def deployed_erc721a_mock(from_admin) -> ERC721AMock:
 
 
 @pytest.fixture
-def deployed_soulbound(deployed_erc721a_mock, from_admin, admin) -> SoulboundFoundersKey:
-    soulbound = SoulboundFoundersKey.deploy(
-        deployed_erc721a_mock.address,
-        from_admin
-    ) 
+def deployed_soulbound(
+    deployed_erc721a_mock, from_admin, admin
+) -> SoulboundFoundersKey:
+    soulbound = SoulboundFoundersKey.deploy(deployed_erc721a_mock.address, from_admin)
 
-    soulbound.grantRole(soulbound.STAKING_CONTRACT_ROLE(),  admin.address, from_admin)
+    soulbound.grantRole(soulbound.STAKING_CONTRACT_ROLE(), admin.address, from_admin)
     return soulbound, deployed_erc721a_mock
