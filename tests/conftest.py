@@ -1,7 +1,11 @@
 import pytest
 from typing import Tuple
 
-from brownie import SoulboundFoundersKey, accounts, ERC721AMock
+from brownie import (
+    SoulboundFoundersKey,
+    accounts,
+    ERC721AMock
+)
 from brownie.network.account import Account
 from brownie.network.contract import ContractContainer
 
