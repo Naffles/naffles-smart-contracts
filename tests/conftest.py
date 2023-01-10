@@ -2,7 +2,7 @@ import pytest
 
 from brownie import (
     SoulboundFoundersKey,
-    accounts, 
+    accounts,
     ERC721AMock
 )
 from brownie.network.account import Account
