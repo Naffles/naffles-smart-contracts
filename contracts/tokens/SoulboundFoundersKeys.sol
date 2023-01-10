@@ -38,7 +38,6 @@ contract SoulboundFoundersKey is ERC721, Ownable, AccessControl {
 
       emit Burned(_tokenId);
     }
-  
     function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
       internal
       virtual
