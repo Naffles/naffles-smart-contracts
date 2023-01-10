@@ -35,9 +35,10 @@ def test_safe_mint_not_staking_contract_role(deployed_soulbound, from_address):
         soulbound_founders_key.safeMint(from_address["from"].address, 1, from_address)
 
 
-def test_burn_not_staking_contract_role(deployed_soulbound, from_address):
-    soulbound_founders_key,  = deployed_soulbound
-    soulbound_founders_key.safeMint(from_address["from"].address, 1, from_address)
+def test_burn_not_staking_contract_role(deployed_soulbound, from_address, from_admin):
+    soulbound_founders_key, erc721a_mock = deployed_soulbound
+    erc721a_mock.mint(from_address["from"].address, 1, from_admin)
+    soulbound_founders_key.safeMint(from_address["from"].address, 1, from_admin)
     with brownie.reverts():
         soulbound_founders_key.burn(1, from_address)
 
