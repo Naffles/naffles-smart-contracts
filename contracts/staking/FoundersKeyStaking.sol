@@ -32,7 +32,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     mapping(address => uint16[]) public stakedNFTIds;
     mapping(address => StakeInfo[]) public userStakeInfo;
 
-    event UserStaked(address userAddress, uint16 nftId, uint256 stakeTime);
+    event UserStaked(address userAddress, uint16 nftId, uint256 stakeTime, StakingPeriod stakingPeriod);
     event UserUnstaked(address userAddress, uint16 nftId, uint256 unstakeTime);
 
     constructor(
@@ -49,14 +49,14 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
 
         StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, _stakingPeriod);
         userStakeInfo[msg.sender].push(stakeInfo);
+        nftIdToIndex[_nftId] = stakedNFTIds[msg.sender].length;
         stakedNFTIds[msg.sender].push(_nftId);
-        nftIdToIndex[_nftId] = stakedNFTIds[msg.sender].length - 1;
      
-        emit UserStaked(msg.sender, _nftId, block.timestamp);
+        emit UserStaked(msg.sender, _nftId, block.timestamp, _stakingPeriod);
     }
 
     function unstake(uint16 _nftId) external {
-        StakeInfo storage stakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
+        StakeInfo memory stakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
         if (stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod) > block.timestamp) {
             revert NFTLocked(_nftId, stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod));
         }
@@ -91,13 +91,13 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         uint16[] storage stakedNFTIdsForAddress = stakedNFTIds[_userAddress];
         StakeInfo[] storage stakedInfos = userStakeInfo[_userAddress];
 
-        for (uint i = 0; i < stakedNFTIdsForAddress.length; i++) {
+        for (uint i = 0; i < stakedNFTIdsForAddress.length; ++i) {
             uint16 nftId = stakedNFTIdsForAddress[i];
             StakeInfo storage stakedInfo = stakedInfos[nftIdToIndex[nftId]];
             uint8 tokenType = FoundersKeyAddress.tokenType(nftId);
 
             if (tokenType == bestStakedType) {
-                amountStakedOfBestType++;
+                ++amountStakedOfBestType;
                 if (earliestTimeStakedOfBestType > stakedInfo.stakedSince) {
                   earliestTimeStakedOfBestType = stakedInfo.stakedSince;
                 }
