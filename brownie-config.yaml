@@ -1,4 +1,12 @@
+networks:
+    default: development
 dependencies:
+    - chiru-labs/ERC721A@4.2.3
+    - OpenZeppelin/openzeppelin-contracts@4.8.0
 compiler:
-  solc:
-    remapping:
+    solc:
+        version: 0.8.17
+        remappings:
+            - '@ERC721A=chiru-labs/ERC721A@4.2.3'
+            - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0'
+
