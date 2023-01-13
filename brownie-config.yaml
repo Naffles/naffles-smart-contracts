@@ -6,9 +6,6 @@ networks:
 compiler:
     solc:
         version: 0.8.17
-        optimizer:
-            enabled: true
-            runs: 200
         remappings:
             - '@ERC721A=chiru-labs/ERC721A@4.2.3'
             - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0'
