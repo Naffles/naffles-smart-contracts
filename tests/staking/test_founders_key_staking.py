@@ -384,8 +384,6 @@ def test_get_best_staked_nft_infos(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
 ):
-    import time
-
     current_time = time.time()
     deployed_erc721a_mock.mint(address.address, TOKEN_ID_ONE, from_admin)
     deployed_erc721a_mock.setApprovalForAll(
