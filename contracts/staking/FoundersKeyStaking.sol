@@ -10,6 +10,7 @@ import "../../interfaces/ISoulboundFoundersKey.sol";
 
 error NFTAlreadyStaked(uint16 nftId);
 error NFTLocked(uint16 nftId, uint256 unlockTime);
+error AddressIsZero(address addr);
 
 contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     IFoundersKey public FoundersKeyAddress;
@@ -36,7 +37,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     event UserUnstaked(address userAddress, uint16 nftId, uint256 unstakeTime);
 
     constructor(
-        address _foundersKeyAddress, 
+        address _foundersKeyAddress,
         address _soulboundFoundersKeyAddress
     ) {
         FoundersKeyAddress = IFoundersKey(_foundersKeyAddress);
@@ -51,21 +52,20 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         userStakeInfo[msg.sender].push(stakeInfo);
         nftIdToIndex[_nftId] = stakedNFTIds[msg.sender].length;
         stakedNFTIds[msg.sender].push(_nftId);
-     
         emit UserStaked(msg.sender, _nftId, block.timestamp, _stakingPeriod);
     }
 
     function unstake(uint16 _nftId) external {
-        StakeInfo memory stakeInfo = userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
+        uint index = nftIdToIndex[_nftId];
+        StakeInfo memory stakeInfo = userStakeInfo[msg.sender][index];
         if (stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod) > block.timestamp) {
             revert NFTLocked(_nftId, stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod));
         }
         FoundersKeyAddress.transferFrom(address(this), msg.sender, _nftId);
         SoulboundFoundersKeyAddress.burn(_nftId);
-        delete userStakeInfo[msg.sender][nftIdToIndex[_nftId]];
-        delete stakedNFTIds[msg.sender][nftIdToIndex[_nftId]];
+        delete userStakeInfo[msg.sender][index];
+        delete stakedNFTIds[msg.sender][index];
         delete nftIdToIndex[_nftId];
-
         emit UserUnstaked(msg.sender, _nftId, block.timestamp);
     }
 
@@ -93,7 +93,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
 
         for (uint i = 0; i < stakedNFTIdsForAddress.length; ++i) {
             uint16 nftId = stakedNFTIdsForAddress[i];
-            StakeInfo storage stakedInfo = stakedInfos[nftIdToIndex[nftId]];
+            StakeInfo storage stakedInfo = stakedInfos[i];
             uint8 tokenType = FoundersKeyAddress.tokenType(nftId);
 
             if (tokenType == bestStakedType) {
@@ -119,12 +119,16 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     }
 
     function setFoundersKeyAddress(address _foundersKeyAddress) external onlyOwner {
-        require(_foundersKeyAddress != address(0), "can't use address 0");
+        if(_foundersKeyAddress == address(0)) {
+          revert AddressIsZero(_foundersKeyAddress);
+        }
         FoundersKeyAddress = IFoundersKey(_foundersKeyAddress);
     }
 
     function setSoulboundFoundersKeyAddress(address _soulboundFoundersKeyAddress) external onlyOwner {
-        require(_soulboundFoundersKeyAddress != address(0), "can't use address 0");
+        if(_soulboundFoundersKeyAddress== address(0)) {
+          revert AddressIsZero(_soulboundFoundersKeyAddress);
+        }
         SoulboundFoundersKeyAddress = ISoulboundFoundersKey(_soulboundFoundersKeyAddress);
     }
 }
