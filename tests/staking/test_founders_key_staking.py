@@ -203,8 +203,9 @@ def test_unstake_after_lock(
     )
     chain.sleep(THIRTYONE_DAYS_IN_SECONDS)
     deployed_founders_key_staking.unstake(TOKEN_ID_ONE, from_address)
+
     with reverts():
-        assert deployed_soulbound.ownerOf(TOKEN_ID_ONE) == address.address
+        assert deployed_soulbound.ownerOf(TOKEN_ID_ONE) 
     assert deployed_erc721a_mock.ownerOf(TOKEN_ID_ONE) == address.address
     assert deployed_founders_key_staking.userStakeInfo(address.address, 0)[0] == 0
 
