@@ -11,7 +11,6 @@ STAKING_DURATION_ONE_MONTH = 0
 STAKING_DURATION_THREE_MONTHS = 1
 
 THIRTYONE_DAYS_IN_SECONDS = 2678400
-NINETYONE_DAYS_IN_SECONDS = 7862400 
 
 
 def _mint_and_stake(
@@ -46,7 +45,6 @@ def test_founders_key_staking_stake(
 
     assert soulbound.ownerOf(TOKEN_ID_ONE) == address.address
     assert erc721a.ownerOf(TOKEN_ID_ONE) == staking.address
-    assert staking.stakedNFTIds(address.address, 0) == TOKEN_ID_ONE
     info = staking.userStakeInfo(address.address, 0)
     assert info[0] == TOKEN_ID_ONE
     assert info[1] >= curent_time
@@ -67,8 +65,6 @@ def test_founders_key_staking_stake_multiple_times_same_nft(
     _mint_and_stake(staking, erc721a, from_admin, from_address, address, TOKEN_ID_ONE)
     assert soulbound.ownerOf(TOKEN_ID_ONE) == address.address
     assert erc721a.ownerOf(1) == staking.address
-    assert staking.stakedNFTIds(address.address, 0) == 0
-    assert staking.stakedNFTIds(address.address, 1) == TOKEN_ID_ONE
     info = staking.userStakeInfo(address.address, 0)
     assert info[0] == 0
     assert info[1] == 0
@@ -147,7 +143,7 @@ def test_unstake_after_lock(
     with reverts():
         assert soulbound.ownerOf(TOKEN_ID_ONE) == address.address
     assert erc721a.ownerOf(TOKEN_ID_ONE) == address.address
-    assert staking.stakedNFTIds(address.address, 0) == 0
+    assert staking.userStakeInfo(address.address, 0)[0] == 0
 
 
 def test_unstake_still_locked(

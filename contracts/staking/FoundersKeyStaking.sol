@@ -30,7 +30,6 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     }
 
     mapping(uint16 => uint) private nftIdToIndex;
-    mapping(address => uint16[]) public stakedNFTIds;
     mapping(address => StakeInfo[]) public userStakeInfo;
 
     event UserStaked(address userAddress, uint16 nftId, uint256 stakeTime, StakingPeriod stakingPeriod);
@@ -50,8 +49,6 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
 
         StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, _stakingPeriod);
         userStakeInfo[msg.sender].push(stakeInfo);
-        nftIdToIndex[_nftId] = stakedNFTIds[msg.sender].length;
-        stakedNFTIds[msg.sender].push(_nftId);
         emit UserStaked(msg.sender, _nftId, block.timestamp, _stakingPeriod);
     }
 
@@ -64,7 +61,6 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         FoundersKeyAddress.transferFrom(address(this), msg.sender, _nftId);
         SoulboundFoundersKeyAddress.burn(_nftId);
         delete userStakeInfo[msg.sender][index];
-        delete stakedNFTIds[msg.sender][index];
         delete nftIdToIndex[_nftId];
         emit UserUnstaked(msg.sender, _nftId, block.timestamp);
     }
@@ -88,13 +84,11 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         uint16 amountStakedOfBestType = 0;
         uint256 earliestTimeStakedOfBestType = 0;
 
-        uint16[] storage stakedNFTIdsForAddress = stakedNFTIds[_userAddress];
-        StakeInfo[] storage stakedInfos = userStakeInfo[_userAddress];
+        StakeInfo[] memory stakedInfos = userStakeInfo[_userAddress];
 
-        for (uint i = 0; i < stakedNFTIdsForAddress.length; ++i) {
-            uint16 nftId = stakedNFTIdsForAddress[i];
-            StakeInfo storage stakedInfo = stakedInfos[i];
-            uint8 tokenType = FoundersKeyAddress.tokenType(nftId);
+        for (uint i = 0; i < stakedInfos.length; ++i) {
+            StakeInfo memory stakedInfo = stakedInfos[i];
+            uint8 tokenType = FoundersKeyAddress.tokenType(stakedInfo.nftId);
 
             if (tokenType == bestStakedType) {
                 ++amountStakedOfBestType;
