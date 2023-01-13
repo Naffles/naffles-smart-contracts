@@ -35,5 +35,7 @@ contract ERC721AMock is ERC721A, IFoundersKey {
         }
         return 0;
     }
+
+    function setStakingAddress(address stakingAddress) public {}
 }
 
