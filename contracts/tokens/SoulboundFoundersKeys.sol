@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@ERC721A/contracts/interfaces/IERC721A.sol";
 
-error Soulbound();
+error Soulbound(uint256 tokenId);
 error AlreadyMinted(uint256 tokenId);
 error NotOwnerOfToken(uint256 tokenId);
 
@@ -18,7 +18,6 @@ contract SoulboundFoundersKey is ERC721, Ownable, AccessControl {
 
     event Minted(uint256 tokenId, address owner);
     event Burned(uint256 tokenId);
-    
     constructor(address _foundersKeysAddress) ERC721("Soulbound Naffles Founders Keys", "SBNFLS") {
       FoundersKeysAddress = IERC721A(_foundersKeysAddress);
 
@@ -39,21 +38,17 @@ contract SoulboundFoundersKey is ERC721, Ownable, AccessControl {
 
       emit Burned(_tokenId);
     }
-  
     function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
       internal
       virtual
       override(ERC721)
     {
       if(from != address(0) && to != address(0)) {
-        revert Soulbound();
+        revert Soulbound(tokenId);
       }
       super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
-    function _burn(uint256 tokenId) internal override(ERC721) {
-      super._burn(tokenId);
-    }
 
     function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
       return FoundersKeysAddress.tokenURI(tokenId);

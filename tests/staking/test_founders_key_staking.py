@@ -1,6 +1,16 @@
+import datetime
 import time
 
 from brownie import reverts, chain
+
+TOKEN_ID_ONE = 1
+TOKEN_ID_TWO = 2
+TOKEN_ID_THREE = 3
+
+STAKING_DURATION_ONE_MONTH = 0
+STAKING_DURATION_THREE_MONTHS = 1
+
+THIRTYONE_DAYS_IN_SECONDS = 2678400
 
 
 def _mint_and_stake(
@@ -13,7 +23,7 @@ def _mint_and_stake(
 ):
     erc721a.mint(address.address, id, from_admin)
     erc721a.approve(staking.address, id, from_address)
-    staking.stake(id, 0, from_address)
+    staking.stake(id, STAKING_DURATION_ONE_MONTH, from_address)
 
 
 def test_founders_key_staking_constructor(deployed_founders_key_staking):
@@ -31,15 +41,14 @@ def test_founders_key_staking_stake(
     staking, soulbound, erc721a = deployed_founders_key_staking
     curent_time = time.time()
 
-    _mint_and_stake(staking, erc721a, from_admin, from_address, address, 1)
+    _mint_and_stake(staking, erc721a, from_admin, from_address, address, TOKEN_ID_ONE)
 
-    assert soulbound.ownerOf(1) == address.address
-    assert erc721a.ownerOf(1) == staking.address
-    assert staking.stakedNFTIds(address.address, 0) == 1
+    assert soulbound.ownerOf(TOKEN_ID_ONE) == address.address
+    assert erc721a.ownerOf(TOKEN_ID_ONE) == staking.address
     info = staking.userStakeInfo(address.address, 0)
-    assert info[0] == 1
+    assert info[0] == TOKEN_ID_ONE
     assert info[1] >= curent_time
-    assert info[2] == 0
+    assert info[2] == STAKING_DURATION_ONE_MONTH
 
 
 def test_founders_key_staking_stake_multiple_times_same_nft(
@@ -50,22 +59,20 @@ def test_founders_key_staking_stake_multiple_times_same_nft(
 ):
     staking, soulbound, erc721a = deployed_founders_key_staking
     curent_time = time.time()
-    _mint_and_stake(staking, erc721a, from_admin, from_address, address, 1)
-    chain.sleep(60 * 60 * 24 * 31)
-    staking.unstake(1, from_address)
-    _mint_and_stake(staking, erc721a, from_admin, from_address, address, 1)
-    assert soulbound.ownerOf(1) == address.address
+    _mint_and_stake(staking, erc721a, from_admin, from_address, address, TOKEN_ID_ONE)
+    chain.sleep(THIRTYONE_DAYS_IN_SECONDS)
+    staking.unstake(TOKEN_ID_ONE, from_address)
+    _mint_and_stake(staking, erc721a, from_admin, from_address, address, TOKEN_ID_ONE)
+    assert soulbound.ownerOf(TOKEN_ID_ONE) == address.address
     assert erc721a.ownerOf(1) == staking.address
-    assert staking.stakedNFTIds(address.address, 0) == 0
-    assert staking.stakedNFTIds(address.address, 1) == 1
     info = staking.userStakeInfo(address.address, 0)
     assert info[0] == 0
     assert info[1] == 0
     assert info[2] == 0
     info = staking.userStakeInfo(address.address, 1)
-    assert info[0] == 1
+    assert info[0] == TOKEN_ID_ONE
     assert info[1] >= curent_time
-    assert info[2] == 0
+    assert info[2] == STAKING_DURATION_ONE_MONTH
 
 
 def test_founders_key_staking_stake_no_owner(
@@ -75,10 +82,10 @@ def test_founders_key_staking_stake_no_owner(
     from_address,
 ):
     staking, _, erc721a = deployed_founders_key_staking
-    erc721a.mint(admin.address, 1, from_admin)
-    erc721a.approve(staking.address, 1, from_admin)
+    erc721a.mint(admin.address, TOKEN_ID_ONE, from_admin)
+    erc721a.approve(staking.address, TOKEN_ID_ONE, from_admin)
     with reverts():
-        staking.stake(1, 0, from_address)
+        staking.stake(TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_address)
 
 
 def test_founders_key_staking_stake_id_does_not_exist(
@@ -87,7 +94,7 @@ def test_founders_key_staking_stake_id_does_not_exist(
 ):
     staking, _, _ = deployed_founders_key_staking
     with reverts():
-        staking.stake(1, 0, from_admin)
+        staking.stake(TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_admin)
 
 
 def test_founders_key_staking_stake_id_already_staked(
@@ -97,9 +104,9 @@ def test_founders_key_staking_stake_id_already_staked(
     from_address,
 ):
     staking, _, erc721a = deployed_founders_key_staking
-    _mint_and_stake(staking, erc721a, from_admin, from_address, address, 1)
+    _mint_and_stake(staking, erc721a, from_admin, from_address, address, TOKEN_ID_ONE)
     with reverts():
-        staking.stake(1, 0, from_address)
+        staking.stake(TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_address)
 
 
 def test_founders_key_staking_stake_id_already_staked_by_other(
@@ -109,18 +116,18 @@ def test_founders_key_staking_stake_id_already_staked_by_other(
     from_address,
 ):
     staking, _, erc721a = deployed_founders_key_staking
-    _mint_and_stake(staking, erc721a, from_admin, from_address, address, 1)
+    _mint_and_stake(staking, erc721a, from_admin, from_address, address, TOKEN_ID_ONE)
     with reverts():
-        staking.stake(1, 0, from_admin)
+        staking.stake(TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_admin)
 
 
 def test_founders_key_staking_stake_id_not_approved(
     deployed_founders_key_staking, from_admin, address, from_address
 ):
     staking, _, erc721a = deployed_founders_key_staking
-    erc721a.mint(address.address, 1, from_admin)
+    erc721a.mint(address.address, TOKEN_ID_ONE, from_admin)
     with reverts():
-        staking.stake(1, 0, from_address)
+        staking.stake(TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_address)
 
 
 def test_unstake_after_lock(
@@ -130,14 +137,13 @@ def test_unstake_after_lock(
     from_address,
 ):
     staking, soulbound, erc721a = deployed_founders_key_staking
-    _mint_and_stake(staking, erc721a, from_admin, from_address, address, 1)
-    # rpc sleep for 1 month
-    chain.sleep(60 * 60 * 24 * 31)
-    staking.unstake(1, from_address)
+    _mint_and_stake(staking, erc721a, from_admin, from_address, address, TOKEN_ID_ONE)
+    chain.sleep(THIRTYONE_DAYS_IN_SECONDS)
+    staking.unstake(TOKEN_ID_ONE, from_address)
     with reverts():
-        assert soulbound.ownerOf(1) == address.address
-    assert erc721a.ownerOf(1) == address.address
-    assert staking.stakedNFTIds(address.address, 0) == 0
+        assert soulbound.ownerOf(TOKEN_ID_ONE) == address.address
+    assert erc721a.ownerOf(TOKEN_ID_ONE) == address.address
+    assert staking.userStakeInfo(address.address, 0)[0] == 0
 
 
 def test_unstake_still_locked(
@@ -147,9 +153,9 @@ def test_unstake_still_locked(
     from_address,
 ):
     staking, _, erc721a = deployed_founders_key_staking
-    _mint_and_stake(staking, erc721a, from_admin, from_address, address, 1)
+    _mint_and_stake(staking, erc721a, from_admin, from_address, address, TOKEN_ID_ONE)
     with reverts():
-        staking.unstake(1, from_address)
+        staking.unstake(TOKEN_ID_ONE, from_address)
 
 
 def test_unstake_id_does_not_exist(
@@ -158,7 +164,7 @@ def test_unstake_id_does_not_exist(
 ):
     staking, _, _ = deployed_founders_key_staking
     with reverts():
-        staking.unstake(1, from_address)
+        staking.unstake(TOKEN_ID_ONE, from_address)
 
 
 def test_unstake_id_not_staked(
@@ -168,9 +174,9 @@ def test_unstake_id_not_staked(
     from_address,
 ):
     staking, _, erc721a = deployed_founders_key_staking
-    erc721a.mint(address.address, 1, from_admin)
+    erc721a.mint(address.address, TOKEN_ID_ONE, from_admin)
     with reverts():
-        staking.unstake(1, from_address)
+        staking.unstake(TOKEN_ID_ONE, from_address)
 
 
 def test_unstake_id_not_staked_by_user(
@@ -180,11 +186,11 @@ def test_unstake_id_not_staked_by_user(
     from_address,
 ):
     staking, _, erc721a = deployed_founders_key_staking
-    erc721a.mint(address.address, 1, from_admin)
-    erc721a.approve(staking.address, 1, from_address)
-    staking.stake(1, 0, from_address)
+    erc721a.mint(address.address, TOKEN_ID_ONE, from_admin)
+    erc721a.approve(staking.address, TOKEN_ID_ONE, from_address)
+    staking.stake(TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_address)
     with reverts():
-        staking.unstake(1, from_admin)
+        staking.unstake(TOKEN_ID_ONE, from_admin)
 
 
 def testSetFoundersKeyAddressNoAdmin(
@@ -234,19 +240,19 @@ def testGetStakedInfo(
     from_address,
 ):
     staking, _, erc721a = deployed_founders_key_staking
-    erc721a.mint(address.address, 1, from_admin)
-    erc721a.approve(staking.address, 1, from_address)
-    staking.stake(1, 0, from_address)
-    erc721a.mint(address.address, 2, from_admin)
-    erc721a.approve(staking.address, 2, from_address)
-    staking.stake(2, 1, from_address)
+    erc721a.mint(address.address, TOKEN_ID_ONE, from_admin)
+    erc721a.approve(staking.address, TOKEN_ID_ONE, from_address)
+    staking.stake(TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_address)
+    erc721a.mint(address.address, TOKEN_ID_TWO, from_admin)
+    erc721a.approve(staking.address, TOKEN_ID_TWO, from_address)
+    staking.stake(TOKEN_ID_TWO, STAKING_DURATION_THREE_MONTHS, from_address)
 
     info = staking.getStakedNFTInfos(address, from_address)
 
-    assert info[0][0] == 1
-    assert info[0][2] == 0
-    assert info[1][0] == 2
-    assert info[1][2] == 1
+    assert info[0][0] == TOKEN_ID_ONE
+    assert info[0][2] == STAKING_DURATION_ONE_MONTH
+    assert info[1][0] == TOKEN_ID_TWO
+    assert info[1][2] == STAKING_DURATION_THREE_MONTHS
 
 
 def test_get_staked_info_for_nft_id(
@@ -256,17 +262,17 @@ def test_get_staked_info_for_nft_id(
     from_address,
 ):
     staking, _, erc721a = deployed_founders_key_staking
-    erc721a.mint(address.address, 1, from_admin)
-    erc721a.approve(staking.address, 1, from_address)
-    staking.stake(1, 0, from_address)
-    erc721a.mint(address.address, 2, from_admin)
-    erc721a.approve(staking.address, 2, from_address)
-    staking.stake(2, 1, from_address)
+    erc721a.mint(address.address, TOKEN_ID_ONE, from_admin)
+    erc721a.approve(staking.address, TOKEN_ID_ONE, from_address)
+    staking.stake(TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_address)
+    erc721a.mint(address.address, TOKEN_ID_TWO, from_admin)
+    erc721a.approve(staking.address, TOKEN_ID_TWO, from_address)
+    staking.stake(TOKEN_ID_TWO, STAKING_DURATION_THREE_MONTHS, from_address)
 
-    info = staking.getStakedInfoForNFTId(address, 1, from_address)
+    info = staking.getStakedInfoForNFTId(address, TOKEN_ID_ONE, from_address)
 
-    assert info[0] == 1
-    assert info[2] == 0
+    assert info[0] == TOKEN_ID_ONE
+    assert info[2] == STAKING_DURATION_ONE_MONTH
 
 
 def test_get_best_staked_nft_infos(
@@ -279,15 +285,22 @@ def test_get_best_staked_nft_infos(
 
     current_time = time.time()
     staking, _, erc721a = deployed_founders_key_staking
-    erc721a.mint(address.address, 1, from_admin)
-    erc721a.approve(staking.address, 1, from_address)
-    staking.stake(1, 0, from_address)
-    erc721a.mint(address.address, 2, from_admin)
-    erc721a.approve(staking.address, 2, from_address)
-    staking.stake(2, 1, from_address)
-    erc721a.mint(address.address, 3, from_admin)
-    erc721a.approve(staking.address, 3, from_address)
-    staking.stake(3, 1, from_address)
+    erc721a.mint(address.address, TOKEN_ID_ONE, from_admin)
+    erc721a.setApprovalForAll(staking.address, True, from_address)
+    staking.stake(TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_address)
+    chain.sleep(THIRTYONE_DAYS_IN_SECONDS)
+    staking.unstake(TOKEN_ID_ONE, from_address)
+
+    erc721a.mint(address.address, TOKEN_ID_TWO, from_admin)
+    staking.stake(TOKEN_ID_TWO, STAKING_DURATION_THREE_MONTHS, from_address)
+
+    erc721a.mint(address.address, TOKEN_ID_THREE, from_admin)
+    staking.stake(TOKEN_ID_THREE, STAKING_DURATION_ONE_MONTH, from_address)
+    chain.sleep(THIRTYONE_DAYS_IN_SECONDS)
+    staking.unstake(TOKEN_ID_THREE, from_address)
+
+    staking.stake(TOKEN_ID_ONE, STAKING_DURATION_THREE_MONTHS, from_address)
+    staking.stake(TOKEN_ID_THREE, STAKING_DURATION_THREE_MONTHS, from_address)
 
     best_type, amount, best_date = staking.getBestStakedNFTInfo(address, from_address)
     assert best_type == 4
