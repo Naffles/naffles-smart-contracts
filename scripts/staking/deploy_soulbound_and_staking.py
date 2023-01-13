@@ -10,4 +10,5 @@ def deploy(private_key: str, founders_key_address: str):
     )
     print(f"Founders Key Address: {founders_key_address}")
     print(f"Staking Address: {staking_address}")
+    print(f"Soulbound Address: {soulbound_address}")
     return soulbound_address, staking_address
