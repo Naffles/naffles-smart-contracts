@@ -1,5 +1,4 @@
 import pytest
-from typing import Tuple
 
 from brownie import (
     SoulboundFoundersKey,
@@ -44,18 +43,20 @@ def deployed_erc721a_mock(from_admin) -> ERC721AMock:
 @pytest.fixture
 def deployed_soulbound(
     deployed_erc721a_mock, from_admin, admin
-) -> Tuple[ContractContainer, ContractContainer]:
+) -> SoulboundFoundersKey:
     soulbound = SoulboundFoundersKey.deploy(deployed_erc721a_mock.address, from_admin)
-
     soulbound.grantRole(soulbound.STAKING_CONTRACT_ROLE(), admin.address, from_admin)
-    return soulbound, deployed_erc721a_mock
+    return soulbound
 
 
 @pytest.fixture
 def deployed_founders_key_staking(
-    deployed_soulbound, from_admin
-) -> Tuple[ContractContainer, ContractContainer, ContractContainer]:
-    soulbound, erc721a = deployed_soulbound
-    staking = FoundersKeyStaking.deploy(erc721a.address, soulbound.address, from_admin)
-    soulbound.grantRole(soulbound.STAKING_CONTRACT_ROLE(), staking.address, from_admin)
-    return staking, soulbound, erc721a
+    deployed_soulbound, deployed_erc721a_mock, from_admin
+) -> FoundersKeyStaking:
+    staking = FoundersKeyStaking.deploy(
+        deployed_erc721a_mock.address, deployed_soulbound.address, from_admin
+    )
+    deployed_soulbound.grantRole(
+        deployed_soulbound.STAKING_CONTRACT_ROLE(), staking.address, from_admin
+    )
+    return staking
