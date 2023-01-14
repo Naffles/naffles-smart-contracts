@@ -125,8 +125,7 @@ def test_founders_key_staking_stake_no_owner(
 
 
 def test_founders_key_staking_stake_id_does_not_exist(
-    from_admin,
-    deployed_founders_key_staking
+    from_admin, deployed_founders_key_staking
 ):
     with reverts():
         deployed_founders_key_staking.stake(
@@ -177,7 +176,12 @@ def test_founders_key_staking_stake_id_already_staked_by_other(
 
 
 def test_founders_key_staking_stake_id_not_approved(
-        from_admin, address, from_address, deployed_founders_key_staking, deployed_erc721a_mock):
+    from_admin,
+    address,
+    from_address,
+    deployed_founders_key_staking,
+    deployed_erc721a_mock,
+):
     deployed_erc721a_mock.mint(address.address, TOKEN_ID_ONE, from_admin)
     with reverts():
         deployed_founders_key_staking.stake(
@@ -203,8 +207,9 @@ def test_unstake_after_lock(
     )
     chain.sleep(THIRTYONE_DAYS_IN_SECONDS)
     deployed_founders_key_staking.unstake(TOKEN_ID_ONE, from_address)
+
     with reverts():
-        assert deployed_soulbound.ownerOf(TOKEN_ID_ONE) == address.address
+        assert deployed_soulbound.ownerOf(TOKEN_ID_ONE)
     assert deployed_erc721a_mock.ownerOf(TOKEN_ID_ONE) == address.address
     assert deployed_founders_key_staking.userStakeInfo(address.address, 0)[0] == 0
 
@@ -270,7 +275,6 @@ def test_set_founders_key_address_no_admin(
     from_address,
     address,
     deployed_founders_key_staking,
-    deployed_erc721a_mock,
 ):
     with reverts():
         deployed_founders_key_staking.setFoundersKeyAddress(
@@ -280,23 +284,17 @@ def test_set_founders_key_address_no_admin(
 
 def test_set_founders_key_address(
     from_admin,
+    address,
     deployed_founders_key_staking,
-    deployed_erc721a_mock,
 ):
-    deployed_founders_key_staking.setFoundersKeyAddress(
-        deployed_erc721a_mock.address, from_admin
-    )
-    assert (
-        deployed_founders_key_staking.FoundersKeyAddress()
-        == deployed_erc721a_mock.address
-    )
+    deployed_founders_key_staking.setFoundersKeyAddress(address.address, from_admin)
+    assert deployed_founders_key_staking.FoundersKeyAddress() == address.address
 
 
 def test_set_soulbound_founders_key_address_no_admin(
     from_address,
     address,
     deployed_founders_key_staking,
-    deployed_erc721a_mock,
 ):
     with reverts():
         deployed_founders_key_staking.setSoulboundFoundersKeyAddress(
@@ -306,16 +304,14 @@ def test_set_soulbound_founders_key_address_no_admin(
 
 def test_set_soulbound_founders_key_address(
     from_admin,
+    address,
     deployed_founders_key_staking,
-    deployed_soulbound,
-    deployed_erc721a_mock,
 ):
     deployed_founders_key_staking.setSoulboundFoundersKeyAddress(
-        deployed_soulbound.address, from_admin
+        address.address, from_admin
     )
     assert (
-        deployed_founders_key_staking.SoulboundFoundersKeyAddress()
-        == deployed_soulbound.address
+        deployed_founders_key_staking.SoulboundFoundersKeyAddress() == address.address
     )
 
 
@@ -324,16 +320,19 @@ def test_get_staked_info(
     address,
     from_address,
     deployed_founders_key_staking,
-    deployed_soulbound,
     deployed_erc721a_mock,
 ):
     deployed_erc721a_mock.mint(address.address, TOKEN_ID_ONE, from_admin)
-    deployed_erc721a_mock.approve(deployed_founders_key_staking.address, TOKEN_ID_ONE, from_address)
+    deployed_erc721a_mock.approve(
+        deployed_founders_key_staking.address, TOKEN_ID_ONE, from_address
+    )
     deployed_founders_key_staking.stake(
         TOKEN_ID_ONE, STAKING_DURATION_ONE_MONTH, from_address
     )
     deployed_erc721a_mock.mint(address.address, TOKEN_ID_TWO, from_admin)
-    deployed_erc721a_mock.approve(deployed_founders_key_staking.address, TOKEN_ID_TWO, from_address)
+    deployed_erc721a_mock.approve(
+        deployed_founders_key_staking.address, TOKEN_ID_TWO, from_address
+    )
     deployed_founders_key_staking.stake(
         TOKEN_ID_TWO, STAKING_DURATION_THREE_MONTHS, from_address
     )

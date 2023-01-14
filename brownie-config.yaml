@@ -6,7 +6,6 @@ networks:
       host: "https://goerli.infura.io/v3/$WEB3_INFURA_PROJECT_ID"
 dotenv: .env
 compiler:
-    evm_version: null
     solc:
         version: 0.8.17
         optimizer:
@@ -15,8 +14,6 @@ compiler:
         remappings:
             - '@ERC721A=chiru-labs/ERC721A@4.2.3'
             - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0'
-    vyper:
-        version: null
 dependencies:
     - chiru-labs/ERC721A@4.2.3
     - OpenZeppelin/openzeppelin-contracts@4.8.0
