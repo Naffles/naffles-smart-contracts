@@ -1,4 +1,5 @@
 import json
+import os
 
 from brownie import FoundersKeyStaking, accounts, SoulboundFoundersKey, Contract
 
@@ -7,12 +8,13 @@ def deploy(
 ) -> str:
     account = accounts.add(private_key)
     deployed = FoundersKeyStaking.deploy(
-        founders_key_address, soulbound_nft_address, {"from": account}, publish_source=True)
+        founders_key_address, soulbound_nft_address, {"from": account})
 
     address = deployed.address
 
-    # open IfoundersKey json file 
-    with open("../../build/interfaces/IFoundersKey.json", "r") as f:
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    with open(f"{dir_path}/../../build/interfaces/IFoundersKey.json", "r") as f:
         abi = json.load(f)["abi"]
 
     Contract.from_abi("FoundersKey", founders_key_address, abi).setStakingAddress(address, {"from": account})
