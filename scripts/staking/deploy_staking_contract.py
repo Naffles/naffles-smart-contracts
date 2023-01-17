@@ -3,12 +3,11 @@ from brownie import interface
 
 
 def deploy(
-    private_key: str,
+    account,
     founders_key_address: str,
     soulbound_nft_address: str,
     publish_source: bool = True,
 ) -> str:
-    account = accounts.add(private_key)
     deployed = FoundersKeyStaking.deploy(
         founders_key_address,
         soulbound_nft_address,
