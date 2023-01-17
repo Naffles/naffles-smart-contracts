@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@ERC721A/contracts/interfaces/IERC721A.sol";
+import "../../interfaces/IERC721A.sol";
 
 error Soulbound(uint256 tokenId);
 error AlreadyMinted(uint256 tokenId);
