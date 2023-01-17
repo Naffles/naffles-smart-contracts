@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity 0.8.17;
 
 import "../../interfaces/IFoundersKey.sol";
-import "@ERC721A/contracts/ERC721A.sol";
+import "../tokens/ERC721A.sol";
 
 contract ERC721AMock is ERC721A, IFoundersKey {
     constructor() ERC721A("ERC721A Mock", "ERC721AMOCK") {}
