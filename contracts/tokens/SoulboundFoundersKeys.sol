@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../interfaces/IERC721A.sol";
 
 error Soulbound(uint256 tokenId);
+error CantApprove();
 error AlreadyMinted(uint256 tokenId);
 error NotOwnerOfToken(uint256 tokenId);
 
@@ -38,6 +39,7 @@ contract SoulboundFoundersKey is ERC721, Ownable, AccessControl {
 
       emit Burned(_tokenId);
     }
+
     function _beforeTokenTransfer(address from, address to, uint256 tokenId, uint256 batchSize)
       internal
       virtual
@@ -49,6 +51,13 @@ contract SoulboundFoundersKey is ERC721, Ownable, AccessControl {
       super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
+    function setApprovalForAll(address operator, bool approved) public override {
+        revert CantApprove();
+    }
+
+    function approve(address operator, uint256 tokenId) public override {
+        revert CantApprove();
+    }
 
     function tokenURI(uint256 tokenId) public view override(ERC721) returns (string memory) {
       return FoundersKeysAddress.tokenURI(tokenId);

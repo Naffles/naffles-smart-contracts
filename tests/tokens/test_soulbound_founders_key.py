@@ -83,3 +83,14 @@ def test_supports_interface(deployed_soulbound, from_admin):
     assert deployed_soulbound.supportsInterface("0x80ac58cd", from_admin)
     assert deployed_soulbound.supportsInterface("0x5b5e139f", from_admin)
     assert deployed_soulbound.supportsInterface("0x01ffc9a7", from_admin)
+
+def test_cant_approve(deployed_soulbound, deployed_erc721a_mock, from_admin, address):
+    deployed_erc721a_mock.mint(from_admin["from"].address, 1, from_admin)
+    deployed_soulbound.safeMint(from_admin["from"].address, 1, from_admin)
+
+    with brownie.reverts():
+        deployed_soulbound.approve(address, 1, from_admin)
+
+def test_cant_set_approval_for_all(deployed_soulbound, from_admin, address):
+    with brownie.reverts():
+        deployed_soulbound.setApprovalForAll(address, True, from_admin)
