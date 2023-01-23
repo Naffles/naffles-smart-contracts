@@ -3,15 +3,15 @@ import os
 import pytest
 from brownie import (
     accounts,
-    Account,
     NaffleDiamond,
     TestValueFacet,
     TestValueFacetUpgraded,
 )
+from brownie.network.account import Accounts
 
 
 @pytest.fixture
-def admin() -> Account:
+def admin() -> Accounts:
     return accounts[0]
 
 
