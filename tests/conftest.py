@@ -3,7 +3,7 @@ import os
 import pytest
 from brownie import (
     accounts,
-    NaffleDiamond,
+    TestNaffleDiamond,
     TestValueFacet,
     TestValueFacetUpgraded,
     SoulboundFoundersKey,
@@ -39,8 +39,8 @@ def from_admin(admin) -> dict:
 
 
 @pytest.fixture()
-def deployed_naffle_diamond(from_admin) -> NaffleDiamond:
-    diamond = NaffleDiamond.deploy(from_admin)
+def deployed_naffle_diamond(from_admin) -> TestNaffleDiamond:
+    diamond = TestNaffleDiamond.deploy(from_admin)
     return diamond
 
 
