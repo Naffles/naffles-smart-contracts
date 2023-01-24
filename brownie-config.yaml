@@ -1,10 +1,21 @@
 networks:
     default: development
-dependencies:
-    - solidstate-network/solidstate-solidity@0.0.51
+    mainnet:
+      host: "https://mainnet.infura.io/v3/$WEB3_INFURA_PROJECT_ID"
+    goerli:
+      host: "https://goerli.infura.io/v3/$WEB3_INFURA_PROJECT_ID"
+dotenv: .env
 compiler:
-    evm_version: null
     solc:
-        version: 0.8.17
+        version: "0.8.17"
+        optimizer:
+            enabled: true
+            runs: 200
         remappings:
+            - '@erc721a=chiru-labs/ERC721A@4.2.3'
+            - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0'
             - '@solidstate=solidstate-network/solidstate-solidity@0.0.51'
+dependencies:
+    - chiru-labs/ERC721A@4.2.3
+    - OpenZeppelin/openzeppelin-contracts@4.8.0
+    - solidstate-network/solidstate-solidity@0.0.51
