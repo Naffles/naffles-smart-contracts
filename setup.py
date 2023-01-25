@@ -2,10 +2,10 @@ import os
 
 from setuptools import setup
 
-requires = ["brownie~=1.19.2"]
+requires = ["eth-brownie~=1.19.2"]
 
 setup(
-    name="Naffles",
+    name="naffles-smart-contracts",
     version="0.0.1",
     author="Naffles",
     install_requires=requires,
