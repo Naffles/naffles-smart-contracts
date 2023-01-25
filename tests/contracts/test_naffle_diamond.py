@@ -1,7 +1,7 @@
 import json
 from scripts.util import FacetCutAction, get_selectors, get_selector_by_name
 
-from brownie import Contract, TestValueFacet, TestValueFacetUpgraded
+from brownie import Contract, TestValueFacet, TestValueFacetUpgraded, interface
 
 
 NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
@@ -25,15 +25,10 @@ def test_facet_deployment(
 
 
 def test_set_and_get_value(
-    from_admin, deployed_naffle_diamond, deployed_test_facet, root_directory
+    from_admin, deployed_naffle_diamond, deployed_test_facet 
 ):
     _add_facets(deployed_naffle_diamond, deployed_test_facet, from_admin)
-
-    file = open(f"{root_directory}/build/contracts/TestValueFacet.json")
-    abi = json.load(file)["abi"]
-    test_facet_proxy = Contract.from_abi(
-        "TestValueFacet", deployed_naffle_diamond.address, abi
-    )
+    test_facet_proxy = interface.ITestValueFacet(deployed_naffle_diamond.address)
     test_facet_proxy.setValue("value", from_admin)
     assert test_facet_proxy.getValue() == "value"
 
@@ -43,16 +38,9 @@ def test_upgrade_storage_and_facet(
     deployed_naffle_diamond,
     deployed_test_facet,
     deployed_test_facet_upgraded,
-    root_directory,
 ):
     _add_facets(deployed_naffle_diamond, deployed_test_facet, from_admin)
-
-    file = open(f"{root_directory}/build/contracts/TestValueFacet.json")
-    abi = json.load(file)["abi"]
-    test_facet_proxy = Contract.from_abi(
-        "TestValueFacet", deployed_naffle_diamond.address, abi
-    )
-
+    test_facet_proxy = interface.ITestValueFacet(deployed_naffle_diamond.address)
     test_facet_proxy.setValue("value", from_admin)
     assert test_facet_proxy.getValue() == "value"
 
@@ -80,12 +68,7 @@ def test_upgrade_storage_and_facet(
     ]
 
     deployed_naffle_diamond.diamondCut(upgrade_cut, NULL_ADDRESS, b"", from_admin)
-
-    file = open(f"{root_directory}/build/contracts/TestValueFacetUpgraded.json")
-    abi = json.load(file)["abi"]
-    test_facet_proxy = Contract.from_abi(
-        "TestValueFacetUpgraded", deployed_naffle_diamond.address, abi
-    )
+    test_facet_proxy = interface.ITestValueFacetUpgraded(deployed_naffle_diamond.address)
 
     assert test_facet_proxy.getValue() == "value"
     test_facet_proxy.setSecondValue("value2", from_admin)

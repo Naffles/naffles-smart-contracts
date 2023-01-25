@@ -1,5 +1,3 @@
-import os
-
 import pytest
 from brownie import (
     accounts,
@@ -54,11 +52,6 @@ def deployed_test_facet(from_admin) -> TestValueFacet:
 def deployed_test_facet_upgraded(from_admin) -> TestValueFacetUpgraded:
     facet = TestValueFacetUpgraded.deploy(from_admin)
     return facet
-
-
-@pytest.fixture()
-def root_directory() -> str:
-    return os.getcwd()
 
 
 @pytest.fixture
