@@ -12,7 +12,7 @@ def _add_facets(diamond, facet, from_admin):
     diamond.diamondCut(cut, NULL_ADDRESS, b"", from_admin)
 
 
-def test_faucet_deployment(
+def test_facet_deployment(
     from_admin,
     deployed_naffle_diamond,
     deployed_test_facet,
@@ -38,7 +38,7 @@ def test_set_and_get_value(
     assert test_facet_proxy.getValue() == "value"
 
 
-def test_upgrade_storage_and_faucet(
+def test_upgrade_storage_and_facet(
     from_admin,
     deployed_naffle_diamond,
     deployed_test_facet,
