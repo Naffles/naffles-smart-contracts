@@ -1,18 +1,29 @@
 import pytest
-
 from brownie import (
+    accounts,
+    TestNaffleDiamond,
+    TestValueFacet,
+    TestValueFacetUpgraded,
     SoulboundFoundersKey,
     FoundersKeyStaking,
-    accounts,
     ERC721AMock,
 )
-from brownie.network.account import Account
+from brownie.network.account import _PrivateKeyAccount 
 from brownie.network.contract import ContractContainer
 
 
 @pytest.fixture
-def admin() -> Account:
+def admin() -> _PrivateKeyAccount:
     return accounts[0]
+
+@pytest.fixture
+def address() -> _PrivateKeyAccount:
+    return accounts[1]
+
+
+@pytest.fixture
+def from_address(address) -> dict:
+    return {"from": address}
 
 
 @pytest.fixture
@@ -25,14 +36,22 @@ def from_admin(admin) -> dict:
     return {"from": admin}
 
 
-@pytest.fixture
-def address() -> Account:
-    return accounts[1]
+@pytest.fixture()
+def deployed_naffle_diamond(from_admin) -> TestNaffleDiamond:
+    diamond = TestNaffleDiamond.deploy(from_admin)
+    return diamond
 
 
-@pytest.fixture
-def from_address(address) -> dict:
-    return {"from": address}
+@pytest.fixture()
+def deployed_test_facet(from_admin) -> TestValueFacet:
+    facet = TestValueFacet.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_test_facet_upgraded(from_admin) -> TestValueFacetUpgraded:
+    facet = TestValueFacetUpgraded.deploy(from_admin)
+    return facet
 
 
 @pytest.fixture

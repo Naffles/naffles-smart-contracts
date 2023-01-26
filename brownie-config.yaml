@@ -14,6 +14,8 @@ compiler:
         remappings:
             - '@erc721a=chiru-labs/ERC721A@4.2.3'
             - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0'
+            - '@solidstate=solidstate-network/solidstate-solidity@0.0.51'
 dependencies:
     - chiru-labs/ERC721A@4.2.3
     - OpenZeppelin/openzeppelin-contracts@4.8.0
+    - solidstate-network/solidstate-solidity@0.0.51
