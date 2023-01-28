@@ -172,12 +172,12 @@ contract NaffleLottery is VRFConsumerBaseV2, KeeperCompatibleInterface, AccessCo
     }
 
     function performUpkeep(bytes calldata performData) external override {
-        // if finished lottires are indeed present, call the coordinator to get a random number
-        // and update the lottery with the winning ticket ids
         for (uint256 i = 0; i < lotteries.length; ++i) {
             storage loterry = lotteries[i];
             if ((lottery.endTime < block.timestamp || lottery.manuallyClosed) && lottery.winners.length == 0) {
-                uint256 seed = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, lottery.id)));
+                if (lottery.ticketsSold <= lottery.numberOfWinners) {
+                    lottery.numberOfWinners = lottery.ticketsSold;
+                }
                 bytes32 requestId = coordinator.requestRandomWords(gasLaneKeyHash, subscriptionId, requestConfirmations, callbackGasLimit, lottery.numberOfWinners)
                 requestIdToLotteryMapping[requestId] = lottery;
             }
