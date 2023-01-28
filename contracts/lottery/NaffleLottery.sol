@@ -6,6 +6,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 error InvalidStartTime(uint256 startTime);
 error InvalidEndTime(uint256 endTime);
@@ -19,8 +20,7 @@ error AlreadyClaimed(uint256 lotteryId, address _address);
 error NotElligibleToClaim(uint256 lotteryId, address _address);
 error LotteryAlreadyClosed(uint256 lotteryId);
 
-contract NaffleLottery is VRFConsumerBaseV2, KeeperCompatibleInterface, AccessControl {
-    // contract that supports holding mutliple lotteries with different erc20 tokens
+contract NaffleLottery is VRFConsumerBaseV2, KeeperCompatibleInterface, AccessControl, Ownable {
     using SafeERC20 for IERC20;
     VRFCoordinatorV2Interface public coordinator;
 
@@ -61,10 +61,13 @@ contract NaffleLottery is VRFConsumerBaseV2, KeeperCompatibleInterface, AccessCo
     event TicketBought(uint256 id, address buyer, uint256 amount);
     event PrizeClaimed(uint256 id, address claimer, uint256 amount);
 
+    bytes32 public constant WITHDRAW_ROLE = keccak256("WITHDRAW_ROLE");
+
     constructor(address _coordinator, uint64 _subscriptionId, bytes32 _gasLaneKeyHash) VRFConsumerBaseV2(_coordinator, _link) {
         coordinator = VRFCoordinatorV2Interface(_coordinator);
 
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setupRole(WITHDRAW_ROLE, msg.sender);
 
         subscriptionId = _subscriptionId;
         gasLaneKeyHash = _gasLaneKeyHash;
@@ -136,7 +139,7 @@ contract NaffleLottery is VRFConsumerBaseV2, KeeperCompatibleInterface, AccessCo
         }
 
         IERC20 token = IERC20(lotteries[_id].token);
-        uint256 prize = (lottery.ticketPrice * tickets[_id][msg.sender]) / lottery.totalPrizeClaimed;
+        uint256 prize = (lottery.ticketPrice * lottery.ticketsSold / lottery.numberOfWinners;
         token.safeTransfer(msg.sender, prize);
         claimed[_id][msg.sender] = true;
         emit PrizeClaimed(_id, msg.sender, prize);
@@ -150,7 +153,6 @@ contract NaffleLottery is VRFConsumerBaseV2, KeeperCompatibleInterface, AccessCo
         uint256 numberOfWinners = lottery.numberOfWinners;
         uint256 totalPrize = lottery.ticketPrice * lottery.ticketsSold;
         uint256 fee = (totalPrize * feePercentage) / 10000;
-        uint256 prize = (totalPrize - fee) / numberOfWinners;
 
         for (uint256 i = 0; i < numberOfWinners; ++i) {
             uint256 winningTicket = _randomWords[i] % lottery.ticketsSold;
