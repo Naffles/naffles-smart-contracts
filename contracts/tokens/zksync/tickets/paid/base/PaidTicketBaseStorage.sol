@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import { INaffle } "../../../../../../interfaces/naffle/zksync/naffle/INaffle.sol"}
+
 library PaidTIcketBaseStorage {
     bytes32 internal constant STORAGE_SLOT = keccak256("naffles.contract.tokens.zksync.tickets.paid.PaidTIcketBaseStorage");
     
@@ -12,7 +14,7 @@ library PaidTIcketBaseStorage {
     }
 
     struct Storage {
-      
+      NaffleContract INaffle;
       mapping(uint256 => PaidTicket) paidTickets;
     }
 
