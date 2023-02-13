@@ -6,4 +6,5 @@ import { IAccessControl } from "@solidstate/contract/access/accesscontrol/IAcces
 interface IPaidTicketBase {
   function setNaffleContract(address _naffleContract) external;
   function getNaffleContract() external view returns (address);
+  function getAdminRole() external view returns (bytes32);
 }

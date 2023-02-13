@@ -5,9 +5,9 @@ import { SolidStateERC721 } from "@solidstate/contracts/token/erc721/SolidStateE
 import { Ownable } from "@solidstate/contracts/access/Ownable.sol";
 import { PaidTicketBaseStorage } from "./PaidTicketBaseStorage.sol";
 import { AccessControlStorage } from "@solidstate/contracts/access/acess_control/AccessControlStorage.sol";
+import { IPaidTicketBaseInternal } from "../../../../../../interfaces/tokens/zksync/tickets/paid/base/IPaidTicketBaseInternal.sol";
 
-
-contract PaidTicketBaseInternal is SolidStateERC721 {
+contract PaidTicketBaseInternal is SolidStateERC721, IPaidTicketBaseInternal {
     function _setNaffleContract(address _naffleContract) internal {
         PaidTicketBaseStorage.layout().naffleContract = _naffleContract;
     }
