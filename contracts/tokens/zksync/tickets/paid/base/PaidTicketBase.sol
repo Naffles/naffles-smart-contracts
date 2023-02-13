@@ -4,8 +4,7 @@ pragma solidity ^0.8.17;
 import "../../../../../../interfaces/tokens/zksync/tickets/paid/base/IPaidTicketBase.sol";
 import { AccessControl } from "@solidstate/contracts/access/acess_control/AccessControl.sol";
 
-contract PaidTicketBaseFacet in AccessControl, PaidTicketBaseInternal, IPaidTicketBase {
-
+contract PaidTicketBase in AccessControl, PaidTicketBaseInternal, IPaidTicketBase {
   function initialize(address _naffleContract, address _admin) external {
     _setNaffleContract(_naffleContract);
     _grantRole(_getAdminRole(), _admin);
@@ -23,5 +22,4 @@ contract PaidTicketBaseFacet in AccessControl, PaidTicketBaseInternal, IPaidTick
      return _getAdminRole();
    }
 }
-
 
