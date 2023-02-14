@@ -13,7 +13,7 @@ contract PaidTicketBase in Ownable, AccessControl, PaidTicketBaseInternal, IPaid
         _setOwner(_admin);
     }
 
-    function mintTickets(address _to, uint256 _amount, uint256 _naffleId) external payable {
+    function mintTickets(address _to, uint256 _amount, uint256 _naffleId) external payable (uint256[] memory) {
         _mintTickets(_to, _amount, _naffleId);
     }
 
@@ -25,10 +25,6 @@ contract PaidTicketBase in Ownable, AccessControl, PaidTicketBaseInternal, IPaid
         return _owner();
     }
 
-    function getNaffleContract() external view returns (address) {
-        return _getNaffleContract();
-    }
-    
     function getAdminRole() external view returns (bytes32) {
         return _getAdminRole();
     }

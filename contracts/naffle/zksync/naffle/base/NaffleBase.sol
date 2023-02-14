@@ -23,10 +23,6 @@ contract NaffleBase in AccessControl, NaffleBaseInternal, INaffleBase {
         _setPaidTicketContract(_paidTicketContract);
     }
 
-    function getPaidTicketContract() external view returns (address) {
-        return _getPaidTicketContract();
-    }
-
     function buyTickets(uint256 _amount) external payable returns(uint256[] memory) {
         return _buyTickets(_amount);
     }
