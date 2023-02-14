@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import { SolidStateERC721 } from "@solidstate/contracts/token/erc721/SolidStateERC721.sol";
 import { PaidTicketBaseStorage } from "./PaidTicketBaseStorage.sol";
 import { AccessControlStorage } from "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import { OwnableStorage } from "@solidstate/contracts/access/ownable/OwnableStorage.sol";
 import { INaffleBase } from "../../../../../../interfaces/naffle/zksync/naffle/base/INaffleBase.sol";
+import { ERC721BaseInternal } from '@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol';
+import { ERC721EnumerableInternal } from '@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol';
 
-abstract contract PaidTicketBaseInternal is SolidStateERC721 {
+abstract contract PaidTicketBaseInternal is ERC721BaseInternal, ERC721EnumerableInternal {
     function _setNaffleContract(address _naffleContract) internal {
         PaidTicketBaseStorage.layout().naffleContract = INaffleBase(_naffleContract);
     }
@@ -26,9 +27,9 @@ abstract contract PaidTicketBaseInternal is SolidStateERC721 {
                 naffleId: _naffleId,
                 winningTicket: false
             });
-            _safeMint(_to, totalSupply() + 1);
-            l.paidTickets[totalSupply()] = paidTicket;
-            ticketIds[i] = totalSupply();
+            _safeMint(_to, _totalSupply() + 1);
+            l.paidTickets[_totalSupply()] = paidTicket;
+            ticketIds[i] = _totalSupply();
         }
     }
 }
