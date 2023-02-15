@@ -44,51 +44,6 @@ contract PaidTicketBase is Ownable, AccessControl, SolidStateERC721, PaidTicketB
         super._handleTransferMessageValue(from, to, tokenId, value);
     }
 
-    function _setApprovalForAll(
-        address operator,
-        bool approved
-    )
-        internal
-        override(ERC721BaseInternal)
-    {
-        super._setApprovalForAll(operator, approved);
-    }
-
-    function _approve(
-        address operator,
-        uint256 tokenId
-    )
-        internal
-        override(ERC721BaseInternal)
-    {
-        super._approve(operator, tokenId);
-    }
-
-    function _transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal override(ERC721BaseInternal) {
-        super._transferFrom(from, to, tokenId);
-    }
-
-    function _safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal override(ERC721BaseInternal){
-        super._safeTransferFrom(from, to, tokenId);
-    }
-
-    function _safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal override(ERC721BaseInternal) {
-        super._safeTransferFrom(from, to, tokenId, data);
-    }
-
     function _beforeTokenTransfer(
         address from,
         address to,
