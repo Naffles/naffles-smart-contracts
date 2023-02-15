@@ -16,7 +16,12 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     IFoundersKey public FoundersKeyAddress;
     ISoulboundFoundersKey public SoulboundFoundersKeyAddress;
 
-    enum StakingPeriod { ONE_MONTH, THREE_MONTHS, SIX_MONTHS, TWELVE_MONTHS }
+    enum StakingPeriod {
+        ONE_MONTH,
+        THREE_MONTHS,
+        SIX_MONTHS,
+        TWELVE_MONTHS
+    }
 
     uint256 public constant ONE_MONTH = 30 days;
     uint256 public constant THREE_MONTHS = 90 days;
@@ -32,7 +37,12 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     mapping(uint16 => uint) private nftIdToIndex;
     mapping(address => StakeInfo[]) public userStakeInfo;
 
-    event UserStaked(address userAddress, uint16 nftId, uint256 stakeTime, StakingPeriod stakingPeriod);
+    event UserStaked(
+        address userAddress,
+        uint16 nftId,
+        uint256 stakeTime,
+        StakingPeriod stakingPeriod
+    );
     event UserUnstaked(address userAddress, uint16 nftId, uint256 unstakeTime);
 
     constructor(
@@ -40,14 +50,23 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         address _soulboundFoundersKeyAddress
     ) {
         FoundersKeyAddress = IFoundersKey(_foundersKeyAddress);
-        SoulboundFoundersKeyAddress = ISoulboundFoundersKey(_soulboundFoundersKeyAddress);
+        SoulboundFoundersKeyAddress = ISoulboundFoundersKey(
+            _soulboundFoundersKeyAddress
+        );
     }
 
-    function stake(uint16 _nftId, StakingPeriod _stakingPeriod) external whenNotPaused {
+    function stake(
+        uint16 _nftId,
+        StakingPeriod _stakingPeriod
+    ) external whenNotPaused {
         SoulboundFoundersKeyAddress.safeMint(msg.sender, _nftId);
         FoundersKeyAddress.transferFrom(msg.sender, address(this), _nftId);
 
-        StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, _stakingPeriod);
+        StakeInfo memory stakeInfo = StakeInfo(
+            _nftId,
+            block.timestamp,
+            _stakingPeriod
+        );
         userStakeInfo[msg.sender].push(stakeInfo);
         emit UserStaked(msg.sender, _nftId, block.timestamp, _stakingPeriod);
     }
@@ -55,8 +74,15 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     function unstake(uint16 _nftId) external {
         uint index = nftIdToIndex[_nftId];
         StakeInfo memory stakeInfo = userStakeInfo[msg.sender][index];
-        if (stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod) > block.timestamp) {
-            revert NFTLocked(_nftId, stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod));
+        if (
+            stakeInfo.stakedSince + _getStakingPeriod(stakeInfo.stakingPeriod) >
+            block.timestamp
+        ) {
+            revert NFTLocked(
+                _nftId,
+                stakeInfo.stakedSince +
+                    _getStakingPeriod(stakeInfo.stakingPeriod)
+            );
         }
         FoundersKeyAddress.transferFrom(address(this), msg.sender, _nftId);
         SoulboundFoundersKeyAddress.burn(_nftId);
@@ -65,7 +91,9 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         emit UserUnstaked(msg.sender, _nftId, block.timestamp);
     }
 
-    function _getStakingPeriod(StakingPeriod _stakingPeriod) internal pure returns (uint256) {
+    function _getStakingPeriod(
+        StakingPeriod _stakingPeriod
+    ) internal pure returns (uint256) {
         if (_stakingPeriod == StakingPeriod.ONE_MONTH) {
             return ONE_MONTH;
         } else if (_stakingPeriod == StakingPeriod.THREE_MONTHS) {
@@ -79,7 +107,9 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         }
     }
 
-    function getBestStakedNFTInfo(address _userAddress) external view returns(uint8, uint16, uint256) {
+    function getBestStakedNFTInfo(
+        address _userAddress
+    ) external view returns (uint8, uint16, uint256) {
         uint8 bestStakedType = 0;
         uint16 amountStakedOfBestType = 0;
         uint256 earliestTimeStakedOfBestType = 0;
@@ -93,7 +123,7 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
             if (tokenType == bestStakedType) {
                 ++amountStakedOfBestType;
                 if (earliestTimeStakedOfBestType > stakedInfo.stakedSince) {
-                  earliestTimeStakedOfBestType = stakedInfo.stakedSince;
+                    earliestTimeStakedOfBestType = stakedInfo.stakedSince;
                 }
             } else if (tokenType > bestStakedType) {
                 bestStakedType = tokenType;
@@ -101,28 +131,43 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
                 earliestTimeStakedOfBestType = stakedInfo.stakedSince;
             }
         }
-        return (bestStakedType, amountStakedOfBestType, earliestTimeStakedOfBestType);
+        return (
+            bestStakedType,
+            amountStakedOfBestType,
+            earliestTimeStakedOfBestType
+        );
     }
 
-    function getStakedNFTInfos(address _userAddress) external view returns(StakeInfo[] memory) {
+    function getStakedNFTInfos(
+        address _userAddress
+    ) external view returns (StakeInfo[] memory) {
         return userStakeInfo[_userAddress];
     }
 
-    function getStakedInfoForNFTId(address _userAddress, uint16 _nftId) external view returns(StakeInfo memory) {
+    function getStakedInfoForNFTId(
+        address _userAddress,
+        uint16 _nftId
+    ) external view returns (StakeInfo memory) {
         return userStakeInfo[_userAddress][nftIdToIndex[_nftId]];
     }
 
-    function setFoundersKeyAddress(address _foundersKeyAddress) external onlyOwner {
-        if(_foundersKeyAddress == address(0)) {
-          revert AddressIsZero(_foundersKeyAddress);
+    function setFoundersKeyAddress(
+        address _foundersKeyAddress
+    ) external onlyOwner {
+        if (_foundersKeyAddress == address(0)) {
+            revert AddressIsZero(_foundersKeyAddress);
         }
         FoundersKeyAddress = IFoundersKey(_foundersKeyAddress);
     }
 
-    function setSoulboundFoundersKeyAddress(address _soulboundFoundersKeyAddress) external onlyOwner {
-        if(_soulboundFoundersKeyAddress== address(0)) {
-          revert AddressIsZero(_soulboundFoundersKeyAddress);
+    function setSoulboundFoundersKeyAddress(
+        address _soulboundFoundersKeyAddress
+    ) external onlyOwner {
+        if (_soulboundFoundersKeyAddress == address(0)) {
+            revert AddressIsZero(_soulboundFoundersKeyAddress);
         }
-        SoulboundFoundersKeyAddress = ISoulboundFoundersKey(_soulboundFoundersKeyAddress);
+        SoulboundFoundersKeyAddress = ISoulboundFoundersKey(
+            _soulboundFoundersKeyAddress
+        );
     }
 }

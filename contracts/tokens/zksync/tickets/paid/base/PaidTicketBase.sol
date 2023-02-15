@@ -1,25 +1,37 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import { IPaidTicketBase } from "../../../../../../interfaces/tokens/zksync/tickets/paid/base/IPaidTicketBase.sol";
-import { AccessControl } from "@solidstate/contracts/access/access_control/AccessControl.sol";
-import { SolidStateERC721 } from '@solidstate/contracts/token/ERC721/SolidStateERC721.sol';
-import { PaidTicketBaseInternal } from "./PaidTicketBaseInternal.sol";
-import { ERC721BaseInternal } from '@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol';
-import { Ownable } from "@solidstate/contracts/access/ownable/Ownable.sol";
+import {IPaidTicketBase} from "../../../../../../interfaces/tokens/zksync/tickets/paid/base/IPaidTicketBase.sol";
+import {AccessControl} from "@solidstate/contracts/access/access_control/AccessControl.sol";
+import {SolidStateERC721} from "@solidstate/contracts/token/ERC721/SolidStateERC721.sol";
+import {PaidTicketBaseInternal} from "./PaidTicketBaseInternal.sol";
+import {ERC721BaseInternal} from "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
+import {Ownable} from "@solidstate/contracts/access/ownable/Ownable.sol";
 
-
-contract PaidTicketBase is Ownable, AccessControl, SolidStateERC721, PaidTicketBaseInternal, IPaidTicketBase {
+contract PaidTicketBase is
+    Ownable,
+    AccessControl,
+    SolidStateERC721,
+    PaidTicketBaseInternal,
+    IPaidTicketBase
+{
     constructor(address _admin) {
         _grantRole(_getAdminRole(), _admin);
         _setOwner(_admin);
     }
 
-    function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei) external onlyRole(_getNaffleContractRole()) returns (uint256[] memory) {
+    function mintTickets(
+        address _to,
+        uint256 _amount,
+        uint256 _naffleId,
+        uint256 _ticketPriceInWei
+    ) external onlyRole(_getNaffleContractRole()) returns (uint256[] memory) {
         _mintTickets(_to, _amount, _naffleId, _ticketPriceInWei);
     }
 
-    function setNaffleContract(address _naffleContract) external onlyRole(_getAdminRole()) {
+    function setNaffleContract(
+        address _naffleContract
+    ) external onlyRole(_getAdminRole()) {
         _setNaffleContract(_naffleContract);
     }
 
@@ -52,4 +64,3 @@ contract PaidTicketBase is Ownable, AccessControl, SolidStateERC721, PaidTicketB
         super._beforeTokenTransfer(from, to, tokenId);
     }
 }
-

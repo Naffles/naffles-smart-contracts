@@ -4,7 +4,10 @@ pragma solidity ^0.8.17;
 import "./TestValueFacetInternalUpgraded.sol";
 import "../../interfaces/example/ITestValueFacetUpgraded.sol";
 
-contract TestValueFacetUpgraded is TestValueFacetInternalUpgraded, ITestValueFacetUpgraded {
+contract TestValueFacetUpgraded is
+    TestValueFacetInternalUpgraded,
+    ITestValueFacetUpgraded
+{
     function getValue() external view returns (string memory) {
         return _getValue();
     }

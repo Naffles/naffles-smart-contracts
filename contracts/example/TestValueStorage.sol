@@ -2,7 +2,8 @@
 pragma solidity ^0.8.17;
 
 library TestValueStorage {
-    bytes32 internal constant STORAGE_SLOT = keccak256("naffles.contract.tests.TestValueStorage");
+    bytes32 internal constant STORAGE_SLOT =
+        keccak256("naffles.contract.tests.TestValueStorage");
 
     struct Storage {
         string value;

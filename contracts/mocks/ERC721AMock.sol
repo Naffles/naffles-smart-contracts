@@ -15,7 +15,9 @@ contract ERC721AMock is ERC721A, IFoundersKey {
         _burn(tokenId);
     }
 
-    function tokenURI(uint256 tokenId) public view override(ERC721A, IERC721A) returns (string memory) {
+    function tokenURI(
+        uint256 tokenId
+    ) public view override(ERC721A, IERC721A) returns (string memory) {
         return "https://example.com";
     }
 
@@ -25,17 +27,16 @@ contract ERC721AMock is ERC721A, IFoundersKey {
 
     function tokenType(uint16 tokenId) public pure override returns (uint8) {
         if (tokenId == 1) {
-          return 4;
+            return 4;
         }
         if (tokenId == 2) {
-          return 4;
+            return 4;
         }
         if (tokenId == 3) {
-          return 3;
+            return 3;
         }
         return 0;
     }
 
     function setStakingAddress(address stakingAddress) public {}
 }
-
