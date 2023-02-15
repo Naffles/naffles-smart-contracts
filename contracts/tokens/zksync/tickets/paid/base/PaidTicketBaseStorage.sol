@@ -13,6 +13,8 @@ library PaidTicketBaseStorage {
       bool winningTicket;
     }
 
+    bytes32 internal constant NAFFLE_CONTRACT_ROLE = keccak256("NAFFLE_CONTRACT_ROLE");
+
     struct Layout {
       INaffleBase naffleContract;
       mapping(uint256 => PaidTicket) paidTickets;

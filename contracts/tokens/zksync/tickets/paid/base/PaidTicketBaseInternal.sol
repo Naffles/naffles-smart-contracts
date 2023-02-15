@@ -17,6 +17,10 @@ abstract contract PaidTicketBaseInternal is ERC721BaseInternal, ERC721Enumerable
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
+    function _getNaffleContractRole() internal pure returns (bytes32) {
+        return PaidTicketBaseStorage.NAFFLE_CONTRACT_ROLE;
+    } 
+
     function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei) internal returns(uint256[] memory ticketIds){
         ticketIds = new uint256[](_amount);
         PaidTicketBaseStorage.Layout storage l = PaidTicketBaseStorage.layout();

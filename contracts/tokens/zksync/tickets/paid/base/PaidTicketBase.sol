@@ -10,22 +10,17 @@ import { Ownable } from "@solidstate/contracts/access/ownable/Ownable.sol";
 
 
 contract PaidTicketBase is Ownable, AccessControl, SolidStateERC721, PaidTicketBaseInternal, IPaidTicketBase {
-    function initialize(address _naffleContract, address _admin) external {
-        _setNaffleContract(_naffleContract);
+    constructor(address _admin) {
         _grantRole(_getAdminRole(), _admin);
         _setOwner(_admin);
     }
 
-    function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei) external payable returns (uint256[] memory) {
+    function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei) external onlyRole(_getNaffleContractRole()) returns (uint256[] memory) {
         _mintTickets(_to, _amount, _naffleId, _ticketPriceInWei);
     }
 
     function setNaffleContract(address _naffleContract) external onlyRole(_getAdminRole()) {
         _setNaffleContract(_naffleContract);
-    }
-
-    function owner() external view returns (address) {
-        return _owner();
     }
 
     function getAdminRole() external view returns (bytes32) {
@@ -92,6 +87,14 @@ contract PaidTicketBase is Ownable, AccessControl, SolidStateERC721, PaidTicketB
         bytes memory data
     ) internal override(ERC721BaseInternal) {
         super._safeTransferFrom(from, to, tokenId, data);
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721BaseInternal, SolidStateERC721) {
+        super._beforeTokenTransfer(from, to, tokenId);
     }
 }
 

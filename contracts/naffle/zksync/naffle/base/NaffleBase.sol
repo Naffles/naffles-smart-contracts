@@ -6,9 +6,8 @@ import { AccessControl } from "@solidstate/contracts/access/acess_control/Access
 import { NaffleBaseInternal } from "./NaffleBaseInternal.sol";
 
 contract NaffleBase in AccessControl, NaffleBaseInternal, INaffleBase {
-    function initialize(address _PaidTicketContract, address _admin) external {
+    constructor(address _PaidTicketContract, address _admin) {
         _grantRole(_getAdminRole(), _admin);
-        _setPaidTicketContract(_PaidTicketContract);
     }
 
     function getAdminRole() external view returns (bytes32) {
