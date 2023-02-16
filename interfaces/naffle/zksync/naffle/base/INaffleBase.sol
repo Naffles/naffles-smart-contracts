@@ -12,7 +12,7 @@ interface INaffleBase {
     function postponeNaffle(uint256 _naffleId, NaffleBaseStorage.PostponeTime _postponeTime) external;
     function cancelNaffle(uint256 _naffleId) external;
     function adminCancelNaffle(uint256 _naffleId) external;
-    function getNaffleInfo(uint256 _naffleId) external; 
+    function getNaffleInfo(uint256 _naffleId) external returns(NaffleBaseStorage.Naffle memory);
     function setFreeTicketRatio(uint256 _freeTicketRatio) external;
     function getFreeTicketRatio() external view returns (uint256);
     function setMinimumNaffleDuration(uint256 _minimumNaffleDuration) external;

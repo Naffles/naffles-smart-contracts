@@ -8,7 +8,7 @@ import {FreeTicketBaseInternal} from "./FreeTicketBaseInternal.sol";
 import {ERC721BaseInternal} from "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import {Ownable} from "@solidstate/contracts/access/ownable/Ownable.sol";
 
-contract FreeTicketBase is
+abstract contract FreeTicketBase is
     Ownable,
     AccessControl,
     SolidStateERC721,
@@ -23,16 +23,22 @@ contract FreeTicketBase is
     function mintTickets(
         address _to,
         uint256 _amount,
-        uint256 _naffleId,
-        uint256 _ticketPriceInWei
+        uint256 _naffleId
     ) external onlyRole(_getNaffleContractRole()) returns (uint256[] memory) {
-        _mintTickets(_to, _amount, _naffleId, _ticketPriceInWei);
+        _mintTickets(_to, _amount, _naffleId);
     }
 
     function setNaffleContract(
         address _naffleContract
     ) external onlyRole(_getAdminRole()) {
         _setNaffleContract(_naffleContract);
+    }
+
+    function setWinningTicket(
+        uint256 _naffleId,
+        uint256 _naffleTicketId
+    ) external onlyRole(_getNaffleContractRole()) {
+        _setWinningTicket(_naffleId, _naffleTicketId);
     }
 
     function getAdminRole() external view returns (bytes32) {

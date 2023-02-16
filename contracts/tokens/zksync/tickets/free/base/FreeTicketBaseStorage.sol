@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
 import {INaffleBase} from "../../../../../../interfaces/naffle/zksync/naffle/base/INaffleBase.sol";
@@ -20,7 +21,7 @@ library FreeTicketBaseStorage {
 
     struct Layout {
         INaffleBase naffleContract;
-        // naffleId => ticketId => FreeTicket
+        // naffleId => ticketIdOnNaffle => FreeTicket
         mapping(uint256 => mapping(uint256 => FreeTicket)) freeTickets;
         mapping(uint256 => uint256) ticketIdNaffleTicketId;
     }

@@ -7,6 +7,7 @@ import {OwnableStorage} from "@solidstate/contracts/access/ownable/OwnableStorag
 import {INaffleBase} from "../../../../../../interfaces/naffle/zksync/naffle/base/INaffleBase.sol";
 import {ERC721BaseInternal} from "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import {ERC721EnumerableInternal} from "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
+import {NaffleBaseStorage} from "../../../../../naffle/zksync/naffle/base/NaffleBaseStorage.sol";
 
 error InvalidNaffleId(uint256 naffleId);
 
@@ -42,22 +43,22 @@ abstract contract FreeTicketBaseInternal is
         }
 
         for (uint256 i = naffle.numberOfFreeTickets; i < _amount; ++i) {
-            FreeTicketBaseStorage.FreeTicket
-                memory freeTicket = FreeTicketBaseStorage.FreeTicket({
-                    owner: _to,
-                    naffleId: _naffleId,
-                    ticketIdOfNaffle: i + 1,
-                    winningTicket: false
-                });
+            uint256 ticketIdOnNaffle = i + 1;
+            FreeTicketBaseStorage.FreeTicket memory freeTicket = FreeTicketBaseStorage.FreeTicket({
+                owner: _to,
+                naffleId: _naffleId,
+                ticketIdOnNaffle: ticketIdOnNaffle,
+                winningTicket: false
+            });
             _safeMint(_to, _totalSupply() + 1);
-            l.ticketIdNaffleTicketId[_totalSupply()] = i + 1;
-            l.paidTickets[_totalSupply()] = FreeTicket;
+            l.ticketIdNaffleTicketId[_totalSupply()] = ticketIdOnNaffle;
+            l.freeTickets[_naffleId][ticketIdOnNaffle] = freeTicket;
             ticketIds[i] = _totalSupply();
         }
     }
 
-    function _setWinningTicket(uint256 _naffleId, uint256 _ticketId) internal {
+    function _setWinningTicket(uint256 _naffleId, uint256 _naffleTicketId) internal {
         FreeTicketBaseStorage.Layout storage l = FreeTicketBaseStorage.layout();
-        l.paidTickets[_ticketId].winningTicket = true;
+        l.freeTickets[_naffleId][_naffleTicketId].winningTicket = true;
     }
 }

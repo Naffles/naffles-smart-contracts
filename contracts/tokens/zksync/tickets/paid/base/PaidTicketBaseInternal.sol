@@ -7,6 +7,9 @@ import {OwnableStorage} from "@solidstate/contracts/access/ownable/OwnableStorag
 import {INaffleBase} from "../../../../../../interfaces/naffle/zksync/naffle/base/INaffleBase.sol";
 import {ERC721BaseInternal} from "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import {ERC721EnumerableInternal} from "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
+import {NaffleBaseStorage} from "../../../../../naffle/zksync/naffle/base/NaffleBaseStorage.sol";
+
+error InvalidNaffleId(uint256 naffleId);
 
 abstract contract PaidTicketBaseInternal is
     ERC721BaseInternal,
@@ -42,21 +45,24 @@ abstract contract PaidTicketBaseInternal is
         }
 
         for (uint256 i = naffle.numberOfPaidTickets; i < _amount; ++i) {
+            uint256 ticketIdOnNaffle = i + 1;
             PaidTicketBaseStorage.PaidTicket
                 memory paidTicket = PaidTicketBaseStorage.PaidTicket({
                     owner: _to,
-                    ticketIdOnNaffle: naffle.ticketId,
+                    ticketIdOnNaffle: ticketIdOnNaffle,
                     ticketPriceInWei: _ticketPriceInWei,
                     naffleId: _naffleId,
                     winningTicket: false
                 });
             _safeMint(_to, _totalSupply() + 1);
-            l.paidTickets[_totalSupply()] = paidTicket;
+            l.ticketIdNaffleTicketId[_totalSupply()] = ticketIdOnNaffle;
+            l.paidTickets[_naffleId][ticketIdOnNaffle] = paidTicket;
             ticketIds[i] = _totalSupply();
         }
     }
 
-    function _setWinningTicket(uint256 _naffleId, uint256 _ticketId) internal {
-        PaidTicketBaseStorage.layout().winningTicketId = _ticketId;
+    function _setWinningTicket(uint256 _naffleId, uint256 _naffleTicketId) internal {
+        PaidTicketBaseStorage.Layout storage l = PaidTicketBaseStorage.layout();
+        l.paidTickets[_naffleId][_naffleTicketId].winningTicket = true;
     }
 }

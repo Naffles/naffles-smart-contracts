@@ -35,6 +35,13 @@ contract PaidTicketBase is
         _setNaffleContract(_naffleContract);
     }
 
+    function setWinningTicket(
+        uint256 _naffleId,
+        uint256 _naffleTicketId 
+    ) external onlyRole(_getNaffleContractRole()) {
+        _setWinningTicket(_naffleId, _naffleTicketId);
+    }
+
     function getAdminRole() external view returns (bytes32) {
         return _getAdminRole();
     }
