@@ -30,7 +30,7 @@ library NaffleBaseStorage {
         FOUR_DAYS,
         FIVE_DAYS,
         SIX_DAYS,
-        ONE_WEEK,
+        ONE_WEEK
     }
 
     struct Naffle {
@@ -42,6 +42,7 @@ library NaffleBaseStorage {
         uint256 numberOfPaidTickets;
         uint256 numberOfFreeTickets;
         uint256 ticketPriceInWei;
+        uint256 endTime;
         NaffleStatus status;
         NaffleType naffleType;
     }

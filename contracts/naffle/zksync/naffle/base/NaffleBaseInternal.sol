@@ -14,6 +14,8 @@ error InvalidNaffleStatus(NaffleBaseStorage.NaffleStatus status);
 error NotNaffleOwner(uint256 naffleId);
 error NaffleNotFinished(uint256 naffleId);
 error NaffleIsFinished(uint256 naffleId);
+error InvalidEndTime(uint256 endTime);
+error InvalidPostponeTime();
 
 contract NaffleBaseInternal {
     function _buyTickets(
@@ -59,11 +61,12 @@ contract NaffleBaseInternal {
         uint256 _ticketPriceInWei,
         NaffleBaseStorage.NaffleType _type 
     ) internal returns (uint256 naffleId) {
+        NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
+
         if (block.timestamp + layout.minimumNaffleDuration < _endTime) {
             revert InvalidEndTime(_endTime);
         }
 
-        NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
         ++layout.numberOfNaffles;
         naffleId = layout.numberOfNaffles;
         uint256 freeTicketSpots = 0;
@@ -87,6 +90,7 @@ contract NaffleBaseInternal {
             numberOfPaidTickets: 0,
             numberOfFreeTickets: 0,
             ticketPriceInWei: _ticketPriceInWei,
+            endTime: _endTime,
             status: NaffleBaseStorage.NaffleStatus.ACTIVE,
             naffleType: _type
         });
@@ -97,7 +101,7 @@ contract NaffleBaseInternal {
         NaffleBaseStorage.Naffle storage naffle = layout.naffles[_naffleId];
 
         if (msg.sender != naffle.owner) {
-            revert NotNaffleOwner();
+            revert NotNaffleOwner(_naffleId);
         }
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
@@ -119,20 +123,20 @@ contract NaffleBaseInternal {
         NaffleBaseStorage.Naffle storage naffle = layout.naffles[_naffleId];
 
         if (msg.sender != naffle.owner) {
-            revert NotNaffleOwner();
+            revert NotNaffleOwner(_naffleId);
         }
 
-        _internalCancelNaffle(naffle);
+        _internalCancelNaffle(_naffleId, naffle);
     }
 
     function adminCancelnaffle(uint256 _naffleId) internal {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
         NaffleBaseStorage.Naffle storage naffle = layout.naffles[_naffleId];
 
-        _internalCancelNaffle(naffle);
+        _internalCancelNaffle(_naffleId, naffle);
     }
 
-    function _internalCancelNaffle(NaffleBaseStorage.Naffle storage naffle) internal {
+    function _internalCancelNaffle(uint256 _naffleId, NaffleBaseStorage.Naffle storage naffle) internal {
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
@@ -145,7 +149,7 @@ contract NaffleBaseInternal {
         if (naffle.numberOfPaidTickets == naffle.paidTicketSpots) {
             revert NaffleIsFinished(_naffleId);
         }
-        naffle.status = NaffleBaseStorage.NaffleStatus.CANCELLED;
+        naffle.status = NaffleBaseStorage.NaffleStatus.CLOSED;
     }
 
     function _getAdminRole() internal view returns (bytes32) {
