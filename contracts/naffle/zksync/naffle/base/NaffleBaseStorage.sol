@@ -23,8 +23,19 @@ library NaffleBaseStorage {
         UNLIMITED
     }
 
+    enum PostponeTime {
+        ONE_DAY,
+        TWO_DAYS,
+        THREE_DAYS,
+        FOUR_DAYS,
+        FIVE_DAYS,
+        SIX_DAYS,
+        ONE_WEEK,
+    }
+
     struct Naffle {
         address ethTokenAddress;
+        address owner;
         uint256 nftId;
         uint256 paidTicketSpots;
         uint256 freeTicketSpots;
@@ -42,6 +53,8 @@ library NaffleBaseStorage {
         // 100 = 1%
         uint256 freeTicketRatio;
         uint256 numberOfNaffles;
+        uint256 minimumNaffleDuration;
+        uint256 minimumPaidTicketSpots;
         mapping(uint256 => Naffle) naffles;
 }
 
