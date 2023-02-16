@@ -31,7 +31,7 @@ abstract contract FreeTicketBaseInternal is
     function _mintTickets(
         address _to,
         uint256 _amount,
-        uint256 _naffleId,
+        uint256 _naffleId
     ) internal returns (uint256[] memory ticketIds) {
         ticketIds = new uint256[](_amount);
         FreeTicketBaseStorage.Layout storage l = FreeTicketBaseStorage.layout();

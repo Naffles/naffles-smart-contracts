@@ -24,8 +24,7 @@ library PaidTicketBaseStorage {
         INaffleBase naffleContract;
         // naffleId => ticketId => PaidTicket
         mapping(uint256 => mapping(uint256 => PaidTicket)) paidTickets;
-        mapping(uint256 => uint256) ticketIdNaffleTicketId
-
+        mapping(uint256 => uint256) ticketIdNaffleTicketId;
     }
 
     function layout() internal pure returns (Layout storage l) {
