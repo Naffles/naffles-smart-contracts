@@ -19,4 +19,5 @@ interface INaffleBase {
     function getMinimumNaffleDuration() external view returns (uint256);
     function getMinimumPaidTicketSpots() external view returns (uint256);
     function setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) external;
+    function selectWinner(uint256 winningNumber, uint256 _naffleId) external;
 }

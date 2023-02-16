@@ -16,6 +16,9 @@ error NaffleNotFinished(uint256 naffleId);
 error NaffleIsFinished(uint256 naffleId);
 error InvalidEndTime(uint256 endTime);
 error InvalidPostponeTime();
+error InvalidWinningNumber(uint256 winningNumber);
+error InsufficientPlatformFeeBalance();
+error UnableToWithdraw(uint256 amount);
 
 contract NaffleBaseInternal {
     function _buyTickets(
@@ -91,6 +94,8 @@ contract NaffleBaseInternal {
             numberOfFreeTickets: 0,
             ticketPriceInWei: _ticketPriceInWei,
             endTime: _endTime,
+            winningTicketId: 0, 
+            winningTicketType: NaffleBaseStorage.TicketType.NONE,
             status: NaffleBaseStorage.NaffleStatus.ACTIVE,
             naffleType: _type
         });
@@ -150,6 +155,54 @@ contract NaffleBaseInternal {
             revert NaffleIsFinished(_naffleId);
         }
         naffle.status = NaffleBaseStorage.NaffleStatus.CLOSED;
+    }
+
+    function _selectWinner(uint256 _winningNumber, uint256 _naffleId) internal {
+        NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
+        NaffleBaseStorage.Naffle storage naffle = layout.naffles[_naffleId];
+    
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleBaseStorage.NaffleStatus.ACTIVE || naffle.status != NaffleBaseStorage.NaffleStatus.POSTPONED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+        if (naffle.endTime > block.timestamp) {
+            revert NaffleNotFinished(_naffleId);
+        }
+        if (naffle.numberOfPaidTickets == naffle.paidTicketSpots) {
+            revert NaffleIsFinished(_naffleId);
+        }
+        if (_winningNumber > naffle.numberOfPaidTickets + naffle.numberOfFreeTickets) {
+            revert InvalidWinningNumber(_winningNumber);
+        }
+        if (_winningNumber <= naffle.numberOfPaidTickets) {
+            naffle.winningTicketId = _winningNumber;
+            naffle.winningTicketType = NaffleBaseStorage.TicketType.PAID;
+        } else {
+            naffle.winningTicketId = _winningNumber - naffle.numberOfPaidTickets;
+            naffle.winningTicketType = NaffleBaseStorage.TicketType.FREE;
+        }
+        naffle.status = NaffleBaseStorage.NaffleStatus.FINISHED;
+
+        // TODO reduce platform fee for passholders
+        uint256 totalFundsInNaffle = naffle.numberOfPaidTickets * naffle.ticketPriceInWei * 10000;
+        uint256 amountToSendToOwner = totalFundsInNaffle - totalFundsInNaffle * layout.platformFee / 10000;
+        layout.platformFeeBalance += (totalFundsInNaffle - amountToSendToOwner) / 1000;
+        amountToSendToOwner = amountToSendToOwner / 10000;
+
+        (bool success, ) = msg.sender.call{value: amountToSendToOwner}("");
+        if (!success) { revert UnableToWithdraw({amount: amountToSendToOwner});}
+    }
+
+    function _adminPlatformFeeWithdraw(uint256 _amount) internal {
+        NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
+        if (layout.platformFeeBalance < _amount) {
+            revert InsufficientPlatformFeeBalance();
+        }
+        layout.platformFeeBalance -= _amount;
+        (bool success, ) = msg.sender.call{value: _amount}("");
+        if (!success) { revert UnableToWithdraw({amount: _amount});}
     }
 
     function _getAdminRole() internal view returns (bytes32) {

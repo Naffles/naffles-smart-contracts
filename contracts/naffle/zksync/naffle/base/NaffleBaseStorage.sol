@@ -33,6 +33,12 @@ library NaffleBaseStorage {
         ONE_WEEK
     }
 
+    enum TicketType {
+        NONE,
+        FREE,
+        PAID
+    }
+
     struct Naffle {
         address ethTokenAddress;
         address owner;
@@ -43,6 +49,8 @@ library NaffleBaseStorage {
         uint256 numberOfFreeTickets;
         uint256 ticketPriceInWei;
         uint256 endTime;
+        uint256 winningTicketId;
+        TicketType winningTicketType;
         NaffleStatus status;
         NaffleType naffleType;
     }
@@ -56,6 +64,7 @@ library NaffleBaseStorage {
         uint256 numberOfNaffles;
         uint256 minimumNaffleDuration;
         uint256 minimumPaidTicketSpots;
+        uint256 platformFeeBalance;
         mapping(uint256 => Naffle) naffles;
 }
 
