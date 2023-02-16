@@ -4,21 +4,21 @@ pragma solidity ^0.8.17;
 import {NaffleBaseStorage} from "./NaffleBaseStorage.sol";
 import {AccessControlStorage} from "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import {IPaidTicketBase} from "../../../../../interfaces/tokens/zksync/tickets/paid/base/IPaidTicketBase.sol";
+import {NaffleTypes} from "../../../../libraries/NaffleTypes.sol";
 
 error NotEnoughFunds(uint256 funds);
 error NotEnoughPaidTicketSpots(uint256 tickets);
 error NaffleNotActive();
-error InvalidPaidTicketSpots(uint256 spots);
 error InvalidNaffleId(uint256 naffleId);
 error InvalidNaffleStatus(NaffleBaseStorage.NaffleStatus status);
 error NotNaffleOwner(uint256 naffleId);
 error NaffleNotFinished(uint256 naffleId);
 error NaffleIsFinished(uint256 naffleId);
-error InvalidEndTime(uint256 endTime);
 error InvalidPostponeTime();
 error InvalidWinningNumber(uint256 winningNumber);
 error InsufficientPlatformFeeBalance();
 error UnableToWithdraw(uint256 amount);
+
 
 contract NaffleBaseInternal {
     function _buyTickets(
@@ -60,36 +60,18 @@ contract NaffleBaseInternal {
         address _owner,
         uint256 _nftId,
         uint256 _paidTicketSpots,
+        uint256 _freeTicketSpots,
         uint256 _endTime,
         uint256 _ticketPriceInWei,
         NaffleBaseStorage.NaffleType _type 
     ) internal returns (uint256 naffleId) {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
-
-        if (block.timestamp + layout.minimumNaffleDuration < _endTime) {
-            revert InvalidEndTime(_endTime);
-        }
-
-        ++layout.numberOfNaffles;
-        naffleId = layout.numberOfNaffles;
-        uint256 freeTicketSpots = 0;
-
-        if (
-            (_type == NaffleBaseStorage.NaffleType.UNLIMITED && _paidTicketSpots != 0) ||
-            _paidTicketSpots < layout.minimumPaidTicketSpots
-        ) {
-            // Unlimited naffles don't have an upper limit on paid or free tickets.
-            revert InvalidPaidTicketSpots(_paidTicketSpots);
-        } else {
-            freeTicketSpots = _paidTicketSpots / layout.freeTicketRatio;
-        }
-
-        layout.naffles[naffleId] = NaffleBaseStorage.Naffle({
+        layout.naffles[naffleId] = NaffleTypes.Naffle({
             ethTokenAddress: _ethTokenAddress,
             owner: _owner,
             nftId: _nftId,
             paidTicketSpots: _paidTicketSpots,
-            freeTicketSpots: freeTicketSpots,
+            freeTicketSpots: _freeTicketSpots,
             numberOfPaidTickets: 0,
             numberOfFreeTickets: 0,
             ticketPriceInWei: _ticketPriceInWei,

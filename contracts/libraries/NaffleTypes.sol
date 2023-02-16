@@ -14,6 +14,11 @@ library NaffleTypes {
         UNLIMITED
     }
 
+    enum TokenContractType {
+        ERC721,
+        ERC1155
+    }
+
     enum PostponeTime {
         ONE_DAY,
         TWO_DAYS,
@@ -44,6 +49,13 @@ library NaffleTypes {
         uint256 ticketIdOnNaffle;
         bool winningTicket;
     }
+
+    struct NaffleHolder {
+        address tokenAddress;
+        uint256 naffleId;
+        address owner;
+        NaffleTokenType naffleTokenType;
+    }
     
     struct Naffle {
         address ethTokenAddress;
@@ -56,9 +68,10 @@ library NaffleTypes {
         uint256 ticketPriceInWei;
         uint256 endTime;
         uint256 winningTicketId;
-        NaffleTypes.TicketType winningTicketType;
-        NaffleTypes.NaffleStatus status;
-        NaffleTypes.NaffleType naffleType;
+        TicketType winningTicketType;
+        NaffleTokenType naffleTokenType;
+        NaffleStatus status;
+        NaffleType naffleType;
     }
 }
 
