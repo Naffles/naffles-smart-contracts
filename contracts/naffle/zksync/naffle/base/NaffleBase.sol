@@ -8,7 +8,7 @@ import { NaffleType } from './NaffleBaseStorage.sol';
 import { NaffleBaseStorage } from "./NaffleBaseStorage.sol";
 
 contract NaffleBase in AccessControl, NaffleBaseInternal, INaffleBase { 
-    constructor(address _PaidTicketContract, address _admin) {
+    constructor(address _admin) {
         _grantRole(_getAdminRole(), _admin);
     }
 
@@ -30,6 +30,10 @@ contract NaffleBase in AccessControl, NaffleBaseInternal, INaffleBase {
             _ticketPriceInWei,
             _naffleType
         )
+    }
+
+    function selectWinner(uint256 _winningNumber, uint256 _naffleId) external onlyRole(_getNafflePlatformRole()) {
+        _selectWinner(winningNumber, _naffleId);
     }
 
     function postponeNaffle(uint256 _naffleId, NaffleBaseStorage.PostponeTime _postponeTime) external {
