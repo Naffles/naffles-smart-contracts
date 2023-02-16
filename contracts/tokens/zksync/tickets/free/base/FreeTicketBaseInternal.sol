@@ -8,6 +8,8 @@ import {INaffleBase} from "../../../../../../interfaces/naffle/zksync/naffle/bas
 import {ERC721BaseInternal} from "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import {ERC721EnumerableInternal} from "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
 import {NaffleBaseStorage} from "../../../../../naffle/zksync/naffle/base/NaffleBaseStorage.sol";
+import {NaffleTypes} from "../../../../../libraries/NaffleTypes.sol";
+
 
 error InvalidNaffleId(uint256 naffleId);
 
@@ -36,7 +38,7 @@ abstract contract FreeTicketBaseInternal is
     ) internal returns (uint256[] memory ticketIds) {
         ticketIds = new uint256[](_amount);
         FreeTicketBaseStorage.Layout storage l = FreeTicketBaseStorage.layout();
-        NaffleBaseStorage.Naffle memory naffle = l.naffleContract.getNaffleInfo(_naffleId);
+        NaffleTypes.Naffle memory naffle = l.naffleContract.getNaffleInfo(_naffleId);
 
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
@@ -44,7 +46,7 @@ abstract contract FreeTicketBaseInternal is
 
         for (uint256 i = naffle.numberOfFreeTickets; i < _amount; ++i) {
             uint256 ticketIdOnNaffle = i + 1;
-            FreeTicketBaseStorage.FreeTicket memory freeTicket = FreeTicketBaseStorage.FreeTicket({
+            NaffleTypes.FreeTicket memory freeTicket = NaffleTypes.FreeTicket({
                 owner: _to,
                 naffleId: _naffleId,
                 ticketIdOnNaffle: ticketIdOnNaffle,

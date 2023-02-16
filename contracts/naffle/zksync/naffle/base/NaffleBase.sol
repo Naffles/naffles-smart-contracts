@@ -4,8 +4,7 @@ pragma solidity ^0.8.17;
 import { INaffleBase } from "../../../../../interfaces/naffle/zksync/naffle/base/INaffleBase.sol";
 import { AccessControl } from "@solidstate/contracts/access/acess_control/AccessControl.sol";
 import { NaffleBaseInternal } from "./NaffleBaseInternal.sol";
-import { NaffleType } from './NaffleBaseStorage.sol';
-import { NaffleBaseStorage } from "./NaffleBaseStorage.sol";
+import { NaffleTypes } from '../../../../libraries/NaffleTypes.sol';
 
 contract NaffleBase in AccessControl, NaffleBaseInternal, INaffleBase { 
     constructor(address _admin) {
@@ -19,7 +18,7 @@ contract NaffleBase in AccessControl, NaffleBaseInternal, INaffleBase {
       uint256 _paidTicketSpots,
       uint256 _ticketPriceInWei,
       uint256 _endTime, 
-      NaffleType _naffleType
+      NaffleTypes.NaffleType _naffleType
     ) external onlyRole(_getNafflePlatformRole())
         _createNaffle(
             _ethTokenAddress, 
@@ -36,7 +35,7 @@ contract NaffleBase in AccessControl, NaffleBaseInternal, INaffleBase {
         _selectWinner(winningNumber, _naffleId);
     }
 
-    function postponeNaffle(uint256 _naffleId, NaffleBaseStorage.PostponeTime _postponeTime) external {
+    function postponeNaffle(uint256 _naffleId, NaffleTypes.PostponeTime _postponeTime) external {
         _postponeNaffle(_naffleId, _postponeTime);
     }
 
@@ -48,7 +47,7 @@ contract NaffleBase in AccessControl, NaffleBaseInternal, INaffleBase {
         _adminCancelNaffle(_naffleId);
     }
     
-    function getNaffleInfo(uint256 _naffleId) external view returns (NaffleBaseStorage.Naffle memory) {
+    function getNaffleInfo(uint256 _naffleId) external view returns (NaffleTypes.Naffle memory) {
         return _getNaffleInfo(_naffleId);
     }
 
