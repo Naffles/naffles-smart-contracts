@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 import { IPaidTicketBase } from "../../../../../interfaces/tokens/zksync/tickets/paid/base/IPaidTicketBase.sol";
-import { IFrreeTicketBase } from "../../../../../interfaces/tokens/zksync/tickets/free/base/IFreeTicketBase.sol";
+import { IFreeTicketBase } from "../../../../../interfaces/tokens/zksync/tickets/free/base/IFreeTicketBase.sol";
 import { NaffleTypes } from "../../../../libraries/NaffleTypes.sol";
 
 library NaffleBaseStorage {
@@ -18,12 +18,11 @@ library NaffleBaseStorage {
         IFreeTicketBase freeTicketContract;
         // 100 = 1%
         uint256 platformFee;
+        uint256 numberOfNaffles;
+        uint256 platformFeeBalance;
         // 100 = 1%
         uint256 freeTicketRatio;
-        uint256 numberOfNaffles;
-        uint256 minimumNaffleDuration;
-        uint256 minimumPaidTicketSpots;
-        uint256 platformFeeBalance;
+
         mapping(uint256 => NaffleTypes.Naffle) naffles;
 }
 

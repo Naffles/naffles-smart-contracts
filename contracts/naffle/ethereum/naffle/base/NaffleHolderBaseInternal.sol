@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import {NaffleHolderBaseStorage} from "./NaffleHolderBaseStorage.sol"
+import {NaffleHolderBaseStorage} from "./NaffleHolderBaseStorage.sol";
 import { NaffleTypes } from '../../../../libraries/NaffleTypes.sol';
 import { IERC165 } from '@solidstate/contracts/interfaces/IERC165.sol';
 
@@ -22,34 +22,49 @@ contract NaffleHolderBaseInternal {
         uint256 _ticketPriceInWei,
         uint256 _endTime, 
         NaffleTypes.NaffleType _naffleType
-    ) internal {
+    ) internal returns (uint256 naffleId) {
         NaffleHolderBaseStorage.Layout storage layout = NaffleHolderBaseStorage.layout();
         
         if (block.timestamp + layout.minimumNaffleDuration < _endTime) {
             revert InvalidEndTime(_endTime);
-        )
+        }
          
         ++layout.numberOfNaffles;
         naffleId = layout.numberOfNaffles;
 
-        uint256 freeTicketSpots = 0;
         if (
-            (_type == NaffleTypes.NaffleType.UNLIMITED && _paidTicketSpots != 0) ||
+            (_naffleType == NaffleTypes.NaffleType.UNLIMITED && _paidTicketSpots != 0) ||
             _paidTicketSpots < layout.minimumPaidTicketSpots
         ) {
             // Unlimited naffles don't have an upper limit on paid or free tickets.
             revert InvalidPaidTicketSpots(_paidTicketSpots);
-        } else {
-            freeTicketSpots = _paidTicketSpots / layout.freeTicketRatio;
         }
 
-        NaffleTypes.TokenContractType memory tokenContractType;
+        NaffleTypes.TokenContractType tokenContractType;
         if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID)) {
           tokenContractType = NaffleTypes.TokenContractType.ERC721;
         } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID)) {
           tokenContractType = NaffleTypes.TokenContractType.ERC1155;
         } else {
-          revert InvalidTokenType()
+          revert InvalidTokenType();
         }
-   }
+    }
+
+    function _claimNFT(uint256 _naffleId) internal {}
+
+    function _getMinimumNaffleDuration() internal view returns (uint256) {
+        return NaffleHolderBaseStorage.layout().minimumNaffleDuration;
+    }
+
+    function _setMinimumNaffleDuration(uint256 _minimumNaffleDuration) internal {
+        NaffleHolderBaseStorage.layout().minimumNaffleDuration = _minimumNaffleDuration;
+    }
+
+    function _getMinimumPaidTicketSpots() internal view returns (uint256) {
+        return NaffleHolderBaseStorage.layout().minimumPaidTicketSpots;
+    }
+
+    function _setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) internal {
+        NaffleHolderBaseStorage.layout().minimumPaidTicketSpots = _minimumPaidTicketSpots;
+    }
 }

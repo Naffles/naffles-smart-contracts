@@ -35,6 +35,11 @@ library NaffleTypes {
         PAID
     }
 
+    enum NaffleTokenType {
+        ERC721,
+        ERC1155
+    }
+
     struct FreeTicket {
         address owner;
         uint256 naffleId;

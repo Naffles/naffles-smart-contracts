@@ -10,7 +10,7 @@ error NotEnoughFunds(uint256 funds);
 error NotEnoughPaidTicketSpots(uint256 tickets);
 error NaffleNotActive();
 error InvalidNaffleId(uint256 naffleId);
-error InvalidNaffleStatus(NaffleBaseStorage.NaffleStatus status);
+error InvalidNaffleStatus(NaffleTypes.NaffleStatus status);
 error NotNaffleOwner(uint256 naffleId);
 error NaffleNotFinished(uint256 naffleId);
 error NaffleIsFinished(uint256 naffleId);
@@ -26,12 +26,12 @@ contract NaffleBaseInternal {
         uint256 _naffleId
     ) internal returns (uint256[] memory ticketIds) {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
-        NaffleBaseStorage.Naffle storage naffle = layout.naffles[_naffleId];
+        NaffleTypes.Naffle storage naffle = layout.naffles[_naffleId];
 
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
-        if (naffle.status != NaffleBaseStorage.NaffleStatus.ACTIVE && naffle.status != NaffleBaseStorage.NaffleStatus.POSTPONED) {
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
         if (msg.value < _amount * naffle.ticketPriceInWei) {
@@ -42,8 +42,8 @@ contract NaffleBaseInternal {
             revert NotEnoughPaidTicketSpots(naffle.paidTicketSpots);
         }
         if (
-            naffle.status != NaffleBaseStorage.NaffleStatus.ACTIVE ||
-            naffle.status != NaffleBaseStorage.NaffleStatus.POSTPONED
+            naffle.status != NaffleTypes.NaffleStatus.ACTIVE ||
+            naffle.status != NaffleTypes.NaffleStatus.POSTPONED
         ) {
             revert NaffleNotActive();
         }
@@ -60,32 +60,38 @@ contract NaffleBaseInternal {
         address _owner,
         uint256 _nftId,
         uint256 _paidTicketSpots,
-        uint256 _freeTicketSpots,
         uint256 _endTime,
         uint256 _ticketPriceInWei,
-        NaffleBaseStorage.NaffleType _type 
+        NaffleTypes.NaffleTokenType _naffleTokenType,
+        NaffleTypes.NaffleType _naffleType
     ) internal returns (uint256 naffleId) {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
+
+        uint256 freeTicketSpots = 0;
+        if (_naffleType == NaffleTypes.NaffleType.STANDARD) {
+            freeTicketSpots = _paidTicketSpots / layout.freeTicketRatio;
+        }
         layout.naffles[naffleId] = NaffleTypes.Naffle({
             ethTokenAddress: _ethTokenAddress,
             owner: _owner,
             nftId: _nftId,
             paidTicketSpots: _paidTicketSpots,
-            freeTicketSpots: _freeTicketSpots,
+            freeTicketSpots: freeTicketSpots,
             numberOfPaidTickets: 0,
             numberOfFreeTickets: 0,
             ticketPriceInWei: _ticketPriceInWei,
             endTime: _endTime,
             winningTicketId: 0, 
-            winningTicketType: NaffleBaseStorage.TicketType.NONE,
-            status: NaffleBaseStorage.NaffleStatus.ACTIVE,
-            naffleType: _type
+            winningTicketType: NaffleTypes.TicketType.NONE,
+            naffleTokenType: _naffleTokenType,
+            status: NaffleTypes.NaffleStatus.ACTIVE,
+            naffleType: _naffleType 
         });
     }
 
-    function postponeNaffle(uint256 _naffleId, NaffleBaseStorage.PostponeTime _postponeTime) internal {
+    function postponeNaffle(uint256 _naffleId, NaffleTypes.PostponeTime _postponeTime) internal {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
-        NaffleBaseStorage.Naffle storage naffle = layout.naffles[_naffleId];
+        NaffleTypes.Naffle storage naffle = layout.naffles[_naffleId];
 
         if (msg.sender != naffle.owner) {
             revert NotNaffleOwner(_naffleId);
@@ -93,7 +99,7 @@ contract NaffleBaseInternal {
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
-        if (naffle.status != NaffleBaseStorage.NaffleStatus.ACTIVE) {
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE) {
             revert InvalidNaffleStatus(naffle.status);
         }
         if (naffle.endTime < block.timestamp) {
@@ -102,12 +108,12 @@ contract NaffleBaseInternal {
         if (naffle.numberOfPaidTickets == naffle.paidTicketSpots) {
             revert NaffleIsFinished(_naffleId);
         }
-        naffle.status = NaffleBaseStorage.NaffleStatus.POSTPONED;
+        naffle.status = NaffleTypes.NaffleStatus.POSTPONED;
     }
 
     function cancelNaffle(uint256 _naffleId) internal {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
-        NaffleBaseStorage.Naffle storage naffle = layout.naffles[_naffleId];
+        NaffleTypes.Naffle storage naffle = layout.naffles[_naffleId];
 
         if (msg.sender != naffle.owner) {
             revert NotNaffleOwner(_naffleId);
@@ -118,16 +124,16 @@ contract NaffleBaseInternal {
 
     function adminCancelnaffle(uint256 _naffleId) internal {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
-        NaffleBaseStorage.Naffle storage naffle = layout.naffles[_naffleId];
+        NaffleTypes.Naffle storage naffle = layout.naffles[_naffleId];
 
         _internalCancelNaffle(_naffleId, naffle);
     }
 
-    function _internalCancelNaffle(uint256 _naffleId, NaffleBaseStorage.Naffle storage naffle) internal {
+    function _internalCancelNaffle(uint256 _naffleId, NaffleTypes.Naffle storage naffle) internal {
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
-        if (naffle.status != NaffleBaseStorage.NaffleStatus.ACTIVE) {
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE) {
             revert InvalidNaffleStatus(naffle.status);
         }
         if (naffle.endTime < block.timestamp) {
@@ -136,17 +142,17 @@ contract NaffleBaseInternal {
         if (naffle.numberOfPaidTickets == naffle.paidTicketSpots) {
             revert NaffleIsFinished(_naffleId);
         }
-        naffle.status = NaffleBaseStorage.NaffleStatus.CLOSED;
+        naffle.status = NaffleTypes.NaffleStatus.CLOSED;
     }
 
     function _selectWinner(uint256 _winningNumber, uint256 _naffleId) internal {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
-        NaffleBaseStorage.Naffle storage naffle = layout.naffles[_naffleId];
+        NaffleTypes.Naffle storage naffle = layout.naffles[_naffleId];
     
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
-        if (naffle.status != NaffleBaseStorage.NaffleStatus.ACTIVE || naffle.status != NaffleBaseStorage.NaffleStatus.POSTPONED) {
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE || naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
         if (naffle.endTime > block.timestamp) {
@@ -160,12 +166,12 @@ contract NaffleBaseInternal {
         }
         if (_winningNumber <= naffle.numberOfPaidTickets) {
             naffle.winningTicketId = _winningNumber;
-            naffle.winningTicketType = NaffleBaseStorage.TicketType.PAID;
+            naffle.winningTicketType = NaffleTypes.TicketType.PAID;
         } else {
             naffle.winningTicketId = _winningNumber - naffle.numberOfPaidTickets;
-            naffle.winningTicketType = NaffleBaseStorage.TicketType.FREE;
+            naffle.winningTicketType = NaffleTypes.TicketType.FREE;
         }
-        naffle.status = NaffleBaseStorage.NaffleStatus.FINISHED;
+        naffle.status = NaffleTypes.NaffleStatus.FINISHED;
 
         // TODO reduce platform fee for passholders
         uint256 totalFundsInNaffle = naffle.numberOfPaidTickets * naffle.ticketPriceInWei * 10000;
@@ -210,7 +216,6 @@ contract NaffleBaseInternal {
     ) internal view returns (uint256) {
         return NaffleBaseStorage.layout().naffles[_naffleId].ticketPriceInWei;
     }
-    
     function _getFreeTicketRatio() internal view returns (uint256) {
         return NaffleBaseStorage.layout().freeTicketRatio;
     }
@@ -218,41 +223,25 @@ contract NaffleBaseInternal {
     function _setFreeTicketRatio(uint256 _freeTicketRatio) internal {
         NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
     }
-
-    function _getMinimumNaffleDuration() internal view returns (uint256) {
-        return NaffleBaseStorage.layout().minimumNaffleDuration;
-    }
-
-    function _setMinimumNaffleDuration(uint256 _minimumNaffleDuration) internal {
-        NaffleBaseStorage.layout().minimumNaffleDuration = _minimumNaffleDuration;
-    }
-
-    function _getMinimumPaidTicketSpots() internal view returns (uint256) {
-        return NaffleBaseStorage.layout().minimumPaidTicketSpots;
-    }
-
-    function _setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) internal {
-        NaffleBaseStorage.layout().minimumPaidTicketSpots = _minimumPaidTicketSpots;
-    }
-
-    function getPostponeTime(NaffleBaseStorage.PostponeTime _postponeTime)
+    
+    function getPostponeTime(NaffleTypes.PostponeTime _postponeTime)
         internal
         pure
         returns (uint256)
     {
-        if (_postponeTime == NaffleBaseStorage.PostponeTime.ONE_DAY) {
+        if (_postponeTime == NaffleTypes.PostponeTime.ONE_DAY) {
             return 1 days;
-        } else if (_postponeTime == NaffleBaseStorage.PostponeTime.TWO_DAYS) {
+        } else if (_postponeTime == NaffleTypes.PostponeTime.TWO_DAYS) {
             return 2 days;
-        } else if (_postponeTime == NaffleBaseStorage.PostponeTime.THREE_DAYS) {
+        } else if (_postponeTime == NaffleTypes.PostponeTime.THREE_DAYS) {
             return 3 days;
-        } else if (_postponeTime == NaffleBaseStorage.PostponeTime.FOUR_DAYS) {
+        } else if (_postponeTime == NaffleTypes.PostponeTime.FOUR_DAYS) {
             return 4 days;
-        } else if (_postponeTime == NaffleBaseStorage.PostponeTime.FIVE_DAYS) {
+        } else if (_postponeTime == NaffleTypes.PostponeTime.FIVE_DAYS) {
             return 5 days;
-        } else if (_postponeTime == NaffleBaseStorage.PostponeTime.SIX_DAYS) {
+        } else if (_postponeTime == NaffleTypes.PostponeTime.SIX_DAYS) {
             return 6 days;
-        } else if (_postponeTime == NaffleBaseStorage.PostponeTime.ONE_WEEK) {
+        } else if (_postponeTime == NaffleTypes.PostponeTime.ONE_WEEK) {
             return 7 days;
         } else {
             revert InvalidPostponeTime();
