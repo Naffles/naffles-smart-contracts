@@ -7,6 +7,7 @@ import { IERC165 } from '@solidstate/contracts/interfaces/IERC165.sol';
 import {INaffleBase} from "../../../../../interfaces/naffle/zksync/naffle/base/INaffleBase.sol";
 import {AccessControlStorage} from "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 
+import {IZkSync} from "@zksync/contracts/zksync/interfaces/IZkSync.sol";
 
 error InvalidTokenType();
 error InvalidEndTime(uint256 endTime);
@@ -25,7 +26,7 @@ contract NaffleHolderBaseInternal {
         uint256 _ticketPriceInWei,
         uint256 _endTime, 
         NaffleTypes.NaffleType _naffleType
-    ) internal returns (uint256 naffleId) {
+    ) internal returns (uint256 naffleId, bytes32 txHash) {
         NaffleHolderBaseStorage.Layout storage layout = NaffleHolderBaseStorage.layout();
         
         if (block.timestamp + layout.minimumNaffleDuration < _endTime) {
@@ -51,6 +52,33 @@ contract NaffleHolderBaseInternal {
         } else {
           revert InvalidTokenType();
         }
+
+        IZkSync zksync = IZkSync(_getZkSyncAddress());
+        txHash = zksync.requestL2Transaction{value: msg.value}(
+            // The address of the L2 contract to call
+            _getZkSyncNaffleContractAddress(),
+            // We pass no ETH with the call
+            0,
+            // Encoding the calldata for the execute
+            abi.encodeWithSignature(
+              "createNaffle(address, address, uint256, uint256, uint256, uint256, uint8)", 
+              _ethTokenAddress, 
+              _owner, 
+              _nftId, 
+              _paidTicketSpots, 
+              _ticketPriceInWei, 
+              _endTime, 
+              tokenContractType
+            ),
+            // Gas limit
+            10000,
+            // gas price per pubdata byte
+            800,
+            // factory dependencies
+            new bytes[](0),
+            // refund address
+            address(0)
+        );
     }
 
     function _claimNFT(uint256 _naffleId) internal {}
@@ -81,5 +109,13 @@ contract NaffleHolderBaseInternal {
 
     function _getZkSyncNaffleContractAddress() internal view returns (address) {
         return NaffleHolderBaseStorage.layout().zkSyncNaffleContractAddress;
+    }
+
+    function _setZkSyncAddress(address _zkSyncAddress) internal {
+        NaffleHolderBaseStorage.layout().zkSyncAddress = _zkSyncAddress;
+    }
+
+    function _getZkSyncAddress() internal view returns (address) {
+        return NaffleHolderBaseStorage.layout().zkSyncAddress;
     }
 }

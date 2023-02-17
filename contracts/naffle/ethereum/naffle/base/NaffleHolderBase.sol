@@ -8,6 +8,7 @@ import {NaffleHolderBaseInternal} from "./NaffleHolderBaseInternal.sol";
 import { NaffleTypes } from '../../../../libraries/NaffleTypes.sol';
 
 
+error UnableToWithdraw(uint256 amount);
 error NotSupported();
 
 abstract contract NaffleHolderBase is AccessControl, NaffleHolderBaseInternal, IERC721Receiver, IERC1155Receiver {
@@ -23,7 +24,7 @@ abstract contract NaffleHolderBase is AccessControl, NaffleHolderBaseInternal, I
       uint256 _ticketPriceInWei,
       uint256 _endTime, 
       NaffleTypes.NaffleType _naffleType
-  ) internal returns (uint256 naffleId) {
+  ) internal returns (uint256 naffleId, bytes32 txHash) {
       return _createNaffle(
           _ethTokenAddress, 
           _owner,
@@ -69,6 +70,11 @@ abstract contract NaffleHolderBase is AccessControl, NaffleHolderBaseInternal, I
       revert NotSupported();
   }
 
+  function withdraw() external onlyRole(_getAdminRole()) {
+    (bool success, ) = msg.sender.call{value: address(this).balance}("");
+    if (!success) { revert UnableToWithdraw({amount: address(this).balance});}
+  }
+
   function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
     return interfaceId == type(IERC721Receiver).interfaceId || interfaceId == type(IERC1155Receiver).interfaceId;
   }
@@ -97,4 +103,11 @@ abstract contract NaffleHolderBase is AccessControl, NaffleHolderBaseInternal, I
       _setZkSyncNaffleContractAddress(_zksyncNaffleContractAddress);
   }
 
+  function getZkSyncAddress() external view returns (address) {
+      return _getZkSyncAddress();
+  }
+
+  function setZkSyncAddress(address _zksyncAddress) external onlyRole(_getAdminRole()) {
+      _setZkSyncAddress(_zksyncAddress);
+  }
 }
