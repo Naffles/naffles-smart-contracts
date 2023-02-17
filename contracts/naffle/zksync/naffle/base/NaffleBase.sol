@@ -70,21 +70,5 @@ contract NaffleBase in AccessControl, NaffleBaseInternal, INaffleBase {
     function buyTickets(uint256 _amount) external payable returns(uint256[] memory) {
         return _buyTickets(_amount);
     }
-
-    function getMinimumNaffleDuration() external view returns (uint256) {
-        return _getMinimumNaffleDuration();
-    }
-
-    function setMinimumNaffleDuration(uint256 _minimumNaffleDuration) external onlyRole(_getAdminRole()) {
-        _setMinimumNaffleDuration(_minimumNaffleDuration);
-    }
-
-    function getMinimumPaidTicketSpots() external view returns (uint256) {
-        return _getMinimumPaidTicketSpots();
-    }
-
-    function setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) external onlyRole(_getAdminRole()) {
-        _setMinimumPaidTicketSpots(_minimumPaidTicketSpots);
-    }
 }
 

@@ -3,12 +3,18 @@ pragma solidity ^0.8.17;
 
 import {IERC721Receiver} from "@solidstate/contracts/interfaces/IERC721Receiver.sol";
 import {IERC1155Receiver} from "@solidstate/contracts/interfaces/IERC1155Receiver.sol";
+import { AccessControl } from "@solidstate/contracts/access/access_control/AccessControl.sol";
 import {NaffleHolderBaseInternal} from "./NaffleHolderBaseInternal.sol";
 import { NaffleTypes } from '../../../../libraries/NaffleTypes.sol';
 
+
 error NotSupported();
 
-abstract contract NaffleHolderBase is NaffleHolderBaseInternal, IERC721Receiver, IERC1155Receiver {
+abstract contract NaffleHolderBase is AccessControl, NaffleHolderBaseInternal, IERC721Receiver, IERC1155Receiver {
+  constructor(address _admin) {
+      _grantRole(_getAdminRole(), _admin);
+  }
+
   function createNaffle(
       address _ethTokenAddress, 
       address _owner,
@@ -65,6 +71,30 @@ abstract contract NaffleHolderBase is NaffleHolderBaseInternal, IERC721Receiver,
 
   function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
     return interfaceId == type(IERC721Receiver).interfaceId || interfaceId == type(IERC1155Receiver).interfaceId;
+  }
+
+  function getMinimumNaffleDuration() external view returns (uint256) {
+    return _getMinimumNaffleDuration();
+  }
+
+  function setMinimumNaffleDuration(uint256 _minimumNaffleDuration) external onlyRole(_getAdminRole()) {
+      _setMinimumNaffleDuration(_minimumNaffleDuration);
+  }
+
+  function getMinimumPaidTicketSpots() external view returns (uint256) {
+      return _getMinimumPaidTicketSpots();
+  }
+
+  function setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) external onlyRole(_getAdminRole()) {
+      _setMinimumPaidTicketSpots(_minimumPaidTicketSpots);
+  }
+
+  function getZkSyncNaffleContractAddress() external view returns (address) {
+      return _getZkSyncNaffleContractAddress();
+  }
+
+  function setZkSyncNaffleContractAddress(address _zksyncNaffleContractAddress) external onlyRole(_getAdminRole()) {
+      _setZkSyncNaffleContractAddress(_zksyncNaffleContractAddress);
   }
 
 }

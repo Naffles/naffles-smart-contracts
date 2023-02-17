@@ -4,6 +4,9 @@ pragma solidity ^0.8.17;
 import {NaffleHolderBaseStorage} from "./NaffleHolderBaseStorage.sol";
 import { NaffleTypes } from '../../../../libraries/NaffleTypes.sol';
 import { IERC165 } from '@solidstate/contracts/interfaces/IERC165.sol';
+import {INaffleBase} from "../../../../../interfaces/naffle/zksync/naffle/base/INaffleBase.sol";
+import {AccessControlStorage} from "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
+
 
 error InvalidTokenType();
 error InvalidEndTime(uint256 endTime);
@@ -52,6 +55,10 @@ contract NaffleHolderBaseInternal {
 
     function _claimNFT(uint256 _naffleId) internal {}
 
+    function _getAdminRole() internal view returns (bytes32) {
+        return AccessControlStorage.DEFAULT_ADMIN_ROLE;
+    }
+
     function _getMinimumNaffleDuration() internal view returns (uint256) {
         return NaffleHolderBaseStorage.layout().minimumNaffleDuration;
     }
@@ -66,5 +73,13 @@ contract NaffleHolderBaseInternal {
 
     function _setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) internal {
         NaffleHolderBaseStorage.layout().minimumPaidTicketSpots = _minimumPaidTicketSpots;
+    }
+
+    function _setZkSyncNaffleContractAddress(address _zkSyncNaffleContractAddress) internal {
+        NaffleHolderBaseStorage.layout().zkSyncNaffleContractAddress = _zkSyncNaffleContractAddress;
+    }
+
+    function _getZkSyncNaffleContractAddress() internal view returns (address) {
+        return NaffleHolderBaseStorage.layout().zkSyncNaffleContractAddress;
     }
 }

@@ -8,6 +8,7 @@ library NaffleHolderBaseStorage {
         keccak256("naffles.contracts.naffle.ethereum.naffle.base.NaffleHolderBaseStorage");
 
     struct Layout{
+        address zkSyncNaffleContractAddress;
         uint256 numberOfNaffles;
         uint256 minimumNaffleDuration;
         uint256 minimumPaidTicketSpots;
