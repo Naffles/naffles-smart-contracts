@@ -6,6 +6,7 @@ import {AccessControlStorage} from "@solidstate/contracts/access/access_control/
 import {IPaidTicketBase} from "../../../../../interfaces/tokens/zksync/tickets/paid/base/IPaidTicketBase.sol";
 import {NaffleTypes} from "../../../../libraries/NaffleTypes.sol";
 
+
 error NotEnoughFunds(uint256 funds);
 error NotEnoughPaidTicketSpots(uint256 tickets);
 error NaffleNotActive();
@@ -62,7 +63,7 @@ contract NaffleBaseInternal {
         uint256 _paidTicketSpots,
         uint256 _endTime,
         uint256 _ticketPriceInWei,
-        NaffleTypes.NaffleTokenType _naffleTokenType,
+        NaffleTypes.TokenContractType _naffleTokenType,
         NaffleTypes.NaffleType _naffleType
     ) internal returns (uint256 naffleId) {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
@@ -87,6 +88,50 @@ contract NaffleBaseInternal {
             status: NaffleTypes.NaffleStatus.ACTIVE,
             naffleType: _naffleType 
         });
+    }
+
+    function _setWinner(
+        uint256 _naffleId,
+        uint256 _ticketId,
+        uint256 _winningNumber,
+        NaffleTypes.TicketType _winningTicketType
+    ) internal {
+        NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
+        NaffleTypes.Naffle storage naffle = layout.naffles[_naffleId];
+
+        naffle.winningTicketId = _winningNumber;
+        naffle.winningTicketType = _winningTicketType;
+      
+        // TODO reduce platform fee for passholders
+        uint256 totalFundsInNaffle = naffle.numberOfPaidTickets * naffle.ticketPriceInWei * 10000;
+        uint256 amountToSendToOwner = totalFundsInNaffle - totalFundsInNaffle * layout.platformFee / 10000;
+        layout.platformFeeBalance += (totalFundsInNaffle - amountToSendToOwner) / 1000;
+        amountToSendToOwner = amountToSendToOwner / 10000;
+
+        (bool success, ) = msg.sender.call{value: amountToSendToOwner}("");
+        if (!success) { revert UnableToWithdraw({amount: amountToSendToOwner});}
+
+    }
+
+   function _runNaffle(uint256 _naffleId) internal {
+        NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
+        NaffleTypes.Naffle storage naffle = layout.naffles[_naffleId];
+    
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE || naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+        if (naffle.endTime > block.timestamp) {
+            revert NaffleNotFinished(_naffleId);
+        }
+        if (naffle.numberOfPaidTickets == naffle.paidTicketSpots) {
+            revert NaffleIsFinished(_naffleId);
+        }
+        naffle.status = NaffleTypes.NaffleStatus.SELECTING_WINNER;
+
+        // call l1 contract to select winner
     }
 
     function postponeNaffle(uint256 _naffleId, NaffleTypes.PostponeTime _postponeTime) internal {
@@ -145,44 +190,7 @@ contract NaffleBaseInternal {
         naffle.status = NaffleTypes.NaffleStatus.CLOSED;
     }
 
-    function _selectWinner(uint256 _winningNumber, uint256 _naffleId) internal {
-        NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
-        NaffleTypes.Naffle storage naffle = layout.naffles[_naffleId];
-    
-        if (naffle.ethTokenAddress == address(0)) {
-            revert InvalidNaffleId(_naffleId);
-        }
-        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE || naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
-            revert InvalidNaffleStatus(naffle.status);
-        }
-        if (naffle.endTime > block.timestamp) {
-            revert NaffleNotFinished(_naffleId);
-        }
-        if (naffle.numberOfPaidTickets == naffle.paidTicketSpots) {
-            revert NaffleIsFinished(_naffleId);
-        }
-        if (_winningNumber > naffle.numberOfPaidTickets + naffle.numberOfFreeTickets) {
-            revert InvalidWinningNumber(_winningNumber);
-        }
-        if (_winningNumber <= naffle.numberOfPaidTickets) {
-            naffle.winningTicketId = _winningNumber;
-            naffle.winningTicketType = NaffleTypes.TicketType.PAID;
-        } else {
-            naffle.winningTicketId = _winningNumber - naffle.numberOfPaidTickets;
-            naffle.winningTicketType = NaffleTypes.TicketType.FREE;
-        }
-        naffle.status = NaffleTypes.NaffleStatus.FINISHED;
-
-        // TODO reduce platform fee for passholders
-        uint256 totalFundsInNaffle = naffle.numberOfPaidTickets * naffle.ticketPriceInWei * 10000;
-        uint256 amountToSendToOwner = totalFundsInNaffle - totalFundsInNaffle * layout.platformFee / 10000;
-        layout.platformFeeBalance += (totalFundsInNaffle - amountToSendToOwner) / 1000;
-        amountToSendToOwner = amountToSendToOwner / 10000;
-
-        (bool success, ) = msg.sender.call{value: amountToSendToOwner}("");
-        if (!success) { revert UnableToWithdraw({amount: amountToSendToOwner});}
-    }
-
+   
     function _adminPlatformFeeWithdraw(uint256 _amount) internal {
         NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
         if (layout.platformFeeBalance < _amount) {

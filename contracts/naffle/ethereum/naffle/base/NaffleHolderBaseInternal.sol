@@ -6,13 +6,23 @@ import { NaffleTypes } from '../../../../libraries/NaffleTypes.sol';
 import { IERC165 } from '@solidstate/contracts/interfaces/IERC165.sol';
 import {INaffleBase} from "../../../../../interfaces/naffle/zksync/naffle/base/INaffleBase.sol";
 import {AccessControlStorage} from "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
-
-import {IZkSync} from "@zksync/contracts/zksync/interfaces/IZkSync.sol";
+import {IZkSync} from "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
 
 error InvalidTokenType();
 error InvalidEndTime(uint256 endTime);
 error InvalidPaidTicketSpots(uint256 spots);
-
+error NotEnoughFunds(uint256 funds);
+error NotEnoughPaidTicketSpots(uint256 tickets);
+error NaffleNotActive();
+error InvalidNaffleId(uint256 naffleId);
+error InvalidNaffleStatus(NaffleTypes.NaffleStatus status);
+error NotNaffleOwner(uint256 naffleId);
+error NaffleNotFinished(uint256 naffleId);
+error NaffleIsFinished(uint256 naffleId);
+error InvalidPostponeTime();
+error InvalidWinningNumber(uint256 winningNumber);
+error InsufficientPlatformFeeBalance();
+error UnableToWithdraw(uint256 amount);
 
 contract NaffleHolderBaseInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
@@ -53,7 +63,17 @@ contract NaffleHolderBaseInternal {
           revert InvalidTokenType();
         }
 
-        IZkSync zksync = IZkSync(_getZkSyncAddress());
+        layout.naffles[naffleId] = NaffleTypes.NaffleHolder({
+            tokenAddress: _ethTokenAddress,
+            nftId: _nftId,
+            naffleId: naffleId,
+            owner: _owner,
+            winner: address(0),
+            winnerClaimed: false,
+            naffleTokenType: tokenContractType
+        });
+
+        IZkSync zksync = IZkSync(_getZkSyncNaffleContractAddress());
         txHash = zksync.requestL2Transaction{value: msg.value}(
             // The address of the L2 contract to call
             _getZkSyncNaffleContractAddress(),
@@ -79,6 +99,11 @@ contract NaffleHolderBaseInternal {
             // refund address
             address(0)
         );
+    }
+
+    function _selectWinner(uint256 _naffleId, uint256 _totalTickets) internal {
+        NaffleHolderBaseStorage.Layout storage layout = NaffleHolderBaseStorage.layout();
+        NaffleTypes.NaffleHolder storage naffle = layout.naffles[_naffleId];
     }
 
     function _claimNFT(uint256 _naffleId) internal {}

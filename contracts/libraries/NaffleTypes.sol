@@ -6,8 +6,10 @@ library NaffleTypes {
         ACTIVE,
         POSTPONED,
         CLOSED,
+        SELECTING_WINNER,
         FINISHED
     }
+
 
     enum NaffleType {
         STANDARD,
@@ -35,11 +37,6 @@ library NaffleTypes {
         PAID
     }
 
-    enum NaffleTokenType {
-        ERC721,
-        ERC1155
-    }
-
     struct FreeTicket {
         address owner;
         uint256 naffleId;
@@ -57,9 +54,12 @@ library NaffleTypes {
 
     struct NaffleHolder {
         address tokenAddress;
+        uint256 nftId;
         uint256 naffleId;
         address owner;
-        NaffleTokenType naffleTokenType;
+        address winner;
+        bool winnerClaimed;
+        TokenContractType naffleTokenType;
     }
     
     struct Naffle {
@@ -74,11 +74,8 @@ library NaffleTypes {
         uint256 endTime;
         uint256 winningTicketId;
         TicketType winningTicketType;
-        NaffleTokenType naffleTokenType;
+        TokenContractType naffleTokenType;
         NaffleStatus status;
         NaffleType naffleType;
     }
 }
-
-
-

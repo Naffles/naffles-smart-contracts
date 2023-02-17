@@ -10,6 +10,7 @@ import { NaffleTypes } from '../../../../libraries/NaffleTypes.sol';
 
 error UnableToWithdraw(uint256 amount);
 error NotSupported();
+error NotAllowed();
 
 abstract contract NaffleHolderBase is AccessControl, NaffleHolderBaseInternal, IERC721Receiver, IERC1155Receiver {
   constructor(address _admin) {
@@ -68,6 +69,10 @@ abstract contract NaffleHolderBase is AccessControl, NaffleHolderBaseInternal, I
     bytes calldata
   ) external pure override returns (bytes4) {
       revert NotSupported();
+  }
+
+  function selectWinner(uint256 _naffleId, uint256 _totalTickets) external {
+      _selectWinner(_naffleId, _totalTickets);
   }
 
   function withdraw() external onlyRole(_getAdminRole()) {
