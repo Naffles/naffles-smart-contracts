@@ -4,6 +4,9 @@ pragma solidity ^0.8.17;
 import {L1NaffleBaseStorage} from "./L1NaffleBaseStorage.sol";
 import {NaffleTypes} from "../../../libraries/NaffleTypes.sol";
 import { IERC165 } from '@solidstate/contracts/interfaces/IERC165.sol';
+import { IERC721 } from '@solidstate/contracts/interfaces/IERC721.sol';
+import { IERC1155 } from '@solidstate/contracts/interfaces/IERC1155.sol';
+
 import {IZkSync} from "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
 import {AccessControlStorage} from "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 
@@ -44,11 +47,13 @@ abstract contract L1NaffleBaseInternal {
 
         NaffleTypes.TokenContractType tokenContractType;
         if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID)) {
-          tokenContractType = NaffleTypes.TokenContractType.ERC721;
+            tokenContractType = NaffleTypes.TokenContractType.ERC721;
+            IERC721(_ethTokenAddress).transferFrom(msg.sender, address(this), _nftId);
         } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID)) {
-          tokenContractType = NaffleTypes.TokenContractType.ERC1155;
+            tokenContractType = NaffleTypes.TokenContractType.ERC1155;
+            IERC1155(_ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _nftId);
         } else {
-          revert InvalidTokenType();
+            revert InvalidTokenType();
         }
 
         layout.naffles[naffleId] = NaffleTypes.L1Naffle({

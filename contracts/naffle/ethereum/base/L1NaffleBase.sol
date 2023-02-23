@@ -4,8 +4,9 @@ pragma solidity ^0.8.17;
 import {L1NaffleBaseInternal} from "./L1NaffleBaseInternal.sol";
 import {NaffleTypes} from "../../../libraries/NaffleTypes.sol";
 import { AccessControl } from "@solidstate/contracts/access/access_control/AccessControl.sol";
-
-abstract contract L1NaffleBase is L1NaffleBaseInternal, AccessControl {
+import {IERC721Receiver} from "@solidstate/contracts/interfaces/IERC721Receiver.sol";
+import {IERC1155Receiver} from "@solidstate/contracts/interfaces/IERC1155Receiver.sol";
+abstract contract L1NaffleBase is L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
 
     function createNaffle(
         address _ethTokenAddress, 
@@ -25,6 +26,41 @@ abstract contract L1NaffleBase is L1NaffleBaseInternal, AccessControl {
             _endTime, 
             _naffleType
         );
+    }
+
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        return
+            bytes4(
+                keccak256('onERC721Received(address,address,uint256,bytes)')
+            );
+    }
+
+    function onERC1155Received(
+        address,
+        address,
+        uint256,
+        uint256,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        return
+            bytes4(
+                keccak256('onERC1155Received(address,address,uint256,uint256,bytes)')
+            );
+    }
+
+    function onERC1155BatchReceived(
+        address,
+        address,
+        uint256[] calldata,
+        uint256[] calldata,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        revert NotSupported();
     }
 
     function getMinimumNaffleDuration() external view returns (uint256) {
