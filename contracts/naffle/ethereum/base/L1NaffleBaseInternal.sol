@@ -5,6 +5,7 @@ import {L1NaffleBaseStorage} from "./L1NaffleBaseStorage.sol";
 import {NaffleTypes} from "../../../libraries/NaffleTypes.sol";
 import { IERC165 } from '@solidstate/contracts/interfaces/IERC165.sol';
 import {IZkSync} from "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
+import {AccessControlStorage} from "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 
 error InvalidEndTime(uint256 endTime);
 error InvalidTokenType();
@@ -85,7 +86,39 @@ abstract contract L1NaffleBaseInternal {
         );
     }
 
+    function _getAdminRole() internal view returns (bytes32) {
+        return AccessControlStorage.DEFAULT_ADMIN_ROLE;
+    }
+
+    function _getMinimumNaffleDuration() internal view returns (uint256) {
+        return L1NaffleBaseStorage.layout().minimumNaffleDuration;
+    }
+
+    function _setMinimumNaffleDuration(uint256 _minimumNaffleDuration) internal {
+        L1NaffleBaseStorage.layout().minimumNaffleDuration = _minimumNaffleDuration;
+    }
+
+    function _getMinimumPaidTicketSpots() internal view returns (uint256) {
+        return L1NaffleBaseStorage.layout().minimumPaidTicketSpots;
+    }
+
+    function _setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) internal {
+        L1NaffleBaseStorage.layout().minimumPaidTicketSpots = _minimumPaidTicketSpots;
+    }
+
+    function _setZkSyncNaffleContractAddress(address _zkSyncNaffleContractAddress) internal {
+        L1NaffleBaseStorage.layout().zkSyncNaffleContractAddress = _zkSyncNaffleContractAddress;
+    }
+
     function _getZkSyncNaffleContractAddress() internal view returns (address) {
         return L1NaffleBaseStorage.layout().zkSyncNaffleContractAddress;
+    }
+
+    function _setZkSyncAddress(address _zkSyncAddress) internal {
+        L1NaffleBaseStorage.layout().zkSyncAddress = _zkSyncAddress;
+    }
+
+    function _getZkSyncAddress() internal view returns (address) {
+        return L1NaffleBaseStorage.layout().zkSyncAddress;
     }
 }
