@@ -10,6 +10,7 @@ import { IERC1155 } from '@solidstate/contracts/interfaces/IERC1155.sol';
 import {IZkSync} from "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
 import {AccessControlStorage} from "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 
+error NotAllowed();
 error InvalidEndTime(uint256 endTime);
 error InvalidTokenType();
 error NotEnoughPaidTicketSpots(uint256 tickets);
@@ -30,6 +31,13 @@ abstract contract L1NaffleBaseInternal {
     ) internal returns (uint256 naffleId, bytes32 txHash) {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         
+        if (
+            IERC721(layout.foundersKeyAddress).balanceOf(creator) == 0 && 
+            IERC721(layout.foundersKeyPlaceHolderAddress).balanceOf(creator) == 0
+        ) {
+            revert NotAllowed();
+        }
+
         if (block.timestamp + layout.minimumNaffleDuration < _endTime) {
             revert InvalidEndTime(_endTime);
         }
@@ -66,9 +74,9 @@ abstract contract L1NaffleBaseInternal {
             naffleTokenType: tokenContractType
         });
 
-        IZkSync zksync = IZkSync(_getZkSyncNaffleContractAddress());
+        IZkSync zksync = IZkSync(layout.zksyncAddress);
         txHash = zksync.requestL2Transaction{value: msg.value}(
-            _getZkSyncNaffleContractAddress(),
+            layout.zkSyncNaffleContractAddress,
             0,
             abi.encodeWithSignature(
               "createNaffle(address, address, uint256, uint256, uint256, uint256, uint8)", 
@@ -125,5 +133,21 @@ abstract contract L1NaffleBaseInternal {
 
     function _getZkSyncAddress() internal view returns (address) {
         return L1NaffleBaseStorage.layout().zkSyncAddress;
+    }
+
+    function _getFoundersKeyAddress() internal view returns (address) {
+        return L1NaffleBaseStorage.layout().foundersKeyAddress;
+    }
+
+    function _setFoundersKeyAddress(address _foundersKeyAddress) internal {
+        L1NaffleBaseStorage.layout().foundersKeyAddress = _foundersKeyAddress;
+    }
+
+    function _setFoundersKeyPlaceholderAddress(address _foundersKeyPlaceholderAddress) internal {
+        L1NaffleBaseStorage.layout().foundersKeyPlaceholderAddress = _foundersKeyPlaceholderAddress;
+    }
+
+    function _getFoundersKeyPlaceholderAddress() internal view returns (address) {
+        return L1NaffleBaseStorage.layout().foundersKeyPlaceholderAddress;
     }
 }

@@ -10,6 +10,8 @@ library L1NaffleBaseStorage {
     struct Layout {
         address zkSyncAddress;
         address zkSyncNaffleContractAddress;
+        address FoundersKeyAddress;
+        address FoundersKeyPlaceHolderAddress;
         uint256 numberOfNaffles;
         uint256 minimumNaffleDuration;
         uint256 minimumPaidTicketSpots;
