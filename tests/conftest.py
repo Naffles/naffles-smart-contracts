@@ -7,6 +7,10 @@ from brownie import (
     SoulboundFoundersKey,
     FoundersKeyStaking,
     ERC721AMock,
+    L1NaffleDiamond,
+    L1NaffleBase,
+    L1NaffleAdmin,
+    L1NaffleView
 )
 from brownie.network.account import _PrivateKeyAccount 
 from brownie.network.contract import ContractContainer
@@ -37,10 +41,29 @@ def from_admin(admin) -> dict:
 
 
 @pytest.fixture()
-def deployed_naffle_diamond(from_admin) -> TestNaffleDiamond:
+def deployed_test_naffle_diamond(from_admin) -> TestNaffleDiamond:
     diamond = TestNaffleDiamond.deploy(from_admin)
     return diamond
 
+@pytest.fixture()
+def deployed_l1_naffle_diamond(from_admin) -> TestNaffleDiamond:
+    diamond = L1NaffleDiamond.deploy(from_admin)
+    return diamond
+
+@pytest.fixture()
+def deployed_l1_naffle_base_facet(from_admin) -> TestNaffleDiamond:
+    facet = L1NaffleBase.deploy(from_admin)
+    return facet
+
+@pytest.fixture()
+def deployed_l1_naffle_admin_facet(from_admin) -> TestNaffleDiamond:
+    facet = L1NaffleAdmin.deploy(from_admin)
+    return facet
+
+@pytest.fixture()
+def deployed_l1_naffle_view_facet(from_admin) -> TestNaffleDiamond:
+    facet = L1NaffleView.deploy(from_admin)
+    return facet
 
 @pytest.fixture()
 def deployed_test_facet(from_admin) -> TestValueFacet:
