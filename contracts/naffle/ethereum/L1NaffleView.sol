@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 import "./L1NaffleBaseInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleView.sol";
 
-abstract contract L1NaffleView is IL1NaffleView, L1NaffleBaseInternal {
+contract L1NaffleView is IL1NaffleView, L1NaffleBaseInternal {
     function getMinimumNaffleDuration() external view returns (uint256) {
         return _getMinimumNaffleDuration();
     }

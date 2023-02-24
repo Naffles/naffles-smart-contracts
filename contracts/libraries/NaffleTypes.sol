@@ -2,6 +2,16 @@
 pragma solidity ^0.8.17;
 
 library NaffleTypes {
+    struct CreateNaffleParams {
+        address _ethTokenAddress;
+        address _owner;
+        uint256 _nftId;
+        uint256 _paidTicketSpots;
+        uint256 _ticketPriceInWei;
+        uint256 _endTime;
+        NaffleType _naffleType;
+    }
+
     enum NaffleType {
         STANDARD,
         UNLIMITED

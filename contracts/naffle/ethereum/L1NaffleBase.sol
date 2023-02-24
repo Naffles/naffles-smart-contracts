@@ -8,27 +8,12 @@ import "@solidstate/contracts/interfaces/IERC721Receiver.sol";
 import "@solidstate/contracts/interfaces/IERC1155Receiver.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
-error NotSupported();
 
-abstract contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
+contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
     function createNaffle(
-        address _ethTokenAddress, 
-        address _owner,
-        uint256 _nftId, 
-        uint256 _paidTicketSpots,
-        uint256 _ticketPriceInWei,
-        uint256 _endTime, 
-        NaffleTypes.NaffleType _naffleType
+        NaffleTypes.CreateNaffleParams memory _params
     ) external returns (uint256 naffleId, bytes32 txHash) {
-        return _createNaffle(
-            _ethTokenAddress, 
-            _owner,
-            _nftId, 
-            _paidTicketSpots,
-            _ticketPriceInWei,
-            _endTime, 
-            _naffleType
-        );
+        return _createNaffle(_params);
     }
 
     function onERC721Received(
@@ -64,5 +49,9 @@ abstract contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessCon
         bytes calldata
     ) external pure override returns (bytes4) {
         revert NotSupported();
+    }
+
+    function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
+        return interfaceId == type(IERC721Receiver).interfaceId || interfaceId == type(IERC1155Receiver).interfaceId;
     }
 }
