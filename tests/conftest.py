@@ -10,15 +10,16 @@ from brownie import (
     L1NaffleDiamond,
     L1NaffleBase,
     L1NaffleAdmin,
-    L1NaffleView
+    L1NaffleView,
 )
-from brownie.network.account import _PrivateKeyAccount 
+from brownie.network.account import _PrivateKeyAccount
 from brownie.network.contract import ContractContainer
 
 
 @pytest.fixture
 def admin() -> _PrivateKeyAccount:
     return accounts[0]
+
 
 @pytest.fixture
 def address() -> _PrivateKeyAccount:
@@ -45,25 +46,30 @@ def deployed_test_naffle_diamond(from_admin) -> TestNaffleDiamond:
     diamond = TestNaffleDiamond.deploy(from_admin)
     return diamond
 
+
 @pytest.fixture()
 def deployed_l1_naffle_diamond(from_admin) -> L1NaffleDiamond:
     diamond = L1NaffleDiamond.deploy(from_admin)
     return diamond
+
 
 @pytest.fixture()
 def deployed_l1_naffle_base_facet(from_admin) -> L1NaffleBase:
     facet = L1NaffleBase.deploy(from_admin)
     return facet
 
+
 @pytest.fixture()
 def deployed_l1_naffle_admin_facet(from_admin) -> L1NaffleAdmin:
     facet = L1NaffleAdmin.deploy(from_admin)
     return facet
 
+
 @pytest.fixture()
 def deployed_l1_naffle_view_facet(from_admin) -> L1NaffleView:
     facet = L1NaffleView.deploy(from_admin)
     return facet
+
 
 @pytest.fixture()
 def deployed_test_facet(from_admin) -> TestValueFacet:
