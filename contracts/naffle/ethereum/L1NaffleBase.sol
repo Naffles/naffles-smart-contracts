@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import {L1NaffleBaseInternal} from "./L1NaffleBaseInternal.sol";
-import {NaffleTypes} from "../../libraries/NaffleTypes.sol";
-import { AccessControl } from "@solidstate/contracts/access/access_control/AccessControl.sol";
-import {IERC721Receiver} from "@solidstate/contracts/interfaces/IERC721Receiver.sol";
-import {IERC1155Receiver} from "@solidstate/contracts/interfaces/IERC1155Receiver.sol";
-import {IL1NaffleBase} from "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
+import "./L1NaffleBaseInternal.sol";
+import "../../libraries/NaffleTypes.sol";
+import "@solidstate/contracts/access/access_control/AccessControl.sol";
+import "@solidstate/contracts/interfaces/IERC721Receiver.sol";
+import "@solidstate/contracts/interfaces/IERC1155Receiver.sol";
+import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
 error NotSupported();
 
 abstract contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
-
     function createNaffle(
         address _ethTokenAddress, 
         address _owner,

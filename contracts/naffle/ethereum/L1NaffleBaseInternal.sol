@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import {L1NaffleBaseStorage} from "./L1NaffleBaseStorage.sol";
-import {NaffleTypes} from "../../libraries/NaffleTypes.sol";
-import { IERC165 } from '@solidstate/contracts/interfaces/IERC165.sol';
-import { IERC721 } from '@solidstate/contracts/interfaces/IERC721.sol';
-import { IERC1155 } from '@solidstate/contracts/interfaces/IERC1155.sol';
+import "./L1NaffleBaseStorage.sol";
+import "../../libraries/NaffleTypes.sol";
+import '@solidstate/contracts/interfaces/IERC165.sol';
+import '@solidstate/contracts/interfaces/IERC721.sol';
+import '@solidstate/contracts/interfaces/IERC1155.sol';
 
-import {IZkSync} from "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
-import {AccessControlStorage} from "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
+import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
+import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 
 error NotAllowed();
 error InvalidEndTime(uint256 endTime);

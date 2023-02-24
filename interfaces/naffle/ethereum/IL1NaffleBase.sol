@@ -1,5 +1,7 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
-import {NaffleTypes} from "../../../../contracts/libraries/NaffleTypes.sol";
+import "../../../../contracts/libraries/NaffleTypes.sol";
 
 interface IL1NaffleBase {
     function createNaffle(
