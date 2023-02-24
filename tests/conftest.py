@@ -47,8 +47,8 @@ def deployed_test_naffle_diamond(from_admin) -> TestNaffleDiamond:
 
 
 @pytest.fixture()
-def deployed_l1_naffle_diamond(from_admin) -> L1NaffleDiamond:
-    diamond = L1NaffleDiamond.deploy(from_admin)
+def deployed_l1_naffle_diamond(admin, from_admin) -> L1NaffleDiamond:
+    diamond = L1NaffleDiamond.deploy(admin, from_admin)
     return diamond
 
 

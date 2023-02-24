@@ -150,7 +150,7 @@ def test_get_and_set_founders_key_placeholder_address(
 
 
 def test_get_and_set_admin_address(
-    admin,
+    address,
     from_admin,
     deployed_l1_naffle_diamond,
     deployed_l1_naffle_base_facet,
@@ -164,6 +164,6 @@ def test_get_and_set_admin_address(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    admin_facet.setAdmin(admin, from_admin)
+    admin_facet.setAdmin(address, from_admin)
 
-    assert access_control.hasRole(view_facet.getAdminRole(), admin)
+    assert access_control.hasRole(view_facet.getAdminRole(), address)
