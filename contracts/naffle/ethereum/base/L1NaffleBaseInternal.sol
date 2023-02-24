@@ -33,7 +33,7 @@ abstract contract L1NaffleBaseInternal {
         
         if (
             IERC721(layout.foundersKeyAddress).balanceOf(msg.sender) == 0 && 
-            IERC721(layout.foundersKeyPlaceHolderAddress).balanceOf(msg.sender) == 0
+            IERC721(layout.foundersKeyPlaceholderAddress).balanceOf(msg.sender) == 0
         ) {
             revert NotAllowed();
         }
@@ -59,7 +59,7 @@ abstract contract L1NaffleBaseInternal {
             IERC721(_ethTokenAddress).transferFrom(msg.sender, address(this), _nftId);
         } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID)) {
             tokenContractType = NaffleTypes.TokenContractType.ERC1155;
-            IERC1155(_ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _nftId);
+            IERC1155(_ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _nftId, 1, bytes(""));
         } else {
             revert InvalidTokenType();
         }
@@ -74,7 +74,7 @@ abstract contract L1NaffleBaseInternal {
             naffleTokenType: tokenContractType
         });
 
-        IZkSync zksync = IZkSync(layout.zksyncAddress);
+        IZkSync zksync = IZkSync(layout.zkSyncAddress);
         txHash = zksync.requestL2Transaction{value: msg.value}(
             layout.zkSyncNaffleContractAddress,
             0,

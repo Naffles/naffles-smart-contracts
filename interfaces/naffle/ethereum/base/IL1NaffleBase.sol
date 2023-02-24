@@ -12,29 +12,6 @@ interface IL1NaffleBase {
         NaffleTypes.NaffleType _naffleType
     ) external returns (uint256 naffleId, bytes32 txHash);
 
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) external pure returns (bytes4);
-
-    function onERC1155Received(
-        address,
-        address,
-        uint256,
-        uint256,
-        bytes calldata
-    ) external pure returns (bytes4);
-
-    function onERC1155BatchReceived(
-        address,
-        address,
-        uint256[] calldata,
-        uint256[] calldata,
-        bytes calldata
-    ) external pure returns (bytes4);
-
     function getMinimumNaffleDuration() external view returns (uint256);
     function getMinimumPaidTicketSpots() external view returns (uint256);
     function getZkSyncNaffleContractAddress() external view returns (address);
