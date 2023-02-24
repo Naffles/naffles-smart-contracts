@@ -32,8 +32,8 @@ abstract contract L1NaffleBaseInternal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         
         if (
-            IERC721(layout.foundersKeyAddress).balanceOf(creator) == 0 && 
-            IERC721(layout.foundersKeyPlaceHolderAddress).balanceOf(creator) == 0
+            IERC721(layout.foundersKeyAddress).balanceOf(msg.sender) == 0 && 
+            IERC721(layout.foundersKeyPlaceHolderAddress).balanceOf(msg.sender) == 0
         ) {
             revert NotAllowed();
         }

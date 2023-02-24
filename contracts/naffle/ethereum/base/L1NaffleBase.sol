@@ -6,7 +6,11 @@ import {NaffleTypes} from "../../../libraries/NaffleTypes.sol";
 import { AccessControl } from "@solidstate/contracts/access/access_control/AccessControl.sol";
 import {IERC721Receiver} from "@solidstate/contracts/interfaces/IERC721Receiver.sol";
 import {IERC1155Receiver} from "@solidstate/contracts/interfaces/IERC1155Receiver.sol";
-abstract contract L1NaffleBase is L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
+import {IL1NaffleBase} from "../../../../interfaces/naffle/ethereum/base/IL1NaffleBase.sol";
+
+error NotSupported();
+
+abstract contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
 
     function createNaffle(
         address _ethTokenAddress, 
@@ -93,5 +97,21 @@ abstract contract L1NaffleBase is L1NaffleBaseInternal, AccessControl, IERC721Re
 
     function setZkSyncAddress(address _zksyncAddress) external onlyRole(_getAdminRole()) {
         _setZkSyncAddress(_zksyncAddress);
+    }
+
+    function getFoundersKeyAddress() external view returns (address) {
+        return _getFoundersKeyAddress();
+    }
+
+    function setFoundersKeyAddress(address _foundersKeyAddress) external onlyRole(_getAdminRole()) {
+        _setFoundersKeyAddress(_foundersKeyAddress);
+    }
+
+    function getFoundersKeyPlaceholderAddress() external view returns (address) {
+        return _getFoundersKeyPlaceholderAddress();
+    }
+
+    function setFoundersKeyPlaceholderAddress(address _foundersKeyPlaceholderAddress) external onlyRole(_getAdminRole()) {
+        _setFoundersKeyPlaceholderAddress(_foundersKeyPlaceholderAddress);
     }
 }
