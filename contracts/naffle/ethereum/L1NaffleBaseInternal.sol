@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 import {L1NaffleBaseStorage} from "./L1NaffleBaseStorage.sol";
-import {NaffleTypes} from "../../../libraries/NaffleTypes.sol";
+import {NaffleTypes} from "../../libraries/NaffleTypes.sol";
 import { IERC165 } from '@solidstate/contracts/interfaces/IERC165.sol';
 import { IERC721 } from '@solidstate/contracts/interfaces/IERC721.sol';
 import { IERC1155 } from '@solidstate/contracts/interfaces/IERC1155.sol';

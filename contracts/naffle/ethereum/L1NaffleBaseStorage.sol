@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import {NaffleTypes} from "../../../libraries/NaffleTypes.sol";
+import {NaffleTypes} from "../../libraries/NaffleTypes.sol";
 
 library L1NaffleBaseStorage {
     bytes32 internal constant STORAGE_SLOT =

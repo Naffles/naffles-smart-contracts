@@ -2,11 +2,11 @@
 pragma solidity ^0.8.17;
 
 import {L1NaffleBaseInternal} from "./L1NaffleBaseInternal.sol";
-import {NaffleTypes} from "../../../libraries/NaffleTypes.sol";
+import {NaffleTypes} from "../../libraries/NaffleTypes.sol";
 import { AccessControl } from "@solidstate/contracts/access/access_control/AccessControl.sol";
 import {IERC721Receiver} from "@solidstate/contracts/interfaces/IERC721Receiver.sol";
 import {IERC1155Receiver} from "@solidstate/contracts/interfaces/IERC1155Receiver.sol";
-import {IL1NaffleBase} from "../../../../interfaces/naffle/ethereum/base/IL1NaffleBase.sol";
+import {IL1NaffleBase} from "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
 error NotSupported();
 
