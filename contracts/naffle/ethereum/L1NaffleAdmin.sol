@@ -3,8 +3,9 @@ pragma solidity ^0.8.17;
 
 import "./L1NaffleBaseInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleAdmin.sol";
+import "@solidstate/contracts/access/access_control/AccessControl.sol";
 
-abstract contract L1NaffleAdmin is INaffleAdmin, L1NaffleBaseInternal {
+abstract contract L1NaffleAdmin is INaffleAdmin, L1NaffleBaseInternal, AccessControl {
     function setMinimumNaffleDuration(uint256 _minimumNaffleDuration) external onlyRole(_getAdminRole()) {
         _setMinimumNaffleDuration(_minimumNaffleDuration);
     }

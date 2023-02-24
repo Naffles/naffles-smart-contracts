@@ -19,7 +19,7 @@ error InvalidPaidTicketSpots(uint256 spots);
 abstract contract L1NaffleBaseInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
-    
+
     function _createNaffle(
         address _ethTokenAddress, 
         address _owner,
