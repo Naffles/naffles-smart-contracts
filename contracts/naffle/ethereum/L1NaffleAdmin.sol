@@ -4,8 +4,9 @@ pragma solidity ^0.8.17;
 import "./L1NaffleBaseInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleAdmin.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
+import "@solidstate/contracts/access/ownable/SafeOwnable.sol";
 
-contract L1NaffleAdmin is INaffleAdmin, L1NaffleBaseInternal, AccessControl {
+contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, SafeOwnable {
     function setMinimumNaffleDuration(uint256 _minimumNaffleDuration) external onlyRole(_getAdminRole()) {
         _setMinimumNaffleDuration(_minimumNaffleDuration);
     }
@@ -21,11 +22,16 @@ contract L1NaffleAdmin is INaffleAdmin, L1NaffleBaseInternal, AccessControl {
     function setZkSyncAddress(address _zksyncAddress) external onlyRole(_getAdminRole()) {
         _setZkSyncAddress(_zksyncAddress);
     }
+
     function setFoundersKeyAddress(address _foundersKeyAddress) external onlyRole(_getAdminRole()) {
         _setFoundersKeyAddress(_foundersKeyAddress);
     }
 
     function setFoundersKeyPlaceholderAddress(address _foundersKeyPlaceholderAddress) external onlyRole(_getAdminRole()) {
         _setFoundersKeyPlaceholderAddress(_foundersKeyPlaceholderAddress);
+    }
+
+    function setAdmin(address _admin) external onlyOwner {
+        _grantRole(_getAdminRole(), _admin);
     }
 }

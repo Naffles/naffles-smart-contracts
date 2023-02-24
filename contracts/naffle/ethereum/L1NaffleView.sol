@@ -28,4 +28,8 @@ contract L1NaffleView is IL1NaffleView, L1NaffleBaseInternal {
     function getFoundersKeyPlaceholderAddress() external view returns (address) {
         return _getFoundersKeyPlaceholderAddress();
     }
+
+    function getAdminRole() external view returns (bytes32) {
+        return _getAdminRole();
+    }
 }

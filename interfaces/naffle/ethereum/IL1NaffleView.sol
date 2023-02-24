@@ -8,4 +8,5 @@ interface IL1NaffleView {
     function getZkSyncAddress() external view returns (address);
     function getFoundersKeyAddress() external view returns (address);
     function getFoundersKeyPlaceholderAddress() external view returns (address);
+    function getAdminRole() external view returns (bytes32);
 }

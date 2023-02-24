@@ -13,7 +13,6 @@ from brownie import (
     L1NaffleView,
 )
 from brownie.network.account import _PrivateKeyAccount
-from brownie.network.contract import ContractContainer
 
 
 @pytest.fixture

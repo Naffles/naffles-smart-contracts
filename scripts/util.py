@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Optional
 
+OWNABLE_SELECTORS = ['0x8ab5150a', '0x79ba5097', '0xf2fde38b', '0x8da5cb5b']
 NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 
@@ -10,11 +11,15 @@ class FacetCutAction(Enum):
     REMOVE = 2
 
 
-def get_selectors(contract, skip_supports_interface=True) -> list[str]:
+def get_selectors(contract) -> list[str]:
     selectors = set(contract.signatures.values())
-    if skip_supports_interface:
+    try:
+        selectors.remove(get_selector_by_name(contract, "supportsInterface"))
+    except KeyError:
+        pass
+    for value in OWNABLE_SELECTORS:
         try:
-            selectors.remove(get_selector_by_name(contract, "supportsInterface"))
+            selectors.remove(value)
         except KeyError:
             pass
     return list(selectors)
@@ -30,10 +35,10 @@ def get_name_by_selector(contract, selector) -> Optional[str]:
             return key
 
 
-def _add_facet(diamond, facet, from_admin, selectors) -> None:
+def add_facet(diamond, facet, from_admin, selectors) -> None:
     cut = [[facet.address, FacetCutAction.ADD.value, selectors]]
     diamond.diamondCut(cut, NULL_ADDRESS, b"", from_admin)
 
 
-def _remove_duplicated_selectors(current_selectors, new_selectors):
+def remove_duplicated_selectors(current_selectors, new_selectors):
     return [selector for selector in new_selectors if selector not in current_selectors]
