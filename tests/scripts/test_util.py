@@ -1,6 +1,13 @@
-from brownie import TestValueFacet
+from brownie import TestValueFacet, L1NaffleAdmin, L1NaffleBase
 
-from scripts.util import get_selectors, get_selector_by_name
+from scripts.util import (
+    get_selectors,
+    get_selector_by_name,
+    OWNABLE_SELECTORS,
+    get_name_by_selector,
+    remove_duplicated_selectors,
+    add_facet,
+)
 
 
 def test_get_selectors():
@@ -11,7 +18,49 @@ def test_get_selectors():
     assert "0x93a09352" in selectors
 
 
+def test_get_selectors_remove_ownable():
+    selectors = get_selectors(L1NaffleAdmin)
+    for selector in OWNABLE_SELECTORS:
+        assert selector not in selectors
+
+
+def test_remove_supports_interface():
+    selectors = get_selectors(L1NaffleBase)
+    assert get_selector_by_name(L1NaffleBase, "supportsInterface") not in selectors
+
+
+def test_get_name_by_selector():
+    name = get_name_by_selector(TestValueFacet, "0x93a09352")
+
+    assert name == "setValue"
+
+
 def test_get_selector_by_name():
     selector = get_selector_by_name(TestValueFacet, "setValue")
 
     assert selector == "0x93a09352"
+
+
+def test_remove_duplicated_selectors():
+    current_selectors = ["0x93a09352", "0x20965255"]
+    new_selectors = ["0x93a09352", "0x20965255", "0x12345678"]
+
+    selectors = remove_duplicated_selectors(current_selectors, new_selectors)
+
+    assert len(selectors) == 1
+    assert "0x12345678" in selectors
+
+
+def test_add_facet(
+    deployed_l1_naffle_diamond, deployed_l1_naffle_base_facet, from_admin
+):
+    start_facet_number = len(deployed_l1_naffle_diamond.facets())
+
+    add_facet(
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        get_selectors(L1NaffleBase),
+        from_admin,
+    )
+
+    assert len(deployed_l1_naffle_diamond.facets()) == start_facet_number + 1

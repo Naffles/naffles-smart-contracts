@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-OWNABLE_SELECTORS = ['0x8ab5150a', '0x79ba5097', '0xf2fde38b', '0x8da5cb5b']
+OWNABLE_SELECTORS = ["0x8ab5150a", "0x79ba5097", "0xf2fde38b", "0x8da5cb5b"]
 NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 

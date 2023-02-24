@@ -1,11 +1,18 @@
 from brownie import (
-    L1NaffleDiamond, L1NaffleBase, L1NaffleAdmin, L1NaffleView, accounts,
-    interface)
+    L1NaffleDiamond,
+    L1NaffleBase,
+    L1NaffleAdmin,
+    L1NaffleView,
+    accounts,
+    interface,
+)
 
 from scripts.util import (
     get_selectors,
-    remove_duplicated_selectors, add_facet,
+    remove_duplicated_selectors,
+    add_facet,
 )
+
 
 def setup_diamond_with_facets(
     from_admin,
@@ -22,19 +29,19 @@ def setup_diamond_with_facets(
         deployed_l1_naffle_diamond,
         deployed_l1_naffle_base_facet,
         from_admin,
-        base_selectors
+        base_selectors,
     )
     add_facet(
         deployed_l1_naffle_diamond,
         deployed_l1_naffle_admin_facet,
         from_admin,
-        remove_duplicated_selectors(base_selectors, admin_selectors)
+        remove_duplicated_selectors(base_selectors, admin_selectors),
     )
     add_facet(
         deployed_l1_naffle_diamond,
         deployed_l1_naffle_view_facet,
         from_admin,
-        remove_duplicated_selectors(base_selectors + admin_selectors, view_selectors)
+        remove_duplicated_selectors(base_selectors + admin_selectors, view_selectors),
     )
     access_control = interface.IAccessControl(deployed_l1_naffle_diamond.address)
     base_facet = interface.IL1NaffleBase(deployed_l1_naffle_diamond.address)

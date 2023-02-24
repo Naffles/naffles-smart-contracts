@@ -1,10 +1,10 @@
 from brownie import L1NaffleAdmin, interface, L1NaffleView, L1NaffleBase
 
 from scripts.util import get_selectors, add_facet
-from tests.contracts.naffle.test_l1_naffle_diamond import \
-    setup_diamond_with_facets
+from tests.contracts.naffle.test_l1_naffle_diamond import setup_diamond_with_facets
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
+
 
 def test_admin_facet_deployment(
     from_admin,
@@ -17,7 +17,7 @@ def test_admin_facet_deployment(
         deployed_l1_naffle_diamond,
         deployed_l1_naffle_admin_facet,
         from_admin,
-        get_selectors(L1NaffleAdmin)
+        get_selectors(L1NaffleAdmin),
     )
 
     assert len(deployed_l1_naffle_diamond.facets()) == start_facet_number + 1
