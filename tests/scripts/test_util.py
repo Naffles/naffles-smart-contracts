@@ -7,8 +7,8 @@ def test_get_selectors():
     selectors = get_selectors(TestValueFacet)
 
     assert len(selectors) == 2
-    assert selectors[0] == "0x20965255"
-    assert selectors[1] == "0x93a09352"
+    assert "0x20965255" in selectors
+    assert "0x93a09352" in selectors
 
 
 def test_get_selector_by_name():
