@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 library NaffleTypes {
-    struct CreateNaffleParams {
+    struct CreateZkSyncNaffleParams {
         address _ethTokenAddress;
         address _owner;
         uint256 _nftId;

@@ -38,7 +38,6 @@ def test_get_and_set_minimum_naffle_duration(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    admin_facet.setAdmin(admin, from_admin)
     admin_facet.setMinimumNaffleDuration(1, from_admin)
 
     assert view_facet.getMinimumNaffleDuration() == 1
@@ -59,7 +58,6 @@ def test_get_and_set_minimum_paid_ticket_spots(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    admin_facet.setAdmin(admin, from_admin)
     admin_facet.setMinimumPaidTicketSpots(1, from_admin)
 
     assert view_facet.getMinimumPaidTicketSpots() == 1
@@ -80,7 +78,6 @@ def test_get_and_set_zksync_naffle_contract_address(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    admin_facet.setAdmin(admin, from_admin)
     admin_facet.setZkSyncNaffleContractAddress(admin, from_admin)
 
     assert view_facet.getZkSyncNaffleContractAddress() == admin
@@ -101,7 +98,6 @@ def test_get_and_set_zksync_address(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    admin_facet.setAdmin(admin, from_admin)
     admin_facet.setZkSyncAddress(admin, from_admin)
 
     assert view_facet.getZkSyncAddress() == admin
@@ -122,7 +118,6 @@ def test_get_and_set_founders_key_address(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    admin_facet.setAdmin(admin, from_admin)
     admin_facet.setFoundersKeyAddress(admin, from_admin)
 
     assert view_facet.getFoundersKeyAddress() == admin
@@ -143,7 +138,6 @@ def test_get_and_set_founders_key_placeholder_address(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    admin_facet.setAdmin(admin, from_admin)
     admin_facet.setFoundersKeyPlaceholderAddress(admin, from_admin)
 
     assert view_facet.getFoundersKeyPlaceholderAddress() == admin

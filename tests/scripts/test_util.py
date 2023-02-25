@@ -59,8 +59,8 @@ def test_add_facet(
     add_facet(
         deployed_l1_naffle_diamond,
         deployed_l1_naffle_base_facet,
-        get_selectors(L1NaffleBase),
         from_admin,
+        get_selectors(L1NaffleBase),
     )
 
     assert len(deployed_l1_naffle_diamond.facets()) == start_facet_number + 1

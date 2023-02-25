@@ -8,12 +8,23 @@ import "@solidstate/contracts/interfaces/IERC721Receiver.sol";
 import "@solidstate/contracts/interfaces/IERC1155Receiver.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
-
 contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
     function createNaffle(
-        NaffleTypes.CreateNaffleParams memory _params
+        address _ethTokenAddress,
+        uint256 _nftId,
+        uint256 _paidTicketSpots,
+        uint256 _ticketPriceInWei,
+        uint256 _endTime,
+        NaffleTypes.NaffleType _naffleType
     ) external returns (uint256 naffleId, bytes32 txHash) {
-        return _createNaffle(_params);
+        return _createNaffle(
+            _ethTokenAddress,
+            _nftId,
+            _paidTicketSpots,
+            _ticketPriceInWei,
+            _endTime,
+            _naffleType
+        );
     }
 
     function onERC721Received(

@@ -17,66 +17,74 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
 
     function _createNaffle(
-        NaffleTypes.CreateNaffleParams memory _params
+        address _ethTokenAddress,
+        uint256 _nftId,
+        uint256 _paidTicketSpots,
+        uint256 _ticketPriceInWei,
+        uint256 _endTime,
+        NaffleTypes.NaffleType _naffleType
     ) internal returns (uint256 naffleId, bytes32 txHash) {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
-        
+
         if (
-            IERC721(layout.foundersKeyAddress).balanceOf(msg.sender) == 0 && 
+            IERC721(layout.foundersKeyAddress).balanceOf(msg.sender) == 0 &&
             IERC721(layout.foundersKeyPlaceholderAddress).balanceOf(msg.sender) == 0
         ) {
             revert NotAllowed();
         }
 
-        if (block.timestamp + layout.minimumNaffleDuration < _params._endTime) {
-            revert InvalidEndTime(_params._endTime);
+        if (block.timestamp + layout.minimumNaffleDuration < _endTime) {
+            revert InvalidEndTime(_endTime);
         }
-         
+
         ++layout.numberOfNaffles;
-        naffleId = layout.numberOfNaffles;
 
         if (
-            (_params._naffleType == NaffleTypes.NaffleType.UNLIMITED && _params._paidTicketSpots != 0) ||
-            _params._paidTicketSpots < layout.minimumPaidTicketSpots
+            (_naffleType == NaffleTypes.NaffleType.UNLIMITED && _paidTicketSpots != 0) ||
+            _paidTicketSpots < layout.minimumPaidTicketSpots
         ) {
             // Unlimited naffles don't have an upper limit on paid or free tickets.
-            revert InvalidPaidTicketSpots(_params._paidTicketSpots);
+            revert InvalidPaidTicketSpots(_paidTicketSpots);
         }
 
         NaffleTypes.TokenContractType tokenContractType;
-        if (IERC165(_params._ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID)) {
+        if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID)) {
             tokenContractType = NaffleTypes.TokenContractType.ERC721;
-            IERC721(_params._ethTokenAddress).transferFrom(msg.sender, address(this), _params._nftId);
-        } else if (IERC165(_params._ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID)) {
+            IERC721(_ethTokenAddress).transferFrom(msg.sender, address(this), _nftId);
+        } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID)) {
             tokenContractType = NaffleTypes.TokenContractType.ERC1155;
-            IERC1155(_params._ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _params._nftId, 1, bytes(""));
+            IERC1155(_ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _nftId, 1, bytes(""));
         } else {
             revert InvalidTokenType();
         }
 
         layout.naffles[naffleId] = NaffleTypes.L1Naffle({
-            tokenAddress: _params._ethTokenAddress,
-            nftId: _params._nftId,
+            tokenAddress: _ethTokenAddress,
+            nftId: _nftId,
             naffleId: naffleId,
-            owner: _params._owner,
+            owner: msg.sender,
             winner: address(0),
             winnerClaimed: false,
             naffleTokenType: tokenContractType
         });
 
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
+        NaffleTypes.CreateZkSyncNaffleParams memory params = NaffleTypes.CreateZkSyncNaffleParams({
+            _ethTokenAddress: _ethTokenAddress,
+            _owner: msg.sender,
+            _nftId: _nftId,
+            _paidTicketSpots: _paidTicketSpots,
+            _ticketPriceInWei: _ticketPriceInWei,
+            _endTime: _endTime,
+            _naffleType: _naffleType
+        });
+
         txHash = zksync.requestL2Transaction{value: msg.value}(
             layout.zkSyncNaffleContractAddress,
             0,
             abi.encodeWithSignature(
-              "createNaffle(address, address, uint256, uint256, uint256, uint256, uint8)", 
-              _params._ethTokenAddress,
-              _params._owner,
-              _params._nftId,
-              _params._paidTicketSpots,
-              _params._ticketPriceInWei,
-              _params._endTime,
-              tokenContractType
+              "createNaffle((address, address, uint256, uint256, uint256, uint256, uint8))",
+                params
             ),
             // Gas limit
             10000,
