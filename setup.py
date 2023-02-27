@@ -5,6 +5,7 @@ from setuptools import setup
 requires = [
     "eth-brownie~=1.19.2",
     "web3~=5.31.3",
+    "pycryptodome"
 ]
 
 setup(

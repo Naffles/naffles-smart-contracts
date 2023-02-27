@@ -1,6 +1,8 @@
 import datetime
 
 import brownie
+import pytest
+from brownie.exceptions import VirtualMachineError
 import web3
 
 from scripts.util import ZKSYNC_ADDRESS, get_error_message
@@ -12,7 +14,7 @@ UNLIMITED_NAFFLE_TYPE = 1
 
 
 def _setup_contract(admin_facet, deployed_founders_key_staking, from_admin):
-    admin_facet.setMinimumNaffleDuration(2, from_admin)
+    admin_facet.setMinimumNaffleDuration(10, from_admin)
     admin_facet.setMinimumPaidTicketSpots(2, from_admin)
     admin_facet.setZkSyncAddress(ZKSYNC_ADDRESS, from_admin)
     admin_facet.setZkSyncNaffleContractAddress(ZKSYNC_ADDRESS, from_admin)
@@ -54,7 +56,8 @@ def test_create_naffle_not_allowed(
             from_address
         )
 
-def atest_create_naffle_invalid_end_time(
+
+def test_create_naffle_invalid_end_time(
     from_address,
     from_admin,
     deployed_l1_naffle_diamond,
@@ -71,19 +74,21 @@ def atest_create_naffle_invalid_end_time(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(admin_facet, deployed_founders_key_staking, from_admin)
-
+    _setup_contract(admin_facet, deployed_erc721a_mock, from_admin)
+    deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
     minimum_paid_ticket_spots = 2
     ticket_price = 10
 
-    with brownie.reverts(get_error_message("INVALID_END_TIME()")):
+    with brownie.reverts(get_error_message('InvalidEndTime(uint256)')):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,
             minimum_paid_ticket_spots,
             ticket_price,
-            datetime.datetime.now().timestamp() - 1000,
-            1,
-            from_address
-        )
+            datetime.datetime.now().timestamp() + 1,
+            STANDARD_NAFFLE_TYPE,
+            from_address)
+
+
+

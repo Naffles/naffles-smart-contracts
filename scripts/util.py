@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional
 
 from web3 import Web3
+from Crypto.Hash import keccak
 
 OWNABLE_SELECTORS = ["0x8ab5150a", "0x79ba5097", "0xf2fde38b", "0x8da5cb5b"]
 NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
@@ -49,4 +50,7 @@ def remove_duplicated_selectors(current_selectors, new_selectors):
 
 
 def get_error_message(error) -> str:
-    return f"typed error: {Web3.keccak(text=f'{error}')[:4].hex()}"
+    hash_ = keccak.new(data=error.encode("utf-8"), digest_bits=256)
+    result = f"typed error: 0x{hash_.digest()[:4].hex()}"
+    print(result)
+    return result
