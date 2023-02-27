@@ -7,4 +7,5 @@ interface IL1NaffleBaseInternal {
     error InvalidTokenType();
     error NotEnoughPaidTicketSpots(uint256 tickets);
     error InvalidPaidTicketSpots(uint256 spots);
+    error InvalidPaidTicketPrice(uint256 price);
 }

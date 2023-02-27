@@ -12,10 +12,15 @@ from tests.contracts.naffle.test_l1_naffle_diamond import \
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
 
+MINIMUM_NAFFLE_DURATION = 10
+MINIMUM_PAID_TICKET_SPOTS = 2
+MINIMUM_TICKET_PRICE = 2
+
 
 def _setup_contract(admin_facet, deployed_founders_key_staking, from_admin):
-    admin_facet.setMinimumNaffleDuration(10, from_admin)
-    admin_facet.setMinimumPaidTicketSpots(2, from_admin)
+    admin_facet.setMinimumNaffleDuration(MINIMUM_NAFFLE_DURATION, from_admin)
+    admin_facet.setMinimumPaidTicketSpots(MINIMUM_PAID_TICKET_SPOTS, from_admin)
+    admin_facet.setMinimumTicketPrice(MINIMUM_TICKET_PRICE, from_admin)
     admin_facet.setZkSyncAddress(ZKSYNC_ADDRESS, from_admin)
     admin_facet.setZkSyncNaffleContractAddress(ZKSYNC_ADDRESS, from_admin)
     admin_facet.setFoundersKeyAddress(deployed_founders_key_staking.address, from_admin)
@@ -42,15 +47,13 @@ def test_create_naffle_not_allowed(
     _setup_contract(admin_facet, deployed_erc721a_mock, from_admin)
 
     nft_id = 1
-    paid_ticket_spots = 2
-    ticket_price = 10
 
     with brownie.reverts(get_error_message("NotAllowed()")):
         base_facet.createNaffle(
             deployed_founders_key_staking.address,
             nft_id,
-            paid_ticket_spots,
-            ticket_price,
+            MINIMUM_PAID_TICKET_SPOTS,
+            MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
             from_address
@@ -77,15 +80,13 @@ def test_create_naffle_invalid_end_time(
     _setup_contract(admin_facet, deployed_erc721a_mock, from_admin)
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
-    paid_ticket_spots = 2
-    ticket_price = 10
 
     with brownie.reverts(get_error_message('InvalidEndTime(uint256)')):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,
-            paid_ticket_spots,
-            ticket_price,
+            MINIMUM_PAID_TICKET_SPOTS,
+            MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1,
             STANDARD_NAFFLE_TYPE,
             from_address)
@@ -111,15 +112,13 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
     _setup_contract(admin_facet, deployed_erc721a_mock, from_admin)
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
-    paid_ticket_spots = 1
-    ticket_price = 10
 
     with brownie.reverts(get_error_message('InvalidMinimumPaidTicketSpots(uint256)')):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,
-            paid_ticket_spots,
-            ticket_price,
+            MINIMUM_PAID_TICKET_SPOTS - 1,
+            MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
             from_address)
@@ -145,15 +144,13 @@ def test_create_naffle_invalid_naffle_type(
     _setup_contract(admin_facet, deployed_erc721a_mock, from_admin)
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
-    minimum_paid_ticket_spots = 2
-    ticket_price = 10
 
     with brownie.reverts(get_error_message('InvalidNaffleType(uint256)')):
         base_facet.createNaffle(
             NULL_ADDRESS,
             nft_id,
-            minimum_paid_ticket_spots,
-            ticket_price,
+            MINIMUM_PAID_TICKET_SPOTS,
+            MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
             2,
             from_address)

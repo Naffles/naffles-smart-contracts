@@ -13,6 +13,10 @@ contract L1NaffleView is IL1NaffleView, L1NaffleBaseInternal {
         return _getMinimumPaidTicketSpots();
     }
 
+    function getMinimumPaidTicketPrice() external view returns (uint256) {
+        return _getMinimumPaidTicketPrice();
+    }
+
     function getZkSyncNaffleContractAddress() external view returns (address) {
         return _getZkSyncNaffleContractAddress();
     }

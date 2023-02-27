@@ -63,6 +63,26 @@ def test_get_and_set_minimum_paid_ticket_spots(
     assert view_facet.getMinimumPaidTicketSpots() == 1
 
 
+def test_get_and_set_minimum_ticket_price(
+    admin,
+    from_admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    admin_facet.setMinimumTicketPrice(1, from_admin)
+
+    assert view_facet.getMinimumTicketPrice() == 1
+
+
 def test_get_and_set_zksync_naffle_contract_address(
     admin,
     from_admin,
