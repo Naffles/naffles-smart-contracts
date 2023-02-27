@@ -121,6 +121,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         L1NaffleBaseStorage.layout().minimumPaidTicketPriceInWei = _minimumPaidTicketPriceInWei;
     }
 
+    function _getMinimumPaidTicketPriceInWei() internal view returns (uint256) {
+        return L1NaffleBaseStorage.layout().minimumPaidTicketPriceInWei;
+    }
+
     function _setZkSyncNaffleContractAddress(address _zkSyncNaffleContractAddress) internal {
         L1NaffleBaseStorage.layout().zkSyncNaffleContractAddress = _zkSyncNaffleContractAddress;
     }
