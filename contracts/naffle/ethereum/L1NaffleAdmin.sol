@@ -15,8 +15,8 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
         _setMinimumPaidTicketSpots(_minimumPaidTicketSpots);
     }
 
-    function setMinimumPaidTicketPrice(uint256 _minimumPaidTicketPrice) external onlyRole(_getAdminRole()) {
-        _setMinimumPaidTicketPrice(_minimumPaidTicketPrice);
+    function setMinimumPaidTicketPriceInWei(uint256 _minimumPaidTicketPriceInWei) external onlyRole(_getAdminRole()) {
+        _setMinimumPaidTicketPriceInWei(_minimumPaidTicketPriceInWei);
     }
 
     function setZkSyncNaffleContractAddress(address _zksyncNaffleContractAddress) external onlyRole(_getAdminRole()) {

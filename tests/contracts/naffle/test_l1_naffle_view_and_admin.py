@@ -1,3 +1,4 @@
+import brownie
 from brownie import L1NaffleAdmin, interface, L1NaffleView, L1NaffleBase
 
 from scripts.util import get_selectors, add_facet
@@ -43,6 +44,25 @@ def test_get_and_set_minimum_naffle_duration(
     assert view_facet.getMinimumNaffleDuration() == 1
 
 
+def test_get_and_set_minimum_naffle_duration_not_admin(
+    from_admin,
+    from_address,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setMinimumNaffleDuration(1, from_address)
+
+
 def test_get_and_set_minimum_paid_ticket_spots(
     admin,
     from_admin,
@@ -63,6 +83,25 @@ def test_get_and_set_minimum_paid_ticket_spots(
     assert view_facet.getMinimumPaidTicketSpots() == 1
 
 
+def test_get_and_set_minimum_paid_ticket_spots_not_admin(
+    from_admin,
+    from_address,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setMinimumPaidTicketSpots(1, from_address)
+
+
 def test_get_and_set_minimum_ticket_price(
     admin,
     from_admin,
@@ -78,9 +117,28 @@ def test_get_and_set_minimum_ticket_price(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    admin_facet.setMinimumTicketPrice(1, from_admin)
+    admin_facet.setMinimumTicketPriceInWei(1, from_admin)
 
     assert view_facet.getMinimumTicketPrice() == 1
+
+
+def test_set_minimum_ticket_price_not_admin(
+    from_admin,
+    from_address,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setMinimumTicketPriceInWei(1, from_address)
 
 
 def test_get_and_set_zksync_naffle_contract_address(
@@ -103,6 +161,25 @@ def test_get_and_set_zksync_naffle_contract_address(
     assert view_facet.getZkSyncNaffleContractAddress() == admin
 
 
+def test_get_and_set_zksync_naffle_contract_address_not_admin(
+    from_admin,
+    from_address,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setZkSyncNaffleContractAddress(admin, from_address)
+
+
 def test_get_and_set_zksync_address(
     admin,
     from_admin,
@@ -122,6 +199,24 @@ def test_get_and_set_zksync_address(
 
     assert view_facet.getZkSyncAddress() == admin
 
+
+def test_get_and_set_zksync_address_not_admin(
+    from_admin,
+    from_address,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setZkSyncAddress(admin, from_address)
 
 def test_get_and_set_founders_key_address(
     admin,
@@ -143,7 +238,26 @@ def test_get_and_set_founders_key_address(
     assert view_facet.getFoundersKeyAddress() == admin
 
 
-def test_get_and_set_founders_key_placeholder_address(
+def test_set_founders_key_address_not_admin(
+    from_admin,
+    from_address,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setFoundersKeyAddress(admin, from_address)
+
+
+def test_set_founders_key_placeholder_address(
     admin,
     from_admin,
     deployed_l1_naffle_diamond,
@@ -181,3 +295,23 @@ def test_get_and_set_admin_address(
     admin_facet.setAdmin(address, from_admin)
 
     assert access_control.hasRole(view_facet.getAdminRole(), address)
+
+
+def test_set_admin_address_not_admin(
+    address,
+    from_admin,
+    from_address,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setAdmin(address, from_address)

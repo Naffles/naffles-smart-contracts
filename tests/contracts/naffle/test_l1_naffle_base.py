@@ -20,7 +20,7 @@ MINIMUM_TICKET_PRICE = 2
 def _setup_contract(admin_facet, deployed_founders_key_staking, from_admin):
     admin_facet.setMinimumNaffleDuration(MINIMUM_NAFFLE_DURATION, from_admin)
     admin_facet.setMinimumPaidTicketSpots(MINIMUM_PAID_TICKET_SPOTS, from_admin)
-    admin_facet.setMinimumTicketPrice(MINIMUM_TICKET_PRICE, from_admin)
+    admin_facet.setMinimumTicketPriceInWei(MINIMUM_TICKET_PRICE, from_admin)
     admin_facet.setZkSyncAddress(ZKSYNC_ADDRESS, from_admin)
     admin_facet.setZkSyncNaffleContractAddress(ZKSYNC_ADDRESS, from_admin)
     admin_facet.setFoundersKeyAddress(deployed_founders_key_staking.address, from_admin)
@@ -154,8 +154,5 @@ def test_create_naffle_invalid_naffle_type(
             datetime.datetime.now().timestamp() + 1000,
             2,
             from_address)
-
-
-
 
 
