@@ -105,3 +105,43 @@ def test_set_admin_address_not_admin(
     )
     with brownie.reverts():
         admin_facet.setAdmin(address, from_address)
+
+
+def test_get_and_set_paid_ticket_contract_address(
+    address,
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+    )
+    admin_facet.setPaidTicketContractAddress(address, from_admin)
+
+    assert view_facet.getPaidTicketContractAddress() == address
+
+
+def test_set_paid_ticket_contract_address_not_admin(
+    address,
+    from_admin,
+    from_address,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setPaidTicketContractAddress(address, from_address)
