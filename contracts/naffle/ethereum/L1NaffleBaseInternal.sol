@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
 import "./L1NaffleBaseStorage.sol";
@@ -40,7 +40,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         ++layout.numberOfNaffles;
 
         if (
-            (_naffleType == NaffleTypes.NaffleType.UNLIMITED && _paidTicketSpots != 0) ||
+            (_naffleType == NaffleTypes.NaffleType.UNLIMITED&& _paidTicketSpots != 0) ||
             (_naffleType == NaffleTypes.NaffleType.STANDARD && _paidTicketSpots < layout.minimumPaidTicketSpots)
         ) {
             // Unlimited naffles don't have an upper limit on paid or free tickets.

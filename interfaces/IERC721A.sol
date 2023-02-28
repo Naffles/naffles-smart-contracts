@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 // ERC721A Contracts v4.2.3
 // Creator: Chiru Labs
 

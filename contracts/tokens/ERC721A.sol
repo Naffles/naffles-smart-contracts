@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 // ERC721A Contracts v4.2.3
 // Creator: Chiru Labs
 
@@ -83,7 +83,7 @@ contract ERC721A is IERC721A {
     // This limit is to prevent overflows on the address data entries.
     // For a limit of 5000, a total of 3.689e15 calls to {_mintERC2309}
     // is required to cause an overflow, which is unrealistic.
-    uint256 private constant _MAX_MINT_ERC2309_QUANTITY_LIMIT = 5000;
+    uint256 private constant _MAX_MINT_ERC2309_QUANTITY_LIUNLICENSED  = 5000;
 
     // The `Transfer` event signature is given by:
     // `keccak256(bytes("Transfer(address,address,uint256)"))`.
@@ -816,7 +816,7 @@ contract ERC721A is IERC721A {
         uint256 startTokenId = _currentIndex;
         if (to == address(0)) _revert(MintToZeroAddress.selector);
         if (quantity == 0) _revert(MintZeroQuantity.selector);
-        if (quantity > _MAX_MINT_ERC2309_QUANTITY_LIMIT) _revert(MintERC2309QuantityExceedsLimit.selector);
+        if (quantity > _MAX_MINT_ERC2309_QUANTITY_LIUNLICENSED ) _revert(MintERC2309QuantityExceedsLimit.selector);
 
         _beforeTokenTransfers(address(0), to, startTokenId, quantity);
 
