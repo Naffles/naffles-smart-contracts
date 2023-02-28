@@ -15,6 +15,10 @@ from brownie import (
     L2NaffleBase,
     L2NaffleAdmin,
     L2NaffleView,
+    L2PaidTicketDiamond,
+    L2PaidTicketBase,
+    L2PaidTicketAdmin,
+    L2PaidTicketView,
     ETHZkSyncMock,
 )
 from brownie.network.account import _PrivateKeyAccount
@@ -96,6 +100,30 @@ def deployed_l2_naffle_admin_facet(from_admin) -> L1NaffleAdmin:
 @pytest.fixture()
 def deployed_l2_naffle_view_facet(from_admin) -> L1NaffleView:
     facet = L2NaffleView.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_paid_ticket_diamond(admin, from_admin) -> L1NaffleDiamond:
+    diamond = L2PaidTicketDiamond.deploy(admin, from_admin)
+    return diamond
+
+
+@pytest.fixture()
+def deployed_l2_paid_ticket_base_facet(from_admin) -> L1NaffleBase:
+    facet = L2PaidTicketBase.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_paid_ticket_admin_facet(from_admin) -> L1NaffleAdmin:
+    facet = L2PaidTicketAdmin.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_paid_ticket_view_facet(from_admin) -> L1NaffleView:
+    facet = L2PaidTicketView.deploy(from_admin)
     return facet
 
 
