@@ -3,13 +3,13 @@ pragma solidity ^0.8.17;
 
 library NaffleTypes {
     struct CreateZkSyncNaffleParams {
-        address _ethTokenAddress;
-        address _owner;
-        uint256 _nftId;
-        uint256 _paidTicketSpots;
-        uint256 _ticketPriceInWei;
-        uint256 _endTime;
-        NaffleType _naffleType;
+        address ethTokenAddress;
+        address owner;
+        uint256 nftId;
+        uint256 paidTicketSpots;
+        uint256 ticketPriceInWei;
+        uint256 endTime;
+        NaffleType naffleType;
     }
 
     enum NaffleType {
