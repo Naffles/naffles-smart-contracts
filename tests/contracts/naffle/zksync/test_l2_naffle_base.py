@@ -10,15 +10,25 @@ UNLIMITED_NAFFLE_TYPE = 1
 
 PLATFORM_FEE = 100
 FREE_TICKET_RATIO = 100
+NAFFLE_ID = 1
+
+PAID_TICKET_SPOTS = 2
+TICKET_PRICE = 10
+
+ERC721 = 0
+ERC1155 = 1
+
+NFT_ID = 1
 
 
 def _setup_contract(admin_facet, zksync_contract, from_admin):
     admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
     admin_facet.setFreeTicketRatio(FREE_TICKET_RATIO, from_admin)
-    admin_facet.setZkSyncAddress(zksync_contract.address, from_admin)
+    admin_facet.setL1NaffleContractAddress(zksync_contract.address, from_admin)
 
 
 def test_create_naffle_not_allowed(
+    address,
     from_address,
     from_admin,
     deployed_l2_naffle_diamond,
@@ -37,3 +47,19 @@ def test_create_naffle_not_allowed(
         deployed_l2_naffle_view_facet,
     )
     _setup_contract(admin_facet, from_admin["from"], from_admin)
+
+    with brownie.reverts(get_error_message("NotAllowed", [], [])):
+        base_facet.createNaffle(
+            (
+                deployed_erc721a_mock.address,
+                address,
+                NAFFLE_ID,
+                NFT_ID,
+                PAID_TICKET_SPOTS,
+                TICKET_PRICE,
+                datetime.datetime.now().timestamp() + 1000,
+                STANDARD_NAFFLE_TYPE,
+                ERC721,
+            ),
+            from_address
+        )
