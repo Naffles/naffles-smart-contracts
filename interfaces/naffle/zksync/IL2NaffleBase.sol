@@ -11,5 +11,5 @@ interface IL2NaffleBase {
     function buyTickets(
         uint256 _amount,
         uint256 _naffleId
-    ) external returns (uint256[] memory ticketIds);
+    ) external payable returns (uint256[] memory ticketIds);
 }
