@@ -11,6 +11,10 @@ from brownie import (
     L1NaffleBase,
     L1NaffleAdmin,
     L1NaffleView,
+    L2NaffleDiamond,
+    L2NaffleBase,
+    L2NaffleAdmin,
+    L2NaffleView,
     ETHZkSyncMock,
 )
 from brownie.network.account import _PrivateKeyAccount
@@ -68,6 +72,30 @@ def deployed_l1_naffle_admin_facet(from_admin) -> L1NaffleAdmin:
 @pytest.fixture()
 def deployed_l1_naffle_view_facet(from_admin) -> L1NaffleView:
     facet = L1NaffleView.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_naffle_diamond(admin, from_admin) -> L1NaffleDiamond:
+    diamond = L2NaffleDiamond.deploy(admin, from_admin)
+    return diamond
+
+
+@pytest.fixture()
+def deployed_l2_naffle_base_facet(from_admin) -> L1NaffleBase:
+    facet = L2NaffleBase.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_naffle_admin_facet(from_admin) -> L1NaffleAdmin:
+    facet = L2NaffleAdmin.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_naffle_view_facet(from_admin) -> L1NaffleView:
+    facet = L2NaffleView.deploy(from_admin)
     return facet
 
 

@@ -1,8 +1,8 @@
 import brownie
-from brownie import L1NaffleAdmin, interface, L1NaffleView, L1NaffleBase
+from brownie import L1NaffleAdmin
 
 from scripts.util import get_selectors, add_facet, NULL_ADDRESS
-from tests.contracts.naffle.test_l1_naffle_diamond import setup_diamond_with_facets
+from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import setup_diamond_with_facets
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 

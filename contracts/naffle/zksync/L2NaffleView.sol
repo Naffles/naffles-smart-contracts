@@ -13,7 +13,7 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
         return _getFreeTicketRatio();
     }
 
-    function getZkSyncAddress() external view override returns (address) {
-        return _getZkSyncAddress();
+    function getL1NaffleContractAddress() external view override returns (address) {
+        return _getL1NaffleContractAddress();
     }
 }

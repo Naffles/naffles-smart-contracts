@@ -3,7 +3,7 @@ import datetime
 import brownie
 
 from scripts.util import NULL_ADDRESS, ZKSYNC_ADDRESS, get_error_message
-from tests.contracts.naffle.test_l1_naffle_diamond import setup_diamond_with_facets
+from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import setup_diamond_with_facets
 
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1

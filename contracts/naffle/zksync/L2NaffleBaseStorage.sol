@@ -8,7 +8,7 @@ library L2NaffleBaseStorage {
         keccak256("naffles.contracts.naffle.zksync.L2NaffleBaseStorage");
 
     struct Layout {
-        address zkSyncAddress;
+        address l1NaffleContractAddress;
         // 100 = 1%
         uint256 freeTicketRatio;
         uint256 platformFee;

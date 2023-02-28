@@ -5,5 +5,5 @@ interface IL2NaffleAdmin {
     function setPlatformFee(uint256 _platformFee) external;
     function setFreeTicketRatio(uint256 _freeTicketRatio) external;
     function setAdmin(address _admin) external;
-    function setZkSyncAddress(address _zkSyncAddress) external;
+    function setL1NaffleContractAddress(address _l1NaffleContractAddress) external;
 }

@@ -61,11 +61,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
     }
 
-    function _setZkSyncAddress(address _zkSyncAddress) internal {
-        L2NaffleBaseStorage.layout().zkSyncAddress = _zkSyncAddress;
+    function _getL1NaffleContractAddress() internal view returns (address) {
+        return L2NaffleBaseStorage.layout().l1NaffleContractAddress;
     }
 
-    function _getZkSyncAddress() internal view returns (address) {
-        return L2NaffleBaseStorage.layout().zkSyncAddress;
+    function _setL1NaffleContractAddress(address _l1NaffleContractAddress) internal {
+        L2NaffleBaseStorage.layout().l1NaffleContractAddress = _l1NaffleContractAddress;
     }
 }
