@@ -70,13 +70,14 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
 
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
         NaffleTypes.CreateZkSyncNaffleParams memory params = NaffleTypes.CreateZkSyncNaffleParams({
-            _ethTokenAddress: _ethTokenAddress,
-            _owner: msg.sender,
-            _nftId: _nftId,
-            _paidTicketSpots: _paidTicketSpots,
-            _ticketPriceInWei: _ticketPriceInWei,
-            _endTime: _endTime,
-            _naffleType: _naffleType
+            ethTokenAddress: _ethTokenAddress,
+            owner: msg.sender,
+            naffleId: naffleId,
+            nftId: _nftId,
+            paidTicketSpots: _paidTicketSpots,
+            ticketPriceInWei: _ticketPriceInWei,
+            endTime: _endTime,
+            naffleType: _naffleType
         });
 
         txHash = zksync.requestL2Transaction{value: msg.value}(
