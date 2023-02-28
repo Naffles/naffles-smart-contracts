@@ -7,9 +7,17 @@ import "@solidstate/contracts/access/access_control/AccessControl.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleBase.sol";
 
 contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
+    modifier onlyL1NaffleContract() {
+        if (msg.sender != _getL1NaffleContractAddress()) {
+            revert NotAllowed();
+        }
+        _;
+    }
+
+
     function createNaffle(
         NaffleTypes.CreateZkSyncNaffleParams memory _params
-    ) external {
+    ) external onlyL1NaffleContract {
         _createNaffle(
             _params
         );

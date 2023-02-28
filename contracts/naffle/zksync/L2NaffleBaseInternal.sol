@@ -13,6 +13,8 @@ import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleBaseInternal.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
+
+
     function _createNaffle(
         NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) internal {
