@@ -151,5 +151,5 @@ def test_buy_tickets_invalid_naffle_id(
     setup_l2_naffle_contract(admin_facet, from_admin["from"],
                              deployed_erc721a_mock, from_admin)
 
-    with brownie.reverts(get_error_message("InvalidNaffleId", [], [])):
+    with brownie.reverts(get_error_message("InvalidNaffleId", ['uint256'], [1])):
         base_facet.buyTickets(1, 1, {"from": admin, "value": 10})

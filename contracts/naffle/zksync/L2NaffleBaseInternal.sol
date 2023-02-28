@@ -45,11 +45,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         uint256 _amount,
         uint256 _naffleId
     ) internal returns (uint256[] memory ticketIds) {
-        revert InvalidNaffleId(_naffleId);
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
         if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
         }
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
