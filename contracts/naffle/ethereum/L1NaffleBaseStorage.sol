@@ -5,7 +5,7 @@ import "../../libraries/NaffleTypes.sol";
 
 library L1NaffleBaseStorage {
     bytes32 internal constant STORAGE_SLOT =
-        keccak256("naffles.contracts.naffle.ethereum.base.L1NaffleBaseStorage");
+        keccak256("naffles.contracts.naffle.ethereum.L1NaffleBaseStorage");
 
     struct Layout {
         address zkSyncAddress;
