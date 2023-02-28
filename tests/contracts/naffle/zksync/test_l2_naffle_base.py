@@ -63,3 +63,40 @@ def test_create_naffle_not_allowed(
             ),
             from_address
         )
+
+
+def test_create_naffle(
+    address,
+    from_address,
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+    deployed_founders_key_staking,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+    _setup_contract(admin_facet, from_admin["from"], from_admin)
+
+    base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            address,
+            NAFFLE_ID,
+            NFT_ID,
+            PAID_TICKET_SPOTS,
+            TICKET_PRICE,
+            datetime.datetime.now().timestamp() + 1000,
+            STANDARD_NAFFLE_TYPE,
+            ERC721,
+        ),
+        from_admin
+    )
