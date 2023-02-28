@@ -76,25 +76,25 @@ def deployed_l1_naffle_view_facet(from_admin) -> L1NaffleView:
 
 
 @pytest.fixture()
-def deployed_l2_naffle_diamond(admin, from_admin) -> L1NaffleDiamond:
+def deployed_l2_naffle_diamond(admin, from_admin) -> L2NaffleDiamond:
     diamond = L2NaffleDiamond.deploy(admin, from_admin)
     return diamond
 
 
 @pytest.fixture()
-def deployed_l2_naffle_base_facet(from_admin) -> L1NaffleBase:
+def deployed_l2_naffle_base_facet(from_admin) -> L2NaffleBase:
     facet = L2NaffleBase.deploy(from_admin)
     return facet
 
 
 @pytest.fixture()
-def deployed_l2_naffle_admin_facet(from_admin) -> L1NaffleAdmin:
+def deployed_l2_naffle_admin_facet(from_admin) -> L2NaffleAdmin:
     facet = L2NaffleAdmin.deploy(from_admin)
     return facet
 
 
 @pytest.fixture()
-def deployed_l2_naffle_view_facet(from_admin) -> L1NaffleView:
+def deployed_l2_naffle_view_facet(from_admin) -> L2NaffleView:
     facet = L2NaffleView.deploy(from_admin)
     return facet
 
