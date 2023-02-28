@@ -5,7 +5,7 @@ from brownie import L2NaffleAdmin
 
 from scripts.util import get_selectors, add_facet, NULL_ADDRESS
 from tests.contracts.naffle.zksync.test_l2_naffle_base import (
-    _setup_contract,
+    setup_l2_naffle_contract,
     STANDARD_NAFFLE_TYPE,
     ERC721,
 )
@@ -208,7 +208,7 @@ def test_get_naffle_by_id(
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_view_facet,
     )
-    _setup_contract(admin_facet, from_admin["from"], from_admin)
+    setup_l2_naffle_contract(admin_facet, from_admin["from"], from_admin["from"], from_admin)
 
     naffle_id = 1
     nft_id = 1
@@ -257,3 +257,43 @@ def test_get_naffle_by_id(
         contract_type,
         naffle_type,
     )
+
+
+def test_get_and_set_paid_ticket_contract_address(
+    address,
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+    admin_facet.setPaidTicketContractAddress(address, from_admin)
+
+    assert view_facet.getPaidTicketContractAddress() == address
+
+
+def test_set_paid_ticket_contract_address_not_admin(
+    address,
+    from_admin,
+    from_address,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setPaidTicketContractAddress(address, from_address)

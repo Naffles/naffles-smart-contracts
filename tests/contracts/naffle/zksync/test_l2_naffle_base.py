@@ -23,10 +23,11 @@ ERC1155 = 1
 NFT_ID = 1
 
 
-def _setup_contract(admin_facet, zksync_contract, from_admin):
+def setup_l2_naffle_contract(admin_facet, zksync_contract, paid_ticket_contract, from_admin):
     admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
     admin_facet.setFreeTicketRatio(FREE_TICKET_RATIO, from_admin)
     admin_facet.setL1NaffleContractAddress(zksync_contract.address, from_admin)
+    admin_facet.setPaidTicketContractAddress(paid_ticket_contract.address, from_admin)
 
 
 def test_create_naffle_not_allowed(
@@ -48,7 +49,7 @@ def test_create_naffle_not_allowed(
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_view_facet,
     )
-    _setup_contract(admin_facet, from_admin["from"], from_admin)
+    setup_l2_naffle_contract(admin_facet, from_admin["from"], from_admin["from"], from_admin)
 
     with brownie.reverts(get_error_message("NotAllowed", [], [])):
         base_facet.createNaffle(
@@ -86,7 +87,7 @@ def test_create_naffle(
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_view_facet,
     )
-    _setup_contract(admin_facet, from_admin["from"], from_admin)
+    setup_l2_naffle_contract(admin_facet, from_admin["from"], from_admin["from"], from_admin)
     endtime = datetime.datetime.now().timestamp() + 1000
 
     base_facet.createNaffle(
@@ -128,3 +129,27 @@ def test_create_naffle(
         ERC721,
         STANDARD_NAFFLE_TYPE,
     )
+
+
+def test_buy_tickets_invalid_naffle_id(
+    admin,
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+    deployed_erc721a_mock,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet
+    )
+
+    setup_l2_naffle_contract(admin_facet, from_admin["from"],
+                             deployed_erc721a_mock, from_admin)
+
+    with brownie.reverts(get_error_message("InvalidNaffleId", [], [])):
+        base_facet.buyTickets(1, 1, {"from": admin, "value": 10})
