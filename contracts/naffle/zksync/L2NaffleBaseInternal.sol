@@ -49,7 +49,15 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         return L2NaffleBaseStorage.layout().platformFee;
     }
 
+    function _setPlatformFee(uint256 _platformFee) external override {
+        L2NaffleBaseStorage.layout().platformFee = _platformFee;
+    }
+
     function _getFreeTicketRatio() external view override returns (uint256) {
         return L2NaffleBaseStorage.layout().freeTicketRatio;
+    }
+
+    function _setFreeTicketRatio(uint256 _freeTicketRatio) external override {
+        L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
     }
 }

@@ -10,4 +10,12 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
     function setAdmin(address _admin) external onlyOwner {
         _grantRole(_getAdminRole(), _admin);
     }
+
+    function setPlatformFee(uint256 _platformFee) external override onlyRole(_getAdminRole()) {
+        _setPlatformFee(_platformFee);
+    }
+
+    function setFreeTicketRatio(uint256 _freeTicketRatio) external override onlyRole(_getAdminRole()) {
+        _setFreeTicketRatio(_freeTicketRatio);
+    }
 }
