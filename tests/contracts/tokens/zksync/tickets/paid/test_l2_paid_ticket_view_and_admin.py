@@ -4,8 +4,9 @@ import brownie
 from brownie import L2PaidTicketAdmin
 
 from scripts.util import get_selectors, add_facet, NULL_ADDRESS
-from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import \
-    setup_diamond_with_facets
+from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
+    setup_diamond_with_facets,
+)
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 
