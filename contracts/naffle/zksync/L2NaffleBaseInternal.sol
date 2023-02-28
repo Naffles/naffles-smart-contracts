@@ -14,7 +14,7 @@ import "../../../interfaces/naffle/zksync/IL2NaffleBaseInternal.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     function _createNaffle(
-        NaffleTypes.CreateZkSyncNaffleParams _params
+        NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
 
@@ -45,19 +45,19 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
-    function _getPlatformFee() external view override returns (uint256) {
+    function _getPlatformFee() internal view returns (uint256) {
         return L2NaffleBaseStorage.layout().platformFee;
     }
 
-    function _setPlatformFee(uint256 _platformFee) external override {
+    function _setPlatformFee(uint256 _platformFee) internal {
         L2NaffleBaseStorage.layout().platformFee = _platformFee;
     }
 
-    function _getFreeTicketRatio() external view override returns (uint256) {
+    function _getFreeTicketRatio() internal view returns (uint256) {
         return L2NaffleBaseStorage.layout().freeTicketRatio;
     }
 
-    function _setFreeTicketRatio(uint256 _freeTicketRatio) external override {
+    function _setFreeTicketRatio(uint256 _freeTicketRatio) internal {
         L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
     }
 }
