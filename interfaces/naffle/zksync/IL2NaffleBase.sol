@@ -5,6 +5,6 @@ import "../../../contracts/libraries/NaffleTypes.sol";
 
 interface IL2NaffleBase {
     function createNaffle(
-        NaffleTypes.CreateZkSyncNaffleParams _params
+        NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) external;
 }

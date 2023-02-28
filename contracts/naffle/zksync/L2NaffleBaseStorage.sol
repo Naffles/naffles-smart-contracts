@@ -11,6 +11,7 @@ library L2NaffleBaseStorage {
         address zkSyncAddress;
         // 100 = 1%
         uint256 freeTicketRatio;
+        uint256 platformFee;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
     }
 

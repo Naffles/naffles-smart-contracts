@@ -11,6 +11,7 @@ library NaffleTypes {
         uint256 ticketPriceInWei;
         uint256 endTime;
         NaffleType naffleType;
+        TokenContractType naffleTokenType;
     }
 
     enum NaffleStatus {
@@ -60,8 +61,8 @@ library NaffleTypes {
         uint256 endTime;
         uint256 winningTicketId;
         TicketType winningTicketType;
-        TokenContractType naffleTokenType;
         NaffleStatus status;
+        TokenContractType naffleTokenType;
         NaffleType naffleType;
     }
 }

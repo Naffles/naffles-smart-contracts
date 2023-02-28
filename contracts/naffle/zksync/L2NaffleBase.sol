@@ -8,9 +8,9 @@ import "../../../interfaces/naffle/zksync/IL2NaffleBase.sol";
 
 contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     function createNaffle(
-        NaffleTypes.CreateZkSyncNaffleParams _params
+        NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) external {
-        return _createNaffle(
+        _createNaffle(
             _params
         );
     }

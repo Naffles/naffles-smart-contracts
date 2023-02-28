@@ -75,7 +75,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             paidTicketSpots: _paidTicketSpots,
             ticketPriceInWei: _ticketPriceInWei,
             endTime: _endTime,
-            naffleType: _naffleType
+            naffleType: _naffleType,
+            naffleTokenType: tokenContractType
         });
 
         txHash = zksync.requestL2Transaction{value: msg.value}(

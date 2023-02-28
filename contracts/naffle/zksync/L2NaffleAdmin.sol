@@ -18,4 +18,8 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
     function setFreeTicketRatio(uint256 _freeTicketRatio) external onlyRole(_getAdminRole()) {
         _setFreeTicketRatio(_freeTicketRatio);
     }
+
+    function setZkSyncAddress(address _zkSyncAddress) external onlyRole(_getAdminRole()) {
+        _setZkSyncAddress(_zkSyncAddress);
+    }
 }

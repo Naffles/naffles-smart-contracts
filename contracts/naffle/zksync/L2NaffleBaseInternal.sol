@@ -35,8 +35,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             endTime: _params.endTime,
             winningTicketId: 0,
             winningTicketType: NaffleTypes.TicketType.NONE,
-            naffleTokenType: _params._naffleTokenType,
             status: NaffleTypes.NaffleStatus.ACTIVE,
+            naffleTokenType: _params.naffleTokenType,
             naffleType: _params.naffleType
         });
     }
@@ -59,5 +59,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     function _setFreeTicketRatio(uint256 _freeTicketRatio) internal {
         L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
+    }
+
+    function _setZkSyncAddress(address _zkSyncAddress) internal {
+        L2NaffleBaseStorage.layout().zkSyncAddress = _zkSyncAddress;
+    }
+
+    function _getZkSyncAddress() internal view returns (address) {
+        return L2NaffleBaseStorage.layout().zkSyncAddress;
     }
 }
