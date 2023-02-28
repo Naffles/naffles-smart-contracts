@@ -6,12 +6,11 @@ import "../../libraries/NaffleTypes.sol";
 import '@solidstate/contracts/interfaces/IERC165.sol';
 import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
-
-import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleBaseInternal.sol";
-import "../../libraries/NaffleTypes.sol";
+import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
+import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     function _createNaffle(
@@ -68,13 +67,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         ) {
             revert NaffleNotActive();
         }
-        ticketIds = [1];
-//        ticketIds = layout.paidTicketContract.mintTickets(
-//            msg.sender,
-//            _amount,
-//            _naffleId,
-//            naffle.ticketPriceInWei
-//        );
+        ticketIds = IL2PaidTicketBase(layout.paidTicketContractAddress).mintTickets(
+            msg.sender,
+            _amount,
+            _naffleId,
+            naffle.ticketPriceInWei
+        );
     }
 
     function _getAdminRole() internal view returns (bytes32) {
