@@ -1,7 +1,11 @@
+import datetime
+
 import brownie
 from brownie import L2NaffleAdmin
 
 from scripts.util import get_selectors, add_facet, NULL_ADDRESS
+from tests.contracts.naffle.zksync.test_l2_naffle_base import _setup_contract, \
+    STANDARD_NAFFLE_TYPE, ERC721
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import setup_diamond_with_facets
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
@@ -180,3 +184,47 @@ def test_set_admin_address_not_admin(
     )
     with brownie.reverts():
         admin_facet.setAdmin(address, from_address)
+
+
+def test_get_naffle_by_id(
+    admin,
+    address,
+    from_admin,
+    deployed_erc721a_mock,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+    _setup_contract(admin_facet, from_admin["from"], from_admin)
+
+    naffle_id = 1
+    nft_id = 1
+    paid_ticket_spots = 2
+    ticket_price = 100
+    end_time = datetime.datetime.now().timestamp() + 1000
+    naffle_type = STANDARD_NAFFLE_TYPE
+    contract_type = ERC721
+
+
+    base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            address,
+            naffle_id,
+            nft_id,
+            paid_ticket_spots,
+            ticket_price,
+            end_time,
+            naffle_type,
+            contract_type,
+        ),
+        from_admin
+    )

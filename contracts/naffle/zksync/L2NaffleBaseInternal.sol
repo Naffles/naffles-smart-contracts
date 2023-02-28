@@ -68,4 +68,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _setL1NaffleContractAddress(address _l1NaffleContractAddress) internal {
         L2NaffleBaseStorage.layout().l1NaffleContractAddress = _l1NaffleContractAddress;
     }
+
+    function _getNaffleById(uint256 _id) internal view returns (NaffleTypes.L2Naffle memory) {
+        return L2NaffleBaseStorage.layout().naffles[_id];
+    }
 }
