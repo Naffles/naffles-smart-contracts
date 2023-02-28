@@ -4,9 +4,14 @@ import brownie
 from brownie import L2NaffleAdmin
 
 from scripts.util import get_selectors, add_facet, NULL_ADDRESS
-from tests.contracts.naffle.zksync.test_l2_naffle_base import _setup_contract, \
-    STANDARD_NAFFLE_TYPE, ERC721
-from tests.contracts.naffle.zksync.test_l2_naffle_diamond import setup_diamond_with_facets
+from tests.contracts.naffle.zksync.test_l2_naffle_base import (
+    _setup_contract,
+    STANDARD_NAFFLE_TYPE,
+    ERC721,
+)
+from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
+    setup_diamond_with_facets,
+)
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 
@@ -225,7 +230,7 @@ def test_get_naffle_by_id(
             naffle_type,
             contract_type,
         ),
-        from_admin
+        from_admin,
     )
 
     naffle = view_facet.getNaffleById(naffle_id)
@@ -250,10 +255,5 @@ def test_get_naffle_by_id(
         expected_winning_ticket_type,
         expected_naffle_status,
         contract_type,
-        naffle_type
+        naffle_type,
     )
-
-
-
-
-

@@ -3,7 +3,9 @@ import datetime
 import brownie
 
 from scripts.util import NULL_ADDRESS, ZKSYNC_ADDRESS, get_error_message
-from tests.contracts.naffle.zksync.test_l2_naffle_diamond import setup_diamond_with_facets
+from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
+    setup_diamond_with_facets,
+)
 
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
@@ -61,7 +63,7 @@ def test_create_naffle_not_allowed(
                 STANDARD_NAFFLE_TYPE,
                 ERC721,
             ),
-            from_address
+            from_address,
         )
 
 
@@ -99,7 +101,7 @@ def test_create_naffle(
             STANDARD_NAFFLE_TYPE,
             ERC721,
         ),
-        from_admin
+        from_admin,
     )
 
     naffle = view_facet.getNaffleById(NAFFLE_ID)
@@ -124,5 +126,5 @@ def test_create_naffle(
         expected_winning_ticket_type,
         expected_naffle_status,
         ERC721,
-        STANDARD_NAFFLE_TYPE
+        STANDARD_NAFFLE_TYPE,
     )
