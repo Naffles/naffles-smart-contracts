@@ -85,7 +85,7 @@ def test_create_naffle(
         deployed_l2_naffle_view_facet,
     )
     _setup_contract(admin_facet, from_admin["from"], from_admin)
-
+    endtime = datetime.datetime.now().timestamp() + 1000,
     base_facet.createNaffle(
         (
             deployed_erc721a_mock.address,
@@ -94,9 +94,34 @@ def test_create_naffle(
             NFT_ID,
             PAID_TICKET_SPOTS,
             TICKET_PRICE,
-            datetime.datetime.now().timestamp() + 1000,
+            endtime,
             STANDARD_NAFFLE_TYPE,
             ERC721,
         ),
         from_admin
+    )
+
+    naffle = view_facet.getNaffleById(NAFFLE_ID)
+    expected_free_ticket_spots = 0
+    expected_number_of_tickets_bought = 0
+    expected_naffle_status = 0 # active
+    expected_winning_ticket_type = 0 # none
+    expected_winning_ticket_id = 0
+
+    assert naffle == (
+        deployed_erc721a_mock.address,
+        address,
+        NAFFLE_ID,
+        NFT_ID,
+        PAID_TICKET_SPOTS,
+        expected_free_ticket_spots,
+        expected_number_of_tickets_bought,
+        expected_number_of_tickets_bought,
+        TICKET_PRICE,
+        endtime,
+        expected_winning_ticket_id,
+        expected_winning_ticket_type,
+        expected_naffle_status,
+        ERC721,
+        STANDARD_NAFFLE_TYPE
     )

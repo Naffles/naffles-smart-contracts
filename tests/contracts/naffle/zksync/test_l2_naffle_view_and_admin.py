@@ -213,7 +213,6 @@ def test_get_naffle_by_id(
     naffle_type = STANDARD_NAFFLE_TYPE
     contract_type = ERC721
 
-
     base_facet.createNaffle(
         (
             deployed_erc721a_mock.address,
@@ -228,3 +227,33 @@ def test_get_naffle_by_id(
         ),
         from_admin
     )
+
+    naffle = view_facet.getNaffleById(naffle_id)
+    expected_free_ticket_spots = 0
+    expected_number_of_tickets_bought = 0
+    expected_naffle_status = 0 # active
+    expected_winning_ticket_type = 0 # none
+    expected_winning_ticket_id = 0
+
+    assert naffle == (
+        deployed_erc721a_mock.address,
+        address,
+        naffle_id,
+        nft_id,
+        paid_ticket_spots,
+        expected_free_ticket_spots,
+        expected_number_of_tickets_bought,
+        expected_number_of_tickets_bought,
+        ticket_price,
+        end_time,
+        expected_winning_ticket_id,
+        expected_winning_ticket_type,
+        expected_naffle_status,
+        contract_type,
+        naffle_type
+    )
+
+
+
+
+
