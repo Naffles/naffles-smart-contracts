@@ -8,6 +8,7 @@ library L2NaffleBaseStorage {
         keccak256("naffles.contracts.naffle.zksync.L2NaffleBaseStorage");
 
     struct Layout {
+        address zkSyncAddress;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
     }
 
