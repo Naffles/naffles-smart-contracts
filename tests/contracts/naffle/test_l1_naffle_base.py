@@ -3,8 +3,7 @@ import datetime
 import brownie
 
 from scripts.util import NULL_ADDRESS, ZKSYNC_ADDRESS, get_error_message
-from tests.contracts.naffle.test_l1_naffle_diamond import \
-    setup_diamond_with_facets
+from tests.contracts.naffle.test_l1_naffle_diamond import setup_diamond_with_facets
 
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
@@ -141,6 +140,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
             from_address,
         )
 
+
 def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
     from_address,
     from_admin,
@@ -207,7 +207,7 @@ def test_create_naffle_invalid_token_type(
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
 
-    with brownie.reverts(''):
+    with brownie.reverts(""):
         base_facet.createNaffle(
             NULL_ADDRESS,
             nft_id,
@@ -238,14 +238,15 @@ def test_create_naffle_no_approval(
         deployed_l1_naffle_view_facet,
     )
     _setup_contract(
-        admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock,
-        from_admin
+        admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
 
     nft_id = 1
 
-    with brownie.reverts(get_error_message('TransferCallerNotOwnerNorApproved', [], [])):
+    with brownie.reverts(
+        get_error_message("TransferCallerNotOwnerNorApproved", [], [])
+    ):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,

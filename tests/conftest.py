@@ -11,7 +11,7 @@ from brownie import (
     L1NaffleBase,
     L1NaffleAdmin,
     L1NaffleView,
-    ETHZkSyncMock
+    ETHZkSyncMock,
 )
 from brownie.network.account import _PrivateKeyAccount
 
