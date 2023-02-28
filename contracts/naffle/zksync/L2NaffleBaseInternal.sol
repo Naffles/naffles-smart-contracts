@@ -22,7 +22,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (_params.naffleType == NaffleTypes.NaffleType.STANDARD) {
             freeTicketSpots = _params.paidTicketSpots / layout.freeTicketRatio;
         }
-        layout.naffles[] = NaffleTypes.Naffle({
+        layout.naffles[_params.naffleId] = NaffleTypes.Naffle({
             ethTokenAddress: _params.ethTokenAddress,
             owner: _params.owner,
             naffleId: _params.naffleId,
