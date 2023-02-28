@@ -1,7 +1,7 @@
 import brownie
 from brownie import L1NaffleAdmin, interface, L1NaffleView, L1NaffleBase
 
-from scripts.util import get_selectors, add_facet
+from scripts.util import get_selectors, add_facet, NULL_ADDRESS
 from tests.contracts.naffle.test_l1_naffle_diamond import setup_diamond_with_facets
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
@@ -117,9 +117,9 @@ def test_get_and_set_minimum_ticket_price(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    admin_facet.setMinimumTicketPriceInWei(1, from_admin)
+    admin_facet.setMinimumPaidTicketPriceInWei(1, from_admin)
 
-    assert view_facet.getMinimumTicketPrice() == 1
+    assert view_facet.getMinimumPaidTicketPriceInWei() == 1
 
 
 def test_set_minimum_ticket_price_not_admin(
@@ -138,7 +138,7 @@ def test_set_minimum_ticket_price_not_admin(
         deployed_l1_naffle_view_facet,
     )
     with brownie.reverts():
-        admin_facet.setMinimumTicketPriceInWei(1, from_address)
+        admin_facet.setMinimumPaidTicketPriceInWei(1, from_address)
 
 
 def test_get_and_set_zksync_naffle_contract_address(
@@ -177,7 +177,7 @@ def test_get_and_set_zksync_naffle_contract_address_not_admin(
         deployed_l1_naffle_view_facet,
     )
     with brownie.reverts():
-        admin_facet.setZkSyncNaffleContractAddress(admin, from_address)
+        admin_facet.setZkSyncNaffleContractAddress(NULL_ADDRESS, from_address)
 
 
 def test_get_and_set_zksync_address(
@@ -216,7 +216,8 @@ def test_get_and_set_zksync_address_not_admin(
         deployed_l1_naffle_view_facet,
     )
     with brownie.reverts():
-        admin_facet.setZkSyncAddress(admin, from_address)
+        admin_facet.setZkSyncAddress(NULL_ADDRESS, from_address)
+
 
 def test_get_and_set_founders_key_address(
     admin,
@@ -254,7 +255,7 @@ def test_set_founders_key_address_not_admin(
         deployed_l1_naffle_view_facet,
     )
     with brownie.reverts():
-        admin_facet.setFoundersKeyAddress(admin, from_address)
+        admin_facet.setFoundersKeyAddress(NULL_ADDRESS, from_address)
 
 
 def test_set_founders_key_placeholder_address(

@@ -11,6 +11,7 @@ from brownie import (
     L1NaffleBase,
     L1NaffleAdmin,
     L1NaffleView,
+    ETHZkSyncMock
 )
 from brownie.network.account import _PrivateKeyAccount
 
@@ -85,6 +86,11 @@ def deployed_test_facet_upgraded(from_admin) -> TestValueFacetUpgraded:
 @pytest.fixture
 def deployed_erc721a_mock(from_admin) -> ERC721AMock:
     return ERC721AMock.deploy(from_admin)
+
+
+@pytest.fixture
+def deployed_eth_zksync_mock(from_admin) -> ETHZkSyncMock:
+    return ETHZkSyncMock.deploy(from_admin)
 
 
 @pytest.fixture
