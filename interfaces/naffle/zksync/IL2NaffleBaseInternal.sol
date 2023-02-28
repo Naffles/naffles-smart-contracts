@@ -9,5 +9,4 @@ interface IL2NaffleBaseInternal {
     error InvalidNaffleStatus(NaffleTypes.NaffleStatus status);
     error NotEnoughFunds(uint256 amount);
     error NotEnoughPaidTicketSpots(uint256 amount);
-    error NaffleNotActive();
 }

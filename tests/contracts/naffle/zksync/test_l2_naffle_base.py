@@ -238,3 +238,43 @@ def test_buy_tickets_not_enough_funds(
     with brownie.reverts(get_error_message("NotEnoughFunds", ['uint256'], [10])):
         base_facet.buyTickets(2, 1, {"from": admin, "value": 10})
 
+
+def test_not_enough_paid_ticket_spots(
+    admin,
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+    deployed_erc721a_mock,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet
+    )
+
+    setup_l2_naffle_contract(admin_facet, from_admin["from"],
+                             deployed_erc721a_mock, from_admin)
+
+    endtime = datetime.datetime.now().timestamp() + 1000
+    base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            admin,
+            NAFFLE_ID,
+            NFT_ID,
+            1,
+            TICKET_PRICE,
+            endtime,
+            STANDARD_NAFFLE_TYPE,
+            ERC721,
+        ),
+        from_admin,
+    )
+
+    with brownie.reverts(get_error_message("NotEnoughPaidTicketSpots", ['uint256'], [1])):
+        base_facet.buyTickets(2, 1, {"from": admin, "value": 20})
+

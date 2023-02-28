@@ -61,12 +61,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.numberOfPaidTickets > naffle.paidTicketSpots) {
             revert NotEnoughPaidTicketSpots(naffle.paidTicketSpots);
         }
-        if (
-            naffle.status != NaffleTypes.NaffleStatus.ACTIVE ||
-            naffle.status != NaffleTypes.NaffleStatus.POSTPONED
-        ) {
-            revert NaffleNotActive();
-        }
         ticketIds = IL2PaidTicketBase(layout.paidTicketContractAddress).mintTickets(
             msg.sender,
             _amount,
