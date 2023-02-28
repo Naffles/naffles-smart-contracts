@@ -231,8 +231,8 @@ def test_get_naffle_by_id(
     naffle = view_facet.getNaffleById(naffle_id)
     expected_free_ticket_spots = 0
     expected_number_of_tickets_bought = 0
-    expected_naffle_status = 0 # active
-    expected_winning_ticket_type = 0 # none
+    expected_naffle_status = 0  # active
+    expected_winning_ticket_type = 0  # none
     expected_winning_ticket_id = 0
 
     assert naffle == (
