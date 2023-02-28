@@ -16,4 +16,8 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
     function getL1NaffleContractAddress() external view override returns (address) {
         return _getL1NaffleContractAddress();
     }
+
+    function getAdminRole() external view override returns (bytes32) {
+        return _getAdminRole();
+    }
 }
