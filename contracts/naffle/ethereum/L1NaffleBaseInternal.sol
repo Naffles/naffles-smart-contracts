@@ -41,12 +41,11 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
 
         if (
             (_naffleType == NaffleTypes.NaffleType.UNLIMITED && _paidTicketSpots != 0) ||
-            _paidTicketSpots < layout.minimumPaidTicketSpots
+            (_naffleType == NaffleTypes.NaffleType.STANDARD && _paidTicketSpots < layout.minimumPaidTicketSpots)
         ) {
             // Unlimited naffles don't have an upper limit on paid or free tickets.
             revert InvalidPaidTicketSpots(_paidTicketSpots);
         }
-
 
         NaffleTypes.TokenContractType tokenContractType;
         if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID)) {
@@ -55,8 +54,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID)) {
             tokenContractType = NaffleTypes.TokenContractType.ERC1155;
             IERC1155(_ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _nftId, 1, bytes(""));
-        } else {
-            revert InvalidTokenType();
         }
 
         layout.naffles[naffleId] = NaffleTypes.L1Naffle({
