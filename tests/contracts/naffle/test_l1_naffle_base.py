@@ -161,6 +161,7 @@ def test_create_naffle_invalid_naffle_type(
             2,
             from_address)
 
+
 def test_create_naffle_zksync_called(
     from_address,
     from_admin,
@@ -183,13 +184,12 @@ def test_create_naffle_zksync_called(
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
 
-    with brownie.reverts(get_error_message('ZkSyncCalled()')):
-        base_facet.createNaffle(
-            deployed_erc721a_mock.address,
-            nft_id,
-            MINIMUM_PAID_TICKET_SPOTS,
-            MINIMUM_TICKET_PRICE,
-            datetime.datetime.now().timestamp() + 1000,
-            STANDARD_NAFFLE_TYPE,
-            from_address)
-)
+    base_facet.createNaffle(
+        deployed_erc721a_mock.address,
+        nft_id,
+        MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE,
+        datetime.datetime.now().timestamp() + 1000,
+        STANDARD_NAFFLE_TYPE,
+        from_address)
+    assert deployed_eth_zksync_mock.called()

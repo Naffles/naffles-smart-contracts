@@ -33,8 +33,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             revert NotAllowed();
         }
 
-        revert InvalidEndTime(_endTime);
-        if (block.timestamp + layout.minimumNaffleDuration < _endTime) {
+        if (_endTime < block.timestamp + layout.minimumNaffleDuration) {
+            revert InvalidEndTime(_endTime);
         }
 
         ++layout.numberOfNaffles;
