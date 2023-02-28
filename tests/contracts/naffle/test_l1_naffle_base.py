@@ -142,7 +142,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
         )
 
 
-def test_create_naffle_invalid_naffle_type(
+def test_create_naffle_invalid_token_type(
     from_address,
     from_admin,
     deployed_l1_naffle_diamond,
@@ -166,14 +166,16 @@ def test_create_naffle_invalid_naffle_type(
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
 
-    with brownie.reverts(get_error_message("InvalidNaffleType(uint256)")):
+    with brownie.reverts(get_error_message(
+        "InvalidTokenType", [], []
+    )):
         base_facet.createNaffle(
             NULL_ADDRESS,
             nft_id,
             MINIMUM_PAID_TICKET_SPOTS,
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
-            2,
+            STANDARD_NAFFLE_TYPE,
             from_address,
         )
 
@@ -202,7 +204,7 @@ def test_create_naffle_no_approval(
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
 
-    with brownie.reverts():
+    with brownie.reverts(get_error_message('TransferCallerNotOwnerNorApproved', [], [])):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,

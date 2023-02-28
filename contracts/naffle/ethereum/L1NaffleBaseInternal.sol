@@ -47,6 +47,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             revert InvalidPaidTicketSpots(_paidTicketSpots);
         }
 
+
         NaffleTypes.TokenContractType tokenContractType;
         if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID)) {
             tokenContractType = NaffleTypes.TokenContractType.ERC721;
