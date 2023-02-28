@@ -16,7 +16,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _createNaffle(
         NaffleTypes.CreateZkSyncNaffleParams _params
     ) internal {
-        NaffleBaseStorage.Layout storage layout = NaffleBaseStorage.layout();
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
 
         uint256 freeTicketSpots = 0;
         if (_params.naffleType == NaffleTypes.NaffleType.STANDARD) {
@@ -43,5 +43,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
+    }
+
+    function _getPlatformFee() external view override returns (uint256) {
+        return L2NaffleBaseStorage.layout().platformFee;
+    }
+
+    function _getFreeTicketRatio() external view override returns (uint256) {
+        return L2NaffleBaseStorage.layout().freeTicketRatio;
     }
 }

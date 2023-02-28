@@ -9,6 +9,8 @@ library L2NaffleBaseStorage {
 
     struct Layout {
         address zkSyncAddress;
+        // 100 = 1%
+        uint256 freeTicketRatio;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
     }
 
