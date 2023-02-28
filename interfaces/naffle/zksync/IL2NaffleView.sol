@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-interface IL1NaffleView {
+interface IL2NaffleView {
 //    function getPlatformFee() external view returns (uint256);
 //    function setNafflePaidTicketContract(address _nafflePaidTicketContract) external;
 //    function setFreeTicketRatio(uint256 _freeTicketRatio) external;

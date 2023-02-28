@@ -13,9 +13,23 @@ library NaffleTypes {
         NaffleType naffleType;
     }
 
+    enum NaffleStatus {
+        ACTIVE,
+        POSTPONED,
+        CLOSED,
+        SELECTING_WINNER,
+        FINISHED
+    }
+
     enum NaffleType {
         STANDARD,
         UNLIMITED
+    }
+
+    enum TicketType {
+        NONE,
+        FREE,
+        PAID
     }
 
     enum TokenContractType {
