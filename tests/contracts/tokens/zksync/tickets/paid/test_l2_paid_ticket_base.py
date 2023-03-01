@@ -1,22 +1,10 @@
 import brownie
-import datetime
 
 from scripts.util import get_error_message
-from tests.contracts.naffle.ethereum.test_l1_naffle_base import STANDARD_NAFFLE_TYPE
-from tests.contracts.naffle.zksync.test_l2_naffle_base import (
-    setup_l2_naffle_contract,
-    NAFFLE_ID,
-    NFT_ID,
-    PAID_TICKET_SPOTS,
-    TICKET_PRICE,
-    ERC721,
-)
 from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
     setup_paid_ticket_diamond_with_facets as setup_paid_ticket_diamond,
 )
-from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
-    setup_diamond_with_facets as setup_naffle_diamond,
-)
+from tests.test_helper import create_naffle_and_mint_tickets
 
 
 def setup_paid_ticket_contract(admin_facet, naffle_contract, from_admin):
@@ -59,53 +47,20 @@ def test_mint_tickets_for_address(
     deployed_l2_naffle_base_facet,
     deployed_erc721a_mock,
 ):
-    (
-        naffle_access_control,
-        naffle_base_facet,
-        naffle_admin_facet,
-        naffle_view_facet,
-    ) = setup_naffle_diamond(
-        from_admin,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_base_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_view_facet,
-    )
-
-    (
-        paid_access_control,
-        paid_base_facet,
-        paid_admin_facet,
-        paid_view_facet,
-    ) = setup_paid_ticket_diamond(
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
         from_admin,
         deployed_l2_paid_ticket_diamond,
         deployed_l2_paid_ticket_base_facet,
         deployed_l2_paid_ticket_admin_facet,
         deployed_l2_paid_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
     )
-
-    setup_l2_naffle_contract(
-        naffle_admin_facet, admin, deployed_l2_paid_ticket_diamond, from_admin
-    )
-    setup_paid_ticket_contract(paid_admin_facet, deployed_l2_naffle_diamond, from_admin)
-
-    naffle_base_facet.createNaffle(
-        (
-            deployed_erc721a_mock.address,
-            address,
-            NAFFLE_ID,
-            NFT_ID,
-            PAID_TICKET_SPOTS,
-            TICKET_PRICE,
-            datetime.datetime.now().timestamp() + 1000,
-            STANDARD_NAFFLE_TYPE,
-            ERC721,
-        ),
-        from_admin,
-    )
-
-    naffle_base_facet.buyTickets(2, 1, {"from": address, "value": 20})
 
     assert (
         brownie.interface.IERC721Base(

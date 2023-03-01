@@ -5,23 +5,11 @@ from brownie import interface
 
 from scripts.util import get_error_message
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
-    setup_diamond_with_facets,
+    setup_l2_naffle_diamond_with_facets,
 )
-
-STANDARD_NAFFLE_TYPE = 0
-UNLIMITED_NAFFLE_TYPE = 1
-
-PLATFORM_FEE = 100
-FREE_TICKET_RATIO = 100
-NAFFLE_ID = 1
-
-PAID_TICKET_SPOTS = 2
-TICKET_PRICE = 10
-
-ERC721 = 0
-ERC1155 = 1
-
-NFT_ID = 1
+from tests.test_helper import create_naffle_and_mint_tickets, PLATFORM_FEE, \
+    FREE_TICKET_RATIO, NAFFLE_ID, NFT_ID, PAID_TICKET_SPOTS, TICKET_PRICE, \
+    DEFAULT_END_DATE, STANDARD_NAFFLE_TYPE, ERC721
 
 
 def setup_l2_naffle_contract(
@@ -45,7 +33,7 @@ def test_create_naffle_not_allowed(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -65,7 +53,7 @@ def test_create_naffle_not_allowed(
                 NFT_ID,
                 PAID_TICKET_SPOTS,
                 TICKET_PRICE,
-                datetime.datetime.now().timestamp() + 1000,
+                DEFAULT_END_DATE,
                 STANDARD_NAFFLE_TYPE,
                 ERC721,
             ),
@@ -85,7 +73,7 @@ def test_create_naffle(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -147,7 +135,7 @@ def test_buy_tickets_invalid_naffle_id(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -174,7 +162,7 @@ def test_buy_tickets_invalid_naffle_status(
 ):
     # can't test yet because no code available to set naffle status
     return
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -215,7 +203,7 @@ def test_buy_tickets_not_enough_funds(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -256,7 +244,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -304,60 +292,20 @@ def test_buy_tickets_does_mint_tickets_for_address(
     deployed_l2_naffle_base_facet,
     deployed_erc721a_mock,
 ):
-    from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
-        setup_paid_ticket_diamond_with_facets,
-    )
-    from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_base import (
-        setup_paid_ticket_contract,
-    )
-
-    (
-        naffle_access_control,
-        naffle_base_facet,
-        naffle_admin_facet,
-        naffle_view_facet,
-    ) = setup_diamond_with_facets(
-        from_admin,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_base_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_view_facet,
-    )
-
-    (
-        paid_access_control,
-        paid_base_facet,
-        paid_admin_facet,
-        paid_view_facet,
-    ) = setup_paid_ticket_diamond_with_facets(
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
         from_admin,
         deployed_l2_paid_ticket_diamond,
         deployed_l2_paid_ticket_base_facet,
         deployed_l2_paid_ticket_admin_facet,
         deployed_l2_paid_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
     )
-
-    setup_l2_naffle_contract(
-        naffle_admin_facet, admin, deployed_l2_paid_ticket_diamond, from_admin
-    )
-    setup_paid_ticket_contract(paid_admin_facet, deployed_l2_naffle_diamond, from_admin)
-
-    naffle_base_facet.createNaffle(
-        (
-            deployed_erc721a_mock.address,
-            address,
-            NAFFLE_ID,
-            NFT_ID,
-            PAID_TICKET_SPOTS,
-            TICKET_PRICE,
-            datetime.datetime.now().timestamp() + 1000,
-            STANDARD_NAFFLE_TYPE,
-            ERC721,
-        ),
-        from_admin,
-    )
-
-    naffle_base_facet.buyTickets(2, 1, {"from": address, "value": 20})
 
     assert (
         interface.IERC721Base(deployed_l2_paid_ticket_diamond.address).balanceOf(
