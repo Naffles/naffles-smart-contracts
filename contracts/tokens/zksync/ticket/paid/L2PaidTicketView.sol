@@ -12,4 +12,12 @@ contract L2PaidTicketView is IL2PaidTicketView, L2PaidTicketBaseInternal {
     function getAdminRole() external view returns (bytes32) {
         return _getAdminRole();
     }
+
+    function getTicketById(uint256 _ticketId) external view returns (NaffleTypes.PaidTicket memory) {
+        return _getTicketById(_ticketId);
+    }
+
+    function getTicketByIdOnNaffle(uint256 _ticketId, uint256 _naffleId) external view returns (NaffleTypes.PaidTicket memory) {
+        return _getTicketByIdOnNaffle(_ticketId, _naffleId);
+    }
 }

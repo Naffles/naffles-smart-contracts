@@ -10,7 +10,7 @@ library L2PaidTicketStorage {
 
     struct Layout {
         address l2NaffleContractAddress;
-        // naffle id => ticket id => ticket
+        // naffle id => ticket id on naffle => ticket
         mapping(uint256 => mapping(uint256 => NaffleTypes.PaidTicket)) paidTickets;
         // ticket id => ticket id on naffle
         mapping(uint256 => uint256) ticketIdNaffleTicketId;
