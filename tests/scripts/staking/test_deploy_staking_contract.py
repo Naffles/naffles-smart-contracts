@@ -1,8 +1,8 @@
 from scripts.staking.deploy_staking_contract import (
-    deploy,
+    FoundersKeyStaking,
     SoulboundFoundersKey,
     accounts,
-    FoundersKeyStaking,
+    deploy,
 )
 
 

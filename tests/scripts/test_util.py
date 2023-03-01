@@ -1,12 +1,12 @@
-from brownie import TestValueFacet, L1NaffleAdmin, L1NaffleBase
+from brownie import L1NaffleAdmin, L1NaffleBase, TestValueFacet
 
 from scripts.util import (
-    get_selectors,
-    get_selector_by_name,
     OWNABLE_SELECTORS,
-    get_name_by_selector,
-    remove_duplicated_selectors,
     add_facet,
+    get_name_by_selector,
+    get_selector_by_name,
+    get_selectors,
+    remove_duplicated_selectors,
 )
 
 
