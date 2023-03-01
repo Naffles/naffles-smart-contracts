@@ -1,17 +1,13 @@
 from brownie import (
-    L2PaidTicketDiamond,
-    L2PaidTicketBase,
     L2PaidTicketAdmin,
+    L2PaidTicketBase,
+    L2PaidTicketDiamond,
     L2PaidTicketView,
     accounts,
     interface,
 )
 
-from scripts.util import (
-    get_selectors,
-    remove_duplicated_selectors,
-    add_facet,
-)
+from scripts.util import add_facet, get_selectors, remove_duplicated_selectors
 
 
 def setup_paid_ticket_diamond_with_facets(

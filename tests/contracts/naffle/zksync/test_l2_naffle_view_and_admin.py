@@ -3,11 +3,11 @@ import datetime
 import brownie
 from brownie import L2NaffleAdmin
 
-from scripts.util import get_selectors, add_facet, NULL_ADDRESS
+from scripts.util import add_facet, get_selectors
 from tests.contracts.naffle.zksync.test_l2_naffle_base import (
     setup_l2_naffle_contract,
-    STANDARD_NAFFLE_TYPE,
     ERC721,
+    STANDARD_NAFFLE_TYPE,
 )
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_diamond_with_facets,

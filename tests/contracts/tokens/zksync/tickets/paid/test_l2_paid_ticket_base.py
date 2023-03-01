@@ -1,9 +1,7 @@
+import brownie
 import datetime
 
-import brownie
-from brownie import interface
-
-from scripts.util import NULL_ADDRESS, ZKSYNC_ADDRESS, get_error_message
+from scripts.util import get_error_message
 from tests.contracts.naffle.ethereum.test_l1_naffle_base import STANDARD_NAFFLE_TYPE
 from tests.contracts.naffle.zksync.test_l2_naffle_base import (
     setup_l2_naffle_contract,
@@ -110,8 +108,9 @@ def test_mint_tickets_for_address(
     naffle_base_facet.buyTickets(2, 1, {"from": address, "value": 20})
 
     assert (
-        interface.IERC721Base(deployed_l2_paid_ticket_diamond.address).balanceOf(
-            address, from_admin
-        )
+        brownie.interface.IERC721Base(
+            deployed_l2_paid_ticket_diamond.address).balanceOf(
+                address, from_admin
+            )
         == 2
     )

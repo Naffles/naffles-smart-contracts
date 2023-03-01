@@ -3,7 +3,7 @@ import datetime
 import brownie
 from brownie import L2PaidTicketAdmin
 
-from scripts.util import get_selectors, add_facet, NULL_ADDRESS
+from scripts.util import NULL_ADDRESS, add_facet, get_selectors
 from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
     setup_paid_ticket_diamond_with_facets,
 )
