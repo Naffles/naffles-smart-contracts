@@ -5,4 +5,5 @@ interface IL1NaffleBaseInternal {
     error NotAllowed();
     error InvalidEndTime(uint256 endTime);
     error InvalidTokenType();
+    error InvalidPaidTicketSpots(uint256 spots);
 }

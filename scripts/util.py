@@ -61,5 +61,4 @@ def get_error_message(
     )
     encoded_abi = encode(types, values)
     result = f"typed error: 0x{hash_.digest()[:4].hex()}{encoded_abi.hex()}"
-    print(result)
     return result

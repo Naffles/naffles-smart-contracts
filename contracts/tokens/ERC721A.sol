@@ -816,7 +816,7 @@ contract ERC721A is IERC721A {
         uint256 startTokenId = _currentIndex;
         if (to == address(0)) _revert(MintToZeroAddress.selector);
         if (quantity == 0) _revert(MintZeroQuantity.selector);
-        if (quantity > _MAX_MINT_ERC2309_QUANTITY_LIUNLICENSED ) _revert(MintERC2309QuantityExceedsLimit.selector);
+        if (quantity > _MAX_MINT_ERC2309_QUANTITY_LIMIT ) _revert(MintERC2309QuantityExceedsLimit.selector);
 
         _beforeTokenTransfers(address(0), to, startTokenId, quantity);
 
