@@ -14,10 +14,9 @@ import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 
 abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
     function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei) internal returns(uint256[] memory ticketIds) {
-        ticketIds = new uint256[](_amount);
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(l.l2NaffleContractAddress).getNaffleById(_naffleId);
-
+        ticketIds = new uint256[](_amount);
         uint256 count = 0;
         for (uint256 i = naffle.numberOfPaidTickets; i < _amount; ++i) {
             NaffleTypes.PaidTicket

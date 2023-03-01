@@ -14,7 +14,7 @@ from scripts.util import (
 )
 
 
-def setup_diamond_with_facets(
+def setup_paid_ticket_diamond_with_facets(
     from_admin,
     deployed_l2_paid_ticket_diamond,
     deployed_l2_paid_ticket_base_facet,
@@ -59,7 +59,7 @@ def test_facet_deployment(
 ):
     start_facet_number = len(deployed_l2_paid_ticket_diamond.facets())
 
-    setup_diamond_with_facets(
+    setup_paid_ticket_diamond_with_facets(
         from_admin,
         deployed_l2_paid_ticket_diamond,
         deployed_l2_paid_ticket_base_facet,

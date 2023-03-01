@@ -5,7 +5,7 @@ from brownie import L2PaidTicketAdmin
 
 from scripts.util import get_selectors, add_facet, NULL_ADDRESS
 from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
-    setup_diamond_with_facets,
+    setup_paid_ticket_diamond_with_facets,
 )
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
@@ -36,7 +36,7 @@ def test_get_and_set_l2_naffle_contract_address(
     deployed_l2_paid_ticket_admin_facet,
     deployed_l2_paid_ticket_view_facet,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_paid_ticket_diamond_with_facets(
         from_admin,
         deployed_l2_paid_ticket_diamond,
         deployed_l2_paid_ticket_base_facet,
@@ -56,7 +56,7 @@ def test_set_l2_naffle_contract_address_not_admin(
     deployed_l2_paid_ticket_admin_facet,
     deployed_l2_paid_ticket_view_facet,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_paid_ticket_diamond_with_facets(
         from_admin,
         deployed_l2_paid_ticket_diamond,
         deployed_l2_paid_ticket_base_facet,
@@ -75,7 +75,7 @@ def test_get_and_set_admin_address(
     deployed_l2_paid_ticket_admin_facet,
     deployed_l2_paid_ticket_view_facet,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_paid_ticket_diamond_with_facets(
         from_admin,
         deployed_l2_paid_ticket_diamond,
         deployed_l2_paid_ticket_base_facet,
@@ -96,7 +96,7 @@ def test_set_admin_address_not_admin(
     deployed_l2_paid_ticket_admin_facet,
     deployed_l2_paid_ticket_view_facet,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_paid_ticket_diamond_with_facets(
         from_admin,
         deployed_l2_paid_ticket_diamond,
         deployed_l2_paid_ticket_base_facet,

@@ -14,7 +14,6 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         _;
     }
 
-
     function createNaffle(
         NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) external onlyL1NaffleContract {
