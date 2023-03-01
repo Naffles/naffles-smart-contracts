@@ -1,11 +1,4 @@
-from brownie import (
-    L1NaffleAdmin,
-    L1NaffleBase,
-    L1NaffleDiamond,
-    L1NaffleView,
-    accounts,
-    interface,
-)
+from brownie import L1NaffleAdmin, L1NaffleBase, L1NaffleView, interface
 
 from scripts.util import add_facet, get_selectors, remove_duplicated_selectors
 

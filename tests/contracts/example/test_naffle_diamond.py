@@ -1,4 +1,4 @@
-from brownie import Contract, TestValueFacet, TestValueFacetUpgraded, interface
+from brownie import TestValueFacet, TestValueFacetUpgraded, interface
 
 from scripts.util import (
     NULL_ADDRESS,

@@ -1,5 +1,4 @@
 from brownie import (
-    Contract,
     FoundersKeyStaking,
     SoulboundFoundersKey,
     accounts,

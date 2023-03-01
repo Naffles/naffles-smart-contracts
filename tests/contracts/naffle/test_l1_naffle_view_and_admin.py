@@ -1,5 +1,5 @@
 import brownie
-from brownie import L1NaffleAdmin, L1NaffleBase, L1NaffleView, interface
+from brownie import L1NaffleAdmin
 
 from scripts.util import NULL_ADDRESS, add_facet, get_selectors
 from tests.contracts.naffle.test_l1_naffle_diamond import setup_diamond_with_facets
