@@ -1,13 +1,8 @@
 from brownie import L1NaffleAdmin, L1NaffleBase, TestValueFacet
 
-from scripts.util import (
-    OWNABLE_SELECTORS,
-    add_facet,
-    get_name_by_selector,
-    get_selector_by_name,
-    get_selectors,
-    remove_duplicated_selectors,
-)
+from scripts.util import (OWNABLE_SELECTORS, add_facet, get_name_by_selector,
+                          get_selector_by_name, get_selectors,
+                          remove_duplicated_selectors)
 
 
 def test_get_selectors():
