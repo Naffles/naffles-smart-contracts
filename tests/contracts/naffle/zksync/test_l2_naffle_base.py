@@ -13,11 +13,11 @@ from tests.test_helper import create_naffle_and_mint_tickets, PLATFORM_FEE, \
 
 
 def setup_l2_naffle_contract(
-    admin_facet, zksync_contract, paid_ticket_contract, from_admin
+    admin_facet, l1_naffle_contract, paid_ticket_contract, from_admin
 ):
     admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
     admin_facet.setFreeTicketRatio(FREE_TICKET_RATIO, from_admin)
-    admin_facet.setL1NaffleContractAddress(zksync_contract.address, from_admin)
+    admin_facet.setL1NaffleContractAddress(l1_naffle_contract.address, from_admin)
     admin_facet.setPaidTicketContractAddress(paid_ticket_contract.address, from_admin)
 
 

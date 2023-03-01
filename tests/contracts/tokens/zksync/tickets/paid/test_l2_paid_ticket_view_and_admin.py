@@ -128,7 +128,7 @@ def test_set_admin_address_not_admin(
         admin_facet.setAdmin(address, from_address)
 
 
-def test_get_naffle_by_id(
+def test_get_ticket_by_id(
     admin,
     address,
     from_admin,
@@ -157,49 +157,54 @@ def test_get_naffle_by_id(
         deployed_erc721a_mock,
     )
 
-    naffle = brownie.interface.IL2NaffleView(
-        deployed_l2_naffle_diamond).getNaffleById(1)
-
-    number_of_tickets_bought = 2
-    number_of_free_tickets = 0
-    winning_ticket_id = 0
-    winning_ticket_type = 0
-    status = 0 # active
-    token_type = ERC721 # ERC721
-
-    print(naffle)
-    print(
-        deployed_erc721a_mock.address,
+    id = 1
+    ticket = brownie.interface.IL2PaidTicketView(
+        deployed_l2_paid_ticket_diamond).getTicketById(id, 1, from_admin)
+    assert ticket == (
         address,
-        NAFFLE_ID,
-        NFT_ID,
-        PAID_TICKET_SPOTS,
-        number_of_free_tickets,
-        number_of_tickets_bought,
-        number_of_free_tickets,
         TICKET_PRICE,
-        DEFAULT_END_DATE,
-        winning_ticket_id,
-        winning_ticket_type,
-        status,
-        token_type,
-        STANDARD_NAFFLE_TYPE
+        NAFFLE_ID,
+        id,
+        False
     )
 
-    assert naffle == (
-        deployed_erc721a_mock.address,
+
+def test_get_ticket_by_id_on_naffle(
+    admin,
+    address,
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        admin,
         address,
-        NAFFLE_ID,
-        NFT_ID,
-        PAID_TICKET_SPOTS,
-        number_of_free_tickets,
-        number_of_tickets_bought,
-        number_of_free_tickets,
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
+    )
+
+    id = 1
+    ticket = brownie.interface.IL2PaidTicketView(
+        deployed_l2_paid_ticket_diamond).getTicketByIdOnNaffle(id, 1, from_admin)
+    assert ticket == (
+        address,
         TICKET_PRICE,
-        DEFAULT_END_DATE,
-        winning_ticket_id,
-        winning_ticket_type,
-        status,
-        token_type,
-        STANDARD_NAFFLE_TYPE
+        NAFFLE_ID,
+        id,
+        False
     )

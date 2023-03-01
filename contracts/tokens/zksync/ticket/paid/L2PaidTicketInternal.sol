@@ -13,27 +13,31 @@ import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 
 
 abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
-    function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei) internal returns(uint256[] memory ticketIds) {
+    event Log(string message, uint data);
+
+    function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei) internal returns(uint256[] memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(l.l2NaffleContractAddress).getNaffleById(_naffleId);
-        ticketIds = new uint256[](_amount);
+        uint256[] memory ticketIds = new uint256[](_amount);
         uint256 count = 0;
-        for (uint256 i = naffle.numberOfPaidTickets; i < _amount; ++i) {
+        for (uint256 i = naffle.numberOfPaidTickets - _amount; i < naffle.numberOfPaidTickets; ++i) {
+            uint256 ticketId = i + 1;
             NaffleTypes.PaidTicket
                 memory paidTicket = NaffleTypes.PaidTicket({
                     owner: _to,
-                    ticketIdOnNaffle: i,
+                    ticketIdOnNaffle: ticketId,
                     ticketPriceInWei: _ticketPriceInWei,
                     naffleId: _naffleId,
                     winningTicket: false
                 });
-            _safeMint(_to, _totalSupply() + 1);
-            uint256 totalSupply = _totalSupply();
-            l.ticketIdNaffleTicketId[totalSupply] = i;
-            l.paidTickets[_naffleId][i] = paidTicket;
-            ticketIds[count] = i;
+            uint256 totalTicketId = _totalSupply() + 1;
+            _mint(_to, totalTicketId);
+            l.ticketIdNaffleTicketId[ticketId] = totalTicketId;
+            l.paidTickets[_naffleId][ticketId] = paidTicket;
+            ticketIds[count] = ticketId;
             ++count;
         }
+        return ticketIds;
     }
 
     function _getAdminRole() internal view returns (bytes32) {

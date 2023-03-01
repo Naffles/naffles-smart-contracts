@@ -61,11 +61,10 @@ def test_mint_tickets_for_address(
         deployed_l2_naffle_base_facet,
         deployed_erc721a_mock,
     )
-
     assert (
         brownie.interface.IERC721Base(
             deployed_l2_paid_ticket_diamond.address).balanceOf(
-                address, from_admin
-            )
+            address, {"from": address}
+        )
         == 2
     )

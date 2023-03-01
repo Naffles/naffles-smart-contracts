@@ -47,7 +47,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     ) internal returns (uint256[] memory ticketIds) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
-
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }

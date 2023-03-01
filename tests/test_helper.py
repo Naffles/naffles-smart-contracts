@@ -1,5 +1,7 @@
 import datetime
 
+import brownie
+
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
 
@@ -32,13 +34,12 @@ def create_naffle_and_mint_tickets(
     deployed_l2_naffle_base_facet,
     deployed_erc721a_mock,
 ):
-    from tests.contracts.naffle.zksync.test_l2_naffle_base import \
-        setup_l2_naffle_contract, NAFFLE_ID, NFT_ID, PAID_TICKET_SPOTS, \
-        TICKET_PRICE, STANDARD_NAFFLE_TYPE, ERC721
     from tests.contracts.naffle.zksync.test_l2_naffle_diamond import \
         setup_l2_naffle_diamond_with_facets
     from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_base import \
         setup_paid_ticket_contract
+    from tests.contracts.naffle.zksync.test_l2_naffle_base import \
+        setup_l2_naffle_contract
     from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import \
         setup_paid_ticket_diamond_with_facets
 
@@ -68,6 +69,7 @@ def create_naffle_and_mint_tickets(
         deployed_l2_paid_ticket_view_facet,
     )
 
+    # We set admin as the l1 contract, so we can call create naffle from admin.
     setup_l2_naffle_contract(
         naffle_admin_facet, admin, deployed_l2_paid_ticket_diamond, from_admin
     )
