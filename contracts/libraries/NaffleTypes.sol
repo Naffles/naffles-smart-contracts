@@ -48,6 +48,14 @@ library NaffleTypes {
         TokenContractType naffleTokenType;
     }
 
+    struct PaidTicket {
+        address owner;
+        uint256 ticketPriceInWei;
+        uint256 naffleId;
+        uint256 ticketIdOnNaffle;
+        bool winningTicket;
+    }
+
     struct L2Naffle {
         address ethTokenAddress;
         address owner;
