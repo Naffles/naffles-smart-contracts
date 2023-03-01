@@ -208,7 +208,9 @@ def test_get_naffle_by_id(
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_view_facet,
     )
-    setup_l2_naffle_contract(admin_facet, from_admin["from"], from_admin["from"], from_admin)
+    setup_l2_naffle_contract(
+        admin_facet, from_admin["from"], from_admin["from"], from_admin
+    )
 
     naffle_id = 1
     nft_id = 1
