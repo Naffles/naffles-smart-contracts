@@ -49,8 +49,14 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         L2PaidTicketStorage.layout().l2NaffleContractAddress = _l2NaffleContractAddress;
     }
 
-    function _getTicketByIdOnNaffle(uint256 _ticketId, uint256 _naffleId) internal view returns (NaffleTypes.PaidTicket memory) {
+    function _getTicketByIdOnNaffle(uint256 _ticketIdOnNaffle, uint256 _naffleId) internal view returns (NaffleTypes.PaidTicket memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        return l.paidTickets[_naffleId][l.ticketIdNaffleTicketId[_ticketId]];
+        return l.paidTickets[_naffleId][_ticketIdOnNaffle];
+    }
+
+    function _getTicketById(uint256 _ticketId, uint256 _naffleId) internal view returns (NaffleTypes.PaidTicket memory) {
+        L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
+        uint256 ticketIdOnNaffle = l.ticketIdNaffleTicketId[_ticketId];
+        return l.paidTickets[_naffleId][ticketIdOnNaffle];
     }
 }

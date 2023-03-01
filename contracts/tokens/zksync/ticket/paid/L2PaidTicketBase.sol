@@ -8,7 +8,14 @@ import "@solidstate/contracts/token/ERC721/SolidStateERC721.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 
 contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidStateERC721, AccessControl {
-    function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 ticketPriceInWei) external override returns (uint256[] memory ticketIds) {
+    modifier onlyL2NaffleContract() {
+        if (msg.sender != _getL2NaffleContractAddress()) {
+            revert NotAllowed();
+        }
+        _;
+    }
+
+    function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 ticketPriceInWei) external onlyL2NaffleContract returns (uint256[] memory ticketIds) {
         _mintTickets(_to, _amount, _naffleId, ticketPriceInWei);
     }
 

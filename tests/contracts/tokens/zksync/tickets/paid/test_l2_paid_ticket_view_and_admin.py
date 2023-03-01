@@ -105,5 +105,3 @@ def test_set_admin_address_not_admin(
     )
     with brownie.reverts():
         admin_facet.setAdmin(address, from_address)
-
-
