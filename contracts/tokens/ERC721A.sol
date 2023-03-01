@@ -83,7 +83,7 @@ contract ERC721A is IERC721A {
     // This limit is to prevent overflows on the address data entries.
     // For a limit of 5000, a total of 3.689e15 calls to {_mintERC2309}
     // is required to cause an overflow, which is unrealistic.
-    uint256 private constant _MAX_MINT_ERC2309_QUANTITY_LIUNLICENSED  = 5000;
+    uint256 private constant _MAX_MINT_ERC2309_QUANTITY_LIMIT = 5000;
 
     // The `Transfer` event signature is given by:
     // `keccak256(bytes("Transfer(address,address,uint256)"))`.

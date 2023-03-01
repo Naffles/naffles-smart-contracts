@@ -2,7 +2,7 @@ import datetime
 
 import brownie
 
-from scripts.util import NULL_ADDRESS, ZKSYNC_ADDRESS, get_error_message
+from scripts.util import ZERO_ADDRESS, ZKSYNC_ADDRESS, get_error_message
 from tests.contracts.naffle.test_l1_naffle_diamond import setup_diamond_with_facets
 
 STANDARD_NAFFLE_TYPE = 0
@@ -209,7 +209,7 @@ def test_create_naffle_invalid_token_type(
 
     with brownie.reverts(""):
         base_facet.createNaffle(
-            NULL_ADDRESS,
+            ZERO_ADDRESS,
             nft_id,
             MINIMUM_PAID_TICKET_SPOTS,
             MINIMUM_TICKET_PRICE,

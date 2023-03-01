@@ -1,7 +1,7 @@
 import brownie
 from brownie import L1NaffleAdmin
 
-from scripts.util import NULL_ADDRESS, add_facet, get_selectors
+from scripts.util import ZERO_ADDRESS, add_facet, get_selectors
 from tests.contracts.naffle.test_l1_naffle_diamond import setup_diamond_with_facets
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
@@ -177,7 +177,7 @@ def test_get_and_set_zksync_naffle_contract_address_not_admin(
         deployed_l1_naffle_view_facet,
     )
     with brownie.reverts():
-        admin_facet.setZkSyncNaffleContractAddress(NULL_ADDRESS, from_address)
+        admin_facet.setZkSyncNaffleContractAddress(ZERO_ADDRESS, from_address)
 
 
 def test_get_and_set_zksync_address(
@@ -216,7 +216,7 @@ def test_get_and_set_zksync_address_not_admin(
         deployed_l1_naffle_view_facet,
     )
     with brownie.reverts():
-        admin_facet.setZkSyncAddress(NULL_ADDRESS, from_address)
+        admin_facet.setZkSyncAddress(ZERO_ADDRESS, from_address)
 
 
 def test_get_and_set_founders_key_address(
@@ -255,7 +255,7 @@ def test_set_founders_key_address_not_admin(
         deployed_l1_naffle_view_facet,
     )
     with brownie.reverts():
-        admin_facet.setFoundersKeyAddress(NULL_ADDRESS, from_address)
+        admin_facet.setFoundersKeyAddress(ZERO_ADDRESS, from_address)
 
 
 def test_set_founders_key_placeholder_address(
