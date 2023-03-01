@@ -1,17 +1,13 @@
 from brownie import (
-    L1NaffleDiamond,
-    L1NaffleBase,
     L1NaffleAdmin,
+    L1NaffleBase,
+    L1NaffleDiamond,
     L1NaffleView,
     accounts,
     interface,
 )
 
-from scripts.util import (
-    get_selectors,
-    remove_duplicated_selectors,
-    add_facet,
-)
+from scripts.util import add_facet, get_selectors, remove_duplicated_selectors
 
 
 def setup_diamond_with_facets(

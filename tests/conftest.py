@@ -1,17 +1,17 @@
 import pytest
 from brownie import (
-    accounts,
+    ERC721AMock,
+    ETHZkSyncMock,
+    FoundersKeyStaking,
+    L1NaffleAdmin,
+    L1NaffleBase,
+    L1NaffleDiamond,
+    L1NaffleView,
+    SoulboundFoundersKey,
     TestNaffleDiamond,
     TestValueFacet,
     TestValueFacetUpgraded,
-    SoulboundFoundersKey,
-    FoundersKeyStaking,
-    ERC721AMock,
-    L1NaffleDiamond,
-    L1NaffleBase,
-    L1NaffleAdmin,
-    L1NaffleView,
-    ETHZkSyncMock,
+    accounts,
 )
 from brownie.network.account import _PrivateKeyAccount
 

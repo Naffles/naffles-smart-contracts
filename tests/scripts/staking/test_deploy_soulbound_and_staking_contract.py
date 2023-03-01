@@ -1,4 +1,4 @@
-from brownie import SoulboundFoundersKey, FoundersKeyStaking
+from brownie import FoundersKeyStaking, SoulboundFoundersKey
 
 from scripts.staking.deploy_soulbound_and_staking import deploy
 

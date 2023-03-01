@@ -1,5 +1,10 @@
-from brownie import FoundersKeyStaking, accounts, SoulboundFoundersKey, Contract
-from brownie import interface
+from brownie import (
+    Contract,
+    FoundersKeyStaking,
+    SoulboundFoundersKey,
+    accounts,
+    interface,
+)
 
 
 def deploy(
