@@ -2,7 +2,7 @@ import datetime
 
 import brownie
 
-from scripts.util import NULL_ADDRESS, ZKSYNC_ADDRESS, get_error_message
+from scripts.util import get_error_message
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_diamond_with_facets,
 )
