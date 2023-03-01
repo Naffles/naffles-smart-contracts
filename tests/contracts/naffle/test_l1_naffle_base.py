@@ -219,6 +219,42 @@ def test_create_naffle_invalid_token_type(
         )
 
 
+def test_create_naffle_invalid_token_type(
+    from_address,
+    from_admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+    deployed_founders_key_staking,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    _setup_contract(
+        admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
+    )
+    deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
+    nft_id = 1
+
+    with brownie.reverts(get_error_message("InvalidTokenType", ["address"], [base_facet.address])):
+        base_facet.createNaffle(
+            base_facet.address,
+            nft_id,
+            MINIMUM_PAID_TICKET_SPOTS,
+            MINIMUM_TICKET_PRICE,
+            datetime.datetime.now().timestamp() + 1000,
+            STANDARD_NAFFLE_TYPE,
+            from_address,
+        )
+
+
 def test_create_naffle_no_approval(
     from_address,
     from_admin,
