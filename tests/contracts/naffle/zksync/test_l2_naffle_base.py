@@ -7,18 +7,9 @@ from scripts.util import get_error_message
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
-from tests.test_helper import (
-    DEFAULT_END_DATE,
-    ERC721,
-    FREE_TICKET_RATIO,
-    NAFFLE_ID,
-    NFT_ID,
-    PAID_TICKET_SPOTS,
-    PLATFORM_FEE,
-    STANDARD_NAFFLE_TYPE,
-    TICKET_PRICE,
-    create_naffle_and_mint_tickets,
-)
+from tests.test_helper import create_naffle_and_mint_tickets, PLATFORM_FEE, \
+    FREE_TICKET_RATIO, NAFFLE_ID, NFT_ID, PAID_TICKET_SPOTS, TICKET_PRICE, \
+    DEFAULT_END_DATE, STANDARD_NAFFLE_TYPE, ERC721, UNLIMITED_NAFFLE_TYPE
 
 
 def setup_l2_naffle_contract(
@@ -42,12 +33,7 @@ def test_create_naffle_not_allowed(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_l2_naffle_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -87,12 +73,7 @@ def test_create_naffle(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_l2_naffle_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -154,12 +135,7 @@ def test_buy_tickets_invalid_naffle_id(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
 ):
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_l2_naffle_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -186,12 +162,7 @@ def test_buy_tickets_invalid_naffle_status(
 ):
     # can't test yet because no code available to set naffle status
     return
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_l2_naffle_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -232,12 +203,7 @@ def test_buy_tickets_not_enough_funds(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
 ):
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_l2_naffle_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -278,12 +244,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
 ):
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_l2_naffle_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -354,7 +315,7 @@ def test_buy_tickets_does_mint_tickets_for_address(
     )
 
 
-def test_use_open_entry_tickets(
+def test_buy_tickets_does_mint_tickets_for_address_unlimited(
     admin,
     address,
     from_admin,
@@ -381,15 +342,13 @@ def test_use_open_entry_tickets(
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_base_facet,
         deployed_erc721a_mock,
-    )
-
-    deployed_l2_naffle_base_facet.useOpenEntryTickets(
-        address, 1, {"from": admin}
+        UNLIMITED_NAFFLE_TYPE,
+        0
     )
 
     assert (
         interface.IERC721Base(deployed_l2_paid_ticket_diamond.address).balanceOf(
             address, from_admin
         )
-        == 1
+        == 2
     )
