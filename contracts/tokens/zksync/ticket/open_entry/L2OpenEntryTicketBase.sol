@@ -6,7 +6,6 @@ import "@solidstate/contracts/access/access_control/AccessControl.sol";
 import "@solidstate/contracts/token/ERC721/SolidStateERC721.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
-import "../paid/L2PaidTicketBaseInternal.sol";
 
 contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseInternal, SolidStateERC721, AccessControl {
     function _handleApproveMessageValue(
