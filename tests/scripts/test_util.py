@@ -6,7 +6,8 @@ from scripts.util import (
     get_name_by_selector,
     get_selector_by_name,
     get_selectors,
-    remove_duplicated_selectors, get_error_message,
+    remove_duplicated_selectors,
+    get_error_message,
 )
 
 

@@ -1,6 +1,9 @@
-from scripts.staking.deploy_staking_contract import (FoundersKeyStaking,
-                                                     SoulboundFoundersKey,
-                                                     accounts, deploy)
+from scripts.staking.deploy_staking_contract import (
+    FoundersKeyStaking,
+    SoulboundFoundersKey,
+    accounts,
+    deploy,
+)
 
 
 def test_deploy_staking_contract(private_key, deployed_erc721a_mock):

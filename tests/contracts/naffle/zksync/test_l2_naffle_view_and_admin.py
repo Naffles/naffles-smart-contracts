@@ -5,9 +5,13 @@ from brownie import L2NaffleAdmin
 
 from scripts.util import add_facet, get_selectors
 from tests.contracts.naffle.zksync.test_l2_naffle_base import (
-    ERC721, STANDARD_NAFFLE_TYPE, _setup_contract)
-from tests.contracts.naffle.zksync.test_l2_naffle_diamond import \
-    setup_diamond_with_facets
+    ERC721,
+    STANDARD_NAFFLE_TYPE,
+    _setup_contract,
+)
+from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
+    setup_diamond_with_facets,
+)
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 

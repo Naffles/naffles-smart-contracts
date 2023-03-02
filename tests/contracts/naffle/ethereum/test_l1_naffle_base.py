@@ -3,8 +3,9 @@ import datetime
 import brownie
 
 from scripts.util import ZERO_ADDRESS, ZKSYNC_ADDRESS, get_error_message
-from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import \
-    setup_diamond_with_facets
+from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
+    setup_diamond_with_facets,
+)
 
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
@@ -281,9 +282,7 @@ def test_create_naffle_no_approval(
 
     nft_id = 1
 
-    with brownie.reverts(
-        get_error_message("TransferCallerNotOwnerNorApproved")
-    ):
+    with brownie.reverts(get_error_message("TransferCallerNotOwnerNorApproved")):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,

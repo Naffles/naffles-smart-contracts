@@ -3,8 +3,9 @@ import datetime
 import brownie
 
 from scripts.util import get_error_message
-from tests.contracts.naffle.zksync.test_l2_naffle_diamond import \
-    setup_diamond_with_facets
+from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
+    setup_diamond_with_facets,
+)
 
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
