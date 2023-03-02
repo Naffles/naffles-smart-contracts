@@ -92,3 +92,84 @@ def test_attach_to_naffle(
         ticket_id_on_naffle,
         False
     )
+
+
+def test_attach_to_naffle_not_owner_of_ticket(
+    admin,
+    address,
+    from_admin,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_open_entry_ticket_diamond_with_facets(
+        from_admin,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+    )
+
+    setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
+    amount = 1
+    base_facet.adminMint(admin, amount, from_admin)
+    naffle_id = 1
+    ticket_id_on_naffle = 1
+
+    with brownie.reverts(get_error_message("NotOwnerOfTicket", ["uint256"], [1])):
+        base_facet.attachToNaffle(naffle_id, [ticket_id_on_naffle], ticket_id_on_naffle, address, from_admin)
+
+
+def test_attach_to_naffle_ticket_already_used(
+    admin,
+    from_admin,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_open_entry_ticket_diamond_with_facets(
+        from_admin,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+    )
+
+    setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
+    amount = 1
+    base_facet.adminMint(admin, amount, from_admin)
+    naffle_id = 1
+    ticket_id_on_naffle = 1
+
+    base_facet.attachToNaffle(naffle_id, [ticket_id_on_naffle], ticket_id_on_naffle, admin, from_admin)
+    with brownie.reverts(get_error_message("TicketAlreadyUsed", ["uint256"], [1])):
+        base_facet.attachToNaffle(naffle_id, [ticket_id_on_naffle], ticket_id_on_naffle, admin, from_admin)
+
+
+def test_attach_to_naffle_not_allowed(
+    admin,
+    from_address,
+    from_admin,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_open_entry_ticket_diamond_with_facets(
+        from_admin,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+    )
+
+    setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
+    amount = 1
+    base_facet.adminMint(admin, amount, from_admin)
+    naffle_id = 1
+    ticket_id_on_naffle = 1
+
+    with brownie.reverts():
+        base_facet.attachToNaffle(naffle_id, [ticket_id_on_naffle], ticket_id_on_naffle, admin, from_address)
