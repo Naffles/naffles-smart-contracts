@@ -11,7 +11,6 @@ def setup_open_entry_ticket_contract(admin_facet, naffle_contract, from_admin):
 
 def test_admin_mint(
     admin,
-    address,
     from_admin,
     deployed_l2_open_entry_ticket_diamond,
     deployed_l2_open_entry_ticket_base_facet,
@@ -32,7 +31,7 @@ def test_admin_mint(
 
 def test_admin_mint_no_admin(
     admin,
-    address,
+    from_address,
     from_admin,
     deployed_l2_open_entry_ticket_diamond,
     deployed_l2_open_entry_ticket_base_facet,
@@ -48,6 +47,6 @@ def test_admin_mint_no_admin(
     )
 
     with brownie.reverts():
-        base_facet.adminMint(admin, 1, from_admin)
+        base_facet.adminMint(admin, 1, from_address)
 
     assert view_facet.getTotalSupply(from_admin) == 0
