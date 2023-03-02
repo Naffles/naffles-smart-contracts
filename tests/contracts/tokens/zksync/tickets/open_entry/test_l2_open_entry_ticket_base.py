@@ -50,3 +50,31 @@ def test_admin_mint_no_admin(
         base_facet.adminMint(admin, 1, from_address)
 
     assert view_facet.getTotalSupply(from_admin) == 0
+
+
+def test_attach_to_naffle(
+    admin,
+    from_admin,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_open_entry_ticket_diamond_with_facets(
+        from_admin,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+    )
+
+    setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
+    base_facet.adminMint(admin, 1, from_admin)
+    base_facet.attachToNaffle(1, [1], 1, admin, from_admin)
+
+    ticket = view_facet.getOpenEntryTicketById(1, from_admin)
+    assert ticket == (
+        1,
+        1,
+        False
+    )

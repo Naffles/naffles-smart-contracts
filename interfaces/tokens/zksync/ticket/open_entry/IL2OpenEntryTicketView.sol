@@ -7,4 +7,5 @@ interface IL2OpenEntryTicketView {
     function getAdminRole() external view returns (bytes32);
     function getL2NaffleContractAddress() external view returns (address);
     function getTotalSupply() external view returns (uint256);
+    function getOpenEntryTicketById(uint256 _ticketId) external view returns (NaffleTypes.OpenEntryTicket memory);
 }

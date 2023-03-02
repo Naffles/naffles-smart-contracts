@@ -41,14 +41,14 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
     }
 
     function adminMint(address _to, uint256 _amount) external onlyRole(_getAdminRole()){
-        _mint(_to, _amount);
+        for (uint256 i = 0; i < _amount; i++) {
+            uint256 ticketId = _totalSupply() + 1;
+            _mint(_to, ticketId);
+            NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(ticketId, 0, false);
+        }
     }
 
     function attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, uint256 startingTicketId, address owner) external onlyL2NaffleContract() {
         _attachToNaffle(_naffleId, _ticketIds, startingTicketId, owner);
-    }
-
-    function getOpenEntryTicketById(uint256 _ticketId) external view override returns (NaffleTypes.OpenEntryTicket memory) {
-        return _getOpenEntryTicketById(_ticketId);
     }
 }
