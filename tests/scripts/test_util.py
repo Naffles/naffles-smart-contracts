@@ -7,6 +7,7 @@ from scripts.util import (
     get_selector_by_name,
     get_selectors,
     remove_duplicated_selectors,
+    get_error_message,
 )
 
 
@@ -64,3 +65,8 @@ def test_add_facet(
     )
 
     assert len(deployed_l1_naffle_diamond.facets()) == start_facet_number + 1
+
+
+def test_get_error_message():
+    expected = "typed error: 0xfac2445f00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002"
+    assert get_error_message("Error", ["uint256", "uint256"], [1, 2]) == expected
