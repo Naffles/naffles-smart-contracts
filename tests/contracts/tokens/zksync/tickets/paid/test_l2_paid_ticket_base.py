@@ -29,8 +29,8 @@ def test_mint_tickets_not_allowed(
     )
     setup_paid_ticket_contract(admin_facet, deployed_l2_naffle_diamond, from_admin)
 
-    with brownie.reverts(get_error_message("NotAllowed", [], [])):
-        base_facet.mintTickets(admin, 1, 1, 10, from_admin)
+    with brownie.reverts(get_error_message("NotAllowed")):
+        base_facet.mintTickets(admin, 1, 1, 10, 0, from_admin)
 
 
 def test_mint_tickets_for_address(

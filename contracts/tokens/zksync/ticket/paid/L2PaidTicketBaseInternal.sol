@@ -19,22 +19,21 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         uint256[] memory ticketIds = new uint256[](_amount);
         uint256 count = 0;
-        for (uint256 i = startingTicketId; i < startingTicketId + _amount; ++i) {
-            uint256 ticketId = i + 1;
+        for (uint256 i = startingTicketId; i < startingTicketId + _amount; i++) {
             NaffleTypes.PaidTicket
                 memory paidTicket = NaffleTypes.PaidTicket({
                     owner: _to,
-                    ticketIdOnNaffle: ticketId,
+                    ticketIdOnNaffle: i,
                     ticketPriceInWei: _ticketPriceInWei,
                     naffleId: _naffleId,
                     winningTicket: false
                 });
             uint256 totalTicketId = _totalSupply() + 1;
             _mint(_to, totalTicketId);
-            l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketId] = totalTicketId;
-            l.ticketIdNaffleTicketId[totalTicketId] = ticketId;
+            l.naffleIdNaffleTicketIdTicketId[_naffleId][i] = totalTicketId;
+            l.ticketIdNaffleTicketId[totalTicketId] = i;
             l.paidTickets[totalTicketId] = paidTicket;
-            ticketIds[count] = ticketId;
+            ticketIds[count] = i;
             ++count;
         }
         return ticketIds;
