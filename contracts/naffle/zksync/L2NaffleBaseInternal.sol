@@ -11,6 +11,7 @@ import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleBaseInternal.sol";
 import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
 import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
+import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     function _createNaffle(
@@ -86,9 +87,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NotEnoughFreeTicketSpots(naffle.freeTicketSpots);
         }
         naffle.numberOfFreeTickets = naffle.numberOfFreeTickets + _ticketIds.length;
-        for (uint256 i = 0; i < _ticketIds.length; i++) {
-            IERC721Base(layout.paidTicketContractAddress).transferFrom(msg.sender, address(this), tokenIds[i]);
-        }
+        IL2OpenEntryTicketBase(layout.paidTicketContractAddress).attachToNaffle(msg.sender, address(this), tokenIds);
     }
 
     function _getAdminRole() internal view returns (bytes32) {

@@ -49,7 +49,6 @@ library NaffleTypes {
     }
 
     struct OpenEntryTicket {
-        address owner;
         uint256 naffleId;
         uint256 ticketIdOnNaffle;
         bool winningTicket;
