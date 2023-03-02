@@ -34,4 +34,9 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
     function _getTotalSupply() internal view returns (uint256) {
         return _totalSupply();
     }
+
+    function _getTicketById(uint256 _ticketId) internal view returns (NaffleTypes.OpenEntryTicket memory) {
+        L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
+        return l.openEntryTickets[_ticketId];
+    }
 }
