@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-import "./L2PaidTicketInternal.sol";
+import "./L2PaidTicketBaseInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketView.sol";
 
 contract L2PaidTicketView is IL2PaidTicketView, L2PaidTicketBaseInternal {
@@ -13,8 +13,8 @@ contract L2PaidTicketView is IL2PaidTicketView, L2PaidTicketBaseInternal {
         return _getAdminRole();
     }
 
-    function getTicketById(uint256 _ticketId, uint256 _naffleId) external view returns (NaffleTypes.PaidTicket memory) {
-        return _getTicketById(_ticketId, _naffleId);
+    function getTicketById(uint256 _ticketId) external view returns (NaffleTypes.PaidTicket memory) {
+        return _getTicketById(_ticketId);
     }
 
     function getTicketByIdOnNaffle(uint256 _ticketIdOnNaffle, uint256 _naffleId) external view returns (NaffleTypes.PaidTicket memory) {
