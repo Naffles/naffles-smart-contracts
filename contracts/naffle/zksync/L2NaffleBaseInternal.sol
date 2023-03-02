@@ -108,4 +108,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _getPaidTicketContractAddress() internal view returns (address) {
         return L2NaffleBaseStorage.layout().paidTicketContractAddress;
     }
+
+    function _setOpenEntryTicketContractAddress(address _openEntryTicketContractAddress) internal {
+        L2NaffleBaseStorage.layout().openEntryTicketContractAddress = _openEntryTicketContractAddress;
+    }
+
+    function _getOpenEntryTicketContractAddress() internal view returns (address) {
+        return L2NaffleBaseStorage.layout().openEntryTicketContractAddress;
+    }
 }

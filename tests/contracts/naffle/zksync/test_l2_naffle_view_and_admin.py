@@ -290,3 +290,43 @@ def test_set_paid_ticket_contract_address_not_admin(
     )
     with brownie.reverts():
         admin_facet.setPaidTicketContractAddress(address, from_address)
+
+
+def test_get_and_set_open_entry_ticket_contract_address(
+    address,
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+    admin_facet.setOpenEntryTicketContractAddress(address, from_admin)
+
+    assert view_facet.getOpenEntryTicketContractAddress() == address
+
+
+def test_set_open_entry_ticket_contract_address_not_admin(
+    address,
+    from_admin,
+    from_address,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setOpenEntryTicketContractAddress(address, from_address)

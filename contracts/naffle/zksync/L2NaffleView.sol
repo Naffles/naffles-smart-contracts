@@ -29,4 +29,8 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
     function getPaidTicketContractAddress() external view returns (address) {
         return _getPaidTicketContractAddress();
     }
+
+    function getOpenEntryTicketContractAddress() external view returns (address) {
+        return _getOpenEntryTicketContractAddress();
+    }
 }

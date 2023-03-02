@@ -10,4 +10,5 @@ interface IL2NaffleView {
     function getAdminRole() external view returns (bytes32);
     function getNaffleById(uint256 _id) external view returns (NaffleTypes.L2Naffle memory);
     function getPaidTicketContractAddress() external view returns (address);
+    function getOpenEntryTicketContractAddress() external view returns (address);
 }
