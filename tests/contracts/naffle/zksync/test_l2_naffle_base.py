@@ -352,3 +352,44 @@ def test_buy_tickets_does_mint_tickets_for_address(
         )
         == 2
     )
+
+
+def test_use_open_entry_tickets(
+    admin,
+    address,
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
+    )
+
+    deployed_l2_naffle_base_facet.useOpenEntryTickets(
+        address, 1, {"from": admin}
+    )
+
+    assert (
+        interface.IERC721Base(deployed_l2_paid_ticket_diamond.address).balanceOf(
+            address, from_admin
+        )
+        == 1
+    )
