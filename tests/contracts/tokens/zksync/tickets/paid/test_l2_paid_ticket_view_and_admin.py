@@ -1,12 +1,11 @@
 import brownie
-from brownie import L2PaidTicketAdmin, interface, ZERO_ADDRESS
+from brownie import ZERO_ADDRESS, L2PaidTicketAdmin, interface
 
 from scripts.util import add_facet, get_selectors
 from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
     setup_paid_ticket_diamond_with_facets,
 )
-from tests.test_helper import create_naffle_and_mint_tickets, NAFFLE_ID, \
-    TICKET_PRICE
+from tests.test_helper import NAFFLE_ID, TICKET_PRICE, create_naffle_and_mint_tickets
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 
@@ -158,14 +157,9 @@ def test_get_ticket_by_id(
 
     id = 1
     ticket = brownie.interface.IL2PaidTicketView(
-        deployed_l2_paid_ticket_diamond).getTicketById(id, from_admin)
-    assert ticket == (
-        address,
-        TICKET_PRICE,
-        NAFFLE_ID,
-        id,
-        False
-    )
+        deployed_l2_paid_ticket_diamond
+    ).getTicketById(id, from_admin)
+    assert ticket == (address, TICKET_PRICE, NAFFLE_ID, id, False)
 
 
 def test_get_ticket_by_id_on_naffle(
@@ -199,11 +193,6 @@ def test_get_ticket_by_id_on_naffle(
 
     id = 1
     ticket = brownie.interface.IL2PaidTicketView(
-        deployed_l2_paid_ticket_diamond).getTicketByIdOnNaffle(id, 1, from_admin)
-    assert ticket == (
-        address,
-        TICKET_PRICE,
-        NAFFLE_ID,
-        id,
-        False
-    )
+        deployed_l2_paid_ticket_diamond
+    ).getTicketByIdOnNaffle(id, 1, from_admin)
+    assert ticket == (address, TICKET_PRICE, NAFFLE_ID, id, False)

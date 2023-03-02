@@ -1,5 +1,5 @@
 import brownie
-from brownie import L1NaffleAdmin, ZERO_ADDRESS
+from brownie import ZERO_ADDRESS, L1NaffleAdmin
 
 from scripts.util import add_facet, get_selectors
 from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
