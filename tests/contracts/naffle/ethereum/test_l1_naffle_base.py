@@ -242,7 +242,7 @@ def test_create_naffle_invalid_token_type(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(
+    setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
