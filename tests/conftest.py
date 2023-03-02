@@ -15,6 +15,10 @@ from brownie import (
     L2PaidTicketBase,
     L2PaidTicketDiamond,
     L2PaidTicketView,
+    L2OpenEntryTicketAdmin,
+    L2OpenEntryTicketBase,
+    L2OpenEntryTicketDiamond,
+    L2OpenEntryTicketView,
     SoulboundFoundersKey,
     TestNaffleDiamond,
     TestValueFacet,
@@ -124,6 +128,30 @@ def deployed_l2_paid_ticket_admin_facet(from_admin) -> L2PaidTicketAdmin:
 @pytest.fixture()
 def deployed_l2_paid_ticket_view_facet(from_admin) -> L2PaidTicketView:
     facet = L2PaidTicketView.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_open_entry_ticket_diamond(admin, from_admin) -> L2OpenEntryTicketDiamond:
+    diamond = L2OpenEntryTicketDiamond.deploy(admin, from_admin)
+    return diamond
+
+
+@pytest.fixture()
+def deployed_l2_open_entry_ticket_base_facet(from_admin) -> L2OpenEntryTicketBase:
+    facet = L2OpenEntryTicketBase.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_open_entry_ticket_admin_facet(from_admin) -> L2OpenEntryTicketAdmin:
+    facet = L2OpenEntryTicketAdmin.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_open_entry_ticket_view_facet(from_admin) -> L2OpenEntryTicketView:
+    facet = L2OpenEntryTicketView.deploy(from_admin)
     return facet
 
 
