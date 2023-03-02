@@ -9,7 +9,7 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
 )
 from tests.test_helper import create_naffle_and_mint_tickets, PLATFORM_FEE, \
     FREE_TICKET_RATIO, NAFFLE_ID, NFT_ID, PAID_TICKET_SPOTS, TICKET_PRICE, \
-    DEFAULT_END_DATE, STANDARD_NAFFLE_TYPE, ERC721
+    DEFAULT_END_DATE, STANDARD_NAFFLE_TYPE, ERC721, UNLIMITED_NAFFLE_TYPE
 
 
 def setup_l2_naffle_contract(
@@ -305,6 +305,45 @@ def test_buy_tickets_does_mint_tickets_for_address(
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_base_facet,
         deployed_erc721a_mock,
+    )
+
+    assert (
+        interface.IERC721Base(deployed_l2_paid_ticket_diamond.address).balanceOf(
+            address, from_admin
+        )
+        == 2
+    )
+
+
+def test_buy_tickets_does_mint_tickets_for_address_unlimited(
+    admin,
+    address,
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
+        UNLIMITED_NAFFLE_TYPE,
+        0
     )
 
     assert (
