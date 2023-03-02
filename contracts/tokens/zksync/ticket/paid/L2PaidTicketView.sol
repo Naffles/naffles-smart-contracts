@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-import "./L2PaidTicketInternal.sol";
+import "./L2PaidTicketBaseInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketView.sol";
 
 contract L2PaidTicketView is IL2PaidTicketView, L2PaidTicketBaseInternal {

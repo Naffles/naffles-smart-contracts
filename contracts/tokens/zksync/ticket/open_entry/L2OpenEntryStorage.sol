@@ -9,11 +9,6 @@ library L2OpenEntryTicketStorage {
         keccak256("naffles.contracts.tokens.zksync.ticket.open_entry.L2OpenEntryTicketStorage");
 
     struct Layout {
-        address l2NaffleContractAddress;
-        // naffle id => ticket id on naffle => ticket
-        mapping(uint256 => mapping(uint256 => NaffleTypes.PaidTicket)) paidTickets;
-        // ticket id => ticket id on naffle
-        mapping(uint256 => uint256) ticketIdNaffleTicketId;
     }
 
     function layout() internal pure returns (Layout storage s) {
