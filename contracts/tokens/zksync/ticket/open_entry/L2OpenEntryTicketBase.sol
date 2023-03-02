@@ -45,6 +45,7 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
             uint256 ticketId = _totalSupply() + 1;
             _mint(_to, ticketId);
             NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(ticketId, 0, false);
+            L2OpenEntryTicketStorage.layout().openEntryTickets[ticketId] = ticket;
         }
     }
 
