@@ -8,7 +8,6 @@ from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
     setup_open_entry_ticket_diamond_with_facets,
 )
-from tests.test_helper import NAFFLE_ID, TICKET_PRICE, create_naffle_and_mint_tickets
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 
