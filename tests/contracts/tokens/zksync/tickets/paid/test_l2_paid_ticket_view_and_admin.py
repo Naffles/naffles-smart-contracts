@@ -1,13 +1,12 @@
 import brownie
-from brownie import L2PaidTicketAdmin, interface
+from brownie import L2PaidTicketAdmin, interface, ZERO_ADDRESS
 
 from scripts.util import add_facet, get_selectors
 from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
     setup_paid_ticket_diamond_with_facets,
 )
 from tests.test_helper import create_naffle_and_mint_tickets, NAFFLE_ID, \
-    NFT_ID, PAID_TICKET_SPOTS, TICKET_PRICE, DEFAULT_END_DATE, ERC721, \
-    STANDARD_NAFFLE_TYPE
+    TICKET_PRICE
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 
