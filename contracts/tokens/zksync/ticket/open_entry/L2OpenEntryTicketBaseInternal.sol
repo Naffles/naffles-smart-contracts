@@ -11,10 +11,8 @@ import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTi
 
 
 abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
-    function _attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, address owner) internal {
-        L2OpenEntryTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        NaffleTypes.L2Naffle memory naffle = IL2NaffleView(l.l2NaffleContractAddress).getNaffleById(_naffleId);
-        uint256 naffleTicketId = naffle.numberOfOpenEntryTicket - _ticketIds.length + 1;
+    function _attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, uint256 startingTicketId, address owner) internal {
+        L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         for (uint256 i = 0; i < _ticketIds.length; i++) {
             uint256 ticketId = _ticketIds[i];
             NaffleTypes.OpenEntryTicket memory ticket = l.openEntryTickets[ticketId];
@@ -25,8 +23,8 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
                 revert NotOwnerOfTicket(ticketId);
             }
             ticket.naffleId = _naffleId;
-            ticket.ticketIdOnNaffle = naffleTicketId;
-            ++naffleTicketId;
+            ticket.ticketIdOnNaffle = startingTicketId;
+            ++startingTicketId;
         }
     }
 
@@ -46,7 +44,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         return _totalSupply();
     }
 
-    function _getTicketById(uint256 _ticketId) internal view returns (NaffleTypes.OpenEntryTicket memory) {
+    function _getOpenEntryTicketById(uint256 _ticketId) internal view returns (NaffleTypes.OpenEntryTicket memory) {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         return l.openEntryTickets[_ticketId];
     }

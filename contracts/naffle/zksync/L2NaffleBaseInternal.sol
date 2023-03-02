@@ -73,7 +73,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _useOpenEntryTickets(
         uint256[] memory _ticketIds,
         uint256 _naffleId
-    ) internal returns () {
+    ) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
@@ -86,8 +86,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.numberOfFreeTickets + _ticketIds.length > naffle.freeTicketSpots) {
             revert NotEnoughFreeTicketSpots(naffle.freeTicketSpots);
         }
+        uint256 startingTicketId = naffle.numberOfFreeTickets + 1;
         naffle.numberOfFreeTickets = naffle.numberOfFreeTickets + _ticketIds.length;
-        IL2OpenEntryTicketBase(layout.paidTicketContractAddress).attachToNaffle(msg.sender, address(this), tokenIds);
+        IL2OpenEntryTicketBase(layout.paidTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
     }
 
     function _getAdminRole() internal view returns (bytes32) {

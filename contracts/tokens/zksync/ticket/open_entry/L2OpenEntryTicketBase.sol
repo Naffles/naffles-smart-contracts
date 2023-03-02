@@ -44,11 +44,11 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
         _mint(_to, _amount);
     }
 
-    function attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, address owner) external onlyL2NaffleContract() {
-        _attachToNaffle(_naffleId, _ticketIds, owner);
+    function attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, uint256 startingTicketId, address owner) external onlyL2NaffleContract() {
+        _attachToNaffle(_naffleId, _ticketIds, startingTicketId, owner);
     }
 
-    function getOpenEntryTicketById(uint256 _ticketId) external view override returns (uint256 ticketId) {
+    function getOpenEntryTicketById(uint256 _ticketId) external view override returns (NaffleTypes.OpenEntryTicket memory) {
         return _getOpenEntryTicketById(_ticketId);
     }
 }
