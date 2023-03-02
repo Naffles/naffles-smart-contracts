@@ -32,8 +32,9 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
                 });
             uint256 totalTicketId = _totalSupply() + 1;
             _mint(_to, totalTicketId);
-            l.ticketIdNaffleTicketId[ticketId] = totalTicketId;
-            l.paidTickets[_naffleId][ticketId] = paidTicket;
+            l.ticketIdNaffleTicketId[totalTicketId] = ticketId;
+            l.paidTickets[_naffleId][ticketId] = totalTicketId;
+            l.paidTickets[totalTicketId] = paidTicket;
             ticketIds[count] = ticketId;
             ++count;
         }
@@ -57,7 +58,7 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         return l.paidTickets[_naffleId][_ticketIdOnNaffle];
     }
 
-    function _getTicketById(uint256 _ticketId, uint256 _naffleId) internal view returns (NaffleTypes.PaidTicket memory) {
+    function _getTicketById(uint256 _ticketId) internal view returns (NaffleTypes.PaidTicket memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         uint256 ticketIdOnNaffle = l.ticketIdNaffleTicketId[_ticketId];
         return l.paidTickets[_naffleId][ticketIdOnNaffle];
