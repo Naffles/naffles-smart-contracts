@@ -10,4 +10,8 @@ contract L2OpenEntryTicketAdmin is IL2OpenEntryTicketAdmin, L2OpenEntryTicketBas
     function setAdmin(address _admin) external onlyOwner {
         _grantRole(_getAdminRole(), _admin);
     }
+
+    function setL2NaffleContractAddress(address _l2NaffleContractAddress) external onlyRole(_getAdminRole()) {
+        _setL2NaffleContractAddress(_l2NaffleContractAddress);
+    }
 }

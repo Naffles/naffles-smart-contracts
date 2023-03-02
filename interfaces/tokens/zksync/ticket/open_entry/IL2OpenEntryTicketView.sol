@@ -5,4 +5,5 @@ import "../../../../../contracts/libraries/NaffleTypes.sol";
 
 interface IL2OpenEntryTicketView {
     function getAdminRole() external view returns (bytes32);
+    function getL2NaffleContractAddress() external view returns (address);
 }
