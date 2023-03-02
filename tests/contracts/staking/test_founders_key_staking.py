@@ -1,6 +1,6 @@
 import time
 
-from brownie import reverts, chain
+from brownie import chain, reverts
 
 TOKEN_ID_ONE = 1
 TOKEN_ID_TWO = 2

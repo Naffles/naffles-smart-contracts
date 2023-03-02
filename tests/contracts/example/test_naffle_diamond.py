@@ -1,46 +1,47 @@
-import json
-from scripts.util import FacetCutAction, get_selectors, get_selector_by_name
+from brownie import TestValueFacet, TestValueFacetUpgraded, interface
 
-from brownie import Contract, TestValueFacet, TestValueFacetUpgraded, interface
-
-
-NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
+from scripts.util import (
+    ZERO_ADDRESS,
+    FacetCutAction,
+    get_selector_by_name,
+    get_selectors,
+)
 
 
 def _add_facets(diamond, facet, from_admin):
     cut = [[facet.address, FacetCutAction.ADD.value, get_selectors(TestValueFacet)]]
-    diamond.diamondCut(cut, NULL_ADDRESS, b"", from_admin)
+    diamond.diamondCut(cut, ZERO_ADDRESS, b"", from_admin)
 
 
 def test_facet_deployment(
     from_admin,
-    deployed_naffle_diamond,
+    deployed_test_naffle_diamond,
     deployed_test_facet,
 ):
-    start_facet_number = len(deployed_naffle_diamond.facets())
+    start_facet_number = len(deployed_test_naffle_diamond.facets())
 
-    _add_facets(deployed_naffle_diamond, deployed_test_facet, from_admin)
+    _add_facets(deployed_test_naffle_diamond, deployed_test_facet, from_admin)
 
-    assert len(deployed_naffle_diamond.facets()) == start_facet_number + 1
+    assert len(deployed_test_naffle_diamond.facets()) == start_facet_number + 1
 
 
 def test_set_and_get_value(
-    from_admin, deployed_naffle_diamond, deployed_test_facet 
+    from_admin, deployed_test_naffle_diamond, deployed_test_facet
 ):
-    _add_facets(deployed_naffle_diamond, deployed_test_facet, from_admin)
-    test_facet_proxy = interface.ITestValueFacet(deployed_naffle_diamond.address)
+    _add_facets(deployed_test_naffle_diamond, deployed_test_facet, from_admin)
+    test_facet_proxy = interface.ITestValueFacet(deployed_test_naffle_diamond.address)
     test_facet_proxy.setValue("value", from_admin)
     assert test_facet_proxy.getValue() == "value"
 
 
 def test_upgrade_storage_and_facet(
     from_admin,
-    deployed_naffle_diamond,
+    deployed_test_naffle_diamond,
     deployed_test_facet,
     deployed_test_facet_upgraded,
 ):
-    _add_facets(deployed_naffle_diamond, deployed_test_facet, from_admin)
-    test_facet_proxy = interface.ITestValueFacet(deployed_naffle_diamond.address)
+    _add_facets(deployed_test_naffle_diamond, deployed_test_facet, from_admin)
+    test_facet_proxy = interface.ITestValueFacet(deployed_test_naffle_diamond.address)
     test_facet_proxy.setValue("value", from_admin)
     assert test_facet_proxy.getValue() == "value"
 
@@ -67,8 +68,10 @@ def test_upgrade_storage_and_facet(
         ],
     ]
 
-    deployed_naffle_diamond.diamondCut(upgrade_cut, NULL_ADDRESS, b"", from_admin)
-    test_facet_proxy = interface.ITestValueFacetUpgraded(deployed_naffle_diamond.address)
+    deployed_test_naffle_diamond.diamondCut(upgrade_cut, ZERO_ADDRESS, b"", from_admin)
+    test_facet_proxy = interface.ITestValueFacetUpgraded(
+        deployed_test_naffle_diamond.address
+    )
 
     assert test_facet_proxy.getValue() == "value"
     test_facet_proxy.setSecondValue("value2", from_admin)
