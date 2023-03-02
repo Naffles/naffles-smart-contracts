@@ -32,4 +32,8 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
     ) internal virtual override(ERC721BaseInternal, SolidStateERC721) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
+
+    function adminMint(address _to, uint256 _amount) external onlyRole(_getAdminRole()){
+        _mint(_to, _amount);
+    }
 }

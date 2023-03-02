@@ -22,4 +22,8 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
     function _setL2NaffleContractAddress(address _l2NaffleContractAddress) internal {
         L2OpenEntryTicketStorage.layout().l2NaffleContractAddress = _l2NaffleContractAddress;
     }
+
+    function _getTotalSupply() internal view returns (uint256) {
+        return _totalSupply();
+    }
 }
