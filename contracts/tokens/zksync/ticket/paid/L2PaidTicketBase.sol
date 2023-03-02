@@ -15,8 +15,8 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
         _;
     }
 
-    function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 ticketPriceInWei) external onlyL2NaffleContract returns (uint256[] memory ticketIds) {
-        _mintTickets(_to, _amount, _naffleId, ticketPriceInWei);
+    function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 ticketPriceInWei, uint256 startingTicketId) external onlyL2NaffleContract returns (uint256[] memory ticketIds) {
+        _mintTickets(_to, _amount, _naffleId, ticketPriceInWei, startingTicketId);
     }
 
     function _handleApproveMessageValue(

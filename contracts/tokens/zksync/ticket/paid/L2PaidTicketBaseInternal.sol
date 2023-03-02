@@ -12,26 +12,25 @@ import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 
 
 abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
-    function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei) internal returns(uint256[] memory) {
+    function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei, uint256 startingTicketId) internal returns(uint256[] memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        NaffleTypes.L2Naffle memory naffle = IL2NaffleView(l.l2NaffleContractAddress).getNaffleById(_naffleId);
         uint256[] memory ticketIds = new uint256[](_amount);
         uint256 count = 0;
-        for (uint256 i = naffle.numberOfPaidTickets - _amount; i < naffle.numberOfPaidTickets; ++i) {
-            uint256 ticketId = i + 1;
+        for (uint256 i = startingTicketId; i < startingTicketId + _amount; i++) {
             NaffleTypes.PaidTicket
                 memory paidTicket = NaffleTypes.PaidTicket({
                     owner: _to,
-                    ticketIdOnNaffle: ticketId,
+                    ticketIdOnNaffle: i,
                     ticketPriceInWei: _ticketPriceInWei,
                     naffleId: _naffleId,
                     winningTicket: false
                 });
             uint256 totalTicketId = _totalSupply() + 1;
             _mint(_to, totalTicketId);
-            l.ticketIdNaffleTicketId[ticketId] = totalTicketId;
-            l.paidTickets[_naffleId][ticketId] = paidTicket;
-            ticketIds[count] = ticketId;
+            l.naffleIdNaffleTicketIdTicketId[_naffleId][i] = totalTicketId;
+            l.ticketIdNaffleTicketId[totalTicketId] = i;
+            l.paidTickets[totalTicketId] = paidTicket;
+            ticketIds[count] = i;
             ++count;
         }
         return ticketIds;
@@ -51,12 +50,11 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
 
     function _getTicketByIdOnNaffle(uint256 _ticketIdOnNaffle, uint256 _naffleId) internal view returns (NaffleTypes.PaidTicket memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        return l.paidTickets[_naffleId][_ticketIdOnNaffle];
+        return l.paidTickets[l.naffleIdNaffleTicketIdTicketId[_naffleId][_ticketIdOnNaffle]];
     }
 
-    function _getTicketById(uint256 _ticketId, uint256 _naffleId) internal view returns (NaffleTypes.PaidTicket memory) {
+    function _getTicketById(uint256 _ticketId) internal view returns (NaffleTypes.PaidTicket memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        uint256 ticketIdOnNaffle = l.ticketIdNaffleTicketId[_ticketId];
-        return l.paidTickets[_naffleId][ticketIdOnNaffle];
+        return l.paidTickets[_ticketId];
     }
 }
