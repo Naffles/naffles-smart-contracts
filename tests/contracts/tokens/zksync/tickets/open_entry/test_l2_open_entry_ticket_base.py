@@ -27,6 +27,15 @@ def test_admin_mint(
 
     base_facet.adminMint(admin, 1, from_admin)
     assert view_facet.getTotalSupply(from_admin) == 1
+    ticket = view_facet.getOpenEntryTicketById(1, from_admin)
+    naffle_id = 0
+    ticket_id_on_naffle = 0
+
+    assert ticket == (
+        naffle_id,
+        ticket_id_on_naffle,
+        False
+    )
 
 
 def test_admin_mint_no_admin(
@@ -69,12 +78,17 @@ def test_attach_to_naffle(
     )
 
     setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
-    base_facet.adminMint(admin, 1, from_admin)
-    base_facet.attachToNaffle(1, [1], 1, admin, from_admin)
+    amount = 1
+    base_facet.adminMint(admin, amount, from_admin)
+    naffle_id = 1
+    ticket_id_on_naffle = 1
+
+    base_facet.attachToNaffle(naffle_id, [ticket_id_on_naffle], ticket_id_on_naffle, admin, from_admin)
 
     ticket = view_facet.getOpenEntryTicketById(1, from_admin)
+
     assert ticket == (
-        1,
-        1,
+        naffle_id,
+        ticket_id_on_naffle,
         False
     )

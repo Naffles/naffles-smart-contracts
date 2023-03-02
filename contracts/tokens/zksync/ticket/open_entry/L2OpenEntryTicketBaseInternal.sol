@@ -15,7 +15,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         for (uint256 i = 0; i < _ticketIds.length; i++) {
             uint256 ticketId = _ticketIds[i];
-            NaffleTypes.OpenEntryTicket memory ticket = l.openEntryTickets[ticketId];
+            NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[ticketId];
             if (ticket.naffleId != 0) {
                 revert TicketAlreadyUsed(ticketId);
             }
