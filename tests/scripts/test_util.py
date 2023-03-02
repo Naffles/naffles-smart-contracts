@@ -1,8 +1,13 @@
 from brownie import L1NaffleAdmin, L1NaffleBase, TestValueFacet
 
-from scripts.util import (OWNABLE_SELECTORS, add_facet, get_name_by_selector,
-                          get_selector_by_name, get_selectors,
-                          remove_duplicated_selectors)
+from scripts.util import (
+    OWNABLE_SELECTORS,
+    add_facet,
+    get_name_by_selector,
+    get_selector_by_name,
+    get_selectors,
+    remove_duplicated_selectors, get_error_message,
+)
 
 
 def test_get_selectors():
@@ -59,3 +64,8 @@ def test_add_facet(
     )
 
     assert len(deployed_l1_naffle_diamond.facets()) == start_facet_number + 1
+
+
+def test_get_error_message():
+    expected = "typed error: 0xfac2445f00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002"
+    assert get_error_message("Error", ["uint256", "uint256"], [1, 2]) == expected

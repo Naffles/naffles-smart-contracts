@@ -1,12 +1,16 @@
 from brownie import TestValueFacet, TestValueFacetUpgraded, interface
 
-from scripts.util import (NULL_ADDRESS, FacetCutAction, get_selector_by_name,
-                          get_selectors)
+from scripts.util import (
+    ZERO_ADDRESS,
+    FacetCutAction,
+    get_selector_by_name,
+    get_selectors,
+)
 
 
 def _add_facets(diamond, facet, from_admin):
     cut = [[facet.address, FacetCutAction.ADD.value, get_selectors(TestValueFacet)]]
-    diamond.diamondCut(cut, NULL_ADDRESS, b"", from_admin)
+    diamond.diamondCut(cut, ZERO_ADDRESS, b"", from_admin)
 
 
 def test_facet_deployment(
@@ -64,7 +68,7 @@ def test_upgrade_storage_and_facet(
         ],
     ]
 
-    deployed_test_naffle_diamond.diamondCut(upgrade_cut, NULL_ADDRESS, b"", from_admin)
+    deployed_test_naffle_diamond.diamondCut(upgrade_cut, ZERO_ADDRESS, b"", from_admin)
     test_facet_proxy = interface.ITestValueFacetUpgraded(
         deployed_test_naffle_diamond.address
     )
