@@ -278,46 +278,6 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
         base_facet.buyTickets(2, 1, {"from": admin, "value": 20})
 
 
-def test_buy_tickets_infinite_spots(
-    admin,
-    from_admin,
-    deployed_l2_naffle_diamond,
-    deployed_l2_naffle_base_facet,
-    deployed_l2_naffle_admin_facet,
-    deployed_l2_naffle_view_facet,
-    deployed_erc721a_mock,
-):
-    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
-        from_admin,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_base_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_view_facet,
-    )
-
-    setup_l2_naffle_contract(
-        admin_facet, from_admin["from"], deployed_erc721a_mock, from_admin
-    )
-
-    endtime = datetime.datetime.now().timestamp() + 1000
-    base_facet.createNaffle(
-        (
-            deployed_erc721a_mock.address,
-            admin,
-            NAFFLE_ID,
-            NFT_ID,
-            0,
-            TICKET_PRICE,
-            endtime,
-            UNLIMITED_NAFFLE_TYPE,
-            ERC721,
-        ),
-        from_admin,
-    )
-
-    base_facet.buyTickets(2, 1, {"from": admin, "value": 20})
-
-
 def test_buy_tickets_does_mint_tickets_for_address(
     admin,
     address,
@@ -345,6 +305,45 @@ def test_buy_tickets_does_mint_tickets_for_address(
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_base_facet,
         deployed_erc721a_mock,
+    )
+
+    assert (
+        interface.IERC721Base(deployed_l2_paid_ticket_diamond.address).balanceOf(
+            address, from_admin
+        )
+        == 2
+    )
+
+
+def test_buy_tickets_does_mint_tickets_for_address_unlimited(
+    admin,
+    address,
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
+        UNLIMITED_NAFFLE_TYPE,
+        0
     )
 
     assert (

@@ -33,6 +33,8 @@ def create_naffle_and_mint_tickets(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_base_facet,
     deployed_erc721a_mock,
+    naffle_type=STANDARD_NAFFLE_TYPE,
+    number_of_tickets=PAID_TICKET_SPOTS,
 ):
     from tests.contracts.naffle.zksync.test_l2_naffle_diamond import \
         setup_l2_naffle_diamond_with_facets
@@ -81,10 +83,10 @@ def create_naffle_and_mint_tickets(
             address,
             NAFFLE_ID,
             NFT_ID,
-            PAID_TICKET_SPOTS,
+            number_of_tickets,
             TICKET_PRICE,
             DEFAULT_END_DATE,
-            STANDARD_NAFFLE_TYPE,
+            naffle_type,
             ERC721,
         ),
         from_admin,
