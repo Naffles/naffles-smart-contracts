@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 
 library L2PaidTicketStorage {
     bytes32 internal constant STORAGE_SLOT =
-        keccak256("naffles.contracts.tokens.zksync.ticket.paid.L2NaffleBaseStorage");
+        keccak256("naffles.contracts.tokens.zksync.ticket.paid.L2PaidTicketStorage");
 
     struct Layout {
         address l2NaffleContractAddress;
