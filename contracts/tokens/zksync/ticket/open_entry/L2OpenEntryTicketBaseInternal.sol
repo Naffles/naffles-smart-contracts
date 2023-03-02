@@ -7,7 +7,6 @@ import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
-import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
 
 
