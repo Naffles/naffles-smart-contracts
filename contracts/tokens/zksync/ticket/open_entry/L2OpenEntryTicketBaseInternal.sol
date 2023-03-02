@@ -11,6 +11,14 @@ import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTi
 
 
 abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
+    function _attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds) internal {
+        L2OpenEntryTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
+        for (uint256 i = 0; i < _ticketIds.length; i++) {
+            NaffleTypes.OpenEntryTicket memory ticket = l.openEntryTickets[_ticketIds[i]];
+            ticket.naffleId = _naffleId;
+        }
+    }
+
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
