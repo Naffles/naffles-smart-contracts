@@ -9,7 +9,7 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
 )
 from tests.test_helper import create_naffle_and_mint_tickets, PLATFORM_FEE, \
     FREE_TICKET_RATIO, NAFFLE_ID, NFT_ID, PAID_TICKET_SPOTS, TICKET_PRICE, \
-    DEFAULT_END_DATE, STANDARD_NAFFLE_TYPE, ERC721
+    DEFAULT_END_DATE, STANDARD_NAFFLE_TYPE, ERC721, UNLIMITED_NAFFLE_TYPE
 
 
 def setup_l2_naffle_contract(
@@ -276,6 +276,46 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
         get_error_message("NotEnoughPaidTicketSpots", ["uint256"], [1])
     ):
         base_facet.buyTickets(2, 1, {"from": admin, "value": 20})
+
+
+def test_buy_tickets_infinite_spots(
+    admin,
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+    deployed_erc721a_mock,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+
+    setup_l2_naffle_contract(
+        admin_facet, from_admin["from"], deployed_erc721a_mock, from_admin
+    )
+
+    endtime = datetime.datetime.now().timestamp() + 1000
+    base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            admin,
+            NAFFLE_ID,
+            NFT_ID,
+            0,
+            TICKET_PRICE,
+            endtime,
+            UNLIMITED_NAFFLE_TYPE,
+            ERC721,
+        ),
+        from_admin,
+    )
+
+    base_facet.buyTickets(2, 1, {"from": admin, "value": 20})
 
 
 def test_buy_tickets_does_mint_tickets_for_address(
