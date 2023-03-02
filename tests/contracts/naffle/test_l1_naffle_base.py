@@ -243,7 +243,7 @@ def test_create_naffle_invalid_token_type(
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
 
-    with brownie.reverts(get_error_message("InvalidTokenType", ["address"], [base_facet.address])):
+    with brownie.reverts(get_error_message("InvalidTokenType")):
         base_facet.createNaffle(
             base_facet.address,
             nft_id,
@@ -281,7 +281,7 @@ def test_create_naffle_no_approval(
     nft_id = 1
 
     with brownie.reverts(
-        get_error_message("TransferCallerNotOwnerNorApproved", [], [])
+        get_error_message("TransferCallerNotOwnerNorApproved")
     ):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
