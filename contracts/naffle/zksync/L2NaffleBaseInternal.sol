@@ -90,7 +90,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         uint256 startingTicketId = naffle.numberOfOpenEntrys + 1;
         naffle.numberOfOpenEntrys = naffle.numberOfOpenEntrys + _ticketIds.length;
-        IL2OpenEntryTicketBase(layout.paidTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
+        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
     }
 
     function _getAdminRole() internal view returns (bytes32) {
