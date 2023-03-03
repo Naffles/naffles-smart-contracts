@@ -34,44 +34,20 @@ def test_mint_tickets_not_allowed(
 
 
 def test_mint_tickets_for_address(
-    admin,
     address,
     from_admin,
-    deployed_l2_paid_ticket_diamond,
-    deployed_l2_paid_ticket_base_facet,
-    deployed_l2_paid_ticket_admin_facet,
-    deployed_l2_paid_ticket_view_facet,
-    deployed_l2_open_entry_ticket_diamond,
-    deployed_l2_open_entry_ticket_base_facet,
-    deployed_l2_open_entry_ticket_admin_facet,
-    deployed_l2_open_entry_ticket_view_facet,
-    deployed_l2_naffle_diamond,
-    deployed_l2_naffle_view_facet,
-    deployed_l2_naffle_admin_facet,
-    deployed_l2_naffle_base_facet,
+    l2_diamonds,
     deployed_erc721a_mock,
 ):
     create_naffle_and_mint_tickets(
-        admin,
         address,
         from_admin,
-        deployed_l2_paid_ticket_diamond,
-        deployed_l2_paid_ticket_base_facet,
-        deployed_l2_paid_ticket_admin_facet,
-        deployed_l2_paid_ticket_view_facet,
-        deployed_l2_open_entry_ticket_diamond,
-        deployed_l2_open_entry_ticket_base_facet,
-        deployed_l2_open_entry_ticket_admin_facet,
-        deployed_l2_open_entry_ticket_view_facet,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_view_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_base_facet,
+        l2_diamonds,
         deployed_erc721a_mock,
     )
     assert (
         brownie.interface.IERC721Base(
-            deployed_l2_paid_ticket_diamond.address
+            l2_diamonds.deployed_l2_paid_ticket_diamond.address
         ).balanceOf(address, {"from": address})
         == 2
     )

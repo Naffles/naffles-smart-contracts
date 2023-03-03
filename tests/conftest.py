@@ -27,6 +27,8 @@ from brownie import (
 )
 from brownie.network.account import _PrivateKeyAccount
 
+from tests.test_helper import L2Diamonds
+
 
 @pytest.fixture
 def admin() -> _PrivateKeyAccount:
@@ -155,6 +157,39 @@ def deployed_l2_open_entry_ticket_admin_facet(from_admin) -> L2OpenEntryTicketAd
 def deployed_l2_open_entry_ticket_view_facet(from_admin) -> L2OpenEntryTicketView:
     facet = L2OpenEntryTicketView.deploy(from_admin)
     return facet
+
+
+@pytest.fixture()
+def l2_diamonds(
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+) -> L2NaffleDiamond:
+    return L2Diamonds(
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet
+    )
 
 
 @pytest.fixture()

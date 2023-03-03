@@ -239,43 +239,19 @@ def test_set_admin_address_not_admin(
 
 
 def test_get_naffle_by_id(
-    admin,
     address,
     from_admin,
-    deployed_l2_paid_ticket_diamond,
-    deployed_l2_paid_ticket_base_facet,
-    deployed_l2_paid_ticket_admin_facet,
-    deployed_l2_paid_ticket_view_facet,
-    deployed_l2_open_entry_ticket_diamond,
-    deployed_l2_open_entry_ticket_base_facet,
-    deployed_l2_open_entry_ticket_admin_facet,
-    deployed_l2_open_entry_ticket_view_facet,
-    deployed_l2_naffle_diamond,
-    deployed_l2_naffle_view_facet,
-    deployed_l2_naffle_admin_facet,
-    deployed_l2_naffle_base_facet,
+    l2_diamonds,
     deployed_erc721a_mock,
 ):
     create_naffle_and_mint_tickets(
-        admin,
         address,
         from_admin,
-        deployed_l2_paid_ticket_diamond,
-        deployed_l2_paid_ticket_base_facet,
-        deployed_l2_paid_ticket_admin_facet,
-        deployed_l2_paid_ticket_view_facet,
-        deployed_l2_open_entry_ticket_diamond,
-        deployed_l2_open_entry_ticket_base_facet,
-        deployed_l2_open_entry_ticket_admin_facet,
-        deployed_l2_open_entry_ticket_view_facet,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_view_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_base_facet,
+        l2_diamonds,
         deployed_erc721a_mock,
     )
 
-    naffle = brownie.interface.IL2NaffleView(deployed_l2_naffle_diamond).getNaffleById(
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(
         1
     )
 

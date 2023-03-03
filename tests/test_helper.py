@@ -3,7 +3,6 @@ import datetime
 import brownie
 
 
-
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
 
@@ -22,89 +21,113 @@ ERC1155 = 1
 NFT_ID = 1
 
 
-def create_naffle_and_mint_tickets(
-    admin,
-    address,
-    from_admin,
-    deployed_l2_paid_ticket_diamond,
-    deployed_l2_paid_ticket_base_facet,
-    deployed_l2_paid_ticket_admin_facet,
-    deployed_l2_paid_ticket_view_facet,
-    deployed_l2_open_entry_ticket_diamond,
-    deployed_l2_open_entry_ticket_base_facet,
-    deployed_l2_open_entry_ticket_admin_facet,
-    deployed_l2_open_entry_ticket_view_facet,
-    deployed_l2_naffle_diamond,
-    deployed_l2_naffle_view_facet,
-    deployed_l2_naffle_admin_facet,
-    deployed_l2_naffle_base_facet,
-    deployed_erc721a_mock,
-    naffle_type=STANDARD_NAFFLE_TYPE,
-    number_of_tickets=PAID_TICKET_SPOTS,
-):
-    from tests.contracts.naffle.zksync.test_l2_naffle_base import (
-        setup_l2_naffle_contract,
-    )
-    from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
-        setup_l2_naffle_diamond_with_facets,
-    )
-    from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_base import (
-        setup_paid_ticket_contract,
-    )
-    from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
-        setup_paid_ticket_diamond_with_facets,
-    )
-    from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import \
-        setup_open_entry_ticket_diamond_with_facets
-    from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_base import \
-        setup_open_entry_ticket_contract
-
-    (
-        naffle_access_control,
-        naffle_base_facet,
-        naffle_admin_facet,
-        naffle_view_facet,
-    ) = setup_l2_naffle_diamond_with_facets(
-        from_admin,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_base_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_view_facet,
-    )
-
-    (
-        paid_access_control,
-        paid_base_facet,
-        paid_admin_facet,
-        paid_view_facet,
-    ) = setup_paid_ticket_diamond_with_facets(
+class L2Diamonds:
+    def __init__(
+        self,
         from_admin,
         deployed_l2_paid_ticket_diamond,
         deployed_l2_paid_ticket_base_facet,
         deployed_l2_paid_ticket_admin_facet,
         deployed_l2_paid_ticket_view_facet,
-    )
-
-    (
-        open_entry_access_control,
-        open_entry_base_facet,
-        open_entry_admin_facet,
-        open_entry_view_facet,
-    ) = setup_open_entry_ticket_diamond_with_facets(
-        from_admin,
         deployed_l2_open_entry_ticket_diamond,
         deployed_l2_open_entry_ticket_base_facet,
         deployed_l2_open_entry_ticket_admin_facet,
         deployed_l2_open_entry_ticket_view_facet,
-    )
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+    ):
+        from tests.contracts.naffle.zksync.test_l2_naffle_base import (
+            setup_l2_naffle_contract,
+        )
+        from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
+            setup_l2_naffle_diamond_with_facets,
+        )
+        from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_base import (
+            setup_paid_ticket_contract,
+        )
+        from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
+            setup_paid_ticket_diamond_with_facets,
+        )
+        from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
+            setup_open_entry_ticket_diamond_with_facets,
+        )
+        from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_base import (
+            setup_open_entry_ticket_contract,
+        )
 
-    # We set admin as the l1 contract, so we can call create naffle from admin.
-    setup_l2_naffle_contract(
-        naffle_admin_facet, admin, deployed_l2_paid_ticket_diamond, deployed_l2_open_entry_ticket_diamond, from_admin)
-    setup_paid_ticket_contract(paid_admin_facet, deployed_l2_naffle_diamond, from_admin)
-    setup_open_entry_ticket_contract(open_entry_admin_facet, deployed_l2_naffle_diamond, from_admin)
+        (
+            self.naffle_access_control,
+            self.naffle_base_facet,
+            self.naffle_admin_facet,
+            self.naffle_view_facet,
+        ) = setup_l2_naffle_diamond_with_facets(
+            from_admin,
+            deployed_l2_naffle_diamond,
+            deployed_l2_naffle_base_facet,
+            deployed_l2_naffle_admin_facet,
+            deployed_l2_naffle_view_facet,
+        )
 
-    naffle_base_facet.createNaffle(
+        (
+            self.paid_access_control,
+            self.paid_base_facet,
+            self.paid_admin_facet,
+            self.paid_view_facet,
+        ) = setup_paid_ticket_diamond_with_facets(
+            from_admin,
+            deployed_l2_paid_ticket_diamond,
+            deployed_l2_paid_ticket_base_facet,
+            deployed_l2_paid_ticket_admin_facet,
+            deployed_l2_paid_ticket_view_facet,
+        )
+
+        (
+            self.open_entry_access_control,
+            self.open_entry_base_facet,
+            self.open_entry_admin_facet,
+            self.open_entry_view_facet,
+        ) = setup_open_entry_ticket_diamond_with_facets(
+            from_admin,
+            deployed_l2_open_entry_ticket_diamond,
+            deployed_l2_open_entry_ticket_base_facet,
+            deployed_l2_open_entry_ticket_admin_facet,
+            deployed_l2_open_entry_ticket_view_facet,
+        )
+
+        # We set admin as the l1 contract,
+        # so we can call create naffle from admin.
+        setup_l2_naffle_contract(
+            self.naffle_admin_facet,
+            from_admin["from"],
+            deployed_l2_paid_ticket_diamond,
+            deployed_l2_open_entry_ticket_diamond,
+            from_admin,
+        )
+        setup_paid_ticket_contract(
+            self.paid_admin_facet, deployed_l2_naffle_diamond, from_admin
+        )
+        setup_open_entry_ticket_contract(
+            self.open_entry_admin_facet, deployed_l2_naffle_diamond, from_admin
+        )
+
+        self.deployed_l2_naffle_diamond = deployed_l2_naffle_diamond
+        self.deployed_l2_paid_ticket_diamond = deployed_l2_paid_ticket_diamond
+        self.deployed_l2_open_entry_ticket_diamond = (
+            deployed_l2_open_entry_ticket_diamond
+        )
+
+
+def create_naffle_and_mint_tickets(
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+    naffle_type=STANDARD_NAFFLE_TYPE,
+    number_of_tickets=PAID_TICKET_SPOTS,
+):
+    l2_diamonds.naffle_base_facet.createNaffle(
         (
             deployed_erc721a_mock.address,
             address,
@@ -119,5 +142,5 @@ def create_naffle_and_mint_tickets(
         from_admin,
     )
 
-    naffle_base_facet.buyTickets(2, 1, {"from": address, "value": 20})
-    open_entry_base_facet.adminMint(address, 1, from_admin)
+    l2_diamonds.naffle_base_facet.buyTickets(2, 1, {"from": address, "value": 20})
+    l2_diamonds.open_entry_base_facet.adminMint(address, 1, from_admin)
