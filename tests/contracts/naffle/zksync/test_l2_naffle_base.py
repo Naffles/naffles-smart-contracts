@@ -543,7 +543,7 @@ def test_use_open_entry_tickets_success(
     interface.IL2NaffleBase(deployed_l2_naffle_diamond).useOpenEntryTickets([1], 1, from_address)
     naffle = interface.IL2NaffleView(deployed_l2_naffle_diamond).getNaffleById(1, from_admin)
 
-    # 6 is number of open entry tickets
-    assert naffle[6] == 1
+    # 7 is number of open entry tickets
+    assert naffle[7] == 1
 
 

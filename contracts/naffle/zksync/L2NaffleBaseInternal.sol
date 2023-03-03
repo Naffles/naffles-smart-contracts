@@ -31,7 +31,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             paidTicketSpots: _params.paidTicketSpots,
             freeTicketSpots: freeTicketSpots,
             numberOfPaidTickets: 0,
-            numberOfOpenEntrys: 0,
+            numberOfOpenEntries: 0,
             ticketPriceInWei: _params.ticketPriceInWei,
             endTime: _params.endTime,
             winningTicketId: 0,
@@ -85,11 +85,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
-        if (naffle.numberOfOpenEntrys + _ticketIds.length > naffle.freeTicketSpots) {
+        if (naffle.numberOfOpenEntries + _ticketIds.length > naffle.freeTicketSpots) {
             revert NotEnoughOpenEntryTicketSpots(naffle.freeTicketSpots);
         }
-        uint256 startingTicketId = naffle.numberOfOpenEntrys + 1;
-        naffle.numberOfOpenEntrys = naffle.numberOfOpenEntrys + _ticketIds.length;
+        uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
+        naffle.numberOfOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
         IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
     }
 

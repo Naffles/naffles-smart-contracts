@@ -70,7 +70,7 @@ library NaffleTypes {
         uint256 paidTicketSpots;
         uint256 freeTicketSpots;
         uint256 numberOfPaidTickets;
-        uint256 numberOfOpenEntrys;
+        uint256 numberOfOpenEntries;
         uint256 ticketPriceInWei;
         uint256 endTime;
         uint256 winningTicketId;
