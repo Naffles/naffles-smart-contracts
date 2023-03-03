@@ -31,7 +31,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             paidTicketSpots: _params.paidTicketSpots,
             freeTicketSpots: freeTicketSpots,
             numberOfPaidTickets: 0,
-            numberOfFreeTickets: 0,
+            numberOfOpenEntrys: 0,
             ticketPriceInWei: _params.ticketPriceInWei,
             endTime: _params.endTime,
             winningTicketId: 0,
@@ -85,11 +85,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
-        if (naffle.numberOfFreeTickets + _ticketIds.length > naffle.freeTicketSpots) {
-            revert NotEnoughFreeTicketSpots(naffle.freeTicketSpots);
+        if (naffle.numberOfOpenEntrys + _ticketIds.length > naffle.freeTicketSpots) {
+            revert NotEnoughOpenEntryTicketSpots(naffle.freeTicketSpots);
         }
-        uint256 startingTicketId = naffle.numberOfFreeTickets + 1;
-        naffle.numberOfFreeTickets = naffle.numberOfFreeTickets + _ticketIds.length;
+        uint256 startingTicketId = naffle.numberOfOpenEntrys + 1;
+        naffle.numberOfOpenEntrys = naffle.numberOfOpenEntrys + _ticketIds.length;
         IL2OpenEntryTicketBase(layout.paidTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
     }
 
@@ -105,11 +105,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.layout().platformFee = _platformFee;
     }
 
-    function _getFreeTicketRatio() internal view returns (uint256) {
+    function _getOpenEntryRatio() internal view returns (uint256) {
         return L2NaffleBaseStorage.layout().freeTicketRatio;
     }
 
-    function _setFreeTicketRatio(uint256 _freeTicketRatio) internal {
+    function _setOpenEntryRatio(uint256 _freeTicketRatio) internal {
         L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
     }
 

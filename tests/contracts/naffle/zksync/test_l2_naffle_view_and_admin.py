@@ -7,7 +7,6 @@ from scripts.util import add_facet, get_selectors
 from tests.contracts.naffle.zksync.test_l2_naffle_base import (
     ERC721,
     STANDARD_NAFFLE_TYPE,
-    setup_l2_naffle_contract,
 )
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
@@ -91,7 +90,7 @@ def test_set_platform_fee_not_admin(
         admin_facet.setPlatformFee(1, from_address)
 
 
-def test_get_and_set_free_ticket_ratio(
+def test_get_and_set_open_entry_ticket_ratio(
     admin,
     from_admin,
     deployed_l2_naffle_diamond,
@@ -111,12 +110,12 @@ def test_get_and_set_free_ticket_ratio(
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_view_facet,
     )
-    admin_facet.setFreeTicketRatio(1, from_admin)
+    admin_facet.setOpenEntryRatio(1, from_admin)
 
-    assert view_facet.getFreeTicketRatio() == 1
+    assert view_facet.getOpenEntryRatio() == 1
 
 
-def test_set_free_ticket_ratio_not_admin(
+def test_set_open_entry_ticket_ratio_not_admin(
     from_admin,
     from_address,
     deployed_l2_naffle_diamond,
@@ -137,7 +136,7 @@ def test_set_free_ticket_ratio_not_admin(
         deployed_l2_naffle_view_facet,
     )
     with brownie.reverts():
-        admin_facet.setFreeTicketRatio(1, from_address)
+        admin_facet.setOpenEntryRatio(1, from_address)
 
 
 def test_get_and_set_l1_naffle_contract_address(
@@ -273,7 +272,7 @@ def test_get_naffle_by_id(
     )
 
     number_of_tickets_bought = 2
-    number_of_free_tickets = 0
+    number_of_open_entry_tickets = 0
     winning_ticket_id = 0
     winning_ticket_type = 0
     status = 0  # active
@@ -285,9 +284,9 @@ def test_get_naffle_by_id(
         NAFFLE_ID,
         NFT_ID,
         PAID_TICKET_SPOTS,
-        number_of_free_tickets,
+        number_of_open_entry_tickets,
         number_of_tickets_bought,
-        number_of_free_tickets,
+        number_of_open_entry_tickets,
         TICKET_PRICE,
         DEFAULT_END_DATE,
         winning_ticket_id,

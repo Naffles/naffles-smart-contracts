@@ -13,12 +13,13 @@ from tests.test_helper import create_naffle_and_mint_tickets, PLATFORM_FEE, \
 
 
 def setup_l2_naffle_contract(
-    admin_facet, l1_naffle_contract, paid_ticket_contract, from_admin
+    admin_facet, l1_naffle_contract, paid_ticket_contract, open_entry_ticket_contract, from_admin
 ):
     admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
-    admin_facet.setFreeTicketRatio(FREE_TICKET_RATIO, from_admin)
+    admin_facet.setOpenEntryRatio(FREE_TICKET_RATIO, from_admin)
     admin_facet.setL1NaffleContractAddress(l1_naffle_contract.address, from_admin)
     admin_facet.setPaidTicketContractAddress(paid_ticket_contract.address, from_admin)
+    admin_facet.setOpenEntryTicketContractAddress(open_entry_ticket_contract.address, from_admin)
 
 
 def test_create_naffle_not_allowed(
@@ -41,7 +42,7 @@ def test_create_naffle_not_allowed(
         deployed_l2_naffle_view_facet,
     )
     setup_l2_naffle_contract(
-        admin_facet, from_admin["from"], from_admin["from"], from_admin
+        admin_facet, from_admin["from"], from_admin["from"], from_admin["from"], from_admin
     )
 
     with brownie.reverts(get_error_message("NotAllowed", [], [])):
@@ -81,7 +82,7 @@ def test_create_naffle(
         deployed_l2_naffle_view_facet,
     )
     setup_l2_naffle_contract(
-        admin_facet, from_admin["from"], from_admin["from"], from_admin
+        admin_facet, from_admin["from"], from_admin["from"], from_admin["from"], from_admin
     )
     endtime = datetime.datetime.now().timestamp() + 1000
 
@@ -101,7 +102,7 @@ def test_create_naffle(
     )
 
     naffle = view_facet.getNaffleById(NAFFLE_ID)
-    expected_free_ticket_spots = 0
+    expected_open_entry_ticket_spots = 0
     expected_number_of_tickets_bought = 0
     expected_naffle_status = 0  # active
     expected_winning_ticket_type = 0  # none
@@ -113,7 +114,7 @@ def test_create_naffle(
         NAFFLE_ID,
         NFT_ID,
         PAID_TICKET_SPOTS,
-        expected_free_ticket_spots,
+        expected_open_entry_ticket_spots,
         expected_number_of_tickets_bought,
         expected_number_of_tickets_bought,
         TICKET_PRICE,
@@ -144,7 +145,7 @@ def test_buy_tickets_invalid_naffle_id(
     )
 
     setup_l2_naffle_contract(
-        admin_facet, from_admin["from"], deployed_erc721a_mock, from_admin
+        admin_facet, from_admin["from"], deployed_erc721a_mock, from_admin["from"], from_admin
     )
 
     with brownie.reverts(get_error_message("InvalidNaffleId", ["uint256"], [1])):
@@ -171,7 +172,7 @@ def test_buy_tickets_invalid_naffle_status(
     )
 
     setup_l2_naffle_contract(
-        admin_facet, from_admin["from"], deployed_erc721a_mock, from_admin
+        admin_facet, from_admin["from"], deployed_erc721a_mock,from_admin["from"], from_admin
     )
 
     endtime = datetime.datetime.now().timestamp() + 1000
@@ -212,7 +213,7 @@ def test_buy_tickets_not_enough_funds(
     )
 
     setup_l2_naffle_contract(
-        admin_facet, from_admin["from"], deployed_erc721a_mock, from_admin
+        admin_facet, from_admin["from"], deployed_erc721a_mock, from_admin["from"], from_admin
     )
 
     endtime = datetime.datetime.now().timestamp() + 1000
@@ -253,7 +254,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     )
 
     setup_l2_naffle_contract(
-        admin_facet, from_admin["from"], deployed_erc721a_mock, from_admin
+        admin_facet, from_admin["from"], deployed_erc721a_mock, from_admin["from"], from_admin
     )
 
     endtime = datetime.datetime.now().timestamp() + 1000
@@ -286,6 +287,10 @@ def test_buy_tickets_does_mint_tickets_for_address(
     deployed_l2_paid_ticket_base_facet,
     deployed_l2_paid_ticket_admin_facet,
     deployed_l2_paid_ticket_view_facet,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
     deployed_l2_naffle_diamond,
     deployed_l2_naffle_view_facet,
     deployed_l2_naffle_admin_facet,
@@ -300,6 +305,10 @@ def test_buy_tickets_does_mint_tickets_for_address(
         deployed_l2_paid_ticket_base_facet,
         deployed_l2_paid_ticket_admin_facet,
         deployed_l2_paid_ticket_view_facet,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_view_facet,
         deployed_l2_naffle_admin_facet,
@@ -323,6 +332,10 @@ def test_buy_tickets_does_mint_tickets_for_address_unlimited(
     deployed_l2_paid_ticket_base_facet,
     deployed_l2_paid_ticket_admin_facet,
     deployed_l2_paid_ticket_view_facet,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
     deployed_l2_naffle_diamond,
     deployed_l2_naffle_view_facet,
     deployed_l2_naffle_admin_facet,
@@ -337,6 +350,10 @@ def test_buy_tickets_does_mint_tickets_for_address_unlimited(
         deployed_l2_paid_ticket_base_facet,
         deployed_l2_paid_ticket_admin_facet,
         deployed_l2_paid_ticket_view_facet,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_view_facet,
         deployed_l2_naffle_admin_facet,
@@ -352,4 +369,181 @@ def test_buy_tickets_does_mint_tickets_for_address_unlimited(
         )
         == 2
     )
+
+
+def test_use_open_entry_tickets_invalid_naffle_id(
+    admin,
+    address,
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
+    )
+
+    with brownie.reverts(get_error_message("InvalidNaffleId", ["uint256"], [2])):
+        interface.IL2NaffleBase(deployed_l2_naffle_diamond).useOpenEntryTickets(
+            [1], 2, from_admin
+        )
+
+
+def test_use_open_entry_tickets_invalid_naffle_status(
+    admin,
+    address,
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
+    )
+
+    # SET NAFFLE STATUS TO COMPLETE
+    return
+    with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [2])):
+        interface.IL2NaffleBase(deployed_l2_naffle_diamond).useOpenEntryTickets([1], 2, from_admin)
+
+
+def test_use_open_entry_tickets_not_enough_ticket_spots(
+    admin,
+    address,
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+    deployed_erc721a_mock,
+):
+
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
+    )
+
+    print(get_error_message("NotEnoughOpenEntryTicketSpots", ["uint256"], [0]))
+    with brownie.reverts(
+        get_error_message("NotEnoughOpenEntryTicketSpots", ["uint256"], [0])
+    ):
+        interface.IL2NaffleBase(deployed_l2_naffle_diamond).useOpenEntryTickets(
+            [1], 1, from_admin
+        )
+
+
+def test_use_open_entry_tickets_success(
+    admin, address, from_address,
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet, deployed_erc721a_mock
+):
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
+    )
+
+    interface.IL2NaffleBase(deployed_l2_naffle_diamond).useOpenEntryTickets([1], 1, from_address)
+    naffle = interface.IL2NaffleView(deployed_l2_naffle_diamond).getNaffleById(1, from_admin)
+
+    # 6 is number of open entry tickets
+    assert naffle[6] == 1
+
 
