@@ -352,3 +352,4 @@ def test_buy_tickets_does_mint_tickets_for_address_unlimited(
         )
         == 2
     )
+
