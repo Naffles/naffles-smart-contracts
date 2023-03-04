@@ -17,7 +17,7 @@ library NaffleTypes {
     enum NaffleStatus {
         ACTIVE,
         POSTPONED,
-        CLOSED,
+        CANCELLED,
         SELECTING_WINNER,
         FINISHED
     }

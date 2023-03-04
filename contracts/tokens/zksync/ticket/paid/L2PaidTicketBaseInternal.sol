@@ -10,6 +10,7 @@ import "@solidstate/contracts/interfaces/IERC721.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
+import "../../../../libraries/NaffleTypes.sol";
 
 
 abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
@@ -20,7 +21,6 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         for (uint256 i = startingTicketId; i < startingTicketId + _amount; i++) {
             NaffleTypes.PaidTicket
                 memory paidTicket = NaffleTypes.PaidTicket({
-                    owner: _to,
                     ticketIdOnNaffle: i,
                     ticketPriceInWei: _ticketPriceInWei,
                     naffleId: _naffleId,
@@ -37,17 +37,28 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         return ticketIds;
     }
 
-    function _refundTicket(uint256 _ticketId, uint256 _naffleId) internal {
+    function _refundAndBurnTicket(uint256 _naffleId, uint256 _naffleTicketId) internal {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        uint256 ticketIdOnNaffle = l.ticketIdNaffleTicketId[_ticketId];
-        uint256 totalTicketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle];
-        _burn(ticketId);
-        delete l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle];
-        delete l.ticketIdNaffleTicketId[totalTicketId];
+        NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
+        if (naffle.naffleStatus != NaffleTypes.NaffleStatus.CANCELLED) {
+            revert NaffleNotCancelled(naffle.status);
+        }
+        uint256 totalTicketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketId];
+        if (totalTicketId == 0) {
+            revert InvalidTicketId(_naffleTicketId);
+        }
+        delete l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketId];
         NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[totalTicketId];
-        address owner = _ownerOf(paidTicket.totalTicketId);
-         owner.call{value: paidTicket.ticketPriceInWei}("");
-        delete l.paidTickets[totalTicketId];
+        address owner = _ownerOf(totalTicketId);
+        if (owner != msg.sender) {
+            revert NotTicketOwner(msg.sender);
+        }
+        (bool success, ) = owner.call{value: paidTicket.ticketPriceInWei}("");
+        if (!success) {
+            revert RefundFailed();
+        }
+        delete paidTicket;
+        _burn(totalTicketId);
     }
 
     function _getAdminRole() internal view returns (bytes32) {

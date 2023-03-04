@@ -206,3 +206,45 @@ def test_attach_to_naffle_not_allowed(
         base_facet.attachToNaffle(
             naffle_id, [ticket_id_on_naffle], ticket_id_on_naffle, admin, from_address
         )
+
+
+def test_detach_to_naffle(
+    admin,
+    from_admin,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+):
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_open_entry_ticket_diamond_with_facets(
+        from_admin,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+    )
+
+    setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
+    amount = 1
+    base_facet.adminMint(admin, amount, from_admin)
+    naffle_id = 1
+    ticket_id_on_naffle = 1
+
+    base_facet.attachToNaffle(
+        naffle_id, [ticket_id_on_naffle], ticket_id_on_naffle, admin, from_admin
+    )
+
+    ticket = view_facet.getOpenEntryTicketById(1, from_admin)
+
+    assert ticket == (naffle_id, ticket_id_on_naffle, False)
+
+    base_facet.detachFromNaffle(1, from_admin)
+
+    ticket = view_facet.getOpenEntryTicketById(1, from_admin)
+
+    assert ticket == (0, 0, False)

@@ -28,9 +28,9 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         }
     }
 
-    function _detachFromNaffle(uint256 _naffleId, uint256 _ticketId) internal {
+    function _detachFromNaffle(uint256 _naffleId, uint256 _naffleTicketId) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
-        uint256 totalTicketId = naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketId];
+        uint256 totalTicketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_naffleTicketId];
         NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[totalTicketId];
         ticket.naffleId = 0;
         ticket.ticketIdOnNaffle = 0;
