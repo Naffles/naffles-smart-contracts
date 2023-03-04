@@ -57,7 +57,8 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         if (!success) {
             revert RefundFailed();
         }
-        delete paidTicket;
+        // We reset the naffle id so we know this is refunded because we can't delete custom structs.
+        paidTicket.naffleId = 0;
         _burn(totalTicketId);
     }
 
