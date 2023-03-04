@@ -6,6 +6,7 @@ import "./L2PaidTicketStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBaseInternal.sol";
+import "@solidstate/contracts/interfaces/IERC721.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
@@ -39,12 +40,15 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
     function _refundTicket(uint256 _ticketId, uint256 _naffleId) internal {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         uint256 ticketIdOnNaffle = l.ticketIdNaffleTicketId[_ticketId];
-        uint256 ticketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle];
+        uint256 totalTicketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle];
         _burn(ticketId);
 
         delete l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle];
         delete l.ticketIdNaffleTicketId[totalTicketId];
-        delete l.paidTickets[ticketId];
+        NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[totalTicketId];
+        address owner = _ownerOf(paidTicket.totalTicketId);
+         owner.call{value: paidTicket.ticketPriceInWei}("");
+        delete l.paidTickets[totalTicketId];
     }
 
     function _getAdminRole() internal view returns (bytes32) {
