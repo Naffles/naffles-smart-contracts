@@ -120,4 +120,4 @@ def create_naffle_and_mint_tickets(
     )
 
     naffle_base_facet.buyTickets(2, 1, {"from": address, "value": 20})
-    open_entry_base_facet.adminMint(address, 1, from_admin)
+    open_entry_admin_facet.adminMint(address, 1, from_admin)
