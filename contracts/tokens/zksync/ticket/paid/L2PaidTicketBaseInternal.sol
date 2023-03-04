@@ -40,7 +40,7 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
     function _refundAndBurnTicket(uint256 _naffleId, uint256 _naffleTicketId) internal {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
-        if (naffle.naffleStatus != NaffleTypes.NaffleStatus.CANCELLED) {
+        if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
             revert NaffleNotCancelled(naffle.status);
         }
         uint256 totalTicketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketId];
@@ -59,6 +59,7 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         }
         // We reset the naffle id so we know this is refunded because we can't delete custom structs.
         paidTicket.naffleId = 0;
+        ticket.ticketIdOnNaffle = 0;
         _burn(totalTicketId);
     }
 

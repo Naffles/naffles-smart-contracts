@@ -104,7 +104,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
-        naffle.status = NaffleTypes.NaffleStatus.CLOSED;
+        naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
         // todo - L1 communication.
     }
 
