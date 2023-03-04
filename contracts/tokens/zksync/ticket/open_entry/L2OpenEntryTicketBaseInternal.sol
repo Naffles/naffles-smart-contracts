@@ -28,6 +28,14 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         }
     }
 
+    function _detachFromNaffle(uint256 _naffleId, uint256 _ticketId) internal {
+        L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
+        uint256 totalTicketId = naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketId];
+        NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[totalTicketId];
+        ticket.naffleId = 0;
+        ticket.ticketIdOnNaffle = 0;
+    }
+
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }

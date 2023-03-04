@@ -42,7 +42,6 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         uint256 ticketIdOnNaffle = l.ticketIdNaffleTicketId[_ticketId];
         uint256 totalTicketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle];
         _burn(ticketId);
-
         delete l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle];
         delete l.ticketIdNaffleTicketId[totalTicketId];
         NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[totalTicketId];

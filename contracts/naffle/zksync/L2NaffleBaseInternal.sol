@@ -110,7 +110,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             IL2PaidTicketBase(layout.paidTicketContractAddress).refundTicket(_naffleId, i + 1);
         }
         for (uint256 i = 0; i < naffle.numberOfOpenEntries; ++i) {
-            IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).resetTicket(_naffleId, i + 1);
+            IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).detachFromNaffle(_naffleId, i + 1);
         }
         // todo - L1 communication.
     }
