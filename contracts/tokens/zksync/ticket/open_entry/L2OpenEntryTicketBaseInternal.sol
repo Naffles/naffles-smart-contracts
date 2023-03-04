@@ -7,6 +7,7 @@ import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
+import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
 
 
@@ -30,11 +31,13 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
 
     function _detachFromNaffle(uint256 _naffleId, uint256 _naffleTicketId) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
+        NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
         if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
             revert NaffleNotCancelled(naffle.status);
         }
         uint256 totalTicketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_naffleTicketId];
         NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[totalTicketId];
+        revert InvalidTicketId(ticket.naffleId);
         if (totalTicketId == 0) {
             revert InvalidTicketId(_naffleTicketId);
         }
