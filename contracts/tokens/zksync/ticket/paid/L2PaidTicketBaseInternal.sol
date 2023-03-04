@@ -36,6 +36,17 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         return ticketIds;
     }
 
+    function _refundTicket(uint256 _ticketId, uint256 _naffleId) internal {
+        L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
+        uint256 ticketIdOnNaffle = l.ticketIdNaffleTicketId[_ticketId];
+        uint256 ticketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle];
+        _burn(ticketId);
+
+        delete l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle];
+        delete l.ticketIdNaffleTicketId[totalTicketId];
+        delete l.paidTickets[ticketId];
+    }
+
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }

@@ -30,4 +30,8 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
     function setOpenEntryTicketContractAddress(address _openEntryTicketContractAddress) external onlyRole(_getAdminRole()) {
         _setOpenEntryTicketContractAddress(_openEntryTicketContractAddress);
     }
+
+    function adminCancelNaffle(uint256 _naffleId) external onlyRole(_getAdminRole()) {
+        _adminCancelNaffle(_naffleId);
+    }
 }

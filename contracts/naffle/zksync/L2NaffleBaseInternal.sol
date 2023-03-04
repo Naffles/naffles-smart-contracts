@@ -93,6 +93,28 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
     }
 
+    function _adminCancelNaffle(
+        uint256 _naffleId
+    ) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+        naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
+
+        for (uint256 i = 0; i < naffle.numberOfPaidTickets; ++i) {
+            IL2PaidTicketBase(layout.paidTicketContractAddress).refundTicket(_naffleId, i + 1);
+        }
+        for (uint256 i = 0; i < naffle.numberOfOpenEntries; ++i) {
+            IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).resetTicket(_naffleId, i + 1);
+        }
+        // todo - L1 communication.
+    }
+
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }

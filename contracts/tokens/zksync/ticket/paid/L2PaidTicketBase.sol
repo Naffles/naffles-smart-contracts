@@ -19,6 +19,10 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
         _mintTickets(_to, _amount, _naffleId, ticketPriceInWei, startingTicketId);
     }
 
+    function refundTicket(uint256 _ticketId, uint256 _naffleId) external onlyL2NaffleContract {
+        _refundTicket(_ticketId, _naffleId);
+    }
+
     function _handleApproveMessageValue(
         address operator,
         uint256 tokenId,
