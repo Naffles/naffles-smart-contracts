@@ -251,9 +251,7 @@ def test_get_naffle_by_id(
         deployed_erc721a_mock,
     )
 
-    naffle = l2_diamonds.naffle_view_facet.getNaffleById(
-        1
-    )
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 
     number_of_tickets_bought = 2
     number_of_open_entry_tickets = 0

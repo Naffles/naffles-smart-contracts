@@ -25,6 +25,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
             }
             ticket.naffleId = _naffleId;
             ticket.ticketIdOnNaffle = startingTicketId;
+            l.naffleIdTicketIdOnNaffleTicketId[_naffleId][startingTicketId] = ticketId;
             ++startingTicketId;
         }
     }
@@ -36,8 +37,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
             revert NaffleNotCancelled(naffle.status);
         }
         uint256 totalTicketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_naffleTicketId];
-        NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[totalTicketId];
-        revert InvalidTicketId(ticket.naffleId);
+        NaffleTypes.OpenEntryTicket memory ticket = l.openEntryTickets[totalTicketId];
         if (totalTicketId == 0) {
             revert InvalidTicketId(_naffleTicketId);
         }
@@ -47,6 +47,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         }
         ticket.naffleId = 0;
         ticket.ticketIdOnNaffle = 0;
+        l.openEntryTickets[totalTicketId] = ticket;
     }
 
     function _getAdminRole() internal view returns (bytes32) {

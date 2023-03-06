@@ -4,8 +4,11 @@ from scripts.util import get_error_message
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
     setup_open_entry_ticket_diamond_with_facets,
 )
-from tests.test_helper import create_naffle_and_mint_tickets, NAFFLE_ID, \
-    NAFFLE_STATUS_ACTIVE
+from tests.test_helper import (
+    NAFFLE_ID,
+    NAFFLE_STATUS_ACTIVE,
+    create_naffle_and_mint_tickets,
+)
 
 
 def setup_open_entry_ticket_contract(admin_facet, naffle_contract, from_admin):
@@ -177,12 +180,7 @@ def test_attach_to_naffle_ticket_already_used(
 
 
 def test_detach_from_naffle_naffle_not_cancelled(
-    from_address,
-    address,
-    admin,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock
+    from_address, address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
 ):
     create_naffle_and_mint_tickets(
         address, from_admin, l2_diamonds, deployed_erc721a_mock, number_of_tickets=200
@@ -193,20 +191,23 @@ def test_detach_from_naffle_naffle_not_cancelled(
         NAFFLE_ID, [ticket_id_on_naffle], ticket_id_on_naffle, address, from_address
     )
 
-    with brownie.reverts(get_error_message("NaffleNotCancelled", ["uint8"], [NAFFLE_STATUS_ACTIVE])):
-        l2_diamonds.open_entry_base_facet.detachFromNaffle(NAFFLE_ID, ticket_id_on_naffle, from_admin)
+    with brownie.reverts(
+        get_error_message("NaffleNotCancelled", ["uint8"], [NAFFLE_STATUS_ACTIVE])
+    ):
+        l2_diamonds.open_entry_base_facet.detachFromNaffle(
+            NAFFLE_ID, ticket_id_on_naffle, from_admin
+        )
 
 
 def test_detach_from_naffle_invalid_ticket_id(
-    address,
-    from_address,
-    admin,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock
+    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
 ):
     create_naffle_and_mint_tickets(
-        address, from_admin, l2_diamonds, deployed_erc721a_mock, number_of_tickets=200,
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
     )
     ticket_id_on_naffle = 1
 
@@ -221,48 +222,48 @@ def test_detach_from_naffle_invalid_ticket_id(
 
 
 def test_detach_from_naffle_not_owner(
-    address,
-    from_address,
-    admin,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock
+    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
 ):
     create_naffle_and_mint_tickets(
-        address, from_admin, l2_diamonds, deployed_erc721a_mock, number_of_tickets=200,
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
     )
     ticket_id_on_naffle = 1
 
     l2_diamonds.open_entry_base_facet.attachToNaffle(
         NAFFLE_ID, [ticket_id_on_naffle], ticket_id_on_naffle, address, from_address
     )
-    ticket = l2_diamonds.open_entry_view_facet.getOpenEntryTicketById(1)
-    print(ticket)
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
 
-    print(get_error_message("InvalidTicketId", ["uint256"], [1]))
-    with brownie.reverts(get_error_message("NotTicketOwner", ["address"], [admin.address])):
-        l2_diamonds.open_entry_base_facet.detachFromNaffle(NAFFLE_ID, ticket_id_on_naffle, from_admin)
+    with brownie.reverts(
+        get_error_message("NotTicketOwner", ["address"], [admin.address])
+    ):
+        l2_diamonds.open_entry_base_facet.detachFromNaffle(
+            NAFFLE_ID, ticket_id_on_naffle, from_admin
+        )
 
 
-# def test_detach_from_naffle_success(
-#     address,
-#     from_address,
-#     admin,
-#     from_admin,
-#     l2_diamonds,
-#     deployed_erc721a_mock
-# ):
-#     create_naffle_and_mint_tickets(
-#         address, from_admin, l2_diamonds, deployed_erc721a_mock, number_of_tickets=200,
-#     )
-#     ticket_id_on_naffle = 1
-#
-#     l2_diamonds.open_entry_base_facet.attachToNaffle(
-#         NAFFLE_ID, [ticket_id_on_naffle], ticket_id_on_naffle, address, from_address
-#     )
-#
-#     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
-#     l2_diamonds.open_entry_base_facet.detachFromNaffle(NAFFLE_ID, ticket_id_on_naffle, from_address)
+def test_detach_from_naffle_success(
+    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
+    )
+    ticket_id_on_naffle = 1
 
-    # l2_diamonds.open_entry_view_facet.get
+    l2_diamonds.open_entry_base_facet.attachToNaffle(
+        NAFFLE_ID, [ticket_id_on_naffle], ticket_id_on_naffle, address, from_address
+    )
+    l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
+    l2_diamonds.open_entry_base_facet.detachFromNaffle(
+        NAFFLE_ID, ticket_id_on_naffle, from_address
+    )
+    ticket = l2_diamonds.open_entry_view_facet.getOpenEntryTicketById(1)
+    assert ticket == (0, 0, False)

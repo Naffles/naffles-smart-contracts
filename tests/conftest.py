@@ -188,7 +188,7 @@ def l2_diamonds(
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_view_facet,
         deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_base_facet
+        deployed_l2_naffle_base_facet,
     )
 
 

@@ -2,7 +2,6 @@ import datetime
 
 import brownie
 
-
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
 
@@ -45,17 +44,17 @@ class L2Diamonds:
         from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
             setup_l2_naffle_diamond_with_facets,
         )
+        from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_base import (
+            setup_open_entry_ticket_contract,
+        )
+        from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
+            setup_open_entry_ticket_diamond_with_facets,
+        )
         from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_base import (
             setup_paid_ticket_contract,
         )
         from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
             setup_paid_ticket_diamond_with_facets,
-        )
-        from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
-            setup_open_entry_ticket_diamond_with_facets,
-        )
-        from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_base import (
-            setup_open_entry_ticket_contract,
         )
 
         (

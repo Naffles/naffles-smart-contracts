@@ -8,17 +8,17 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
 from tests.test_helper import (
-    create_naffle_and_mint_tickets,
-    PLATFORM_FEE,
+    DEFAULT_END_DATE,
+    ERC721,
     FREE_TICKET_RATIO,
     NAFFLE_ID,
     NFT_ID,
     PAID_TICKET_SPOTS,
-    TICKET_PRICE,
-    DEFAULT_END_DATE,
+    PLATFORM_FEE,
     STANDARD_NAFFLE_TYPE,
-    ERC721,
+    TICKET_PRICE,
     UNLIMITED_NAFFLE_TYPE,
+    create_naffle_and_mint_tickets,
 )
 
 
@@ -363,18 +363,15 @@ def test_buy_tickets_does_mint_tickets_for_address(
     )
 
     assert (
-        interface.IERC721Base(l2_diamonds.deployed_l2_paid_ticket_diamond.address).balanceOf(
-            address, from_admin
-        )
+        interface.IERC721Base(
+            l2_diamonds.deployed_l2_paid_ticket_diamond.address
+        ).balanceOf(address, from_admin)
         == 2
     )
 
 
 def test_buy_tickets_does_mint_tickets_for_address_unlimited(
-    address,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock
+    address, from_admin, l2_diamonds, deployed_erc721a_mock
 ):
     create_naffle_and_mint_tickets(
         address,
@@ -386,9 +383,9 @@ def test_buy_tickets_does_mint_tickets_for_address_unlimited(
     )
 
     assert (
-        interface.IERC721Base(l2_diamonds.deployed_l2_paid_ticket_diamond.address).balanceOf(
-            address, from_admin
-        )
+        interface.IERC721Base(
+            l2_diamonds.deployed_l2_paid_ticket_diamond.address
+        ).balanceOf(address, from_admin)
         == 2
     )
 
@@ -407,9 +404,7 @@ def test_use_open_entry_tickets_invalid_naffle_id(
     )
 
     with brownie.reverts(get_error_message("InvalidNaffleId", ["uint256"], [2])):
-        l2_diamonds.naffle_base_facet.useOpenEntryTickets(
-            [1], 2, from_admin
-        )
+        l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 2, from_admin)
 
 
 def test_use_open_entry_tickets_invalid_naffle_status(
@@ -428,9 +423,7 @@ def test_use_open_entry_tickets_invalid_naffle_status(
     # SET NAFFLE STATUS TO COMPLETE
     return
     with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [2])):
-        l2_diamonds.naffle_base_facet.useOpenEntryTickets(
-            [1], 2, from_admin
-        )
+        l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 2, from_admin)
 
 
 def test_use_open_entry_tickets_not_enough_ticket_spots(
@@ -451,9 +444,7 @@ def test_use_open_entry_tickets_not_enough_ticket_spots(
     with brownie.reverts(
         get_error_message("NotEnoughOpenEntryTicketSpots", ["uint256"], [0])
     ):
-        l2_diamonds.naffle_base_facet.useOpenEntryTickets(
-            [1], 1, from_admin
-        )
+        l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 1, from_admin)
 
 
 def test_use_open_entry_tickets_success(
@@ -471,12 +462,8 @@ def test_use_open_entry_tickets_success(
         number_of_tickets=200,
     )
 
-    l2_diamonds.naffle_base_facet.useOpenEntryTickets(
-        [1], 1, from_address
-    )
-    naffle = l2_diamonds.naffle_view_facet.getNaffleById(
-        1, from_admin
-    )
+    l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 1, from_address)
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1, from_admin)
 
     # 7 is number of open entry tickets
     assert naffle[7] == 1
