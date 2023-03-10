@@ -2,9 +2,11 @@
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelinUpgradeable/contracts/token/ERC721/utils/ERC721HolderUpgradeable.sol";
+import "@openzeppelinUpgradeable/contracts/proxy/utils/Initializable.sol";
+import "@openzeppelinUpgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelinUpgradeable/contracts/access/OwnableUpgradeable.sol";
+import "@openzeppelinUpgradeable/contracts/security/PausableUpgradeable.sol";
 import "../../interfaces/IFoundersKey.sol";
 import "../../interfaces/ISoulboundFoundersKey.sol";
 
@@ -12,7 +14,7 @@ error NFTAlreadyStaked(uint16 nftId);
 error NFTLocked(uint16 nftId, uint256 unlockTime);
 error AddressIsZero(address addr);
 
-contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
+contract FoundersKeyStaking is Initializable, UUPSUpgradeable, ERC721HolderUpgradeable, OwnableUpgradeable, PausableUpgradeable {
     IFoundersKey public FoundersKeyAddress;
     ISoulboundFoundersKey public SoulboundFoundersKeyAddress;
 
@@ -35,10 +37,32 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
     event UserStaked(address userAddress, uint16 nftId, uint256 stakeTime, StakingPeriod stakingPeriod);
     event UserUnstaked(address userAddress, uint16 nftId, uint256 unstakeTime);
 
-    constructor(
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initiliaze() initializer public {
+        __FoundersKeyStaking_init(
+            0x02eaB30603Dad3E17D0bDA0f14A683F51475cD99,
+            0x1Eddcb3a7E703f67495e9814b9518A1828ea0b79
+        );
+        __Ownable_init();
+        __Pausable_init();
+        __UUPSUpgradeable_init();
+    }
+
+    function __FoundersKeyStaking_init(
         address _foundersKeyAddress,
         address _soulboundFoundersKeyAddress
-    ) {
+    ) internal onlyInitializing {
+        __FoundersKeyStaking_init_unchained(_foundersKeyAddress, _soulboundFoundersKeyAddress);
+    }
+
+    function __FoundersKeyStaking_init_unchained(
+        address _foundersKeyAddress,
+        address _soulboundFoundersKeyAddress
+    ) internal onlyInitializing {
         FoundersKeyAddress = IFoundersKey(_foundersKeyAddress);
         SoulboundFoundersKeyAddress = ISoulboundFoundersKey(_soulboundFoundersKeyAddress);
     }
@@ -125,4 +149,8 @@ contract FoundersKeyStaking is ERC721Holder, Ownable, Pausable {
         }
         SoulboundFoundersKeyAddress = ISoulboundFoundersKey(_soulboundFoundersKeyAddress);
     }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    uint256[42] private __gap;
 }
