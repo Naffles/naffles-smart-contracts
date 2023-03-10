@@ -1,9 +1,7 @@
-from scripts.staking.deploy_staking_contract import (
-    FoundersKeyStaking,
-    SoulboundFoundersKey,
-    accounts,
-    deploy,
-)
+from brownie import Contract
+from scripts.staking.deploy_staking_contract import (FoundersKeyStaking,
+                                                     SoulboundFoundersKey,
+                                                     accounts, deploy)
 
 
 def test_deploy_staking_contract(private_key, deployed_erc721a_mock):
@@ -15,6 +13,6 @@ def test_deploy_staking_contract(private_key, deployed_erc721a_mock):
     address = deploy(
         private_key, deployed_erc721a_mock.address, soulbound.address, False
     )
-    contract = FoundersKeyStaking.at(address)
-    assert contract
-    assert soulbound.hasRole(soulbound.STAKING_CONTRACT_ROLE(), contract.address)
+    proxy = Contract.from_abi("FoundersKeyStaking", address, FoundersKeyStaking[0].abi)
+    assert proxy
+    assert soulbound.hasRole(soulbound.STAKING_CONTRACT_ROLE(), proxy.address)

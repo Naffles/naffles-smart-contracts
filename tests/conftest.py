@@ -1,18 +1,8 @@
 import pytest
-from brownie import (
-    ERC721AMock,
-    ETHZkSyncMock,
-    FoundersKeyStaking,
-    L1NaffleAdmin,
-    L1NaffleBase,
-    L1NaffleDiamond,
-    L1NaffleView,
-    SoulboundFoundersKey,
-    TestNaffleDiamond,
-    TestValueFacet,
-    TestValueFacetUpgraded,
-    accounts,
-)
+from brownie import (ERC721AMock, ETHZkSyncMock, FoundersKeyStaking,
+                     L1NaffleAdmin, L1NaffleBase, L1NaffleDiamond,
+                     L1NaffleView, SoulboundFoundersKey, TestNaffleDiamond,
+                     TestValueFacet, TestValueFacetUpgraded, accounts)
 from brownie.network.account import _PrivateKeyAccount
 
 
@@ -106,9 +96,9 @@ def deployed_soulbound(
 def deployed_founders_key_staking(
     deployed_soulbound, deployed_erc721a_mock, from_admin
 ) -> FoundersKeyStaking:
-    staking = FoundersKeyStaking.deploy(
-        deployed_erc721a_mock.address, deployed_soulbound.address, from_admin
-    )
+    staking = FoundersKeyStaking.deploy(from_admin)
+    staking.setFoundersKeyAddress(deployed_erc721a_mock.address, from_admin)
+    staking.setSouldboundFoundersKeyAddress(deployed_soulbound.address, from_admin)
     deployed_soulbound.grantRole(
         deployed_soulbound.STAKING_CONTRACT_ROLE(), staking.address, from_admin
     )

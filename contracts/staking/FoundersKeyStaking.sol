@@ -42,7 +42,7 @@ contract FoundersKeyStaking is Initializable, UUPSUpgradeable, ERC721HolderUpgra
         _disableInitializers();
     }
 
-    function initiliaze() initializer public {
+    function initialize() initializer public {
         __FoundersKeyStaking_init(
             0x02eaB30603Dad3E17D0bDA0f14A683F51475cD99,
             0x1Eddcb3a7E703f67495e9814b9518A1828ea0b79
