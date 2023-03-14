@@ -19,10 +19,11 @@ def _mint_and_stake(
     from_address,
     address,
     id,
+    duration=STAKING_DURATION_ONE_MONTH,
 ):
     erc721a.mint(address.address, id, from_admin)
     erc721a.approve(staking.address, id, from_address)
-    staking.stake(id, STAKING_DURATION_ONE_MONTH, from_address)
+    staking.stake(id, duration, from_address)
 
 
 def test_founders_key_staking_constructor(
@@ -251,6 +252,40 @@ def test_unstake_still_locked(
     )
     with reverts():
         deployed_founders_key_staking.unstake(TOKEN_ID_ONE, from_address)
+
+
+def test_unstake_second_token(
+    from_admin,
+    address,
+    from_address,
+    deployed_founders_key_staking,
+    deployed_soulbound,
+    deployed_erc721a_mock,
+):
+    _mint_and_stake(
+        deployed_founders_key_staking,
+        deployed_erc721a_mock,
+        from_admin,
+        from_address,
+        address,
+        TOKEN_ID_ONE,
+        STAKING_DURATION_THREE_MONTHS,
+    )
+    _mint_and_stake(
+        deployed_founders_key_staking,
+        deployed_erc721a_mock,
+        from_admin,
+        from_address,
+        address,
+        TOKEN_ID_TWO,
+        STAKING_DURATION_ONE_MONTH,
+    )
+    chain.sleep(THIRTYONE_DAYS_IN_SECONDS)
+    deployed_founders_key_staking.unstake(TOKEN_ID_TWO, from_address)
+    with reverts():
+        assert deployed_soulbound.ownerOf(TOKEN_ID_TWO)
+    assert deployed_erc721a_mock.ownerOf(TOKEN_ID_TWO) == address.address
+    assert deployed_founders_key_staking.userStakeInfo(address.address, 1)[0] == 0
 
 
 def test_unstake_id_does_not_exist(

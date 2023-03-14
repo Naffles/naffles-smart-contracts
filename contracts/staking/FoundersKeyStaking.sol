@@ -72,7 +72,10 @@ contract FoundersKeyStaking is Initializable, UUPSUpgradeable, ERC721HolderUpgra
         FoundersKeyAddress.transferFrom(msg.sender, address(this), _nftId);
 
         StakeInfo memory stakeInfo = StakeInfo(_nftId, block.timestamp, _stakingPeriod);
-        userStakeInfo[msg.sender].push(stakeInfo);
+        StakeInfo[] storage stakeInfoArray = userStakeInfo[msg.sender];
+        uint index = stakeInfoArray.length;
+        stakeInfoArray.push(stakeInfo);
+        nftIdToIndex[_nftId] = index;
         emit UserStaked(msg.sender, _nftId, block.timestamp, _stakingPeriod);
     }
 
