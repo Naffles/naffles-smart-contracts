@@ -68,6 +68,26 @@ def test_founders_key_staking_stake(
     assert info[2] == STAKING_DURATION_ONE_MONTH
 
 
+def test_founders_key_staking_stake_when_paused(
+    from_admin,
+    from_address,
+    address,
+    deployed_founders_key_staking,
+    deployed_soulbound,
+    deployed_erc721a_mock,
+):
+    deployed_founders_key_staking.pause(from_admin)
+    with reverts():
+        _mint_and_stake(
+            deployed_founders_key_staking,
+            deployed_erc721a_mock,
+            from_admin,
+            from_address,
+            address,
+            TOKEN_ID_ONE,
+        )
+
+
 def test_founders_key_staking_stake_multiple_times_same_nft(
     from_admin,
     address,
@@ -418,6 +438,28 @@ def test_get_best_staked_nft_infos(
     assert best_type == 4
     assert amount == 2
     assert best_date >= current_time
+
+
+def test_pause(deployed_founders_key_staking, from_admin):
+    deployed_founders_key_staking.pause(from_admin)
+    assert deployed_founders_key_staking.paused()
+
+
+def test_pause_not_owner(deployed_founders_key_staking, from_address):
+    with reverts():
+        deployed_founders_key_staking.pause(from_address)
+
+
+def test_unpause(deployed_founders_key_staking, from_admin):
+    deployed_founders_key_staking.pause(from_admin)
+    deployed_founders_key_staking.unpause(from_admin)
+    assert not deployed_founders_key_staking.paused()
+
+
+def test_unapuse_not_owner(deployed_founders_key_staking, from_admin, from_address):
+    deployed_founders_key_staking.pause(from_admin)
+    with reverts():
+        deployed_founders_key_staking.unpause(from_address)
 
 
 def test_upgrade_to(

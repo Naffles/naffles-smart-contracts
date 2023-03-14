@@ -150,6 +150,14 @@ contract FoundersKeyStaking is Initializable, UUPSUpgradeable, ERC721HolderUpgra
         SoulboundFoundersKeyAddress = ISoulboundFoundersKey(_soulboundFoundersKeyAddress);
     }
 
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
     uint256[42] private __gap;
