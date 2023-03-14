@@ -1,9 +1,10 @@
 import pytest
 from brownie import (Contract, ERC721AMock, ETHZkSyncMock, FoundersKeyStaking,
                      FoundersKeyStakingMock, L1NaffleAdmin, L1NaffleBase,
-                     L1NaffleDiamond, L1NaffleView, SoulboundFoundersKey,
-                     TestNaffleDiamond, TestValueFacet, TestValueFacetUpgraded,
-                     accounts)
+                     L1NaffleDiamond, L1NaffleView, L2NaffleAdmin,
+                     L2NaffleBase, L2NaffleDiamond, L2NaffleView,
+                     SoulboundFoundersKey, TestNaffleDiamond, TestValueFacet,
+                     TestValueFacetUpgraded, accounts)
 from brownie.network.account import _PrivateKeyAccount
 
 from scripts.staking.deploy_staking_contract import deploy
@@ -61,6 +62,30 @@ def deployed_l1_naffle_admin_facet(from_admin) -> L1NaffleAdmin:
 @pytest.fixture()
 def deployed_l1_naffle_view_facet(from_admin) -> L1NaffleView:
     facet = L1NaffleView.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_naffle_diamond(admin, from_admin) -> L2NaffleDiamond:
+    diamond = L2NaffleDiamond.deploy(admin, from_admin)
+    return diamond
+
+
+@pytest.fixture()
+def deployed_l2_naffle_base_facet(from_admin) -> L2NaffleBase:
+    facet = L2NaffleBase.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_naffle_admin_facet(from_admin) -> L2NaffleAdmin:
+    facet = L2NaffleAdmin.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_naffle_view_facet(from_admin) -> L2NaffleView:
+    facet = L2NaffleView.deploy(from_admin)
     return facet
 
 
