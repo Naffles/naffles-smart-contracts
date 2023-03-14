@@ -71,7 +71,6 @@ def test_create_naffle_invalid_end_time(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -108,7 +107,6 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -151,7 +149,6 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -193,7 +190,6 @@ def test_create_naffle_invalid_token_type(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -229,7 +225,6 @@ def test_create_naffle_invalid_token_type(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -265,7 +260,6 @@ def test_create_naffle_no_approval(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -302,7 +296,6 @@ def test_create_naffle_zksync_called(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):

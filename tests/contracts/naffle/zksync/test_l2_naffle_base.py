@@ -37,9 +37,7 @@ def test_create_naffle_not_allowed(
     deployed_l2_naffle_base_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
-    deployed_eth_zksync_mock,
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
