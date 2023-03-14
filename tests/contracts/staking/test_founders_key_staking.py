@@ -1,6 +1,6 @@
 import time
 
-from brownie import chain, reverts
+from brownie import Contract, chain, reverts
 
 TOKEN_ID_ONE = 1
 TOKEN_ID_TWO = 2
@@ -418,3 +418,17 @@ def test_get_best_staked_nft_infos(
     assert best_type == 4
     assert amount == 2
     assert best_date >= current_time
+
+
+def test_upgrade_to(
+    deployed_founders_key_staking, deployed_founders_key_staking_mock, from_admin, admin
+):
+    deployed_founders_key_staking.upgradeTo(
+        deployed_founders_key_staking_mock, from_admin
+    )
+    proxy = Contract.from_abi(
+        "FoundersKeyStakingMock",
+        deployed_founders_key_staking.address,
+        deployed_founders_key_staking_mock.abi,
+    )
+    assert proxy.test() == 1
