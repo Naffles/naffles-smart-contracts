@@ -1,14 +1,13 @@
 from brownie import (Contract, ERC1967Proxy, FoundersKeyStaking,
-                     SoulboundFoundersKey, accounts, interface)
+                     SoulboundFoundersKey, interface)
 
 
 def deploy(
-    private_key: str,
+    account=None,
     founders_key_address: str | None = None,
     soulbound_nft_address: str | None = None,
     publish_source: bool = True,
 ) -> str:
-    account = accounts.add(private_key)
     deployed = FoundersKeyStaking.deploy(
         {"from": account},
         publish_source=publish_source,
