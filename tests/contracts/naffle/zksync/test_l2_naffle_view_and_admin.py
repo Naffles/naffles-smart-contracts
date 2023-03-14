@@ -3,7 +3,7 @@ import datetime
 import brownie
 from brownie import L2NaffleAdmin
 
-from scripts.util import add_facet, get_selectors
+from scripts.util import add_facet, get_error_message, get_selectors
 from tests.contracts.naffle.zksync.test_l2_naffle_base import (
     ERC721,
     STANDARD_NAFFLE_TYPE,
@@ -34,7 +34,6 @@ def test_admin_facet_deployment(
 
 
 def test_get_and_set_platform_fee(
-    admin,
     from_admin,
     deployed_l2_naffle_diamond,
     deployed_l2_naffle_base_facet,
@@ -74,7 +73,6 @@ def test_set_platform_fee_not_admin(
 
 
 def test_get_and_set_free_ticket_ratio(
-    admin,
     from_admin,
     deployed_l2_naffle_diamond,
     deployed_l2_naffle_base_facet,
@@ -91,6 +89,24 @@ def test_get_and_set_free_ticket_ratio(
     admin_facet.setFreeTicketRatio(1, from_admin)
 
     assert view_facet.getFreeTicketRatio() == 1
+
+
+def test_set_free_ticket_ratio_cannot_be_zero(
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+    with brownie.reverts(get_error_message("FreeTicketRatioCannotBeZero")):
+        admin_facet.setFreeTicketRatio(0, from_admin)
 
 
 def test_set_free_ticket_ratio_not_admin(
@@ -113,7 +129,6 @@ def test_set_free_ticket_ratio_not_admin(
 
 
 def test_get_and_set_l1_naffle_contract_address(
-    admin,
     from_admin,
     deployed_l2_naffle_diamond,
     deployed_l2_naffle_base_facet,
@@ -192,7 +207,6 @@ def test_set_admin_address_not_admin(
 
 
 def test_get_naffle_by_id(
-    admin,
     address,
     from_admin,
     deployed_erc721a_mock,
