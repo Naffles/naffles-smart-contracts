@@ -27,7 +27,6 @@ def test_admin_facet_deployment(
 
 
 def test_get_and_set_minimum_naffle_duration(
-    admin,
     from_admin,
     deployed_l1_naffle_diamond,
     deployed_l1_naffle_base_facet,
@@ -66,7 +65,6 @@ def test_get_and_set_minimum_naffle_duration_not_admin(
 
 
 def test_get_and_set_minimum_paid_ticket_spots(
-    admin,
     from_admin,
     deployed_l1_naffle_diamond,
     deployed_l1_naffle_base_facet,
@@ -105,7 +103,6 @@ def test_get_and_set_minimum_paid_ticket_spots_not_admin(
 
 
 def test_get_and_set_minimum_ticket_price(
-    admin,
     from_admin,
     deployed_l1_naffle_diamond,
     deployed_l1_naffle_base_facet,
