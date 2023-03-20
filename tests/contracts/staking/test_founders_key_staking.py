@@ -1,6 +1,6 @@
 import time
 
-from brownie import chain, reverts
+from brownie import Contract, chain, reverts
 
 TOKEN_ID_ONE = 1
 TOKEN_ID_TWO = 2
@@ -19,10 +19,11 @@ def _mint_and_stake(
     from_address,
     address,
     id,
+    duration=STAKING_DURATION_ONE_MONTH,
 ):
     erc721a.mint(address.address, id, from_admin)
     erc721a.approve(staking.address, id, from_address)
-    staking.stake(id, STAKING_DURATION_ONE_MONTH, from_address)
+    staking.stake(id, duration, from_address)
 
 
 def test_founders_key_staking_constructor(
@@ -66,6 +67,26 @@ def test_founders_key_staking_stake(
     assert info[0] == TOKEN_ID_ONE
     assert info[1] >= curent_time
     assert info[2] == STAKING_DURATION_ONE_MONTH
+
+
+def test_founders_key_staking_stake_when_paused(
+    from_admin,
+    from_address,
+    address,
+    deployed_founders_key_staking,
+    deployed_soulbound,
+    deployed_erc721a_mock,
+):
+    deployed_founders_key_staking.pause(from_admin)
+    with reverts():
+        _mint_and_stake(
+            deployed_founders_key_staking,
+            deployed_erc721a_mock,
+            from_admin,
+            from_address,
+            address,
+            TOKEN_ID_ONE,
+        )
 
 
 def test_founders_key_staking_stake_multiple_times_same_nft(
@@ -231,6 +252,40 @@ def test_unstake_still_locked(
     )
     with reverts():
         deployed_founders_key_staking.unstake(TOKEN_ID_ONE, from_address)
+
+
+def test_unstake_second_token(
+    from_admin,
+    address,
+    from_address,
+    deployed_founders_key_staking,
+    deployed_soulbound,
+    deployed_erc721a_mock,
+):
+    _mint_and_stake(
+        deployed_founders_key_staking,
+        deployed_erc721a_mock,
+        from_admin,
+        from_address,
+        address,
+        TOKEN_ID_ONE,
+        STAKING_DURATION_THREE_MONTHS,
+    )
+    _mint_and_stake(
+        deployed_founders_key_staking,
+        deployed_erc721a_mock,
+        from_admin,
+        from_address,
+        address,
+        TOKEN_ID_TWO,
+        STAKING_DURATION_ONE_MONTH,
+    )
+    chain.sleep(THIRTYONE_DAYS_IN_SECONDS)
+    deployed_founders_key_staking.unstake(TOKEN_ID_TWO, from_address)
+    with reverts():
+        assert deployed_soulbound.ownerOf(TOKEN_ID_TWO)
+    assert deployed_erc721a_mock.ownerOf(TOKEN_ID_TWO) == address.address
+    assert deployed_founders_key_staking.userStakeInfo(address.address, 1)[0] == 0
 
 
 def test_unstake_id_does_not_exist(
@@ -418,3 +473,39 @@ def test_get_best_staked_nft_infos(
     assert best_type == 4
     assert amount == 2
     assert best_date >= current_time
+
+
+def test_pause(deployed_founders_key_staking, from_admin):
+    deployed_founders_key_staking.pause(from_admin)
+    assert deployed_founders_key_staking.paused()
+
+
+def test_pause_not_owner(deployed_founders_key_staking, from_address):
+    with reverts():
+        deployed_founders_key_staking.pause(from_address)
+
+
+def test_unpause(deployed_founders_key_staking, from_admin):
+    deployed_founders_key_staking.pause(from_admin)
+    deployed_founders_key_staking.unpause(from_admin)
+    assert not deployed_founders_key_staking.paused()
+
+
+def test_unapuse_not_owner(deployed_founders_key_staking, from_admin, from_address):
+    deployed_founders_key_staking.pause(from_admin)
+    with reverts():
+        deployed_founders_key_staking.unpause(from_address)
+
+
+def test_upgrade_to(
+    deployed_founders_key_staking, deployed_founders_key_staking_mock, from_admin, admin
+):
+    deployed_founders_key_staking.upgradeTo(
+        deployed_founders_key_staking_mock, from_admin
+    )
+    proxy = Contract.from_abi(
+        "FoundersKeyStakingMock",
+        deployed_founders_key_staking.address,
+        deployed_founders_key_staking_mock.abi,
+    )
+    assert proxy.test() == 1
