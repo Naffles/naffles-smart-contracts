@@ -99,6 +99,63 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         );
     }
 
+    function _consumeMessageFromL2(
+        address _zkSyncAddress,
+        uint256 _l2BlockNumber,
+        uint256 _index,
+        uint16 _l2TxNumberInBlock,
+        bytes calldata _message,
+        bytes32[] calldata _proof
+    ) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+
+        if (layout.isL2ToL1MessageProcessed[_l2BlockNumber][_index]) {
+            revert MessageAlreadyProcessed();
+        }
+
+        IZkSync zksync = IZkSync(_zkSyncAddress);
+
+        L2Message memory message = L2Message({
+            sender: layout.zkSyncNaffleContractAddress,
+            data: _message,
+            txNumberInBlock: _l2TxNumberInBlock
+        });
+
+        bool success = zksync.proveL2MessageInclusion(
+            _l2BlockNumber,
+            _index,
+            message,
+            _proof
+        );
+        if (!success) {
+            revert FailedMessageInclusion();
+        }
+
+        layout.isL2ToL1MessageProcessed[_l2BlockNumber][_index] = true;
+
+        _processL2Message(_message);
+    }
+
+    function _processL2Message(bytes memory _message) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+
+        (string memory action, uint256 naffleId) = abi.decode(_message, (string, uint256));
+
+        if (keccak256(abi.encodePacked(action)) == keccak256(abi.encodePacked("cancel"))) {
+            _cancelNaffle(layout.naffles[naffleId]);
+        } else {
+            revert InvalidAction();
+        }
+    }
+
+    function _cancelNaffle(NaffleTypes.L1Naffle storage _naffle) internal {
+        if (_naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
+            IERC721(_naffle.tokenAddress).transferFrom(address(this), _naffle.owner, _naffle.nftId);
+        } else if (_naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
+            IERC1155(_naffle.tokenAddress).safeTransferFrom(address(this), _naffle.owner, _naffle.nftId, 1, bytes(""));
+        }
+    }
+
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }

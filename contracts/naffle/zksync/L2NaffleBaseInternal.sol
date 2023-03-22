@@ -10,6 +10,7 @@ import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleBaseInternal.sol";
 import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
+import "@zksync/contracts/l2/system-contracts/Constants.sol";
 import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
 import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
 
@@ -95,7 +96,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     function _adminCancelNaffle(
         uint256 _naffleId
-    ) internal {
+    ) internal returns (bytes32 messageHash){
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
         if (naffle.ethTokenAddress == address(0)) {
@@ -105,7 +106,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert InvalidNaffleStatus(naffle.status);
         }
         naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
-        // todo - L1 communication.
+        bytes memory message = abi.encodePacked("cancel", _naffleId);
+        messageHash = L1_MESSENGER_CONTRACT.sendToL1(message);
     }
 
     function _getAdminRole() internal view returns (bytes32) {

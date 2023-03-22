@@ -334,3 +334,61 @@ def test_create_naffle_zksync_called(
         from_address,
     )
     assert deployed_eth_zksync_mock.called()
+
+
+def test_process_message_from_l2(
+    from_address,
+    from_admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+    deployed_founders_key_staking,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    zksync_l1_message_account
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    setup_l1_naffle_contract(
+        admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
+    )
+    deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
+    deployed_erc721a_mock.setApprovalForAll(
+        deployed_l1_naffle_diamond.address, True, from_address
+    )
+    nft_id = 1
+
+    base_facet.createNaffle(
+        deployed_erc721a_mock.address,
+        nft_id,
+        MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE,
+        datetime.datetime.now().timestamp() + 100000,
+        STANDARD_NAFFLE_TYPE,
+        from_address,
+    )
+
+    _naffleId = 1
+
+    _zkSyncAddress = zksync_l1_message_account.address
+    _l2BlockNumber = 123
+    _index = 0
+    _l2TxNumberInBlock = 1
+    _message = abi.encodePacked("cancel", _naffleId)
+    _proof = ["0x01"]
+
+    base_facet.processMessageFromL2(
+        _zkSyncAddress,
+        _l2BlockNumber,
+        _index,
+        _l2TxNumberInBlock,
+        _message,
+        _proof,
+        {"from": _zkSyncAddress}
+    );

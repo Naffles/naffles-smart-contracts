@@ -18,6 +18,7 @@ library L1NaffleBaseStorage {
         uint256 minimumPaidTicketPriceInWei;
         mapping(uint256 => NaffleTypes.L1Naffle) naffles;
         mapping(uint256 => address) naffleWinner;
+        mapping(uint256 => mapping(uint256 => bool)) isL2ToL1MessageProcessed;
     }
 
     function layout() internal pure returns (Layout storage s) {

@@ -25,7 +25,7 @@ from brownie import (
     TestValueFacetUpgraded,
     accounts,
 )
-from brownie.network.account import _PrivateKeyAccount
+from brownie.network.account import _PrivateKeyAccount, Account
 
 from tests.test_helper import L2Diamonds
 
@@ -234,3 +234,7 @@ def deployed_founders_key_staking(
         deployed_soulbound.STAKING_CONTRACT_ROLE(), staking.address, from_admin
     )
     return staking
+
+@pytest.fixture
+def zksync_l1_message_account() -> Account:
+    return accounts.at('0x79B2f0CbED2a565C925A8b35f2B402710564F8a2', force=True)

@@ -12,7 +12,7 @@ contract ETHZkSyncMock is IMailbox {
         L2Message calldata _message,
         bytes32[] calldata _proof
     ) external view returns (bool) {
-        revert("Not implemented");
+        return true;
     }
 
     function proveL2LogInclusion(
@@ -21,7 +21,7 @@ contract ETHZkSyncMock is IMailbox {
         L2Log memory _log,
         bytes32[] calldata _proof
     ) external view returns (bool) {
-        revert("Not implemented");
+        return true;
     }
 
     function proveL1ToL2TransactionStatus(
@@ -32,7 +32,7 @@ contract ETHZkSyncMock is IMailbox {
         bytes32[] calldata _merkleProof,
         TxStatus _status
     ) external view returns (bool) {
-        revert("Not implemented");
+        return true;
     }
 
     function serializeL2Transaction(

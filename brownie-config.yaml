@@ -8,9 +8,10 @@ dotenv: .env
 compiler:
     solc:
         version: "0.8.17"
+        viaIR: True
         optimizer:
             enabled: true
-            runs: 200
+            runs: 1
         remappings:
             - '@erc721a=chiru-labs/ERC721A@4.2.3'
             - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0'

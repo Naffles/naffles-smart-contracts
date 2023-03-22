@@ -13,7 +13,5 @@ interface IL1NaffleBase {
         NaffleTypes.NaffleType _naffleType
     ) external returns (uint256 naffleId, bytes32 txHash);
 
-    function adminCancelNaffle(uint256 _naffleId) external;
-
     error NotSupported();
 }
