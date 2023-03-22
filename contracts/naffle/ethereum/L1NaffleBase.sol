@@ -7,11 +7,11 @@ import "@solidstate/contracts/access/access_control/AccessControl.sol";
 import "@solidstate/contracts/interfaces/IERC721Receiver.sol";
 import "@solidstate/contracts/interfaces/IERC1155Receiver.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
-import "@zksync/contracts/l2/system-contracts/Constants.sol";
+
 
 contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
      modifier OnlyZkSyncContract() {
-        if (msg.sender != address(L1_MESSENGER_CONTRACT)) {
+        if (msg.sender != address(_getL1MessengerContract())) {
             revert NotAllowed();
         }
         _;

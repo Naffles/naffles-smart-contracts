@@ -10,9 +10,9 @@ import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleBaseInternal.sol";
 import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
-import "@zksync/contracts/l2/system-contracts/Constants.sol";
 import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
 import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
+import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     function _createNaffle(
@@ -107,7 +107,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
         bytes memory message = abi.encodePacked("cancel", _naffleId);
-        messageHash = L1_MESSENGER_CONTRACT.sendToL1(message);
+        messageHash = L2NaffleBaseStorage.L1_MESSENGER_CONTRACT.sendToL1(message);
     }
 
     function _getAdminRole() internal view returns (bytes32) {
@@ -156,5 +156,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     function _getOpenEntryTicketContractAddress() internal view returns (address) {
         return L2NaffleBaseStorage.layout().openEntryTicketContractAddress;
+    }
+
+    function _getL1MessengerContract() internal view returns (IL1Messenger) {
+        return L2NaffleBaseStorage.L1_MESSENGER_CONTRACT;
     }
 }
