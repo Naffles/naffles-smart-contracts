@@ -467,3 +467,27 @@ def test_use_open_entry_tickets_success(
 
     # 7 is number of open entry tickets
     assert naffle[7] == 1
+
+
+def test_claim_refund_invalid_naffle_id(
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+
+    with brownie.reverts(get_error_message("InvalidNaffleId", ["uint256"], [2])):
+        l2_diamonds.naffle_base_facet.claimRefund(2, from_admin)
+
+
+def test_claim_refund(
+
+) {
+
+}
