@@ -2,11 +2,13 @@ import datetime
 
 import brownie
 from brownie import ZERO_ADDRESS
+from web3 import Web3
 
 from scripts.util import ZKSYNC_ADDRESS, get_error_message
 from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
     setup_diamond_with_facets,
 )
+from tests.test_helper import ERC721
 
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
@@ -336,7 +338,8 @@ def test_create_naffle_zksync_called(
     assert deployed_eth_zksync_mock.called()
 
 
-def test_process_message_from_l2(
+def test_process_message_from_l2_send_nft_back(
+    address,
     from_address,
     from_admin,
     deployed_l1_naffle_diamond,
@@ -380,15 +383,36 @@ def test_process_message_from_l2(
     _l2BlockNumber = 123
     _index = 0
     _l2TxNumberInBlock = 1
-    _message = abi.encodePacked("cancel", _naffleId)
     _proof = ["0x01"]
 
-    base_facet.processMessageFromL2(
+    from eth_abi import encode
+
+    action = "cancel"
+    one = 1
+
+    encoded_data = encode(["string", "uint256"], [action, one])
+    hex_string = encoded_data.hex()
+    base_facet.consumeMessageFromL2(
         _zkSyncAddress,
         _l2BlockNumber,
         _index,
         _l2TxNumberInBlock,
-        _message,
+        # cancel, 1
+        encoded_data,
         _proof,
         {"from": _zkSyncAddress}
-    );
+    )
+
+
+    assert view_facet.getNaffleById(_naffleId, from_address) == (
+        deployed_erc721a_mock.address,
+        nft_id,
+        _naffleId,
+        address,
+        ZERO_ADDRESS,
+        False,
+        True,
+        ERC721,
+    )
+
+

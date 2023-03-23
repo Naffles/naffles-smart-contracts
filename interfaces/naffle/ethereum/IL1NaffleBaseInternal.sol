@@ -9,4 +9,5 @@ interface IL1NaffleBaseInternal {
     error MessageAlreadyProcessed();
     error FailedMessageInclusion();
     error InvalidAction();
+    error printString(address message);
 }

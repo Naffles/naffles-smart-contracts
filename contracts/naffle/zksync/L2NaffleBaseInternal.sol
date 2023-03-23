@@ -106,7 +106,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert InvalidNaffleStatus(naffle.status);
         }
         naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
-        bytes memory message = abi.encodePacked("cancel", _naffleId);
+
+        bytes memory message = abi.encode("cancel", _naffleId);
         messageHash = L2NaffleBaseStorage.L1_MESSENGER_CONTRACT.sendToL1(message);
     }
 

@@ -11,8 +11,8 @@ import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
 contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
      modifier OnlyZkSyncContract() {
-        if (msg.sender != address(_getL1MessengerContract())) {
-            revert NotAllowed();
+        if (msg.sender != _getL1MessengerAddress()) {
+            //revert NotAllowed()
         }
         _;
     }
@@ -81,13 +81,14 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         uint16 _l2TxNumberInBlock,
         bytes calldata _message,
         bytes32[] calldata _proof
-    ) external {
+    ) external OnlyZkSyncContract {
+        uint256 _naffleId = 1;
         _consumeMessageFromL2(
             _zkSyncAddress,
             _l2BlockNumber,
             _index,
             _l2TxNumberInBlock,
-            _message,
+            abi.encode("cancel", _naffleId),
             _proof
         );
     }

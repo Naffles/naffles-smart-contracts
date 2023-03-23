@@ -9,7 +9,8 @@ library L1NaffleBaseStorage {
         keccak256("naffles.contracts.naffle.ethereum.L1NaffleBaseStorage");
 
     uint160 constant SYSTEM_CONTRACTS_OFFSET = 0x8000;
-    IL1Messenger constant L1_MESSENGER_CONTRACT = IL1Messenger(address(SYSTEM_CONTRACTS_OFFSET + 0x08));
+    address constant L1_MESSENGER_ADDRESS = address(SYSTEM_CONTRACTS_OFFSET + 0x08);
+    IL1Messenger constant L1_MESSENGER_CONTRACT = IL1Messenger(L1_MESSENGER_ADDRESS);
 
     struct Layout {
         address zkSyncAddress;
