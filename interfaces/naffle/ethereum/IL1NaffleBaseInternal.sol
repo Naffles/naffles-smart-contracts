@@ -9,4 +9,6 @@ interface IL1NaffleBaseInternal {
     error MessageAlreadyProcessed();
     error FailedMessageInclusion();
     error InvalidAction();
+    error notWinner();
+    error NFTAlreadyClaimed();
 }

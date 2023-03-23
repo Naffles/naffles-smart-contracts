@@ -91,4 +91,8 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _proof
         );
     }
+
+    function claimNFT(uint256 _naffleId) external {
+        _claimNFT(_naffleId);
+    }
 }
