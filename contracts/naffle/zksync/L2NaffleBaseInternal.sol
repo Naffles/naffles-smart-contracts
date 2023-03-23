@@ -108,7 +108,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
 
         bytes memory message = abi.encode("cancel", _naffleId);
-        messageHash = L2NaffleBaseStorage.L1_MESSENGER_CONTRACT.sendToL1(message);
+        messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
     }
 
     function _claimRefund(
@@ -182,7 +182,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         return L2NaffleBaseStorage.layout().openEntryTicketContractAddress;
     }
 
-    function _getL1MessengerContract() internal view returns (IL1Messenger) {
-        return L2NaffleBaseStorage.L1_MESSENGER_CONTRACT;
+    function _setL1MessengerContractAddress(address _l1MessengerContractAddress) internal {
+        L2NaffleBaseStorage.layout().l1MessengerContractAddress = _l1MessengerContractAddress;
     }
 }

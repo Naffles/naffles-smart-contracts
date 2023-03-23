@@ -37,6 +37,7 @@ class L2Diamonds:
         deployed_l2_naffle_view_facet,
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_base_facet,
+        deployed_l1_messenger_mock,
     ):
         from tests.contracts.naffle.zksync.test_l2_naffle_base import (
             setup_l2_naffle_contract,
@@ -103,6 +104,7 @@ class L2Diamonds:
             from_admin["from"],
             deployed_l2_paid_ticket_diamond,
             deployed_l2_open_entry_ticket_diamond,
+            deployed_l1_messenger_mock,
             from_admin,
         )
         setup_paid_ticket_contract(

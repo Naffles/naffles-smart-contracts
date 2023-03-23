@@ -3,6 +3,7 @@ from brownie import (
     ERC721AMock,
     ETHZkSyncMock,
     FoundersKeyStaking,
+    L1MessengerMock,
     L1NaffleAdmin,
     L1NaffleBase,
     L1NaffleDiamond,
@@ -174,6 +175,7 @@ def l2_diamonds(
     deployed_l2_naffle_view_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_base_facet,
+    deployed_l1_messenger_mock,
 ) -> L2NaffleDiamond:
     return L2Diamonds(
         from_admin,
@@ -189,6 +191,7 @@ def l2_diamonds(
         deployed_l2_naffle_view_facet,
         deployed_l2_naffle_admin_facet,
         deployed_l2_naffle_base_facet,
+        deployed_l1_messenger_mock
     )
 
 
@@ -240,6 +243,12 @@ def deployed_founders_key_staking(
     )
     return staking
 
+
 @pytest.fixture
 def zksync_l1_message_account() -> Account:
     return accounts.at('0x79B2f0CbED2a565C925A8b35f2B402710564F8a2', force=True)
+
+
+@pytest.fixture
+def deployed_l1_messenger_mock(from_admin) -> L1MessengerMock:
+    return L1MessengerMock.deploy(from_admin)

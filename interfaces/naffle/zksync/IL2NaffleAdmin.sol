@@ -9,4 +9,5 @@ interface IL2NaffleAdmin {
     function setPaidTicketContractAddress(address _paidTicketContractAddress) external;
     function setOpenEntryTicketContractAddress(address _openEntryTicketContractAddress) external;
     function adminCancelNaffle(uint256 _naffleId) external;
+    function setL1MessengerContractAddress(address _l1MessengerContractAddress) external;
 }
