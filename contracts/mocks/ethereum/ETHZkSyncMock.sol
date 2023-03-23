@@ -5,6 +5,20 @@ import "@zksync/contracts/l1/zksync/interfaces/IMailbox.sol";
 
 contract ETHZkSyncMock is IMailbox {
     bool public called = false;
+    bool proveL2MessageInclusionResult = true;
+    bool proveL2LogInclusionResult = true;
+    bool proveL1ToL2TransactionStatusResult = true;
+
+
+    constructor(
+        bool _proveL2MessageInclusionResult,
+        bool _proveL2LogInclusionResult,
+        bool _proveL1ToL2TransactionStatusResult
+    ) {
+        proveL2MessageInclusionResult = _proveL2MessageInclusionResult;
+        proveL2LogInclusionResult = _proveL2LogInclusionResult;
+        proveL1ToL2TransactionStatusResult = _proveL1ToL2TransactionStatusResult;
+    }
 
     function proveL2MessageInclusion(
         uint256 _blockNumber,
@@ -12,7 +26,7 @@ contract ETHZkSyncMock is IMailbox {
         L2Message calldata _message,
         bytes32[] calldata _proof
     ) external view returns (bool) {
-        return true;
+        return proveL2MessageInclusionResult;
     }
 
     function proveL2LogInclusion(
@@ -21,7 +35,7 @@ contract ETHZkSyncMock is IMailbox {
         L2Log memory _log,
         bytes32[] calldata _proof
     ) external view returns (bool) {
-        return true;
+        return proveL2LogInclusionResult;
     }
 
     function proveL1ToL2TransactionStatus(
@@ -32,7 +46,7 @@ contract ETHZkSyncMock is IMailbox {
         bytes32[] calldata _merkleProof,
         TxStatus _status
     ) external view returns (bool) {
-        return true;
+        return proveL1ToL2TransactionStatusResult;
     }
 
     function serializeL2Transaction(

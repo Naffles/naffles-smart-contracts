@@ -211,7 +211,12 @@ def deployed_erc721a_mock(from_admin) -> ERC721AMock:
 
 @pytest.fixture
 def deployed_eth_zksync_mock(from_admin) -> ETHZkSyncMock:
-    return ETHZkSyncMock.deploy(from_admin)
+    return ETHZkSyncMock.deploy(True, True, True, from_admin)
+
+
+@pytest.fixture
+def deployed_eth_zksync_mock_false_return_values(from_admin) -> ETHZkSyncMock:
+    return ETHZkSyncMock.deploy(False, False, False, from_admin)
 
 
 @pytest.fixture
