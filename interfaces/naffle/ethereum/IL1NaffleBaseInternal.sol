@@ -11,5 +11,5 @@ interface IL1NaffleBaseInternal {
     error InvalidAction();
     error notWinner();
     error NFTAlreadyClaimed();
-    error InvalidNaffleId(uint256 _naffleId);
+    error InvalidNaffleId(uint256 naffleId);
 }

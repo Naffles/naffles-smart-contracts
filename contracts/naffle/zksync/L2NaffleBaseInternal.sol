@@ -112,8 +112,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     function _claimRefund(
-        uint256 _naffleId, uint256[] _open_entry_ticket_ids, uint256[] _paid_ticket_ids
-    ) external override {
+        uint256 _naffleId, uint256[] memory _open_entry_ticket_ids, uint256[] memory _paid_ticket_ids
+    ) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 

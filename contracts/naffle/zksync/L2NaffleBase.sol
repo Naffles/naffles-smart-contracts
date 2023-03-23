@@ -42,7 +42,11 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         );
     }
 
-    function claimRefund(uint256 _naffleId, uint256[] _open_entry_ticket_ids, uint256[] _paid_ticket_ids) external {
+    function claimRefund(
+        uint256 _naffleId,
+        uint256[] memory _open_entry_ticket_ids,
+        uint256[] memory _paid_ticket_ids
+    ) external {
         _claimRefund(
             _naffleId,
             _open_entry_ticket_ids,

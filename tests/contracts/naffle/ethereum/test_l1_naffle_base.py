@@ -828,5 +828,5 @@ def test_claim_nft_invalid_naffle_id(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
 
-    with brownie.reverts(get_error_message("invalidNaffleId", ['uint256'], [0])):
-        base_facet.claimNFT(0, from_address)
+    with brownie.reverts(get_error_message("InvalidNaffleId", ['uint256'], [2])):
+        base_facet.claimNFT(2, from_address)
