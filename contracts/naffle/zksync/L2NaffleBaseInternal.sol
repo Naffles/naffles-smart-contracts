@@ -111,6 +111,28 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         messageHash = L2NaffleBaseStorage.L1_MESSENGER_CONTRACT.sendToL1(message);
     }
 
+    function _claimRefund(
+        uint256 _naffleId, uint256[] _open_entry_ticket_ids, uint256[] _paid_ticket_ids
+    ) external override {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+
+        // for every open entry tickets, we un assign the naffle id and send the ticket back to the owner
+        for (uint256 i = 0; i < _open_entry_ticket_ids.length; i++) {
+            IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).detachFromNaffle(_naffleId, _open_entry_ticket_ids[i]);
+        }
+        // for every paid ticket we burn the ticket and send the funds back to the owner
+        for (uint256 i = 0; i < _paid_ticket_ids.length; i++) {
+            IL2PaidTicketBase(layout.paidTicketContractAddress).refundAndBurnTicket(_naffleId, _paid_ticket_ids[i]);
+        }
+    }
+
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }

@@ -17,4 +17,6 @@ interface IL2NaffleBase {
         uint256[] memory _ticketIds,
         uint256 _naffleId
     ) external;
+
+    function claimRefund(uint256 _naffleId, uint256[] _open_entry_ticket_ids, uint256[] _paid_ticket_ids) external;
 }
