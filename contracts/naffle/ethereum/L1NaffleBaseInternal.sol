@@ -150,6 +150,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
 
+        if (naffle.tokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+
         if (naffle.nftClaimed) {
             revert NFTAlreadyClaimed();
         }

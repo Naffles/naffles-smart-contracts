@@ -802,3 +802,31 @@ def test_claim_nft_not_allowed(
 
     with brownie.reverts(get_error_message("NotAllowed")):
         base_facet.claimNFT(_naffleId, from_admin)
+
+
+def test_claim_nft_invalid_naffle_id(
+    address,
+    from_address,
+    from_admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+    deployed_founders_key_staking,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    zksync_l1_message_account
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    setup_l1_naffle_contract(
+        admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
+    )
+
+    with brownie.reverts(get_error_message("invalidNaffleId", ['uint256'], [0])):
+        base_facet.claimNFT(0, from_address)
