@@ -20,7 +20,7 @@ interface IL1NaffleBase {
         bytes calldata _message,
         bytes32[] calldata _proof
     ) external;
-    function claimNft(uint256 _naffleId) external;
+    function claimNFT(uint256 _naffleId) external;
 
     error NotSupported();
 }

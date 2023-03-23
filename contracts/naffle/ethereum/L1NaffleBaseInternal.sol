@@ -64,7 +64,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             naffleId: naffleId,
             owner: msg.sender,
             winner: address(0),
-            winnerClaimed: false,
+            nftClaimed: false,
             cancelled: false,
             naffleTokenType: tokenContractType
         });
@@ -150,19 +150,22 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
 
-        if (naffle.winner != msg.sender) {
-            revert NotWinner();
-        }
-
-        if (naffle.winnerClaimed) {
+        if (naffle.nftClaimed) {
             revert NFTAlreadyClaimed();
         }
 
-        naffle.winnerClaimed = true;
+        if (
+            naffle.cancelled && naffle.owner != msg.sender ||
+            !naffle.cancelled && naffle.winner != msg.sender
+        ) {
+            revert NotAllowed();
+        }
+
+        naffle.nftClaimed = true;
 
         if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
             IERC721(naffle.tokenAddress).transferFrom(address(this), msg.sender, naffle.nftId);
-        } else // can't be another type because we check this on creation.
+        } else { // can't be another type because we check this on creation.
             IERC1155(naffle.tokenAddress).safeTransferFrom(address(this), msg.sender, naffle.nftId, 1, bytes(""));
         }
     }
