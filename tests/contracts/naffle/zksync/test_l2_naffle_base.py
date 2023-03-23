@@ -27,12 +27,14 @@ def setup_l2_naffle_contract(
     l1_naffle_contract,
     paid_ticket_contract,
     open_entry_ticket_contract,
+    l1_messenger_contract,
     from_admin,
 ):
     admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
     admin_facet.setOpenEntryRatio(FREE_TICKET_RATIO, from_admin)
     admin_facet.setL1NaffleContractAddress(l1_naffle_contract.address, from_admin)
     admin_facet.setPaidTicketContractAddress(paid_ticket_contract.address, from_admin)
+    admin_facet.setL1MessengerContractAddress(l1_messenger_contract.address, from_admin)
     admin_facet.setOpenEntryTicketContractAddress(
         open_entry_ticket_contract.address, from_admin
     )
@@ -49,6 +51,7 @@ def test_create_naffle_not_allowed(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    deployed_l1_messenger_mock
 ):
     (
         access_control,
@@ -67,6 +70,7 @@ def test_create_naffle_not_allowed(
         from_admin["from"],
         from_admin["from"],
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -98,6 +102,7 @@ def test_create_naffle(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    deployed_l1_messenger_mock,
 ):
     (
         access_control,
@@ -116,6 +121,7 @@ def test_create_naffle(
         from_admin["from"],
         from_admin["from"],
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
     endtime = datetime.datetime.now().timestamp() + 1000
@@ -168,6 +174,7 @@ def test_buy_tickets_invalid_naffle_id(
     deployed_l2_naffle_base_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
+    deployed_l1_messenger_mock,
     deployed_erc721a_mock,
 ):
     (
@@ -188,6 +195,7 @@ def test_buy_tickets_invalid_naffle_id(
         from_admin["from"],
         deployed_erc721a_mock,
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -203,6 +211,7 @@ def test_buy_tickets_invalid_naffle_status(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
+    deployed_l1_messenger_mock,
 ):
     # can't test yet because no code available to set naffle status
     return
@@ -224,6 +233,7 @@ def test_buy_tickets_invalid_naffle_status(
         from_admin["from"],
         deployed_erc721a_mock,
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -255,6 +265,7 @@ def test_buy_tickets_not_enough_funds(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
+    deployed_l1_messenger_mock,
 ):
     (
         access_control,
@@ -274,6 +285,7 @@ def test_buy_tickets_not_enough_funds(
         from_admin["from"],
         deployed_erc721a_mock,
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -305,6 +317,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
+    deployed_l1_messenger_mock,
 ):
     (
         access_control,
@@ -324,6 +337,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
         from_admin["from"],
         deployed_erc721a_mock,
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
