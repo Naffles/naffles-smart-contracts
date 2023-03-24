@@ -126,11 +126,15 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         // for every open entry tickets, we un assign the naffle id and send the ticket back to the owner
         for (uint256 i = 0; i < _open_entry_ticket_ids.length; i++) {
-            IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).detachFromNaffle(_naffleId, _open_entry_ticket_ids[i]);
+            IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).detachFromNaffle(_naffleId, _open_entry_ticket_ids[i], msg.sender);
         }
         // for every paid ticket we burn the ticket and send the funds back to the owner
         for (uint256 i = 0; i < _paid_ticket_ids.length; i++) {
-            IL2PaidTicketBase(layout.paidTicketContractAddress).refundAndBurnTicket(_naffleId, _paid_ticket_ids[i]);
+            IL2PaidTicketBase(layout.paidTicketContractAddress).detachAndBurnTicket(_naffleId, _paid_ticket_ids[i], msg.sender);
+        }
+        (bool success, ) = msg.sender.call{value: naffle.ticketPriceInWei * _paid_ticket_ids.length}("");
+        if (!success) {
+            revert RefundFailed();
         }
     }
 

@@ -10,4 +10,5 @@ interface IL2NaffleBaseInternal {
     error NotEnoughFunds(uint256 amount);
     error NotEnoughPaidTicketSpots(uint256 amount);
     error NotEnoughOpenEntryTicketSpots(uint256 amount);
+    error RefundFailed();
 }

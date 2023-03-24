@@ -7,6 +7,6 @@ interface IL2PaidTicketBaseInternal {
     error NotAllowed();
     error NaffleNotCancelled(NaffleTypes.NaffleStatus status);
     error InvalidTicketId(uint256 ticketId);
-    error RefundFailed();
+    error RefundFailed(uint256 price);
     error NotTicketOwner(address sender);
 }

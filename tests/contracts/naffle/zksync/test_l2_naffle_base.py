@@ -497,11 +497,52 @@ def test_claim_refund_invalid_naffle_id(
     )
 
     with brownie.reverts(get_error_message("InvalidNaffleId", ["uint256"], [2])):
-        l2_diamonds.naffle_base_facet.claimRefund(2, from_admin)
+        l2_diamonds.naffle_base_facet.claimRefund(2, [], [], from_admin)
 
 
-def test_claim_refund(
+def test_claim_refund_invalid_naffle_status(
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
 
-) {
+    with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [0])):
+        l2_diamonds.naffle_base_facet.claimRefund(1, [], [], from_admin)
 
-}
+
+def test_claim_refund_success(
+    from_address,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200
+    )
+    l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 1, from_address)
+    l2_diamonds.naffle_admin_facet.adminCancelNaffle(1, from_admin)
+    l2_diamonds.naffle_base_facet.claimRefund(1, [1], [1], from_address)
+
+    assert (
+        interface.IERC721Base(
+            l2_diamonds.deployed_l2_paid_ticket_diamond.address
+        ).balanceOf(address, from_admin)
+        == 1
+    )
+
+    assert l2_diamonds.naffle_base_facet.balance() == TICKET_PRICE
+    # get open entry ticket by id and check that its reset
+    open_entry_ticket = l2_diamonds.open_entry_view_facet.getOpenEntryTicketById(1, from_admin)
+    assert open_entry_ticket[0] == 0 # naffle_id

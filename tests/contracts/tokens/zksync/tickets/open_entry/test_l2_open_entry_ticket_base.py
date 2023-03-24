@@ -1,4 +1,5 @@
 import brownie
+from brownie import accounts
 
 from scripts.util import get_error_message
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
@@ -195,7 +196,7 @@ def test_detach_from_naffle_naffle_not_cancelled(
         get_error_message("NaffleNotCancelled", ["uint8"], [NAFFLE_STATUS_ACTIVE])
     ):
         l2_diamonds.open_entry_base_facet.detachFromNaffle(
-            NAFFLE_ID, ticket_id_on_naffle, from_admin
+            NAFFLE_ID, ticket_id_on_naffle, address, {"from": accounts.at(l2_diamonds.naffle_base_facet.address, force=True)}
         )
 
 
@@ -218,7 +219,7 @@ def test_detach_from_naffle_invalid_ticket_id(
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
 
     with brownie.reverts(get_error_message("InvalidTicketId", ["uint256"], [2])):
-        l2_diamonds.open_entry_base_facet.detachFromNaffle(NAFFLE_ID, 2, from_address)
+        l2_diamonds.open_entry_base_facet.detachFromNaffle(NAFFLE_ID, 2, address, {"from": accounts.at(l2_diamonds.naffle_base_facet.address, force=True)})
 
 
 def test_detach_from_naffle_not_owner(
@@ -242,7 +243,7 @@ def test_detach_from_naffle_not_owner(
         get_error_message("NotTicketOwner", ["address"], [admin.address])
     ):
         l2_diamonds.open_entry_base_facet.detachFromNaffle(
-            NAFFLE_ID, ticket_id_on_naffle, from_admin
+            NAFFLE_ID, ticket_id_on_naffle, admin, {"from": accounts.at(l2_diamonds.naffle_base_facet.address, force=True)}
         )
 
 
@@ -262,8 +263,9 @@ def test_detach_from_naffle_success(
         NAFFLE_ID, [ticket_id_on_naffle], ticket_id_on_naffle, address, from_address
     )
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
+
     l2_diamonds.open_entry_base_facet.detachFromNaffle(
-        NAFFLE_ID, ticket_id_on_naffle, from_address
+        NAFFLE_ID, ticket_id_on_naffle, address, {"from": accounts.at(l2_diamonds.naffle_base_facet.address, force=True)}
     )
     ticket = l2_diamonds.open_entry_view_facet.getOpenEntryTicketById(1)
     assert ticket == (0, 0, False)

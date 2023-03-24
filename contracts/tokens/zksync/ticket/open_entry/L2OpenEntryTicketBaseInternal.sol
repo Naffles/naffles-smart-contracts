@@ -30,7 +30,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         }
     }
 
-    function _detachFromNaffle(uint256 _naffleId, uint256 _naffleTicketId) internal {
+    function _detachFromNaffle(uint256 _naffleId, uint256 _naffleTicketId, address _owner) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
         if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
@@ -42,8 +42,8 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
             revert InvalidTicketId(_naffleTicketId);
         }
         address owner = _ownerOf(totalTicketId);
-        if (owner != msg.sender) {
-            revert NotTicketOwner(msg.sender);
+        if (owner != _owner) {
+            revert NotTicketOwner(_owner);
         }
         ticket.naffleId = 0;
         ticket.ticketIdOnNaffle = 0;
