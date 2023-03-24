@@ -120,3 +120,17 @@ def test_detach_and_burn_ticket_not_owner(
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
     with brownie.reverts(get_error_message("NotTicketOwner", ['address'], [admin.address])):
         l2_diamonds.paid_base_facet.detachAndBurnTicket(NAFFLE_ID, 1, admin, {"from": accounts.at(l2_diamonds.naffle_base_facet.address, force=True)})
+
+
+def test_detach_and_burn_ticket_not_allowed(
+    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
+    )
+    with brownie.reverts(get_error_message("NotAllowed")):
+        l2_diamonds.paid_base_facet.detachAndBurnTicket(NAFFLE_ID, 1, address, from_address)
