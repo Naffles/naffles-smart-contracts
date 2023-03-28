@@ -1,7 +1,10 @@
 import datetime
 
+<<<<<<< HEAD
 import brownie
 
+=======
+>>>>>>> test_refactor
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
 

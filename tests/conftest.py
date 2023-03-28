@@ -1,9 +1,11 @@
 import pytest
 from brownie import (
+    Contract,
     ERC721AMock,
     ETHZkSyncMock,
     FoundersKeyStaking,
     L1MessengerMock,
+    FoundersKeyStakingMock,
     L1NaffleAdmin,
     L1NaffleBase,
     L1NaffleDiamond,
@@ -29,6 +31,7 @@ from brownie import (
 from brownie.network.account import _PrivateKeyAccount, Account
 
 from tests.test_helper import L2Diamonds
+from scripts.staking.deploy_staking_contract import deploy
 
 
 @pytest.fixture
@@ -233,15 +236,19 @@ def deployed_soulbound(
 
 @pytest.fixture
 def deployed_founders_key_staking(
-    deployed_soulbound, deployed_erc721a_mock, from_admin
+    deployed_soulbound, deployed_erc721a_mock, from_admin, admin
 ) -> FoundersKeyStaking:
-    staking = FoundersKeyStaking.deploy(
-        deployed_erc721a_mock.address, deployed_soulbound.address, from_admin
+    proxy_address = deploy(
+        admin, deployed_erc721a_mock.address, deployed_soulbound.address, False
     )
+    staking = FoundersKeyStaking[0]
+    proxy = Contract.from_abi("FoundersKeyStaking", proxy_address, staking.abi)
+    proxy.setFoundersKeyAddress(deployed_erc721a_mock.address, from_admin)
+    proxy.setSoulboundFoundersKeyAddress(deployed_soulbound.address, from_admin)
     deployed_soulbound.grantRole(
-        deployed_soulbound.STAKING_CONTRACT_ROLE(), staking.address, from_admin
+        deployed_soulbound.STAKING_CONTRACT_ROLE(), proxy_address, from_admin
     )
-    return staking
+    return proxy
 
 
 @pytest.fixture
@@ -252,3 +259,8 @@ def zksync_l1_message_account() -> Account:
 @pytest.fixture
 def deployed_l1_messenger_mock(from_admin) -> L1MessengerMock:
     return L1MessengerMock.deploy(from_admin)
+
+
+@pytest.fixture
+def deployed_founders_key_staking_mock(from_admin) -> FoundersKeyStakingMock:
+    return FoundersKeyStakingMock.deploy(from_admin)

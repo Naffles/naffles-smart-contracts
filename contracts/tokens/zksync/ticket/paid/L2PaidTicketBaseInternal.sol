@@ -29,7 +29,6 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             uint256 totalTicketId = _totalSupply() + 1;
             _mint(_to, totalTicketId);
             l.naffleIdNaffleTicketIdTicketId[_naffleId][i] = totalTicketId;
-            l.ticketIdNaffleTicketId[totalTicketId] = i;
             l.paidTickets[totalTicketId] = paidTicket;
             ticketIds[count] = i;
             ++count;
