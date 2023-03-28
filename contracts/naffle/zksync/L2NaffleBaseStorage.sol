@@ -3,12 +3,16 @@ pragma solidity ^0.8.17;
 
 import "../../libraries/NaffleTypes.sol";
 
+
+
 library L2NaffleBaseStorage {
     bytes32 internal constant STORAGE_SLOT =
         keccak256("naffles.contracts.naffle.zksync.L2NaffleBaseStorage");
 
+
     struct Layout {
         address l1NaffleContractAddress;
+        address l1MessengerContractAddress;
         address paidTicketContractAddress;
         address openEntryTicketContractAddress;
         // 100 = 1%

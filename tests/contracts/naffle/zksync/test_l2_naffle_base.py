@@ -27,12 +27,14 @@ def setup_l2_naffle_contract(
     l1_naffle_contract,
     paid_ticket_contract,
     open_entry_ticket_contract,
+    l1_messenger_contract,
     from_admin,
 ):
     admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
     admin_facet.setOpenEntryRatio(FREE_TICKET_RATIO, from_admin)
     admin_facet.setL1NaffleContractAddress(l1_naffle_contract.address, from_admin)
     admin_facet.setPaidTicketContractAddress(paid_ticket_contract.address, from_admin)
+    admin_facet.setL1MessengerContractAddress(l1_messenger_contract.address, from_admin)
     admin_facet.setOpenEntryTicketContractAddress(
         open_entry_ticket_contract.address, from_admin
     )
@@ -47,6 +49,8 @@ def test_create_naffle_not_allowed(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    deployed_l1_messenger_mock
 ):
     (
         access_control,
@@ -65,6 +69,7 @@ def test_create_naffle_not_allowed(
         from_admin["from"],
         from_admin["from"],
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -93,6 +98,8 @@ def test_create_naffle(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    deployed_l1_messenger_mock,
 ):
     (
         access_control,
@@ -111,6 +118,7 @@ def test_create_naffle(
         from_admin["from"],
         from_admin["from"],
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
     endtime = datetime.datetime.now().timestamp() + 1000
@@ -164,6 +172,7 @@ def test_buy_tickets_invalid_naffle_id(
     deployed_l2_naffle_base_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
+    deployed_l1_messenger_mock,
     deployed_erc721a_mock,
 ):
     (
@@ -184,6 +193,7 @@ def test_buy_tickets_invalid_naffle_id(
         from_admin["from"],
         deployed_erc721a_mock,
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -199,6 +209,7 @@ def test_buy_tickets_invalid_naffle_status(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
+    deployed_l1_messenger_mock,
 ):
     # can't test yet because no code available to set naffle status
     return
@@ -220,6 +231,7 @@ def test_buy_tickets_invalid_naffle_status(
         from_admin["from"],
         deployed_erc721a_mock,
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -251,6 +263,7 @@ def test_buy_tickets_not_enough_funds(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
+    deployed_l1_messenger_mock,
 ):
     (
         access_control,
@@ -270,6 +283,7 @@ def test_buy_tickets_not_enough_funds(
         from_admin["from"],
         deployed_erc721a_mock,
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -301,6 +315,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
+    deployed_l1_messenger_mock,
 ):
     (
         access_control,
@@ -320,6 +335,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
         from_admin["from"],
         deployed_erc721a_mock,
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -359,18 +375,15 @@ def test_buy_tickets_does_mint_tickets_for_address(
     )
 
     assert (
-        interface.IERC721Base(l2_diamonds.deployed_l2_paid_ticket_diamond.address).balanceOf(
-            address, from_admin
-        )
+        interface.IERC721Base(
+            l2_diamonds.deployed_l2_paid_ticket_diamond.address
+        ).balanceOf(address, from_admin)
         == 2
     )
 
 
 def test_buy_tickets_does_mint_tickets_for_address_unlimited(
-    address,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock
+    address, from_admin, l2_diamonds, deployed_erc721a_mock
 ):
     create_naffle_and_mint_tickets(
         address,
@@ -382,9 +395,9 @@ def test_buy_tickets_does_mint_tickets_for_address_unlimited(
     )
 
     assert (
-        interface.IERC721Base(l2_diamonds.deployed_l2_paid_ticket_diamond.address).balanceOf(
-            address, from_admin
-        )
+        interface.IERC721Base(
+            l2_diamonds.deployed_l2_paid_ticket_diamond.address
+        ).balanceOf(address, from_admin)
         == 2
     )
 
@@ -403,9 +416,7 @@ def test_use_open_entry_tickets_invalid_naffle_id(
     )
 
     with brownie.reverts(get_error_message("InvalidNaffleId", ["uint256"], [2])):
-        l2_diamonds.naffle_base_facet.useOpenEntryTickets(
-            [1], 2, from_admin
-        )
+        l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 2, from_admin)
 
 
 def test_use_open_entry_tickets_invalid_naffle_status(
@@ -424,9 +435,7 @@ def test_use_open_entry_tickets_invalid_naffle_status(
     # SET NAFFLE STATUS TO COMPLETE
     return
     with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [2])):
-        l2_diamonds.naffle_base_facet.useOpenEntryTickets(
-            [1], 2, from_admin
-        )
+        l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 2, from_admin)
 
 
 def test_use_open_entry_tickets_not_enough_ticket_spots(
@@ -447,9 +456,7 @@ def test_use_open_entry_tickets_not_enough_ticket_spots(
     with brownie.reverts(
         get_error_message("NotEnoughOpenEntryTicketSpots", ["uint256"], [0])
     ):
-        l2_diamonds.naffle_base_facet.useOpenEntryTickets(
-            [1], 1, from_admin
-        )
+        l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 1, from_admin)
 
 
 def test_use_open_entry_tickets_success(
@@ -467,12 +474,8 @@ def test_use_open_entry_tickets_success(
         number_of_tickets=200,
     )
 
-    l2_diamonds.naffle_base_facet.useOpenEntryTickets(
-        [1], 1, from_address
-    )
-    naffle = l2_diamonds.naffle_view_facet.getNaffleById(
-        1, from_admin
-    )
+    l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 1, from_address)
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1, from_admin)
 
     # 7 is number of open entry tickets
     assert naffle[7] == 1

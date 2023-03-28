@@ -6,11 +6,11 @@ import "../../libraries/NaffleTypes.sol";
 import '@solidstate/contracts/interfaces/IERC165.sol';
 import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
-
 import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBaseInternal.sol";
+import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
@@ -38,7 +38,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         }
 
         ++layout.numberOfNaffles;
-
+        naffleId = layout.numberOfNaffles;
         if (
             (_naffleType == NaffleTypes.NaffleType.UNLIMITED && _paidTicketSpots != 0) ||
             (_naffleType == NaffleTypes.NaffleType.STANDARD && _paidTicketSpots < layout.minimumPaidTicketSpots)
@@ -65,6 +65,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             owner: msg.sender,
             winner: address(0),
             winnerClaimed: false,
+            cancelled: false,
             naffleTokenType: tokenContractType
         });
 
@@ -99,10 +100,59 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         );
     }
 
-    function fulfillRandomWords(
-        uint256 _requestId,
-        uint256[] memory _randomWords
-    ) internal override {
+    function _consumeMessageFromL2(
+        address _zkSyncAddress,
+        uint256 _l2BlockNumber,
+        uint256 _index,
+        uint16 _l2TxNumberInBlock,
+        bytes memory _message,
+        bytes32[] calldata _proof
+    ) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        if (layout.isL2ToL1MessageProcessed[_l2BlockNumber][_index]) {
+            revert MessageAlreadyProcessed();
+        }
+
+        IZkSync zksync = IZkSync(layout.zkSyncAddress);
+
+        L2Message memory message = L2Message({
+            sender: layout.zkSyncNaffleContractAddress,
+            data: _message,
+            txNumberInBlock: _l2TxNumberInBlock
+        });
+
+        bool success = zksync.proveL2MessageInclusion(
+            _l2BlockNumber,
+            _index,
+            message,
+            _proof
+        );
+        if (!success) {
+            revert FailedMessageInclusion();
+        }
+        layout.isL2ToL1MessageProcessed[_l2BlockNumber][_index] = true;
+
+        _processL2Message(_message);
+    }
+
+    function _processL2Message(bytes memory _message) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        (string memory action, uint256 naffleId) = abi.decode(_message, (string, uint256));
+
+        if (keccak256(abi.encode(action)) == keccak256(abi.encode("cancel"))) {
+            layout.naffles[naffleId].cancelled = true;
+        } else if (keccak256(abi.encode(action)) == keccak256(abi.encode("drawWinner")) {
+            _drawWinner(naffleId);
+        } else {
+            revert InvalidAction();
+        }
+    }
+
+    function _drawWinner(uint256 _naffleId) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        NaffleTypes.L1Naffle storage naffle = layout.naffles[_nafeId];
+
+        
 
     }
 
@@ -164,5 +214,13 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
 
     function _getFoundersKeyPlaceholderAddress() internal view returns (address) {
         return L1NaffleBaseStorage.layout().foundersKeyPlaceholderAddress;
+    }
+
+    function _getL1MessengerAddress() internal view returns (address) {
+        return L1NaffleBaseStorage.L1_MESSENGER_ADDRESS;
+    }
+
+    function _getNaffleById(uint256 _naffleId) public view returns (NaffleTypes.L1Naffle memory) {
+        return L1NaffleBaseStorage.layout().naffles[_naffleId];
     }
 }

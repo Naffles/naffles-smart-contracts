@@ -36,4 +36,8 @@ contract L1NaffleView is IL1NaffleView, L1NaffleBaseInternal {
     function getAdminRole() external view returns (bytes32) {
         return _getAdminRole();
     }
+
+    function getNaffleById(uint256 _id) external view returns (NaffleTypes.L1Naffle memory) {
+        return _getNaffleById(_id);
+    }
 }

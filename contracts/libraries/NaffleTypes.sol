@@ -17,7 +17,7 @@ library NaffleTypes {
     enum NaffleStatus {
         ACTIVE,
         POSTPONED,
-        CLOSED,
+        CANCELLED,
         SELECTING_WINNER,
         FINISHED
     }
@@ -45,6 +45,7 @@ library NaffleTypes {
         address owner;
         address winner;
         bool winnerClaimed;
+        bool cancelled;
         TokenContractType naffleTokenType;
     }
 
@@ -55,7 +56,6 @@ library NaffleTypes {
     }
 
     struct PaidTicket {
-        address owner;
         uint256 ticketPriceInWei;
         uint256 naffleId;
         uint256 ticketIdOnNaffle;

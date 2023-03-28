@@ -4,6 +4,7 @@ from brownie import (
     ERC721AMock,
     ETHZkSyncMock,
     FoundersKeyStaking,
+    L1MessengerMock,
     FoundersKeyStakingMock,
     L1NaffleAdmin,
     L1NaffleBase,
@@ -27,7 +28,7 @@ from brownie import (
     TestValueFacetUpgraded,
     accounts,
 )
-from brownie.network.account import _PrivateKeyAccount
+from brownie.network.account import _PrivateKeyAccount, Account
 
 from tests.test_helper import L2Diamonds
 from scripts.staking.deploy_staking_contract import deploy
@@ -177,6 +178,7 @@ def l2_diamonds(
     deployed_l2_naffle_view_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_base_facet,
+    deployed_l1_messenger_mock,
 ) -> L2NaffleDiamond:
     return L2Diamonds(
         from_admin,
@@ -191,7 +193,8 @@ def l2_diamonds(
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_view_facet,
         deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_base_facet
+        deployed_l2_naffle_base_facet,
+        deployed_l1_messenger_mock
     )
 
 
@@ -214,7 +217,12 @@ def deployed_erc721a_mock(from_admin) -> ERC721AMock:
 
 @pytest.fixture
 def deployed_eth_zksync_mock(from_admin) -> ETHZkSyncMock:
-    return ETHZkSyncMock.deploy(from_admin)
+    return ETHZkSyncMock.deploy(True, True, True, from_admin)
+
+
+@pytest.fixture
+def deployed_eth_zksync_mock_false_return_values(from_admin) -> ETHZkSyncMock:
+    return ETHZkSyncMock.deploy(False, False, False, from_admin)
 
 
 @pytest.fixture
@@ -241,6 +249,16 @@ def deployed_founders_key_staking(
         deployed_soulbound.STAKING_CONTRACT_ROLE(), proxy_address, from_admin
     )
     return proxy
+
+
+@pytest.fixture
+def zksync_l1_message_account() -> Account:
+    return accounts.at('0x79B2f0CbED2a565C925A8b35f2B402710564F8a2', force=True)
+
+
+@pytest.fixture
+def deployed_l1_messenger_mock(from_admin) -> L1MessengerMock:
+    return L1MessengerMock.deploy(from_admin)
 
 
 @pytest.fixture
