@@ -150,9 +150,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
 
     function _drawWinner(uint256 _naffleId) internal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
-        NaffleTypes.L1Naffle storage naffle = layout.naffles[_nafeId];
+        NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
 
-        
 
     }
 

@@ -7,8 +7,4 @@ import "./L1NaffleBaseInternal.sol";
 
 contract L1NaffleVRF is VRFConsumerBaseV2, L1NaffleBaseInternal {
     constructor(address _vrfCoordinator) VRFConsumerBaseV2(_vrfCoordinator) {}
-
-
-
-
 }
