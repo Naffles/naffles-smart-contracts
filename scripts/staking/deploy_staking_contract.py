@@ -1,5 +1,11 @@
-from brownie import (Contract, ERC1967Proxy, FoundersKeyStaking,
-                     SoulboundFoundersKey, accounts, interface)
+from brownie import (
+    Contract,
+    ERC1967Proxy,
+    FoundersKeyStaking,
+    SoulboundFoundersKey,
+    accounts,
+    interface,
+)
 from brownie.network.account import Account
 
 

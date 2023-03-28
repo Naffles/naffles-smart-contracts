@@ -1,12 +1,11 @@
 import brownie
-from brownie import L2OpenEntryTicketAdmin, interface, ZERO_ADDRESS
+from brownie import ZERO_ADDRESS, L2OpenEntryTicketAdmin, interface
 
 from scripts.util import add_facet, get_selectors
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
     setup_open_entry_ticket_diamond_with_facets,
 )
-from tests.test_helper import create_naffle_and_mint_tickets, NAFFLE_ID, \
-    TICKET_PRICE
+from tests.test_helper import NAFFLE_ID, TICKET_PRICE, create_naffle_and_mint_tickets
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 

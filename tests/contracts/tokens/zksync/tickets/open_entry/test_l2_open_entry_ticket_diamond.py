@@ -39,10 +39,18 @@ def setup_open_entry_ticket_diamond_with_facets(
         from_admin,
         remove_duplicated_selectors(base_selectors + admin_selectors, view_selectors),
     )
-    access_control = interface.IAccessControl(deployed_l2_open_entry_ticket_diamond.address)
-    base_facet = interface.IL2OpenEntryTicketBase(deployed_l2_open_entry_ticket_diamond.address)
-    admin_facet = interface.IL2OpenEntryTicketAdmin(deployed_l2_open_entry_ticket_diamond.address)
-    view_facet = interface.IL2OpenEntryTicketView(deployed_l2_open_entry_ticket_diamond.address)
+    access_control = interface.IAccessControl(
+        deployed_l2_open_entry_ticket_diamond.address
+    )
+    base_facet = interface.IL2OpenEntryTicketBase(
+        deployed_l2_open_entry_ticket_diamond.address
+    )
+    admin_facet = interface.IL2OpenEntryTicketAdmin(
+        deployed_l2_open_entry_ticket_diamond.address
+    )
+    view_facet = interface.IL2OpenEntryTicketView(
+        deployed_l2_open_entry_ticket_diamond.address
+    )
     return access_control, base_facet, admin_facet, view_facet
 
 

@@ -4,6 +4,7 @@ from brownie import (
     ERC721AMock,
     ETHZkSyncMock,
     FoundersKeyStaking,
+    FoundersKeyStakingMock,
     L1NaffleAdmin,
     L1NaffleBase,
     L1NaffleDiamond,
@@ -12,19 +13,18 @@ from brownie import (
     L2NaffleBase,
     L2NaffleDiamond,
     L2NaffleView,
-    L2PaidTicketAdmin,
-    L2PaidTicketBase,
-    L2PaidTicketDiamond,
-    L2PaidTicketView,
     L2OpenEntryTicketAdmin,
     L2OpenEntryTicketBase,
     L2OpenEntryTicketDiamond,
     L2OpenEntryTicketView,
+    L2PaidTicketAdmin,
+    L2PaidTicketBase,
+    L2PaidTicketDiamond,
+    L2PaidTicketView,
     SoulboundFoundersKey,
     TestNaffleDiamond,
     TestValueFacet,
     TestValueFacetUpgraded,
-    FoundersKeyStakingMock,
     accounts,
 )
 from brownie.network.account import _PrivateKeyAccount
@@ -136,7 +136,9 @@ def deployed_l2_paid_ticket_view_facet(from_admin) -> L2PaidTicketView:
 
 
 @pytest.fixture()
-def deployed_l2_open_entry_ticket_diamond(admin, from_admin) -> L2OpenEntryTicketDiamond:
+def deployed_l2_open_entry_ticket_diamond(
+    admin, from_admin
+) -> L2OpenEntryTicketDiamond:
     diamond = L2OpenEntryTicketDiamond.deploy(admin, from_admin)
     return diamond
 

@@ -3,11 +3,11 @@ from brownie import L1NaffleAdmin, L1NaffleBase, TestValueFacet
 from scripts.util import (
     OWNABLE_SELECTORS,
     add_facet,
+    get_error_message,
     get_name_by_selector,
     get_selector_by_name,
     get_selectors,
     remove_duplicated_selectors,
-    get_error_message,
 )
 
 
