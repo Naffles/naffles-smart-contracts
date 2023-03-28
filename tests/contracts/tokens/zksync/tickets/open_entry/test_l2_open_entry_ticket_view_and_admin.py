@@ -1,5 +1,5 @@
 import brownie
-from brownie import ZERO_ADDRESS, L2OpenEntryTicketAdmin, interface
+from brownie import L2OpenEntryTicketAdmin, interface
 
 from scripts.util import add_facet, get_selectors
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_base import (
@@ -151,7 +151,7 @@ def test_get_open_entry_ticket_by_id(
 
     setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
     amount = 1
-    base_facet.adminMint(admin, amount, from_admin)
+    admin_facet.adminMint(admin, amount, from_admin)
     naffle_id = 1
     ticket_id_on_naffle = 1
 
@@ -187,6 +187,6 @@ def test_get_total_supply(
 
     setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
     amount = 2
-    base_facet.adminMint(admin, amount, from_admin)
+    admin_facet.adminMint(admin, amount, from_admin)
 
     assert view_facet.getTotalSupply() == 2

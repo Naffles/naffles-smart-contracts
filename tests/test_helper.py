@@ -1,8 +1,5 @@
 import datetime
 
-import brownie
-
-
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
 

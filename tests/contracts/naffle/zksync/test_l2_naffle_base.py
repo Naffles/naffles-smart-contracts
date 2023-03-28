@@ -8,17 +8,17 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
 from tests.test_helper import (
-    create_naffle_and_mint_tickets,
-    PLATFORM_FEE,
     FREE_TICKET_RATIO,
     NAFFLE_ID,
     NFT_ID,
     PAID_TICKET_SPOTS,
-    TICKET_PRICE,
     DEFAULT_END_DATE,
-    STANDARD_NAFFLE_TYPE,
     ERC721,
+    PLATFORM_FEE,
+    STANDARD_NAFFLE_TYPE,
+    TICKET_PRICE,
     UNLIMITED_NAFFLE_TYPE,
+    create_naffle_and_mint_tickets,
 )
 
 
@@ -46,9 +46,7 @@ def test_create_naffle_not_allowed(
     deployed_l2_naffle_base_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
-    deployed_eth_zksync_mock,
 ):
     (
         access_control,
@@ -89,15 +87,12 @@ def test_create_naffle_not_allowed(
 
 def test_create_naffle(
     address,
-    from_address,
     from_admin,
     deployed_l2_naffle_diamond,
     deployed_l2_naffle_base_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
-    deployed_eth_zksync_mock,
 ):
     (
         access_control,
@@ -137,6 +132,7 @@ def test_create_naffle(
 
     naffle = view_facet.getNaffleById(NAFFLE_ID)
     expected_open_entry_ticket_spots = 0
+    expected_free_ticket_spots = 2
     expected_number_of_tickets_bought = 0
     expected_naffle_status = 0  # active
     expected_winning_ticket_type = 0  # none

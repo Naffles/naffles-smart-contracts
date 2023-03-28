@@ -48,4 +48,13 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         return l.openEntryTickets[_ticketId];
     }
+
+    function _adminMint(address _to, uint256 _amount) internal {
+        for (uint256 i = 0; i < _amount; i++) {
+            uint256 ticketId = _totalSupply() + 1;
+            _mint(_to, ticketId);
+            NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0, false);
+            L2OpenEntryTicketStorage.layout().openEntryTickets[ticketId] = ticket;
+        }
+    }
 }

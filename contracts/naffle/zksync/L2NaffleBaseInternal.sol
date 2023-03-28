@@ -110,6 +110,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     function _setOpenEntryRatio(uint256 _freeTicketRatio) internal {
+        if (_freeTicketRatio == 0) {
+            revert OpenTicketRatioCannotBeZero();
+        }
         L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
     }
 
