@@ -7,9 +7,19 @@ from scripts.util import get_error_message
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
-from tests.test_helper import create_naffle_and_mint_tickets, PLATFORM_FEE, \
-    FREE_TICKET_RATIO, NAFFLE_ID, NFT_ID, PAID_TICKET_SPOTS, TICKET_PRICE, \
-    DEFAULT_END_DATE, STANDARD_NAFFLE_TYPE, ERC721, UNLIMITED_NAFFLE_TYPE
+from tests.test_helper import (
+    DEFAULT_END_DATE,
+    ERC721,
+    FREE_TICKET_RATIO,
+    NAFFLE_ID,
+    NFT_ID,
+    PAID_TICKET_SPOTS,
+    PLATFORM_FEE,
+    STANDARD_NAFFLE_TYPE,
+    TICKET_PRICE,
+    UNLIMITED_NAFFLE_TYPE,
+    create_naffle_and_mint_tickets,
+)
 
 
 def setup_l2_naffle_contract(
@@ -30,11 +40,14 @@ def test_create_naffle_not_allowed(
     deployed_l2_naffle_base_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
-    deployed_eth_zksync_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -64,17 +77,19 @@ def test_create_naffle_not_allowed(
 
 def test_create_naffle(
     address,
-    from_address,
     from_admin,
     deployed_l2_naffle_diamond,
     deployed_l2_naffle_base_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
-    deployed_eth_zksync_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -103,6 +118,7 @@ def test_create_naffle(
 
     naffle = view_facet.getNaffleById(NAFFLE_ID)
     expected_open_entry_ticket_spots = 0
+    expected_free_ticket_spots = 2
     expected_number_of_tickets_bought = 0
     expected_naffle_status = 0  # active
     expected_winning_ticket_type = 0  # none
@@ -136,7 +152,12 @@ def test_buy_tickets_invalid_naffle_id(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -152,49 +173,6 @@ def test_buy_tickets_invalid_naffle_id(
         base_facet.buyTickets(1, 1, {"from": admin, "value": 10})
 
 
-def test_buy_tickets_invalid_naffle_status(
-    admin,
-    from_admin,
-    deployed_l2_naffle_diamond,
-    deployed_l2_naffle_base_facet,
-    deployed_l2_naffle_admin_facet,
-    deployed_l2_naffle_view_facet,
-    deployed_erc721a_mock,
-):
-    # can't test yet because no code available to set naffle status
-    return
-    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
-        from_admin,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_base_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_view_facet,
-    )
-
-    setup_l2_naffle_contract(
-        admin_facet, from_admin["from"], deployed_erc721a_mock,from_admin["from"], from_admin
-    )
-
-    endtime = datetime.datetime.now().timestamp() + 1000
-    base_facet.createNaffle(
-        (
-            deployed_erc721a_mock.address,
-            admin,
-            NAFFLE_ID,
-            NFT_ID,
-            PAID_TICKET_SPOTS,
-            TICKET_PRICE,
-            endtime,
-            STANDARD_NAFFLE_TYPE,
-            ERC721,
-        ),
-        from_admin,
-    )
-
-    with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [0])):
-        base_facet.buyTickets(1, 1, {"from": admin, "value": 10})
-
-
 def test_buy_tickets_not_enough_funds(
     admin,
     from_admin,
@@ -204,7 +182,12 @@ def test_buy_tickets_not_enough_funds(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -245,7 +228,12 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -360,7 +348,7 @@ def test_buy_tickets_does_mint_tickets_for_address_unlimited(
         deployed_l2_naffle_base_facet,
         deployed_erc721a_mock,
         UNLIMITED_NAFFLE_TYPE,
-        0
+        0,
     )
 
     assert (

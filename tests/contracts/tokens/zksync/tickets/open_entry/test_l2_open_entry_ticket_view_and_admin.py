@@ -1,5 +1,5 @@
 import brownie
-from brownie import ZERO_ADDRESS, L2OpenEntryTicketAdmin, interface
+from brownie import L2OpenEntryTicketAdmin, interface
 
 from scripts.util import add_facet, get_selectors
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_base import (

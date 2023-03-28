@@ -54,10 +54,13 @@ def create_naffle_and_mint_tickets(
     from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
         setup_paid_ticket_diamond_with_facets,
     )
+<<<<<<< HEAD
     from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import \
         setup_open_entry_ticket_diamond_with_facets
     from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_base import \
         setup_open_entry_ticket_contract
+=======
+>>>>>>> NAFFL-49_free_ticket
 
     (
         naffle_access_control,
@@ -120,4 +123,7 @@ def create_naffle_and_mint_tickets(
     )
 
     naffle_base_facet.buyTickets(2, 1, {"from": address, "value": 20})
+<<<<<<< HEAD
     open_entry_admin_facet.adminMint(address, 1, from_admin)
+=======
+>>>>>>> NAFFL-49_free_ticket
