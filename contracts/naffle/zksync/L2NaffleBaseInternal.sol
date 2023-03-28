@@ -12,6 +12,7 @@ import "../../../interfaces/naffle/zksync/IL2NaffleBaseInternal.sol";
 import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
 import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
 import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
+import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     function _createNaffle(
@@ -91,6 +92,25 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
         naffle.numberOfOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
         IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
+        bytes memory message = abi.encode("drawWinner", _naffleId);
+        messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
+    }
+
+    function _drawWinner(uint256 _naffleId) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+        if (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries == 0) {
+            revert NoTicketsBought();
+        }
+        naffle.status = NaffleTypes.NaffleStatus.SELECTING_WINNER;
+        // TODO call L1 contract to get randomness
+
     }
 
     function _getAdminRole() internal view returns (bytes32) {

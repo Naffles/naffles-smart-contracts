@@ -11,6 +11,10 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
         _grantRole(_getAdminRole(), _admin);
     }
 
+    function drawWinner(uint256 _naffleId) external onlyRole(_getAdminRole()) {
+        _drawWinner(_naffleId);
+    }
+
     function setPlatformFee(uint256 _platformFee) external onlyRole(_getAdminRole()) {
         _setPlatformFee(_platformFee);
     }

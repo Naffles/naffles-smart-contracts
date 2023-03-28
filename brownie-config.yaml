@@ -17,9 +17,11 @@ compiler:
             - '@openzeppelinUpgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.1'
             - '@solidstate=solidstate-network/solidstate-solidity@0.0.51'
             - '@zksync=c0dejax/v2-testnet-contracts@0.1.1'
+            - '@chainlink=smartcontractkit/chainlink@1.13.0'
 dependencies:
     - chiru-labs/ERC721A@4.2.3
     - OpenZeppelin/openzeppelin-contracts@4.8.0
     - OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.1
     - solidstate-network/solidstate-solidity@0.0.51
     - c0dejax/v2-testnet-contracts@0.1.1
+    - smartcontractkit/chainlink@1.13.0
