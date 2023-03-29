@@ -120,6 +120,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
+        if (naffle.naffleType == NaffleTypes.NaffleType.UNLIMITED) {
+            revert InvalidNaffleType(naffle.naffleType);
+        }
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE) {
             revert InvalidNaffleStatus(naffle.status);
         }

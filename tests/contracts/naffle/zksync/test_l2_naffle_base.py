@@ -499,6 +499,33 @@ def test_postpone_naffle_invalid_naffle_id(
         l2_diamonds.naffle_base_facet.postponeNaffle(2, endtime, from_admin)
 
 
+def test_postpone_naffle_invalid_naffle_type(
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+    deployed_l1_messenger_mock,
+):
+    l2_diamonds.naffle_base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            address,
+            NAFFLE_ID,
+            NFT_ID,
+            100,
+            TICKET_PRICE,
+            DEFAULT_END_DATE,
+            1,  # UNLIMITED NAFFLE TYPE
+            ERC721,
+        ),
+        from_admin,
+    )
+
+    endtime = datetime.datetime.now().timestamp() + 1000
+    with brownie.reverts(get_error_message("InvalidNaffleType", ["uint8"], [1])):
+        l2_diamonds.naffle_base_facet.postponeNaffle(1, endtime, from_admin)
+
+
 def test_postpone_naffle_invalid_naffle_status(
     address,
     from_admin,

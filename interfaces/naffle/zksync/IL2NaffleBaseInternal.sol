@@ -14,4 +14,5 @@ interface IL2NaffleBaseInternal {
     error NotNaffleOwner(address owner);
     error InvalidEndTime(uint256 endTime);
     error NaffleNotFinished(uint256 endTime);
+    error InvalidNaffleType(NaffleTypes.NaffleType naffleType);
 }
