@@ -10,13 +10,6 @@ import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
 
 contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
-     modifier OnlyZkSyncContract() {
-        if (msg.sender != _getL1MessengerAddress()) {
-            revert NotAllowed();
-        }
-        _;
-    }
-
     function createNaffle(
         address _ethTokenAddress,
         uint256 _nftId,
