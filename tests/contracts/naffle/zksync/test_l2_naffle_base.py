@@ -171,6 +171,7 @@ def test_buy_tickets_invalid_naffle_id(
     deployed_l2_naffle_base_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
+    deployed_l1_messenger_mock,
     deployed_erc721a_mock,
 ):
     (
@@ -191,6 +192,7 @@ def test_buy_tickets_invalid_naffle_id(
         from_admin["from"],
         deployed_erc721a_mock,
         from_admin["from"],
+        deployed_l1_messenger_mock,
         from_admin,
     )
 
@@ -247,7 +249,7 @@ def test_buy_tickets_invalid_naffle_status(
     )
 
     admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
-    with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [0])):
+    with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [2])):
         base_facet.buyTickets(1, 1, {"from": admin, "value": 10})
 
 

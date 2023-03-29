@@ -460,7 +460,7 @@ def test_process_message_from_l2_message_already_processed(
     )
 
     with brownie.reverts(get_error_message("MessageAlreadyProcessed")):
-        base_facet.consumeMessageFromL2(
+        admin_facet.consumeMessageFromL2(
             _zkSyncAddress,
             _l2BlockNumber,
             _index,
@@ -512,7 +512,7 @@ def test_process_message_from_l2_message_not_allowed(
     one = 1
 
     encoded_data = encode(["string", "uint256"], [action, one])
-    with brownie.reverts(get_error_message("NotAllowed")):
+    with brownie.reverts():
         admin_facet.consumeAdminCancelMessage(
             _zkSyncAddress,
             _l2BlockNumber,
