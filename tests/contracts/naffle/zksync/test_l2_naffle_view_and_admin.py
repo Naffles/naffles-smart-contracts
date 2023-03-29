@@ -449,6 +449,8 @@ def test_cancel_naffle(
 
     admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
     assert view_facet.getNaffleById(NAFFLE_ID)[12] == 2  # cancelled
+    assert deployed_l1_messenger_mock.called()
+
 
 
 def test_cancel_naffle_invalid_naffle_id(

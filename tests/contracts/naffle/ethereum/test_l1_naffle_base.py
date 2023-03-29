@@ -405,6 +405,7 @@ def test_process_message_from_l2_cancel_naffle(
         ERC721,
     )
 
+
 def test_process_message_from_l2_message_already_processed(
     address,
     from_address,
@@ -478,6 +479,7 @@ def test_process_message_from_l2_message_already_processed(
             _proof,
             {"from": _zkSyncAddress}
         )
+
 
 def test_process_message_from_l2_message_not_allowed(
     address,
