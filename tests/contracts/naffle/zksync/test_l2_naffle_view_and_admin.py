@@ -1,4 +1,3 @@
-import datetime
 
 import brownie
 from brownie import L2NaffleAdmin
@@ -121,7 +120,7 @@ def test_set_free_ticket_ratio_cannot_be_zero(
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_view_facet,
 ):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+    access_control, base_facet, admin_facet, view_facet = setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,
@@ -255,6 +254,7 @@ def test_set_admin_address_not_admin(
 
 
 def test_get_naffle_by_id(
+    admin,
     address,
     from_admin,
     deployed_l2_paid_ticket_diamond,
