@@ -6,6 +6,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "./L1NaffleBaseInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleVRF.sol";
 
+
 contract L1NaffleVRF is IL1NaffleVRF, VRFConsumerBaseV2, L1NaffleBaseInternal {
     constructor (
         address _vrfCoordinator
@@ -28,16 +29,21 @@ contract L1NaffleVRF is IL1NaffleVRF, VRFConsumerBaseV2, L1NaffleBaseInternal {
             _proof
         );
         if (keccak256(abi.encode(action)) == keccak256(abi.encode("drawWinner"))) {
+            (uint256 chainLinkRequestId, uint256 subscriptionId, bytes32 gasLaneKeyHash, uint32 callbackGasLimit, uint16 requestConfirmations) = _getChainlinkVRFSettings();
             uint256 chainLinkRequestId = coordinator.requestRandomWords(
                 gasLaneKeyHash,
                 subscriptionId,
                 requestConfirmations,
                 callbackGasLimit,
-                numWords
+                1
             );
+            _storeChainlinkRequest(naffleId, chainLinkRequestId);
         } else {
             revert InvalidAction();
         }
     }
+
+    function fulfillRandomWords(bytes32 requestId, uint256[] memory randomWords) internal override {
+        _fulfillRandomWords(requestId, randomWords, randomWords);
     }
 }

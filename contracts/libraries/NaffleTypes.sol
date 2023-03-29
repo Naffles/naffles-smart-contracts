@@ -22,6 +22,13 @@ library NaffleTypes {
         FINISHED
     }
 
+    struct ChainlinkRequestStatus {
+        bool fulfilled;
+        bool exists;
+        uint256[] randomWords;
+        uint256 naffleId;
+    }
+
     enum NaffleType {
         STANDARD,
         UNLIMITED

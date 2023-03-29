@@ -9,4 +9,5 @@ interface IL1NaffleBaseInternal {
     error MessageAlreadyProcessed();
     error FailedMessageInclusion();
     error InvalidAction();
+    error InvalidChainlinkRequestId(uint256 requestId);
 }

@@ -23,6 +23,10 @@ library L1NaffleBaseStorage {
         mapping(uint256 => address) naffleWinner;
         mapping(uint256 => mapping(uint256 => bool)) isL2ToL1MessageProcessed;
 
+        // RequestId -> ChainlinkRequestStatus
+        mapping(uint256 => NaffleTypes.ChainlinkRequestStatus) chainlinkRequestStatus;
+        mapping(uint256 => uint256) naffleIdToChainlinkRequestId;
+
         bytes32 chainlinkVRFGasLaneKeyHash;
         uint64 chainlinkVRFSubscriptionId;
         uint32 chainlinkVRFCallbackGasLimit;

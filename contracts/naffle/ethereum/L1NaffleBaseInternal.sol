@@ -139,6 +139,17 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         layout.naffles[naffleId].cancelled = true;
     }
 
+    function _storeChainlinkRequest(uint256 _naffleId, uint256 requestId) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        layout.chainlinkRequestStatus[requestId] = ChainlinkRequestStatus({
+            randomWords: new uint256[](0),
+            fulfilled: false,
+            exists: true,
+            naffleId: _naffleId
+        });
+        layout.naffleIdToChainlinkRequestId[_naffleId] = requestId;
+    }
+
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
@@ -212,11 +223,41 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         bytes32 _gasLaneKeyHash,
         uint32 _callbackGasLimit,
         uint16 requestConfirmations
-    ) {
+    ) internal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         layout.chainlinkVRFSubscriptionId = _subscriptionId;
         layout.chainlinkVRFGasLaneKeyHash = _gasLaneKeyHash;
         layout.chainlinkVRFCallbackGasLimit = _callbackGasLimit;
         layout.chainlinkVRFRequestConfirmations = requestConfirmations;
+    }
+
+    function _getChainlinkVRFSettings() internal view returns (
+        uint64 subscriptionId,
+        bytes32 gasLaneKeyHash,
+        uint32 callbackGasLimit,
+        uint16 requestConfirmations
+    ) {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        return (
+            layout.chainlinkVRFSubscriptionId,
+            layout.chainlinkVRFGasLaneKeyHash,
+            layout.chainlinkVRFCallbackGasLimit,
+            layout.chainlinkVRFRequestConfirmations
+        );
+    }
+
+    function _fulfillRandomWords(uint256 _requestId, uint256[] memory randomWords) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        NaffleTypes.ChainlinkRequestStatus storage status = layout.chainlinkRequestStatus[_requestId];
+        if (!status.exists) {
+            revert InvalidChainlinkRequestId(_requestId);
+        }
+        status.fulfilled = true;
+        status.randomWords = randomWords;
+
+        NaffleTypes.L1Naffle storage naffle = layout.naffles[status.naffleId];
+
+        winner = naffle.participants[randomWords[0] % naffle.participants.length];
+        uint256 naffleId = status.naffleId;
     }
 }

@@ -92,8 +92,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
         naffle.numberOfOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
         IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
-        bytes memory message = abi.encode("drawWinner", _naffleId);
-        messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
+
     }
 
     function _drawWinner(uint256 _naffleId) internal {
@@ -110,6 +109,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         naffle.status = NaffleTypes.NaffleStatus.SELECTING_WINNER;
         // TODO call L1 contract to get randomness
+        bytes memory message = abi.encode("drawWinner", _naffleId);
+        messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
 
     }
 
