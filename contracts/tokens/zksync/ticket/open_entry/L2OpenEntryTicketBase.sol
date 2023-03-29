@@ -15,10 +15,6 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
         _;
     }
 
-    function attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, uint256 startingTicketId, address owner) external {
-        _attachToNaffle(_naffleId, _ticketIds, startingTicketId, owner);
-    }
-
     function detachFromNaffle(uint256 _naffleId, uint256 _naffleTicketId) external {
         _detachFromNaffle(_naffleId, _naffleTicketId);
     }

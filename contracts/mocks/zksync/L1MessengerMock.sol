@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 contract L1MessengerMock is IL1Messenger {
-    public bool called = false
+    bool public called = false;
 
     error NotAllowed();
     function sendToL1(bytes memory _message) external returns (bytes32) {

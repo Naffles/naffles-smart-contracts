@@ -47,7 +47,7 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
         bytes calldata _message,
         bytes32[] calldata _proof
     ) external onlyRole(_getAdminRole()) {
-        (string memory action, uint256 naffleId) = _consumeAdminCancelMessage(
+        _consumeMessageFromL2(
             _zkSyncAddress,
             _l2BlockNumber,
             _index,
@@ -55,6 +55,7 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
             _message,
             _proof
         );
+        (string memory action, uint256 naffleId) = abi.decode(_message, (string, uint256));
         if (keccak256(abi.encode(action)) == keccak256(abi.encode("cancel"))) {
             _cancelNaffle(naffleId);
         } else {

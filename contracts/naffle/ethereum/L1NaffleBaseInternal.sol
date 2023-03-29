@@ -107,7 +107,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         uint16 _l2TxNumberInBlock,
         bytes memory _message,
         bytes32[] calldata _proof
-    ) internal returns (string memory action, uint256 naffleId) {
+    ) internal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         if (layout.isL2ToL1MessageProcessed[_l2BlockNumber][_index]) {
             revert MessageAlreadyProcessed();
@@ -131,12 +131,11 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             revert FailedMessageInclusion();
         }
         layout.isL2ToL1MessageProcessed[_l2BlockNumber][_index] = true;
-
-        (action, naffleId) = abi.decode(_message, (string, uint256));
     }
 
     function _cancelNaffle(uint256 _naffleId) internal {
-        layout.naffles[naffleId].cancelled = true;
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        layout.naffles[_naffleId].cancelled = true;
     }
 
     function _getAdminRole() internal view returns (bytes32) {
