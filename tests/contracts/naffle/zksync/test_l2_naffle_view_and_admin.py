@@ -618,8 +618,8 @@ def test_set_max_postpone_time(
         from_admin,
     )
 
-    admin_facet.adminSetMaxPostponeTime(100, from_admin)
-    assert view_facet.getMaxPostponeTime() == 100
+    admin_facet.setMaxPostponeTime(200, from_admin)
+    assert view_facet.getMaxPostponeTime() == 200
 
 
 def test_set_max_postpone_time_not_allowed(
@@ -657,4 +657,4 @@ def test_set_max_postpone_time_not_allowed(
     )
 
     with brownie.reverts():
-        admin_facet.adminSetMaxPostponeTime(100, from_address)
+        admin_facet.setMaxPostponeTime(200, from_address)
