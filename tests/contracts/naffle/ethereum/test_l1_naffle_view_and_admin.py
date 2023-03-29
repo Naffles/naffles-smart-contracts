@@ -460,7 +460,7 @@ def test_process_message_from_l2_message_already_processed(
     )
 
     with brownie.reverts(get_error_message("MessageAlreadyProcessed")):
-        admin_facet.consumeMessageFromL2(
+        admin_facet.consumeAdminCancelMessage(
             _zkSyncAddress,
             _l2BlockNumber,
             _index,
