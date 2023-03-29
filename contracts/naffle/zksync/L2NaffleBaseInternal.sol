@@ -111,6 +111,31 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
     }
 
+    function _postponeNaffle(
+        uint256 _naffleId,
+        uint256 _newEndTime
+    ) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+        if (naffle.endTime > block.timestamp) {
+            revert NaffleNotFinished(naffle.endTime);
+        }
+        if (naffle.owner != msg.sender) {
+            revert NotNaffleOwner(naffle.owner);
+        }
+        if (_newEndTime < block.timestamp || _newEndTime > block.timestamp + layout.maxPostponeTime) {
+            revert InvalidEndTime(_newEndTime);
+        }
+        naffle.status = NaffleTypes.NaffleStatus.POSTPONED;
+        naffle.endTime = _newEndTime;
+    }
+
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
@@ -164,5 +189,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     function _setL1MessengerContractAddress(address _l1MessengerContractAddress) internal {
         L2NaffleBaseStorage.layout().l1MessengerContractAddress = _l1MessengerContractAddress;
+    }
+
+    function _setMaxPostponeTime(uint256 _maxPostponeTime) internal {
+        L2NaffleBaseStorage.layout().maxPostponeTime = _maxPostponeTime;
+    }
+
+    function _getMaxPostponeTime() internal view returns (uint256) {
+        return L2NaffleBaseStorage.layout().maxPostponeTime;
     }
 }

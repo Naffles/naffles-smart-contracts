@@ -33,4 +33,8 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
     function getOpenEntryTicketContractAddress() external view returns (address) {
         return _getOpenEntryTicketContractAddress();
     }
+
+    function getMaxPostponeTime() external view returns (uint256) {
+        return _getMaxPostponeTime();
+    }
 }

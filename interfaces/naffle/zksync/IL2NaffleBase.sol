@@ -17,4 +17,9 @@ interface IL2NaffleBase {
         uint256[] memory _ticketIds,
         uint256 _naffleId
     ) external;
+
+    function postponeNaffle(
+        uint256 _naffleId,
+        uint256 _newEndTime
+    ) external;
 }

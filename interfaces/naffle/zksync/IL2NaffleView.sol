@@ -11,4 +11,5 @@ interface IL2NaffleView {
     function getNaffleById(uint256 _id) external view returns (NaffleTypes.L2Naffle memory);
     function getPaidTicketContractAddress() external view returns (address);
     function getOpenEntryTicketContractAddress() external view returns (address);
+    function getMaxPostponeTime() external view returns (uint256);
 }

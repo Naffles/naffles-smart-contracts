@@ -38,6 +38,7 @@ def setup_l2_naffle_contract(
     admin_facet.setOpenEntryTicketContractAddress(
         open_entry_ticket_contract.address, from_admin
     )
+    admin_facet.setMaxPostponeTime(86400, from_admin)
 
 
 def test_create_naffle_not_allowed(
@@ -519,3 +520,58 @@ def test_use_open_entry_tickets_success(
 
     # 7 is number of open entry tickets
     assert naffle[7] == 1
+
+
+def test_postpone_naffle(
+    admin,
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+    deployed_erc721a_mock,
+    deployed_l1_messenger_mock,
+):
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_l2_naffle_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+
+    setup_l2_naffle_contract(
+        admin_facet,
+        from_admin["from"],
+        deployed_erc721a_mock,
+        from_admin["from"],
+        deployed_l1_messenger_mock,
+        from_admin,
+    )
+
+    endtime = datetime.datetime.now().timestamp() + 1
+    base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            admin,
+            NAFFLE_ID,
+            NFT_ID,
+            1,
+            TICKET_PRICE,
+            endtime,
+            STANDARD_NAFFLE_TYPE,
+            ERC721,
+        ),
+        from_admin,
+    )
+
+    base_facet.postponeNaffle(1, endtime + 1000, from_admin)
+
+    naffle = view_facet.getNaffleById(1, from_admin)
+
+    assert naffle[6] == endtime + 1000

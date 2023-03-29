@@ -18,6 +18,7 @@ library L2NaffleBaseStorage {
         // 100 = 1%
         uint256 freeTicketRatio;
         uint256 platformFee;
+        uint256 maxPostponeTime;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
     }
 
