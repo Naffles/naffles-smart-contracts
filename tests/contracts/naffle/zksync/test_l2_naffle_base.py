@@ -132,7 +132,6 @@ def test_create_naffle(
 
     naffle = view_facet.getNaffleById(NAFFLE_ID)
     expected_open_entry_ticket_spots = 0
-    expected_free_ticket_spots = 2
     expected_number_of_tickets_bought = 0
     expected_naffle_status = 0  # active
     expected_winning_ticket_type = 0  # none
@@ -188,58 +187,6 @@ def test_buy_tickets_invalid_naffle_id(
     )
 
     with brownie.reverts(get_error_message("InvalidNaffleId", ["uint256"], [1])):
-        base_facet.buyTickets(1, 1, {"from": admin, "value": 10})
-
-
-def test_buy_tickets_invalid_naffle_status(
-    admin,
-    from_admin,
-    deployed_l2_naffle_diamond,
-    deployed_l2_naffle_base_facet,
-    deployed_l2_naffle_admin_facet,
-    deployed_l2_naffle_view_facet,
-    deployed_erc721a_mock,
-):
-    # can't test yet because no code available to set naffle status
-    return
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_l2_naffle_diamond_with_facets(
-        from_admin,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_base_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_view_facet,
-    )
-
-    setup_l2_naffle_contract(
-        admin_facet,
-        from_admin["from"],
-        deployed_erc721a_mock,
-        from_admin["from"],
-        from_admin,
-    )
-
-    endtime = datetime.datetime.now().timestamp() + 1000
-    base_facet.createNaffle(
-        (
-            deployed_erc721a_mock.address,
-            admin,
-            NAFFLE_ID,
-            NFT_ID,
-            PAID_TICKET_SPOTS,
-            TICKET_PRICE,
-            endtime,
-            STANDARD_NAFFLE_TYPE,
-            ERC721,
-        ),
-        from_admin,
-    )
-
-    with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [0])):
         base_facet.buyTickets(1, 1, {"from": admin, "value": 10})
 
 
