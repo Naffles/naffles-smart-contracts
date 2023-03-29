@@ -22,6 +22,11 @@ library L1NaffleBaseStorage {
         mapping(uint256 => NaffleTypes.L1Naffle) naffles;
         mapping(uint256 => address) naffleWinner;
         mapping(uint256 => mapping(uint256 => bool)) isL2ToL1MessageProcessed;
+
+        bytes32 chainlinkVRFGasLaneKeyHash;
+        uint64 chainlinkVRFSubscriptionId;
+        uint32 chainlinkVRFCallbackGasLimit;
+        uint16 chainlinkVRFRequestConfirmations;
     }
 
     function layout() internal pure returns (Layout storage s) {
