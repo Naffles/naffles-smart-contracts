@@ -1,10 +1,5 @@
 import datetime
 
-<<<<<<< HEAD
-import brownie
-
-=======
->>>>>>> test_refactor
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
 
@@ -148,4 +143,5 @@ def create_naffle_and_mint_tickets(
     )
 
     l2_diamonds.naffle_base_facet.buyTickets(2, 1, {"from": address, "value": 20})
-    l2_diamonds.open_entry_base_facet.adminMint(address, 1, from_admin)
+    l2_diamonds.open_entry_admin_facet.adminMint(address, 1, from_admin)
+

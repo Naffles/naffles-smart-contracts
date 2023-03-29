@@ -12,13 +12,5 @@ interface IL1NaffleBase {
         uint256 _endTime,
         NaffleTypes.NaffleType _naffleType
     ) external returns (uint256 naffleId, bytes32 txHash);
-    function consumeMessageFromL2(
-        address _zkSyncAddress,
-        uint256 _l2BlockNumber,
-        uint256 _index,
-        uint16 _l2TxNumberInBlock,
-        bytes calldata _message,
-        bytes32[] calldata _proof
-    ) external;
     error NotSupported();
 }
