@@ -38,4 +38,27 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
     function setAdmin(address _admin) external onlyOwner {
         _grantRole(_getAdminRole(), _admin);
     }
+
+    function consumeAdminCancelMessage(
+        address _zkSyncAddress,
+        uint256 _l2BlockNumber,
+        uint256 _index,
+        uint16 _l2TxNumberInBlock,
+        bytes calldata _message,
+        bytes32[] calldata _proof
+    ) external onlyRole(_getAdminRole()) {
+        (string memory action, uint256 naffleId) = _consumeAdminCancelMessage(
+            _zkSyncAddress,
+            _l2BlockNumber,
+            _index,
+            _l2TxNumberInBlock,
+            _message,
+            _proof
+        );
+        if (keccak256(abi.encode(action)) == keccak256(abi.encode("cancel"))) {
+            _cancelNaffle(naffleId);
+        } else {
+            revert InvalidAction();
+        }
+    }
 }

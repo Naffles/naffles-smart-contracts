@@ -73,22 +73,4 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
     function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
         return interfaceId == type(IERC721Receiver).interfaceId || interfaceId == type(IERC1155Receiver).interfaceId;
     }
-
-    function consumeMessageFromL2(
-        address _zkSyncAddress,
-        uint256 _l2BlockNumber,
-        uint256 _index,
-        uint16 _l2TxNumberInBlock,
-        bytes calldata _message,
-        bytes32[] calldata _proof
-    ) external OnlyZkSyncContract {
-        _consumeMessageFromL2(
-            _zkSyncAddress,
-            _l2BlockNumber,
-            _index,
-            _l2TxNumberInBlock,
-            _message,
-            _proof
-        );
-    }
 }

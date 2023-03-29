@@ -10,4 +10,12 @@ interface IL1NaffleAdmin {
     function setFoundersKeyAddress(address _foundersKeyAddress) external;
     function setFoundersKeyPlaceholderAddress(address _foundersKeyPlaceholderAddress) external;
     function setAdmin(address _admin) external;
+    function consumeAdminCancelMessage(
+        address _zkSyncAddress,
+        uint256 _l2BlockNumber,
+        uint256 _index,
+        uint16 _l2TxNumberInBlock,
+        bytes calldata _message,
+        bytes32[] calldata _proof
+    ) external;
 }
