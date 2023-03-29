@@ -118,7 +118,6 @@ def test_create_naffle(
 
     naffle = view_facet.getNaffleById(NAFFLE_ID)
     expected_open_entry_ticket_spots = 0
-    expected_free_ticket_spots = 2
     expected_number_of_tickets_bought = 0
     expected_naffle_status = 0  # active
     expected_winning_ticket_type = 0  # none
