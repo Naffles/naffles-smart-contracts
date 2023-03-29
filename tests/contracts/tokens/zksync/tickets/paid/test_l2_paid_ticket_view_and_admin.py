@@ -139,10 +139,17 @@ def test_get_ticket_by_id(
         deployed_erc721a_mock,
     )
 
-    id = 1
-    ticket = l2_diamonds.paid_view_facet.getTicketById(id, from_admin)
-    print(ticket)
-    assert ticket == (TICKET_PRICE, NAFFLE_ID, id, False)
+    ticket_id = 1
+    ticket = brownie.interface.IL2PaidTicketView(
+        l2_diamonds.deployed_l2_paid_ticket_diamond
+    ).getTicketById(ticket_id, from_admin)
+    assert ticket == (
+        address,
+        TICKET_PRICE,
+        NAFFLE_ID,
+        ticket_id,
+        False
+    )
 
 
 def test_get_ticket_by_id_on_naffle(
@@ -158,6 +165,13 @@ def test_get_ticket_by_id_on_naffle(
         deployed_erc721a_mock,
     )
 
-    id = 1
-    ticket = l2_diamonds.paid_view_facet.getTicketByIdOnNaffle(id, 1, from_admin)
-    assert ticket == (TICKET_PRICE, NAFFLE_ID, id, False)
+    ticket_id = 1
+    ticket = brownie.interface.IL2PaidTicketView(
+        l2_diamonds.deployed_l2_paid_ticket_diamond).getTicketByIdOnNaffle(ticket_id, 1, from_admin)
+    assert ticket == (
+        address,
+        TICKET_PRICE,
+        NAFFLE_ID,
+        ticket_id,
+        False
+    )
