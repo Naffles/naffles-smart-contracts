@@ -155,7 +155,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         naffle.status = NaffleTypes.NaffleStatus.FINISHED;
 
-        bytes memory message = abi.encode("setWinner", winner);
+        bytes memory message = abi.encode("setWinner", _naffleId, winner);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
     }
 

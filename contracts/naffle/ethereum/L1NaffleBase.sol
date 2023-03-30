@@ -44,7 +44,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _message,
             _proof
         );
-        (string memory action, uint256 winner) = abi.decode(_message, (string, address));
+        (string memory action, uint256 naffleId, address winner) = abi.decode(_message, (string, uint256, address));
         if (keccak256(abi.encode(action)) == keccak256(abi.encode("setWinner"))) {
             _setWinnerAndTransferNFT(naffleId, winner);
         } else {
