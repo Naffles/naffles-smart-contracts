@@ -9,7 +9,7 @@ NAFFLE_ID = 1
 NAFFLE_STATUS_ACTIVE = 0
 
 PAID_TICKET_SPOTS = 2
-TICKET_PRICE = 10
+TICKET_PRICE = 10000
 
 DEFAULT_END_DATE = datetime.datetime.now().timestamp() + 1000
 
@@ -142,6 +142,6 @@ def create_naffle_and_mint_tickets(
         from_admin,
     )
 
-    l2_diamonds.naffle_base_facet.buyTickets(2, 1, {"from": address, "value": 20})
+    l2_diamonds.naffle_base_facet.buyTickets(2, 1, {"from": address, "value": TICKET_PRICE * 2})
     l2_diamonds.open_entry_admin_facet.adminMint(address, 1, from_admin)
 

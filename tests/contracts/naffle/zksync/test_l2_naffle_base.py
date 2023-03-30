@@ -357,7 +357,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     with brownie.reverts(
         get_error_message("NotEnoughPaidTicketSpots", ["uint256"], [1])
     ):
-        base_facet.buyTickets(2, 1, {"from": admin, "value": 20})
+        base_facet.buyTickets(2, 1, {"from": admin, "value": TICKET_PRICE * 2})
 
 
 def test_buy_tickets_does_mint_tickets_for_address(
@@ -513,9 +513,12 @@ def test_draw_winner(
         l2_diamonds,
         deployed_erc721a_mock,
     )
+    old_balance = address.balance()
     l2_diamonds.naffle_base_facet.ownerDrawWinner(1, from_address)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
+
+    # print eth balance of address
 
     # winning ticket id
     if naffle[11] != 1 and naffle[11] != 2:
@@ -523,3 +526,5 @@ def test_draw_winner(
 
     assert naffle[11] == 2  # paid ticket type
     assert naffle[12] == 4  # naffle status finished
+
+    assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.99)
