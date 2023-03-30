@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 /**
- * @title L1 Naffle Admin Interface
+ * @title L1 Naffle Admin Interface.
  */
 interface IL1NaffleAdmin {
     /**
@@ -31,12 +31,12 @@ interface IL1NaffleAdmin {
     function setZkSyncAddress(address _zkSyncAddress) external;
 
     /**
-     * @notice sets the Founders Key address
+     * @notice sets the Founders Key address.
      */
     function setFoundersKeyAddress(address _foundersKeyAddress) external;
 
     /**
-     * @notice sets the Founders Key Placeholder Address
+     * @notice sets the Founders Key Placeholder Address.
      */
     function setFoundersKeyPlaceholderAddress(address _foundersKeyPlaceholderAddress) external;
 

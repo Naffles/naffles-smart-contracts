@@ -58,7 +58,7 @@ interface IL1NaffleView {
     /**
      * @notice get a naffle by its id.
      * @param _id the id of the naffle.
-     * @return naffle the naffle struct.
+     * @return naffle the naffle.
      */
     function getNaffleById(uint256 _id) external view returns (NaffleTypes.L1Naffle memory);
 }
