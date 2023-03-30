@@ -42,4 +42,12 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
             _naffleId
         );
     }
+
+    function ownerCancelNaffle(
+        uint256 _naffleId
+    ) external {
+        _ownerCancelNaffle(
+            _naffleId
+        );
+    }
 }

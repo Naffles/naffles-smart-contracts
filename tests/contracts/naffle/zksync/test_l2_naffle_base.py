@@ -1,7 +1,7 @@
 import datetime
 
 import brownie
-from brownie import interface
+from brownie import interface, chain
 
 from scripts.util import get_error_message
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
@@ -477,3 +477,68 @@ def test_use_open_entry_tickets_success(
 
     # 7 is number of open entry tickets
     assert naffle[7] == 1
+
+
+def test_owner_cancel_naffle_not_allowed(
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+
+    chain.sleep(1001)
+    with brownie.reverts(get_error_message("NotAllowed")):
+        l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_admin)
+
+
+def test_owner_cancel_naffle_not_ended_yet(
+    address,
+    from_address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    enddate = DEFAULT_END_DATE + 100000
+    l2_diamonds.naffle_base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            address,
+            NAFFLE_ID,
+            NFT_ID,
+            100,
+            TICKET_PRICE,
+            enddate,
+            0,
+            ERC721,
+        ),
+        from_admin,
+    )
+
+    with brownie.reverts(get_error_message("NaffleNotEndedYet", ["uint256"], [int(enddate)])):
+        l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
+
+
+def test_owner_cancel_naffle_invalid_status(
+    address,
+    from_address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    l2_diamonds.naffle_admin_facet.adminCancelNaffle(1, from_admin)
+    chain.sleep(1001)
+
+    with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [2])):
+        l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)

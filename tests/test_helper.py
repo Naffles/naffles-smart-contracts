@@ -117,6 +117,7 @@ class L2Diamonds:
         self.deployed_l2_open_entry_ticket_diamond = (
             deployed_l2_open_entry_ticket_diamond
         )
+        self.deployed_l1_messenger_mock = deployed_l1_messenger_mock
 
 
 def create_naffle_and_mint_tickets(

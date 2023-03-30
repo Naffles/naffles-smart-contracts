@@ -94,6 +94,21 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
     }
 
+    function _ownerCancelNaffle(
+        uint256 _naffleId
+    ) internal returns (bytes32 messageHash){
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+        if (naffle.owner != msg.sender) {
+            revert NotAllowed();
+        }
+        if (naffle.endTime > block.timestamp) {
+            revert NaffleNotEndedYet(naffle.endTime);
+        }
+
+        return _cancelNaffleInternal(naffle, layout);
+    }
+
     function _adminCancelNaffle(
         uint256 _naffleId
     ) internal returns (bytes32 messageHash){
@@ -102,12 +117,18 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
-        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
-            revert InvalidNaffleStatus(naffle.status);
-        }
-        naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
+        return _cancelNaffleInternal(naffle, layout);
+    }
 
-        bytes memory message = abi.encode("cancel", _naffleId);
+    function _cancelNaffleInternal(
+       NaffleTypes.L2Naffle storage _naffle, L2NaffleBaseStorage.Layout storage layout
+    ) internal returns (bytes32 messageHash) {
+        if (_naffle.status != NaffleTypes.NaffleStatus.ACTIVE && _naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+            revert InvalidNaffleStatus(_naffle.status);
+        }
+        _naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
+
+        bytes memory message = abi.encode("cancel", _naffle.naffleId);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
     }
 

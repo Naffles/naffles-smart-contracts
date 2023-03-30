@@ -11,4 +11,5 @@ interface IL2NaffleBaseInternal {
     error NotEnoughPaidTicketSpots(uint256 amount);
     error NotEnoughOpenEntryTicketSpots(uint256 amount);
     error OpenTicketRatioCannotBeZero();
+    error NaffleNotEndedYet(uint256 endTime);
 }
