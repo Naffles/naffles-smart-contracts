@@ -1,7 +1,8 @@
 import datetime
 
 import brownie
-from brownie import interface
+import pytest
+from brownie import interface, chain
 
 from scripts.util import get_error_message
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
@@ -477,3 +478,48 @@ def test_use_open_entry_tickets_success(
 
     # 7 is number of open entry tickets
     assert naffle[7] == 1
+
+
+def test_draw_winner_not_owner(
+    admin,
+    address,
+    from_admin,
+    from_address,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    chain.sleep(1001)
+    with brownie.reverts(get_error_message("NotAllowed")):
+        l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_admin)
+
+
+def test_draw_winner(
+    admin,
+    from_address,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    l2_diamonds.naffle_base_facet.ownerDrawWinner(1, from_address)
+
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
+
+    # winning ticket id
+    if naffle[11] != 1 and naffle[11] != 2:
+        pytest.fail("Naffle winning ticket id is not 1 or 2")
+
+    assert naffle[11] == 2  # paid ticket type
+    assert naffle[12] == 4  # naffle status finished
