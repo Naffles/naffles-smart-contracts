@@ -1,10 +1,10 @@
 import datetime
 
 import brownie
-from brownie import L2NaffleAdmin
+import pytest
+from brownie import L2NaffleAdmin, chain
 
 from scripts.util import add_facet, get_error_message, get_selectors
-from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import setup_diamond_with_facets
 from tests.contracts.naffle.zksync.test_l2_naffle_base import (
     ERC721,
     STANDARD_NAFFLE_TYPE,
@@ -582,3 +582,137 @@ def test_cancel_naffle_not_allowed(
 
     with brownie.reverts():
         admin_facet.adminCancelNaffle(NAFFLE_ID, from_address)
+
+
+def test_draw_winner_not_admin(
+    admin,
+    address,
+    from_admin,
+    from_address,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    chain.sleep(1001)
+    with brownie.reverts():
+        l2_diamonds.naffle_admin_facet.adminDrawWinner(NAFFLE_ID, from_address)
+
+
+def test_draw_winner_invalid_naffle_id(
+    admin,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    chain.sleep(1001)
+    with brownie.reverts(get_error_message("InvalidNaffleId", ['uint256'], [2])):
+        l2_diamonds.naffle_admin_facet.adminDrawWinner(2, from_admin)
+
+
+def test_draw_winner_invalid_naffle_status(
+    admin,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    chain.sleep(1001)
+    l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
+    with brownie.reverts(get_error_message("InvalidNaffleStatus", ['uint8'], [2])):
+        l2_diamonds.naffle_admin_facet.adminDrawWinner(1, from_admin)
+
+
+def test_draw_winner_naffle_not_ended(
+    admin,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    l2_diamonds.naffle_base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            address,
+            NAFFLE_ID,
+            NFT_ID,
+            100,
+            TICKET_PRICE,
+            DEFAULT_END_DATE + 10000,
+            0,
+            ERC721,
+        ),
+        from_admin,
+    )
+    with brownie.reverts(get_error_message("NaffleNotEndedYet", ['uint256'], [int(DEFAULT_END_DATE + 10000)])):
+        l2_diamonds.naffle_admin_facet.adminDrawWinner(1, from_admin)
+
+
+def test_draw_winner_no_tickets_bought(
+    admin,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    l2_diamonds.naffle_base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            address,
+            NAFFLE_ID,
+            NFT_ID,
+            100,
+            TICKET_PRICE,
+            DEFAULT_END_DATE,
+            0,
+            ERC721,
+        ),
+        from_admin,
+    )
+    chain.sleep(1001)
+    with brownie.reverts(get_error_message("NoTicketsBought")):
+        l2_diamonds.naffle_admin_facet.adminDrawWinner(1, from_admin)
+
+
+def test_draw_winner(
+    admin,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    l2_diamonds.naffle_admin_facet.adminDrawWinner(1, from_admin)
+
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
+
+    # winning ticket id
+    if naffle[11] != 1 and naffle[11] != 2:
+        pytest.fail("Naffle winning ticket id is not 1 or 2")
+
+    assert naffle[11] == 2  # paid ticket type
+    assert naffle[12] == 4  # naffle status finished
+
+

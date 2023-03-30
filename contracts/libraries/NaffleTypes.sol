@@ -29,7 +29,7 @@ library NaffleTypes {
 
     enum TicketType {
         NONE,
-        FREE,
+        OPEN_ENTRY,
         PAID
     }
 

@@ -111,6 +111,53 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
     }
 
+    function _ownerDrawWinner(uint256 _naffleId) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+        if (naffle.owner != msg.sender) {
+            revert NotAllowed();
+        }
+        _drawWinnerInternal(naffle, _naffleId);
+    }
+
+    function _adminDrawWinner(uint256 _naffleId) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+        _drawWinnerInternal(naffle, _naffleId);
+    }
+
+    function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle, uint256 _naffleId) internal {
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+        if (naffle.endTime > block.timestamp) {
+            revert NaffleNotEndedYet(naffle.endTime);
+        }
+        if (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries == 0) {
+            revert NoTicketsBought();
+        }
+        uint256 winningTicketId = random(naffle.numberOfPaidTickets + naffle.numberOfOpenEntries);
+        if (winningTicketId <= naffle.numberOfPaidTickets) {
+            naffle.winningTicketType = NaffleTypes.TicketType.PAID;
+            naffle.winningTicketId = winningTicketId;
+        } else {
+            naffle.winningTicketType = NaffleTypes.TicketType.OPEN_ENTRY;
+            naffle.winningTicketId = winningTicketId - naffle.numberOfPaidTickets;
+        }
+        naffle.status = NaffleTypes.NaffleStatus.FINISHED;
+    }
+
+    function random(uint256 maxValue) internal view returns (uint256) {
+        return uint256(keccak256(abi.encodePacked(
+              tx.origin,
+              blockhash(block.number - 1),
+              block.timestamp
+        ))) % maxValue + 1;
+      }
+
     function _getAdminRole() internal view returns (bytes32) {
         return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
