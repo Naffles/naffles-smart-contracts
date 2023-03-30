@@ -13,4 +13,6 @@ interface IL2NaffleBaseInternal {
     error OpenTicketRatioCannotBeZero();
     error NoTicketsBought();
     error NaffleNotEndedYet(uint256 endTime);
+    error UnableToSendFunds();
+    error InsufficientFunds();
 }

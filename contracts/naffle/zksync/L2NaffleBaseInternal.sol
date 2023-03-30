@@ -142,7 +142,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries == 0) {
             revert NoTicketsBought();
         }
-        uint256 winningTicketId = random(naffle.numberOfPaidTickets + naffle.numberOfOpenEntries);
+        uint256 winningTicketId = _random(naffle.numberOfPaidTickets + naffle.numberOfOpenEntries);
         address winner;
         if (winningTicketId <= naffle.numberOfPaidTickets) {
             naffle.winningTicketType = NaffleTypes.TicketType.PAID;
@@ -155,11 +155,20 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         naffle.status = NaffleTypes.NaffleStatus.FINISHED;
 
+        uint256 totalFundsRaised = naffle.ticketPriceInWei * naffle.numberOfPaidTickets;
+        uint256 platformFee = totalFundsRaised * layout.platformFee / 10000;
+        uint256 amountToTransfer = totalFundsRaised - platformFee;
+
         bytes memory message = abi.encode("setWinner", _naffleId, winner);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
+        layout.platformFeesAccumulated = layout.platformFeesAccumulated + platformFee;
+        (bool success, ) = msg.sender.call{value: amountToTransfer}("");
+        if (!success) {
+            revert UnableToSendFunds();
+        }
     }
 
-    function random(uint256 maxValue) internal view returns (uint256) {
+    function _random(uint256 maxValue) internal view returns (uint256) {
         return uint256(keccak256(abi.encodePacked(
               tx.origin,
               blockhash(block.number - 1),
@@ -220,5 +229,17 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     function _setL1MessengerContractAddress(address _l1MessengerContractAddress) internal {
         L2NaffleBaseStorage.layout().l1MessengerContractAddress = _l1MessengerContractAddress;
+    }
+
+    function _withdrawPlatformFees(uint256 _amount, address _to) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        if (layout.platformFeesAccumulated < _amount) {
+            revert InsufficientFunds();
+        }
+        layout.platformFeesAccumulated = layout.platformFeesAccumulated - _amount;
+        (bool success, ) = _to.call{value: _amount}("");
+        if (!success) {
+            revert UnableToSendFunds();
+        }
     }
 }
