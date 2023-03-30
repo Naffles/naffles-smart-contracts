@@ -518,8 +518,6 @@ def test_draw_winner(
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 
-    # print eth balance of address
-
     # winning ticket id
     if naffle[11] != 1 and naffle[11] != 2:
         pytest.fail("Naffle winning ticket id is not 1 or 2")
