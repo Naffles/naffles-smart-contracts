@@ -44,7 +44,6 @@ library NaffleTypes {
         uint256 naffleId;
         address owner;
         address winner;
-        bool winnerClaimed;
         bool cancelled;
         TokenContractType naffleTokenType;
     }

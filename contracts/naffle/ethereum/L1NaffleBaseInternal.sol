@@ -64,7 +64,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             naffleId: naffleId,
             owner: msg.sender,
             winner: address(0),
-            winnerClaimed: false,
             cancelled: false,
             naffleTokenType: tokenContractType
         });
@@ -98,6 +97,20 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             // refund address
             address(0)
         );
+    }
+
+    function _setWinnerAndTransferNFT(
+        uint256 _naffleId,
+        address _winner
+    ) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
+        naffle.winner = _winner;
+        if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
+            IERC721(naffle.tokenAddress).transferFrom(address(this), _winner, naffle.nftId);
+        } else if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
+            IERC1155(naffle.tokenAddress).safeTransferFrom(address(this), _winner, naffle.nftId, 1, bytes(""));
+        }
     }
 
     function _consumeMessageFromL2(
