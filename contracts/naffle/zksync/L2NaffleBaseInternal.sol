@@ -105,6 +105,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.endTime > block.timestamp) {
             revert NaffleNotEndedYet(naffle.endTime);
         }
+        if (naffle.naffleType == NaffleTypes.NaffleType.UNLIMITED) {
+            revert InvalidNaffleType(naffle.naffleType);
+        }
+        if (naffle.paidTicketSpots == naffle.numberOfPaidTickets) {
+            revert NaffleSoldOut();
+        }
 
         return _cancelNaffleInternal(naffle, layout);
     }

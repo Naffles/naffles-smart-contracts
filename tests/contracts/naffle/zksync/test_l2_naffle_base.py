@@ -504,23 +504,16 @@ def test_owner_cancel_naffle_not_ended_yet(
     l2_diamonds,
     deployed_erc721a_mock,
 ):
-    enddate = DEFAULT_END_DATE + 100000
-    l2_diamonds.naffle_base_facet.createNaffle(
-        (
-            deployed_erc721a_mock.address,
-            address,
-            NAFFLE_ID,
-            NFT_ID,
-            100,
-            TICKET_PRICE,
-            enddate,
-            0,
-            ERC721,
-        ),
+    create_naffle_and_mint_tickets(
+        address,
         from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=2,
     )
+    chain.sleep(1001)
 
-    with brownie.reverts(get_error_message("NaffleNotEndedYet", ["uint256"], [int(enddate)])):
+    with brownie.reverts(get_error_message("NaffleSoldOut")):
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
 
 
@@ -536,9 +529,31 @@ def test_owner_cancel_naffle_invalid_status(
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
+        number_of_tickets=200,
     )
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(1, from_admin)
     chain.sleep(1001)
 
     with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [2])):
+        l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
+
+
+def test_owner_cancel_naffle_invalid_type(
+    address,
+    from_address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        naffle_type=UNLIMITED_NAFFLE_TYPE,
+    )
+    l2_diamonds.naffle_admin_facet.adminCancelNaffle(1, from_admin)
+    chain.sleep(1001)
+
+    with brownie.reverts(get_error_message("InvalidNaffleType", ["uint8"], [1])):
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)

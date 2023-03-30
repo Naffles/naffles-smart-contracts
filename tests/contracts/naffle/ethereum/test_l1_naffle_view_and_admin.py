@@ -391,7 +391,6 @@ def test_process_message_from_l2_cancel_naffle(
         _naffleId,
         address,
         ZERO_ADDRESS,
-        False,
         True,
         ERC721,
     )

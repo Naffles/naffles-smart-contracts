@@ -12,4 +12,6 @@ interface IL2NaffleBaseInternal {
     error NotEnoughOpenEntryTicketSpots(uint256 amount);
     error OpenTicketRatioCannotBeZero();
     error NaffleNotEndedYet(uint256 endTime);
+    error NaffleSoldOut();
+    error InvalidNaffleType(NaffleTypes.NaffleType naffleType);
 }
