@@ -10,6 +10,9 @@ import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
 
 contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
+    /**
+     * @inheritdoc IL1NaffleBase
+     */
     function createNaffle(
         address _ethTokenAddress,
         uint256 _nftId,
@@ -28,6 +31,9 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         );
     }
 
+    /**
+     * @inheritdoc IL1NaffleBase
+     */
     function consumeSetWinnerMessage(
         address _zkSyncAddress,
         uint256 _l2BlockNumber,
@@ -52,6 +58,9 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         }
     }
 
+    /**
+     * @inheritdoc IERC721Receiver
+     */
     function onERC721Received(
         address,
         address,
@@ -64,6 +73,9 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             );
     }
 
+    /**
+     * @inheritdoc IERC1155Receiver
+     */
     function onERC1155Received(
         address,
         address,
@@ -77,6 +89,10 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             );
     }
 
+
+    /**
+     * @inheritdoc IERC1155Receiver
+     */
     function onERC1155BatchReceived(
         address,
         address,

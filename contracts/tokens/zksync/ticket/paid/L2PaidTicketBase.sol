@@ -15,14 +15,23 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
         _;
     }
 
+    /**
+     * @inheritdoc IL2PaidTicketBase
+     */
     function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 ticketPriceInWei, uint256 startingTicketId) external onlyL2NaffleContract returns (uint256[] memory ticketIds) {
         _mintTickets(_to, _amount, _naffleId, ticketPriceInWei, startingTicketId);
     }
 
+    /**
+     * @inheritdoc IL2PaidTicketBase
+     */
     function refundAndBurnTicket(uint256 _naffleId, uint256 _naffleTicketId) external {
         _refundAndBurnTicket(_naffleId, _naffleTicketId);
     }
 
+    /**
+     * @inheritdoc SolidStateERC721
+     */
     function _handleApproveMessageValue(
         address operator,
         uint256 tokenId,
@@ -31,6 +40,9 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
         super._handleApproveMessageValue(operator, tokenId, value);
     }
 
+    /**
+     * @inheritdoc SolidStateERC721
+     */
     function _handleTransferMessageValue(
         address from,
         address to,
@@ -40,6 +52,9 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
         super._handleTransferMessageValue(from, to, tokenId, value);
     }
 
+    /**
+     * @inheritdoc SolidStateERC721
+     */
     function _beforeTokenTransfer(
         address from,
         address to,

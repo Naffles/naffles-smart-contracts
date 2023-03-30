@@ -15,6 +15,9 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         _;
     }
 
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
     function createNaffle(
         NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) external onlyL1NaffleContract {
@@ -23,6 +26,9 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         );
     }
 
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
     function buyTickets(
         uint256 _amount,
         uint256 _naffleId
@@ -33,6 +39,9 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         );
     }
 
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
     function useOpenEntryTickets(
         uint256[] memory _ticketIds,
         uint256 _naffleId
@@ -43,6 +52,9 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         );
     }
 
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
     function ownerCancelNaffle(
         uint256 _naffleId
     ) external {
@@ -51,6 +63,9 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         );
     }
 
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
     function ownerDrawWinner(uint256 _naffleId) external returns (bytes32) {
         return _ownerDrawWinner(
             _naffleId

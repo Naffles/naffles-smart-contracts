@@ -62,30 +62,30 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         _burn(totalTicketId);
     }
 
-    function _getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) internal view returns (address) {
+    function _getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) internal view returns (address owner) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        return _ownerOf(l.naffleIdNaffleTicketIdTicketId[_naffleId][_ticketIdOnNaffle]);
+        owner = _ownerOf(l.naffleIdNaffleTicketIdTicketId[_naffleId][_ticketIdOnNaffle]);
     }
 
-    function _getAdminRole() internal view returns (bytes32) {
-        return AccessControlStorage.DEFAULT_ADMIN_ROLE;
+    function _getAdminRole() internal view returns (bytes32 adminRole) {
+        adminRole = AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
-    function _getL2NaffleContractAddress() internal view returns (address) {
-        return L2PaidTicketStorage.layout().l2NaffleContractAddress;
+    function _getL2NaffleContractAddress() internal view returns (address l2NaffleContractAddress) {
+        l2NaffleContractAddress = L2PaidTicketStorage.layout().l2NaffleContractAddress;
     }
 
     function _setL2NaffleContractAddress(address _l2NaffleContractAddress) internal {
         L2PaidTicketStorage.layout().l2NaffleContractAddress = _l2NaffleContractAddress;
     }
 
-    function _getTicketByIdOnNaffle(uint256 _ticketIdOnNaffle, uint256 _naffleId) internal view returns (NaffleTypes.PaidTicket memory) {
+    function _getTicketByIdOnNaffle(uint256 _ticketIdOnNaffle, uint256 _naffleId) internal view returns (NaffleTypes.PaidTicket memory ticket) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        return l.paidTickets[l.naffleIdNaffleTicketIdTicketId[_naffleId][_ticketIdOnNaffle]];
+        ticket l.paidTickets[l.naffleIdNaffleTicketIdTicketId[_naffleId][_ticketIdOnNaffle]];
     }
 
-    function _getTicketById(uint256 _ticketId) internal view returns (NaffleTypes.PaidTicket memory) {
+    function _getTicketById(uint256 _ticketId) internal view returns (NaffleTypes.PaidTicket memory ticket) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        return l.paidTickets[_ticketId];
+        ticket = l.paidTickets[_ticketId];
     }
 }
