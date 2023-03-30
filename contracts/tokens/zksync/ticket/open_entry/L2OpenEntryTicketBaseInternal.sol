@@ -50,31 +50,31 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         l.openEntryTickets[totalTicketId] = ticket;
     }
 
-    function _getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) internal view returns (address) {
+    function _getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) internal view returns (address owner) {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         uint256 totalTicketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketIdOnNaffle];
         return _ownerOf(totalTicketId);
     }
 
-    function _getAdminRole() internal view returns (bytes32) {
-        return AccessControlStorage.DEFAULT_ADMIN_ROLE;
+    function _getAdminRole() internal view returns (bytes32 adminRole) {
+        adminRole = AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
-    function _getL2NaffleContractAddress() internal view returns (address) {
-        return L2OpenEntryTicketStorage.layout().l2NaffleContractAddress;
+    function _getL2NaffleContractAddress() internal view returns (address l2NaffleContractAddress) {
+        l2NaffleContractAddress = L2OpenEntryTicketStorage.layout().l2NaffleContractAddress;
     }
 
     function _setL2NaffleContractAddress(address _l2NaffleContractAddress) internal {
         L2OpenEntryTicketStorage.layout().l2NaffleContractAddress = _l2NaffleContractAddress;
     }
 
-    function _getTotalSupply() internal view returns (uint256) {
-        return _totalSupply();
+    function _getTotalSupply() internal view returns (uint256 totalSupply)
+        totalSupply = _totalSupply();
     }
 
-    function _getOpenEntryTicketById(uint256 _ticketId) internal view returns (NaffleTypes.OpenEntryTicket memory) {
+    function _getOpenEntryTicketById(uint256 _ticketId) internal view returns (NaffleTypes.OpenEntryTicket memory ticket) {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
-        return l.openEntryTickets[_ticketId];
+        ticket = l.openEntryTickets[_ticketId];
     }
 
     function _adminMint(address _to, uint256 _amount) internal {
