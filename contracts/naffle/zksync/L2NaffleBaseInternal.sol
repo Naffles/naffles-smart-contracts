@@ -111,7 +111,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         // TODO call L1 contract to get randomness
         bytes memory message = abi.encode("drawWinner", _naffleId);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
-
     }
 
     function _adminCancelNaffle(

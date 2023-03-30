@@ -12,38 +12,49 @@ contract L1NaffleVRF is IL1NaffleVRF, VRFConsumerBaseV2, L1NaffleBaseInternal {
         address _vrfCoordinator
     ) VRFConsumerBaseV2(_vrfCoordinator) {}
 
-    function consumeDrawWinnerMessage(
-        address _zkSyncAddress,
-        uint256 _l2BlockNumber,
-        uint256 _index,
-        uint16 _l2TxNumberInBlock,
-        bytes calldata _message,
-        bytes32[] calldata _proof
-    ) external {
-        (string memory action, uint256 naffleId) = _consumeAdminCancelMessage(
-            _zkSyncAddress,
-            _l2BlockNumber,
-            _index,
-            _l2TxNumberInBlock,
-            _message,
-            _proof
+
+    function drawWinner(uint256 _naffleId, uint256 _totalNumberOfTickets) external {
+        (uint256 subscriptionId, bytes32 gasLaneKeyHash, uint32 callbackGasLimit, uint16 requestConfirmations) = _getChainlinkVRFSettings();
+        uint256 requestId = requestRandomness(
+            callbackGasLimit,
+            requestConfirmations,
+            1
         );
-        if (keccak256(abi.encode(action)) == keccak256(abi.encode("drawWinner"))) {
-            (uint256 chainLinkRequestId, uint256 subscriptionId, bytes32 gasLaneKeyHash, uint32 callbackGasLimit, uint16 requestConfirmations) = _getChainlinkVRFSettings();
-            uint256 chainLinkRequestId = coordinator.requestRandomWords(
-                gasLaneKeyHash,
-                subscriptionId,
-                requestConfirmations,
-                callbackGasLimit,
-                1
-            );
-            _storeChainlinkRequest(naffleId, chainLinkRequestId);
-        } else {
-            revert InvalidAction();
-        }
+        _storeChainlinkRequest(_naffleId, requestId, _totalNumberOfTickets);
     }
 
+//    function consumeDrawWinnerMessage(
+//        address _zkSyncAddress,
+//        uint256 _l2BlockNumber,
+//        uint256 _index,
+//        uint16 _l2TxNumberInBlock,
+//        bytes calldata _message,
+//        bytes32[] calldata _proof
+//    ) external {
+//        (string memory action, uint256 naffleId) = _consumeAdminCancelMessage(
+//            _zkSyncAddress,
+//            _l2BlockNumber,
+//            _index,
+//            _l2TxNumberInBlock,
+//            _message,
+//            _proof
+//        );
+//        if (keccak256(abi.encode(action)) == keccak256(abi.encode("drawWinner"))) {
+//            (uint256 chainLinkRequestId, uint256 subscriptionId, bytes32 gasLaneKeyHash, uint32 callbackGasLimit, uint16 requestConfirmations) = _getChainlinkVRFSettings();
+//            uint256 chainLinkRequestId = coordinator.requestRandomWords(
+//                gasLaneKeyHash,
+//                subscriptionId,
+//                requestConfirmations,
+//                callbackGasLimit,
+//                1
+//            );
+//            _storeChainlinkRequest(naffleId, chainLinkRequestId);
+//        } else {
+//            revert InvalidAction();
+//        }
+//    }
+
     function fulfillRandomWords(bytes32 requestId, uint256[] memory randomWords) internal override {
-        _fulfillRandomWords(requestId, randomWords, randomWords);
+        _fulfillRandomWords(requestId, randomWords);
     }
 }

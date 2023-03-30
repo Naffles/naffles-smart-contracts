@@ -138,13 +138,14 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         layout.naffles[_naffleId].cancelled = true;
     }
 
-    function _storeChainlinkRequest(uint256 _naffleId, uint256 requestId) internal {
+    function _storeChainlinkRequest(uint256 _naffleId, uint256 requestId, uint256 _totalNumberOfTickets) internal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         layout.chainlinkRequestStatus[requestId] = ChainlinkRequestStatus({
             randomWords: new uint256[](0),
             fulfilled: false,
             exists: true,
-            naffleId: _naffleId
+            naffleId: _naffleId,
+            totalNumberOfTickets: _totalNumberOfTickets
         });
         layout.naffleIdToChainlinkRequestId[_naffleId] = requestId;
     }
@@ -256,7 +257,26 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
 
         NaffleTypes.L1Naffle storage naffle = layout.naffles[status.naffleId];
 
-        winner = naffle.participants[randomWords[0] % naffle.participants.length];
-        uint256 naffleId = status.naffleId;
+        uint256 winning_number = randomWords[0] % status.totalNumberOfTickets + 1;
+        status.winningNumber = winning_number;
+        // maybe we shoudnt do this in the fullfillRandomWords function because this method cannot fail or chainlink will quit
+        zksync.requestL2Transaction{value: msg.value}(
+            layout.zkSyncNaffleContractAddress,
+            0,
+            abi.encodeWithSignature(
+                "setWinningTicket(uint256,address)",
+                status.naffleId,
+                winning_number
+            ),
+            // Gas limit
+            10000,
+            // gas price per pubdata byte
+            800,
+            // factory dependencies
+            new bytes[](0),
+            // refund address
+            address(0)
+        );
     }
+
 }

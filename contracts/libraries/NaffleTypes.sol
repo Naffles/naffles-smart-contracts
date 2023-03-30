@@ -27,6 +27,8 @@ library NaffleTypes {
         bool exists;
         uint256[] randomWords;
         uint256 naffleId;
+        uint256 totalNumberOfTickets;
+        uint256 winningNumber;
     }
 
     enum NaffleType {
