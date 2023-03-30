@@ -11,7 +11,9 @@ import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleBaseInternal.sol";
 import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
 import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
+import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketView.sol";
 import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
+import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketView.sol";
 import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
@@ -111,22 +113,23 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
     }
 
-    function _ownerDrawWinner(uint256 _naffleId) internal {
+    function _ownerDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
         if (naffle.owner != msg.sender) {
             revert NotAllowed();
         }
-        _drawWinnerInternal(naffle, _naffleId);
+        return _drawWinnerInternal(naffle, _naffleId);
     }
 
-    function _adminDrawWinner(uint256 _naffleId) internal {
+    function _adminDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
-        _drawWinnerInternal(naffle, _naffleId);
+        return _drawWinnerInternal(naffle, _naffleId);
     }
 
-    function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle, uint256 _naffleId) internal {
+    function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle, uint256 _naffleId) internal returns (bytes32 messageHash) {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
@@ -140,14 +143,20 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NoTicketsBought();
         }
         uint256 winningTicketId = random(naffle.numberOfPaidTickets + naffle.numberOfOpenEntries);
+        address winner;
         if (winningTicketId <= naffle.numberOfPaidTickets) {
             naffle.winningTicketType = NaffleTypes.TicketType.PAID;
             naffle.winningTicketId = winningTicketId;
+            winner = IL2PaidTicketView(layout.paidTicketContractAddress).getOwnerOfNaffleTicketId(_naffleId, winningTicketId);
         } else {
             naffle.winningTicketType = NaffleTypes.TicketType.OPEN_ENTRY;
             naffle.winningTicketId = winningTicketId - naffle.numberOfPaidTickets;
+            winner = IL2OpenEntryTicketView(layout.openEntryTicketContractAddress).getOwnerOfNaffleTicketId(_naffleId, naffle.winningTicketId);
         }
         naffle.status = NaffleTypes.NaffleStatus.FINISHED;
+
+        bytes memory message = abi.encode("setWinner", winner);
+        messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
     }
 
     function random(uint256 maxValue) internal view returns (uint256) {

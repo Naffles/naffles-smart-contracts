@@ -51,3 +51,24 @@ def test_mint_tickets_for_address(
         ).balanceOf(address, {"from": address})
         == 2
     )
+
+
+def test_get_owner_of_naffle_ticket_id(
+    admin,
+    address,
+    from_admin,
+    from_address,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200
+    )
+    naffle_id = 1
+    ticket_id = 1
+    assert l2_diamonds.paid_view_facet.getOwnerOfNaffleTicketId(
+        naffle_id, ticket_id, from_address) == address.address

@@ -8,6 +8,7 @@ from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
     setup_open_entry_ticket_diamond_with_facets,
 )
+from tests.test_helper import create_naffle_and_mint_tickets
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 
@@ -190,3 +191,27 @@ def test_get_total_supply(
     admin_facet.adminMint(admin, amount, from_admin)
 
     assert view_facet.getTotalSupply() == 2
+
+
+def test_get_owner_of_naffle_ticket_id(
+    admin,
+    address,
+    from_admin,
+    from_address,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200
+    )
+    naffle_id = 1
+    ticket_id = 1
+    l2_diamonds.naffle_base_facet.useOpenEntryTickets(
+        [ticket_id], naffle_id, from_address
+    )
+    assert l2_diamonds.open_entry_view_facet.getOwnerOfNaffleTicketId(naffle_id, ticket_id, from_address) == address.address
+

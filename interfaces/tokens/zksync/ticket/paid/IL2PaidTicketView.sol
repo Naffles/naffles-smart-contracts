@@ -9,4 +9,5 @@ interface IL2PaidTicketView {
     function getTicketById(uint256 _ticketId) external view returns (NaffleTypes.PaidTicket memory);
     function getTicketByIdOnNaffle(uint256 _ticketIdOnNaffle, uint256 _naffleId) external view returns (NaffleTypes.PaidTicket memory);
     function getTotalSupply() external view returns (uint256);
+    function getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) external view returns (address);
 }

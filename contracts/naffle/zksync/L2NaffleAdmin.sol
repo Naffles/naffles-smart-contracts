@@ -39,7 +39,7 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
         _setL1MessengerContractAddress(_l1MessengerContractAddress);
     }
 
-    function adminDrawWinner(uint256 _naffleId) external onlyRole(_getAdminRole()) {
-        _adminDrawWinner(_naffleId);
+    function adminDrawWinner(uint256 _naffleId) external onlyRole(_getAdminRole()) returns (bytes32) {
+        return _adminDrawWinner(_naffleId);
     }
 }
