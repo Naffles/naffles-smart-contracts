@@ -419,10 +419,6 @@ def test_process_message_from_l2_set_winner(
     setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock_false_return_values, from_admin
     )
-    deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
-    deployed_erc721a_mock.setApprovalForAll(
-        deployed_l1_naffle_diamond.address, True, from_address
-    )
 
     _zkSyncAddress = zksync_l1_message_account.address
     _l2BlockNumber = 123
