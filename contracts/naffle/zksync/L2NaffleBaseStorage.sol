@@ -16,6 +16,7 @@ library L2NaffleBaseStorage {
         uint256 freeTicketRatio;
         uint256 platformFee;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
+        uint256 platformFeesAccumulated;
     }
 
     function layout() internal pure returns (Layout storage s) {

@@ -14,4 +14,7 @@ interface IL2NaffleBaseInternal {
     error NaffleNotEndedYet(uint256 endTime);
     error NaffleSoldOut();
     error InvalidNaffleType(NaffleTypes.NaffleType naffleType);
+    error NoTicketsBought();
+    error UnableToSendFunds();
+    error InsufficientFunds();
 }

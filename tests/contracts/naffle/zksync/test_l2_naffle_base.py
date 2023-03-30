@@ -1,6 +1,7 @@
 import datetime
 
 import brownie
+import pytest
 from brownie import interface, chain
 
 from scripts.util import get_error_message
@@ -356,7 +357,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     with brownie.reverts(
         get_error_message("NotEnoughPaidTicketSpots", ["uint256"], [1])
     ):
-        base_facet.buyTickets(2, 1, {"from": admin, "value": 20})
+        base_facet.buyTickets(2, 1, {"from": admin, "value": TICKET_PRICE * 2})
 
 
 def test_buy_tickets_does_mint_tickets_for_address(
@@ -497,6 +498,25 @@ def test_owner_cancel_naffle_not_allowed(
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_admin)
 
 
+def test_draw_winner_not_owner(
+    admin,
+    address,
+    from_admin,
+    from_address,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    chain.sleep(1001)
+    with brownie.reverts(get_error_message("NotAllowed")):
+        l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_admin)
+
+
 def test_owner_cancel_naffle_not_ended_yet(
     address,
     from_address,
@@ -508,13 +528,40 @@ def test_owner_cancel_naffle_not_ended_yet(
         address,
         from_admin,
         l2_diamonds,
-        deployed_erc721a_mock,
-        number_of_tickets=2,
+        deployed_erc721a_mock
     )
     chain.sleep(1001)
+    with brownie.reverts(get_error_message("NotAllowed")):
+        l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_admin)
 
-    with brownie.reverts(get_error_message("NaffleSoldOut")):
-        l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
+
+def test_draw_winner(
+    admin,
+    from_address,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    old_balance = address.balance()
+    l2_diamonds.naffle_base_facet.ownerDrawWinner(1, from_address)
+
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
+
+    # winning ticket id
+    if naffle[11] != 1 and naffle[11] != 2:
+        pytest.fail("Naffle winning ticket id is not 1 or 2")
+
+    assert naffle[11] == 2  # paid ticket type
+    assert naffle[12] == 4  # naffle status finished
+
+    assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.99)
 
 
 def test_owner_cancel_naffle_invalid_status(

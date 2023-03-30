@@ -29,7 +29,7 @@ library NaffleTypes {
 
     enum TicketType {
         NONE,
-        FREE,
+        OPEN_ENTRY,
         PAID
     }
 
@@ -44,7 +44,6 @@ library NaffleTypes {
         uint256 naffleId;
         address owner;
         address winner;
-        bool winnerClaimed;
         bool cancelled;
         TokenContractType naffleTokenType;
     }

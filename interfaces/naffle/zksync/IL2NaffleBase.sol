@@ -21,4 +21,6 @@ interface IL2NaffleBase {
     function ownerCancelNaffle(
         uint256 _naffleId
     ) external;
+
+    function ownerDrawWinner(uint256 _naffleId) external returns (bytes32);
 }

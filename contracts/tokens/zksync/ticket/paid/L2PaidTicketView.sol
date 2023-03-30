@@ -24,4 +24,8 @@ contract L2PaidTicketView is IL2PaidTicketView, L2PaidTicketBaseInternal {
     function getTotalSupply() external view returns (uint256) {
         return _totalSupply();
     }
+
+    function getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) external view returns (address) {
+        return _getOwnerOfNaffleTicketId(_naffleId, _ticketIdOnNaffle);
+    }
 }
