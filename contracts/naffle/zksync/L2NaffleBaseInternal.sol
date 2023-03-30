@@ -195,28 +195,28 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
     }
 
-    function _random(uint256 maxValue) internal view returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(
+    function _random(uint256 maxValue) internal view returns (uint256 randomNumber) {
+        randomNumber = uint256(keccak256(abi.encodePacked(
               tx.origin,
               blockhash(block.number - 1),
               block.timestamp
         ))) % maxValue + 1;
       }
 
-    function _getAdminRole() internal view returns (bytes32) {
-        return AccessControlStorage.DEFAULT_ADMIN_ROLE;
+    function _getAdminRole() internal view returns (bytes32 adminRole) {
+        adminRole = AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
-    function _getPlatformFee() internal view returns (uint256) {
-        return L2NaffleBaseStorage.layout().platformFee;
+    function _getPlatformFee() internal view returns (uint256 platformFee) {
+        platformFee = L2NaffleBaseStorage.layout().platformFee;
     }
 
     function _setPlatformFee(uint256 _platformFee) internal {
         L2NaffleBaseStorage.layout().platformFee = _platformFee;
     }
 
-    function _getOpenEntryRatio() internal view returns (uint256) {
-        return L2NaffleBaseStorage.layout().freeTicketRatio;
+    function _getOpenEntryRatio() internal view returns (uint256 openEntryRatio) {
+        openEntryRatio = L2NaffleBaseStorage.layout().freeTicketRatio;
     }
 
     function _setOpenEntryRatio(uint256 _freeTicketRatio) internal {
@@ -226,32 +226,32 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
     }
 
-    function _getL1NaffleContractAddress() internal view returns (address) {
-        return L2NaffleBaseStorage.layout().l1NaffleContractAddress;
+    function _getL1NaffleContractAddress() internal view returns (address l1NaffleContractAddress) {
+        l1NaffleContractAddress = L2NaffleBaseStorage.layout().l1NaffleContractAddress;
     }
 
     function _setL1NaffleContractAddress(address _l1NaffleContractAddress) internal {
         L2NaffleBaseStorage.layout().l1NaffleContractAddress = _l1NaffleContractAddress;
     }
 
-    function _getNaffleById(uint256 _id) internal view returns (NaffleTypes.L2Naffle memory) {
-        return L2NaffleBaseStorage.layout().naffles[_id];
+    function _getNaffleById(uint256 _id) internal view returns (NaffleTypes.L2Naffle memory naffle) {
+        naffle = L2NaffleBaseStorage.layout().naffles[_id];
     }
 
     function _setPaidTicketContractAddress(address _paidTicketContractAddress) internal {
         L2NaffleBaseStorage.layout().paidTicketContractAddress = _paidTicketContractAddress;
     }
 
-    function _getPaidTicketContractAddress() internal view returns (address) {
-        return L2NaffleBaseStorage.layout().paidTicketContractAddress;
+    function _getPaidTicketContractAddress() internal view returns (address paidTicketContractAddress) {
+        paidTicketContractAddress = L2NaffleBaseStorage.layout().paidTicketContractAddress;
     }
 
     function _setOpenEntryTicketContractAddress(address _openEntryTicketContractAddress) internal {
         L2NaffleBaseStorage.layout().openEntryTicketContractAddress = _openEntryTicketContractAddress;
     }
 
-    function _getOpenEntryTicketContractAddress() internal view returns (address) {
-        return L2NaffleBaseStorage.layout().openEntryTicketContractAddress;
+    function _getOpenEntryTicketContractAddress() internal view returns (address openEntryTicketContractAddress) {
+        openEntryTicketContractAddress = L2NaffleBaseStorage.layout().openEntryTicketContractAddress;
     }
 
     function _setL1MessengerContractAddress(address _l1MessengerContractAddress) internal {

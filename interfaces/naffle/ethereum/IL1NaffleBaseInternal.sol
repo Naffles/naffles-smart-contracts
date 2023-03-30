@@ -2,11 +2,9 @@
 pragma solidity ^0.8.17;
 
 /**
- * @title L1NaffleBaseInternal interface
- * @dev interface for internal functions of L1NaffleBase
+ * @title interface for L1NaffleBaseInternal
  */
 interface IL1NaffleBaseInternal {
-
     /**
      * @notice thrown when the msg.sender is not allowed to call this message.
      */
@@ -14,7 +12,7 @@ interface IL1NaffleBaseInternal {
 
     /**
      * @notice thrown when the end time provided to the naffle is not valid.
-     * @return provided end time.
+     * @param endTime provided end time.
      */
     error InvalidEndTime(uint256 endTime);
 
@@ -25,7 +23,7 @@ interface IL1NaffleBaseInternal {
 
     /**
      * @notice thrown when there are an invalid number of ticket spots provided.
-     * @return provided number of ticket spots.
+     * @param spots ticket spots.
      */
     error InvalidPaidTicketSpots(uint256 spots);
 
