@@ -151,20 +151,20 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         layout.naffles[_naffleId].cancelled = true;
     }
 
-    function _getAdminRole() internal view returns (bytes32) {
-        return AccessControlStorage.DEFAULT_ADMIN_ROLE;
+    function _getAdminRole() internal view returns (bytes32 adminRole) {
+        adminRole = AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
-    function _getMinimumNaffleDuration() internal view returns (uint256) {
-        return L1NaffleBaseStorage.layout().minimumNaffleDuration;
+    function _getMinimumNaffleDuration() internal view returns (uint256 minimumNaffleDuration) {
+        minimumNaffleDuration = L1NaffleBaseStorage.layout().minimumNaffleDuration;
     }
 
     function _setMinimumNaffleDuration(uint256 _minimumNaffleDuration) internal {
         L1NaffleBaseStorage.layout().minimumNaffleDuration = _minimumNaffleDuration;
     }
 
-    function _getMinimumPaidTicketSpots() internal view returns (uint256) {
-        return L1NaffleBaseStorage.layout().minimumPaidTicketSpots;
+    function _getMinimumPaidTicketSpots() internal view returns (uint256 minimumPaidTicketSpots) {
+        minimumPaidTicketSpots = L1NaffleBaseStorage.layout().minimumPaidTicketSpots;
     }
 
     function _setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) internal {
@@ -175,28 +175,28 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         L1NaffleBaseStorage.layout().minimumPaidTicketPriceInWei = _minimumPaidTicketPriceInWei;
     }
 
-    function _getMinimumPaidTicketPriceInWei() internal view returns (uint256) {
-        return L1NaffleBaseStorage.layout().minimumPaidTicketPriceInWei;
+    function _getMinimumPaidTicketPriceInWei() internal view returns (uint256 minimumPaidTicketPriceInWei) {
+        minimumPaidTicketPriceInWei = L1NaffleBaseStorage.layout().minimumPaidTicketPriceInWei;
     }
 
     function _setZkSyncNaffleContractAddress(address _zkSyncNaffleContractAddress) internal {
         L1NaffleBaseStorage.layout().zkSyncNaffleContractAddress = _zkSyncNaffleContractAddress;
     }
 
-    function _getZkSyncNaffleContractAddress() internal view returns (address) {
-        return L1NaffleBaseStorage.layout().zkSyncNaffleContractAddress;
+    function _getZkSyncNaffleContractAddress() internal view returns (address zkSyncNaffleContractAddress) {
+        zkSyncNaffleContractAddress = L1NaffleBaseStorage.layout().zkSyncNaffleContractAddress;
     }
 
     function _setZkSyncAddress(address _zkSyncAddress) internal {
         L1NaffleBaseStorage.layout().zkSyncAddress = _zkSyncAddress;
     }
 
-    function _getZkSyncAddress() internal view returns (address) {
-        return L1NaffleBaseStorage.layout().zkSyncAddress;
+    function _getZkSyncAddress() internal view returns (address zkSyncAddress) {
+        zkSyncAddress = L1NaffleBaseStorage.layout().zkSyncAddress;
     }
 
-    function _getFoundersKeyAddress() internal view returns (address) {
-        return L1NaffleBaseStorage.layout().foundersKeyAddress;
+    function _getFoundersKeyAddress() internal view returns (address foundersKeyAddress) {
+        foundersKeyAddress = L1NaffleBaseStorage.layout().foundersKeyAddress;
     }
 
     function _setFoundersKeyAddress(address _foundersKeyAddress) internal {
@@ -207,12 +207,12 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         L1NaffleBaseStorage.layout().foundersKeyPlaceholderAddress = _foundersKeyPlaceholderAddress;
     }
 
-    function _getFoundersKeyPlaceholderAddress() internal view returns (address) {
-        return L1NaffleBaseStorage.layout().foundersKeyPlaceholderAddress;
+    function _getFoundersKeyPlaceholderAddress() internal view returns (address foundersKeyPlaceholderAddress) {
+        foundersKeyPlaceholderAddress = L1NaffleBaseStorage.layout().foundersKeyPlaceholderAddress;
     }
 
-    function _getL1MessengerAddress() internal view returns (address) {
-        return L1NaffleBaseStorage.L1_MESSENGER_ADDRESS;
+    function _getL1MessengerAddress() internal view returns (address l1MessengerAddress) {
+        l1MessengerAddress = L1NaffleBaseStorage.L1_MESSENGER_ADDRESS;
     }
 
     function _getNaffleById(uint256 _naffleId) public view returns (NaffleTypes.L1Naffle memory) {
