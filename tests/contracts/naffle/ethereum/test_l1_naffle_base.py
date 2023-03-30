@@ -8,6 +8,7 @@ from scripts.util import ZKSYNC_ADDRESS, get_error_message
 from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
     setup_diamond_with_facets,
 )
+from tests.test_helper import ERC721
 
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
@@ -392,5 +393,6 @@ def test_process_message_from_l2_set_winner(
     )
 
     assert deployed_erc721a_mock.ownerOf(nft_id) == address.address
+    assert view_facet.getNaffleById(_naffleId, from_address)[4] == address.address
 
 
