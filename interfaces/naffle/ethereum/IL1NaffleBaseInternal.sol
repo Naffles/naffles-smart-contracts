@@ -41,4 +41,46 @@ interface IL1NaffleBaseInternal {
      * @notice thrown when the L2 message does not include a valid action.
      */
     error InvalidAction();
+
+    /**
+     * @notice emitted when a naffle is created.
+     * @param naffleId id of the naffle.
+     * @param owner address of the owner.
+     * @param ethTokenAddress address of the ETH token.
+     * @param nftId id of the NFT.
+     * @param paidTicketSpots number of paid ticket spots.
+     * @param ticketPriceInWei price of the ticket in wei.
+     * @param endTime end time of the naffle.
+     * @param naffleType type of the naffle.
+     * @param tokenContractType type of the token contract.
+     */
+    event L1NaffleCreated(
+        uint256 naffleId,
+        address indexed owner,
+        address indexed ethTokenAddress,
+        uint256 nftId,
+        uint256 paidTicketSpots,
+        uint256 ticketPriceInWei,
+        uint256 endTime,
+        uint256 naffleType,
+        uint256 tokenContractType
+    );
+
+    /**
+     * @notice emitted when winner is set on the naffle.
+     * @param naffleId id of the naffle.
+     * @param winner address of the winner.
+     */
+    event L1NaffleWinnerSet(
+        uint256 naffleId,
+        address indexed winner
+    );
+
+    /**
+     * @notice emitted when a naffle is cancelled.
+     * @param naffleId id of the naffle.
+     */
+    event L1NaffleCancelled(
+        uint256 naffleId
+    );
 }

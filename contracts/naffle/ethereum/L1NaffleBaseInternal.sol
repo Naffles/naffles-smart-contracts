@@ -115,6 +115,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             // refund address
             address(0)
         );
+
+        emit L1NaffleCreated(naffleId, msg.sender, _ethTokenAddress, _nftId, _paidTicketSpots, _ticketPriceInWei, _endTime, _naffleType, tokenContractType);
     }
 
     /**
@@ -134,6 +136,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         } else if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
             IERC1155(naffle.tokenAddress).safeTransferFrom(address(this), _winner, naffle.nftId, 1, bytes(""));
         }
+
+        emit L1NaffleWinnerSet(_naffleId, _winner);
     }
 
     /**
@@ -185,6 +189,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
     function _cancelNaffle(uint256 _naffleId) internal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         layout.naffles[_naffleId].cancelled = true;
+
+        emit L1NaffleCancelled(_naffleId);
     }
 
     /**
