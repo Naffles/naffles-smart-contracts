@@ -30,6 +30,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (_params.naffleType == NaffleTypes.NaffleType.STANDARD) {
             freeTicketSpots = _params.paidTicketSpots / layout.freeTicketRatio;
         }
+
         layout.naffles[_params.naffleId] = NaffleTypes.L2Naffle({
             ethTokenAddress: _params.ethTokenAddress,
             owner: _params.owner,
@@ -63,13 +64,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     /**
-     * @notice buy tickets for a naffle. A call is made to to the paid ticket contract to mint the tickets to the buyer.
-     * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
-     * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
-     * @dev if the msg.value is not enough to buy the tickets a NotEnoughFunds error is thrown.
-     * @dev if the naffle is a standard naffle and the amount of tickets to buy is greater than the number of paid ticket spots left a NotEnoughPaidTicketSpots error is thrown.
-     * @param _amount the amount of tickets to buy
-     * @param _naffleId the id of the naffle.
+     * @notice Buy tickets for a naffle. A call is made to the paid ticket contract to mint the tickets to the buyer.
+     * @dev If an invalid naffle id is passed, an InvalidNaffleId error is thrown.
+     * @dev If the naffle is in an invalid state, an InvalidNaffleStatus error is thrown.
+     * @dev If the msg.value is not enough to buy the tickets, a NotEnoughFunds error is thrown.
+     * @dev If the naffle is a standard naffle and the amount of tickets to buy is greater than the number of paid ticket spots left, a NotEnoughPaidTicketSpots error is thrown.
+     * @param _amount The amount of tickets to buy.
+     * @param _naffleId The id of the naffle.
      */
     function _buyTickets(
         uint256 _amount,
@@ -77,21 +78,27 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     ) internal returns (uint256[] memory ticketIds) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
-        if (msg.value < _amount * naffle.ticketPriceInWei) {
+
+        uint256 totalPrice = _amount * naffle.ticketPriceInWei;
+        if (msg.value < totalPrice) {
             revert NotEnoughFunds(msg.value);
         }
-        uint256 ticketSpots = naffle.paidTicketSpots;
-        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD && naffle.numberOfPaidTickets + _amount > naffle.paidTicketSpots) {
+
+        uint256 newPaidTickets = naffle.numberOfPaidTickets + _amount;
+        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD && newPaidTickets > naffle.paidTicketSpots) {
             revert NotEnoughPaidTicketSpots(naffle.paidTicketSpots);
         }
+
         uint256 startingTicketId = naffle.numberOfPaidTickets + 1;
-        naffle.numberOfPaidTickets = naffle.numberOfPaidTickets + _amount;
+        naffle.numberOfPaidTickets = newPaidTickets;
+
         ticketIds = IL2PaidTicketBase(layout.paidTicketContractAddress).mintTickets(
             msg.sender,
             _amount,
@@ -109,12 +116,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     /**
-     * @notice use open entry tickets for a naffle. A call is made to the open entry ticket contract to attach the tickets to the naffle.
-     * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
-     * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
-     * @dev if the number of tickets to use is greater than the number of open entry ticket spots left a NotEnoughOpenEntryTicketSpots error is thrown.
-     * @param _ticketIds the ids of the tickets to use.
-     * @param _naffleId the id of the naffle.
+     * @notice Use open entry tickets for a naffle. A call is made to the open entry ticket contract to attach the tickets to the naffle.
+     * @dev If an invalid naffle id is passed, an InvalidNaffleId error is thrown.
+     * @dev If the naffle is in an invalid state, an InvalidNaffleStatus error is thrown.
+     * @dev If the number of tickets to use is greater than the number of open entry ticket spots left, a NotEnoughOpenEntryTicketSpots error is thrown.
+     * @param _ticketIds The ids of the tickets to use.
+     * @param _naffleId The id of the naffle.
      */
     function _useOpenEntryTickets(
         uint256[] memory _ticketIds,
@@ -129,11 +136,15 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
-        if (naffle.numberOfOpenEntries + _ticketIds.length > naffle.freeTicketSpots) {
+
+        uint256 newOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
+        if (newOpenEntries > naffle.freeTicketSpots) {
             revert NotEnoughOpenEntryTicketSpots(naffle.freeTicketSpots);
         }
+
         uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
-        naffle.numberOfOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
+        naffle.numberOfOpenEntries = newOpenEntries;
+
         IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
 
         emit OpenEntryTicketsUsed(
@@ -156,15 +167,19 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     ) internal returns (bytes32 messageHash){
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
         if (naffle.owner != msg.sender) {
             revert NotAllowed();
         }
+
         if (naffle.endTime > block.timestamp) {
             revert NaffleNotEndedYet(naffle.endTime);
         }
+
         if (naffle.naffleType == NaffleTypes.NaffleType.UNLIMITED) {
             revert InvalidNaffleType(naffle.naffleType);
         }
+
         if (naffle.paidTicketSpots == naffle.numberOfPaidTickets) {
             revert NaffleSoldOut();
         }
@@ -183,9 +198,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     ) internal returns (bytes32 messageHash){
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
+
         return _cancelNaffleInternal(naffle, layout);
     }
 
@@ -238,6 +255,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _adminDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
         return _drawWinnerInternal(naffle, _naffleId);
     }
 
@@ -246,15 +264,19 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
+
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
+
         if (naffle.endTime > block.timestamp) {
             revert NaffleNotEndedYet(naffle.endTime);
         }
+
         if (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries == 0) {
             revert NoTicketsBought();
         }
+
         uint256 winningTicketId = _random(naffle.numberOfPaidTickets + naffle.numberOfOpenEntries);
         address winner;
         if (winningTicketId <= naffle.numberOfPaidTickets) {
@@ -266,14 +288,15 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffle.winningTicketId = winningTicketId - naffle.numberOfPaidTickets;
             winner = IL2OpenEntryTicketView(layout.openEntryTicketContractAddress).getOwnerOfNaffleTicketId(_naffleId, naffle.winningTicketId);
         }
-        naffle.status = NaffleTypes.NaffleStatus.FINISHED;
 
+        naffle.status = NaffleTypes.NaffleStatus.FINISHED;
         uint256 totalFundsRaised = naffle.ticketPriceInWei * naffle.numberOfPaidTickets;
         uint256 platformFee = totalFundsRaised * layout.platformFee / 10000;
         uint256 amountToTransfer = totalFundsRaised - platformFee;
 
         bytes memory message = abi.encode("setWinner", _naffleId, winner);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
+
         layout.platformFeesAccumulated = layout.platformFeesAccumulated + platformFee;
         (bool success, ) = msg.sender.call{value: amountToTransfer}("");
         if (!success) {
@@ -285,6 +308,25 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             winner,
             messageHash
         );
+    }
+
+    /**
+     * @notice withdraw the platform fees to the specified address.
+     * @param _amount the amount to withdraw.
+     * @param _to the address to withdraw the funds to.
+     */
+    function _withdrawPlatformFees(uint256 _amount, address _to) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+
+        if (layout.platformFeesAccumulated < _amount) {
+            revert InsufficientFunds();
+        }
+
+        layout.platformFeesAccumulated = layout.platformFeesAccumulated - _amount;
+        (bool success, ) = _to.call{value: _amount}("");
+        if (!success) {
+            revert UnableToSendFunds();
+        }
     }
 
     /**
@@ -408,22 +450,5 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      */
     function _setL1MessengerContractAddress(address _l1MessengerContractAddress) internal {
         L2NaffleBaseStorage.layout().l1MessengerContractAddress = _l1MessengerContractAddress;
-    }
-
-    /**
-     * @notice withdraw the platform fees to the specified address.
-     * @param _amount the amount to withdraw.
-     * @param _to the address to withdraw the funds to.
-     */
-    function _withdrawPlatformFees(uint256 _amount, address _to) internal {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-        if (layout.platformFeesAccumulated < _amount) {
-            revert InsufficientFunds();
-        }
-        layout.platformFeesAccumulated = layout.platformFeesAccumulated - _amount;
-        (bool success, ) = _to.call{value: _amount}("");
-        if (!success) {
-            revert UnableToSendFunds();
-        }
     }
 }

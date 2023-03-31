@@ -24,15 +24,18 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      */
     function _attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, uint256 startingTicketId, address owner) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
+
         for (uint256 i = 0; i < _ticketIds.length; i++) {
             uint256 ticketId = _ticketIds[i];
             NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[ticketId];
+
             if (ticket.naffleId != 0) {
                 revert TicketAlreadyUsed(ticketId);
             }
             if (_ownerOf(ticketId) != owner) {
                 revert NotOwnerOfTicket(ticketId);
             }
+
             ticket.naffleId = _naffleId;
             ticket.ticketIdOnNaffle = startingTicketId;
             l.naffleIdTicketIdOnNaffleTicketId[_naffleId][startingTicketId] = ticketId;
@@ -53,18 +56,24 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
     function _detachFromNaffle(uint256 _naffleId, uint256 _naffleTicketId) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
+
         if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
             revert NaffleNotCancelled(naffle.status);
         }
+
         uint256 totalTicketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_naffleTicketId];
-        NaffleTypes.OpenEntryTicket memory ticket = l.openEntryTickets[totalTicketId];
+        NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[totalTicketId];
+
         if (totalTicketId == 0) {
             revert InvalidTicketId(_naffleTicketId);
         }
+
         address owner = _ownerOf(totalTicketId);
+
         if (owner != msg.sender) {
             revert NotTicketOwner(msg.sender);
         }
+
         ticket.naffleId = 0;
         ticket.ticketIdOnNaffle = 0;
         l.openEntryTickets[totalTicketId] = ticket;
@@ -80,6 +89,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      */
     function _getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) internal view returns (address owner) {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
+
         uint256 totalTicketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketIdOnNaffle];
         return _ownerOf(totalTicketId);
     }

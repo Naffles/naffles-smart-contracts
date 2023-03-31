@@ -61,7 +61,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             (_naffleType == NaffleTypes.NaffleType.UNLIMITED && _paidTicketSpots != 0) ||
             (_naffleType == NaffleTypes.NaffleType.STANDARD && _paidTicketSpots < layout.minimumPaidTicketSpots)
         ) {
-            // Unlimited naffles don't have an upper limit on paid or free tickets.
             revert InvalidPaidTicketSpots(_paidTicketSpots);
         }
 
@@ -106,13 +105,9 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
               "createNaffle((address, address, uint256, uint256, uint256, uint256, uint8))",
                 params
             ),
-            // Gas limit
             10000,
-            // gas price per pubdata byte
             800,
-            // factory dependencies
             new bytes[](0),
-            // refund address
             address(0)
         );
 
@@ -130,6 +125,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
     ) internal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
+
         naffle.winner = _winner;
         if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
             IERC721(naffle.tokenAddress).transferFrom(address(this), _winner, naffle.nftId);
@@ -163,7 +159,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         }
 
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
-
         L2Message memory message = L2Message({
             sender: layout.zkSyncNaffleContractAddress,
             data: _message,
@@ -179,6 +174,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         if (!success) {
             revert FailedMessageInclusion();
         }
+
         layout.isL2ToL1MessageProcessed[_l2BlockNumber][_index] = true;
     }
 

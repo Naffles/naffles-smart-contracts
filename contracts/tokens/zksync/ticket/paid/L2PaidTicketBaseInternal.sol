@@ -26,8 +26,10 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
      */
     function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei, uint256 startingTicketId) internal returns(uint256[] memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
+
         uint256[] memory ticketIds = new uint256[](_amount);
         uint256 count = 0;
+
         for (uint256 i = startingTicketId; i < startingTicketId + _amount; i++) {
             NaffleTypes.PaidTicket
                 memory paidTicket = NaffleTypes.PaidTicket({
@@ -43,6 +45,7 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             ticketIds[count] = i;
             ++count;
         }
+
         return ticketIds;
 
         emit PaidTicketsMinted(_to, ticketIds, _naffleId, _ticketPriceInWei, startingTicketId);
@@ -60,23 +63,29 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
     function _refundAndBurnTicket(uint256 _naffleId, uint256 _naffleTicketId) internal {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
+
         if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
             revert NaffleNotCancelled(naffle.status);
         }
+
         uint256 totalTicketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketId];
         if (totalTicketId == 0) {
             revert InvalidTicketId(_naffleTicketId);
         }
+
         delete l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketId];
         NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[totalTicketId];
+
         address owner = _ownerOf(totalTicketId);
         if (owner != msg.sender) {
             revert NotTicketOwner(msg.sender);
         }
+
         (bool success, ) = owner.call{value: paidTicket.ticketPriceInWei}("");
         if (!success) {
             revert RefundFailed();
         }
+
         // We reset the naffle id so we know this is refunded because we can't delete custom structs.
         paidTicket.naffleId = 0;
         paidTicket.ticketIdOnNaffle = 0;
