@@ -17,7 +17,6 @@ import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketVi
 import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
-
     /**
      * @notice create a new naffle.
      * @param _params the parameters for the naffle.
@@ -119,7 +118,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     /**
-     * @notice cancel a naffle. A call is made to the paid ticket contract to burn the tickets and a call is made to the open entry ticket contract to detach the tickets.
+     * @notice cancel a naffle.
      * @dev if the caller is not the owner of the naffle a NotAllowed error is thrown.
      * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
      * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
@@ -148,7 +147,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     /**
-     * @notice cancel a naffle. A call is made to the paid ticket contract to burn the tickets and a call is made to the open entry ticket contract to detach the tickets.
+     * @notice cancel a naffle.
      * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
      * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
      * @param _naffleId the id of the naffle.
