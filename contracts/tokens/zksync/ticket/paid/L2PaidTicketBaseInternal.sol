@@ -26,28 +26,25 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
      */
     function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei, uint256 startingTicketId) internal returns(uint256[] memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-
         uint256[] memory ticketIds = new uint256[](_amount);
-        uint256 count = 0;
+        uint256 totalTicketId;
 
-        for (uint256 i = startingTicketId; i < startingTicketId + _amount; i++) {
-            NaffleTypes.PaidTicket
-                memory paidTicket = NaffleTypes.PaidTicket({
-                    ticketIdOnNaffle: i,
-                    ticketPriceInWei: _ticketPriceInWei,
-                    naffleId: _naffleId,
-                    winningTicket: false
-                });
-            uint256 totalTicketId = _totalSupply() + 1;
+        for (uint256 i = 0; i < _amount; i++) {
+            uint256 ticketIdOnNaffle = startingTicketId + i;
+            NaffleTypes.PaidTicket memory paidTicket = NaffleTypes.PaidTicket({
+                ticketIdOnNaffle: ticketIdOnNaffle,
+                ticketPriceInWei: _ticketPriceInWei,
+                naffleId: _naffleId,
+                winningTicket: false
+            });
+            totalTicketId = _totalSupply() + 1;
             _mint(_to, totalTicketId);
-            l.naffleIdNaffleTicketIdTicketId[_naffleId][i] = totalTicketId;
+            l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle] = totalTicketId;
             l.paidTickets[totalTicketId] = paidTicket;
-            ticketIds[count] = i;
-            ++count;
+            ticketIds[i] = ticketIdOnNaffle;
         }
 
         emit PaidTicketsMinted(_to, ticketIds, _naffleId, _ticketPriceInWei, startingTicketId);
-
         return ticketIds;
     }
 
