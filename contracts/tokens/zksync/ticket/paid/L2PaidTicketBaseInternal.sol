@@ -44,6 +44,8 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             ++count;
         }
         return ticketIds;
+
+        emit PaidTicketsMinted(_to, ticketIds, _naffleId, _ticketPriceInWei, startingTicketId);
     }
 
     /**
@@ -79,6 +81,8 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         paidTicket.naffleId = 0;
         paidTicket.ticketIdOnNaffle = 0;
         _burn(totalTicketId);
+
+        emit PaidTicketRefundedAndBurned(owner, _naffleId, totalTicketId, _naffleTicketId);
     }
 
     /**

@@ -78,4 +78,72 @@ interface IL2NaffleBaseInternal {
      * @notice thrown when there are not enough funds to withdraw.
      */
     error InsufficientFunds();
+
+    /**
+     * @notice emitted when a naffle is created.
+     * @param naffleId id of the naffle.
+     * @param owner address of the owner.
+     * @param ethTokenAddress address of the ETH token.
+     * @param nftId id of the NFT.
+     * @param paidTicketSpots number of paid ticket spots.
+     * @param freeTicketSpots number of free ticket spots.
+     * @param ticketPriceInWei price of the ticket in wei.
+     * @param endTime end time of the naffle.
+     * @param naffleType type of the naffle.
+     * @param tokenContractType type of the token contract.
+     */
+    event L2NaffleCreated(
+        uint256 naffleId,
+        address indexed owner,
+        address indexed ethTokenAddress,
+        uint256 nftId,
+        uint256 paidTicketSpots,
+        uint256 freeTicketSpots,
+        uint256 ticketPriceInWei,
+        uint256 endTime,
+        NaffleTypes.NaffleType indexed naffleType,
+        NaffleTypes.TokenContractType tokenContractType
+    );
+
+    /**
+     * @notice emitted when a tickets are bought.
+     * @param naffleId id of the naffle.
+     * @param buyer address of the buyer.
+     * @param amount amount of tickets bought.
+     * @param ticketIds ids of the tickets bought.
+     * @param ticketPriceInWei price of the ticket in wei.
+     */
+    event TicketsBought(
+        uint256 indexed naffleId,
+        address indexed buyer,
+        uint256[] ticketIds,
+        uint256 ticketPriceInWei
+    );
+
+    /**
+     * @notice emitted when open entry tickets are used for a naffle.
+     * @param naffleId id of the naffle.
+     * @param owner address of the owner.
+     * @param ticketIds ids of the tickets used.
+     */
+    event OpenEntryTicketsUsed(
+        uint256 indexed naffleId,
+        address indexed buyer,
+        uint256[] ticketIds
+    );
+
+    /**
+     * @notice emitted when a naffle is cancelled.
+     * @param naffleId id of the naffle.
+     * @param messageHash hash of the transaction sent to the L1.
+     */
+    event L2NaffleCancelled(uint256 indexed naffleId, bytes32 messageHash);
+
+    /**
+     * @notice emitted when a naffle is finished and winner is drawn.
+     * @param naffleId id of the naffle.
+     * @param winner address of the winner.
+     * @param messageHash hash of the transaction sent to the L1.
+     */
+    event L2NaffleFinished(uint256 indexed naffleId, address winner, bytes32 messageHash);
 }

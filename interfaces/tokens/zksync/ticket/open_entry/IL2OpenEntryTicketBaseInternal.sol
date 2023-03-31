@@ -42,4 +42,22 @@ interface IL2OpenEntryTicketBaseInternal {
      * @param sender the sender of the message.
      */
     error NotTicketOwner(address sender);
+
+    /**
+     * @notice emitted when open entry tickets are attached to a naffle.
+     * @param naffleId id of the naffle.
+     * @param ticketIds ids of the tickets.
+     * @param startingTicketId the starting ticket id on the naffle.
+     * @param owner the owner of the tickets.
+     */
+    event TicketsAttachedToNaffle(uint256 indexed naffleId, uint256[] ticketIds, uint256 startingTicketId, address indexed owner);
+
+    /**
+     * @notice emitted when open entry tickets are detached from a naffle.
+     * @param naffleId id of the naffle.
+     * @param ticketId id of the ticket.
+     * @param naffleTicketId the id of the ticket on the naffle.
+     * @param owner the owner of the tickets.
+     */
+    event TicketDetachedFromNaffle(uint256 indexed naffleId, uint256 ticketId, uint256 naffleTicketId, address indexed owner);
 }

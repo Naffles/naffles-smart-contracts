@@ -72,7 +72,7 @@ interface IL1NaffleBaseInternal {
      * @param winner address of the winner.
      */
     event L1NaffleWinnerSet(
-        uint256 naffleId,
+        uint256 indexed naffleId,
         address indexed winner
     );
 

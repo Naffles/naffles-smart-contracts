@@ -47,6 +47,19 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffleTokenType: _params.naffleTokenType,
             naffleType: _params.naffleType
         });
+
+        emit L2NaffleCreated(
+            _params.naffleId,
+            _params.owner,
+            _params.ethTokenAddress,
+            _params.nftId,
+            _params.paidTicketSpots,
+            _params.freeTicketSpots,
+            _params.ticketPriceInWei,
+            _params.endTime,
+            _params.naffleTokenType,
+            _params.naffleType
+        );
     }
 
     /**
@@ -86,6 +99,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffle.ticketPriceInWei,
             startingTicketId
         );
+
+        emit TicketsBought(
+            _naffleId,
+            msg.sender,
+            ticketIds,
+            naffle.ticketPriceInWei
+        );
     }
 
     /**
@@ -115,6 +135,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
         naffle.numberOfOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
         IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
+
+        emit OpenEntryTicketsUsed(
+            _naffleId,
+            msg.sender,
+            _ticketIds
+        );
     }
 
     /**
@@ -173,6 +199,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         bytes memory message = abi.encode("cancel", _naffle.naffleId);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
+
+        emit L2NaffleCancelled(
+            _naffle.naffleId,
+            messageHash
+        );
     }
 
     /**
@@ -248,6 +279,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (!success) {
             revert UnableToSendFunds();
         }
+
+        emit L2NaffleFinished(
+            _naffleId,
+            winner,
+            messageHash
+        );
     }
 
     /**

@@ -38,6 +38,8 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
             l.naffleIdTicketIdOnNaffleTicketId[_naffleId][startingTicketId] = ticketId;
             ++startingTicketId;
         }
+
+        emit TicketsAttachedToNaffle(_naffleId, _ticketIds, startingTicketId, owner);
     }
 
     /**
@@ -66,6 +68,8 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         ticket.naffleId = 0;
         ticket.ticketIdOnNaffle = 0;
         l.openEntryTickets[totalTicketId] = ticket;
+
+        emit TicketDetachedFromNaffle(_naffleId, _naffleTicketId, owner);
     }
 
     /**
