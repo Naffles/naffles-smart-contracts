@@ -17,6 +17,11 @@ import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketVi
 import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
+
+    /**
+     * @notice create a new naffle.
+     * @param _params the parameters for the naffle.
+     */
     function _createNaffle(
         NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) internal {
@@ -45,6 +50,15 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         });
     }
 
+    /**
+     * @notice buy tickets for a naffle. A call is made to to the paid ticket contract to mint the tickets to the buyer.
+     * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
+     * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
+     * @dev if the msg.value is not enough to buy the tickets a NotEnoughFunds error is thrown.
+     * @dev if the naffle is a standard naffle and the amount of tickets to buy is greater than the number of paid ticket spots left a NotEnoughPaidTicketSpots error is thrown.
+     * @param _amount the amount of tickets to buy
+     * @param _naffleId the id of the naffle.
+     */
     function _buyTickets(
         uint256 _amount,
         uint256 _naffleId
@@ -75,6 +89,14 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         );
     }
 
+    /**
+     * @notice use open entry tickets for a naffle. A call is made to the open entry ticket contract to attach the tickets to the naffle.
+     * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
+     * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
+     * @dev if the number of tickets to use is greater than the number of open entry ticket spots left a NotEnoughOpenEntryTicketSpots error is thrown.
+     * @param _ticketIds the ids of the tickets to use.
+     * @param _naffleId the id of the naffle.
+     */
     function _useOpenEntryTickets(
         uint256[] memory _ticketIds,
         uint256 _naffleId
@@ -96,6 +118,14 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
     }
 
+    /**
+     * @notice cancel a naffle. A call is made to the paid ticket contract to burn the tickets and a call is made to the open entry ticket contract to detach the tickets.
+     * @dev if the caller is not the owner of the naffle a NotAllowed error is thrown.
+     * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
+     * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
+     * @dev if the naffle is a standard naffle and the naffle is not sold out a NaffleNotSoldOut error is thrown.
+     * @param _naffleId the id of the naffle.
+     */
     function _ownerCancelNaffle(
         uint256 _naffleId
     ) internal returns (bytes32 messageHash){
@@ -117,6 +147,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         return _cancelNaffleInternal(naffle, layout);
     }
 
+    /**
+     * @notice cancel a naffle. A call is made to the paid ticket contract to burn the tickets and a call is made to the open entry ticket contract to detach the tickets.
+     * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
+     * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
+     * @param _naffleId the id of the naffle.
+     */
     function _adminCancelNaffle(
         uint256 _naffleId
     ) internal returns (bytes32 messageHash){
@@ -140,6 +176,16 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
     }
 
+    /**
+     * @notice draw a winner for a naffle. platform fees are taken and the winner is chosen and send to L1.
+     * @dev if the caller is not the owner of the naffle a NotAllowed error is thrown.
+     * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
+     * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
+     * @dev if the naffle is not finished a NaffleNotEndedYet error is thrown.
+     * @dev if there are no tickets a NoTicketsBought error is thrown.
+     * @dev if the funds can't get send to the owner a UnableToSendFunds error is thrown.
+     * @param _naffleId the id of the naffle.
+     */
     function _ownerDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
@@ -149,6 +195,16 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         return _drawWinnerInternal(naffle, _naffleId);
     }
 
+
+     /**
+     * @notice draw a winner for a naffle. platform fees are taken and the winner is chosen and send to L1.
+     * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
+     * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
+     * @dev if the naffle is not finished a NaffleNotEndedYet error is thrown.
+     * @dev if there are no tickets a NoTicketsBought error is thrown.
+     * @dev if the funds can't get send to the owner a UnableToSendFunds error is thrown.
+     * @param _naffleId the id of the naffle.
+     */
     function _adminDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
@@ -195,6 +251,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
     }
 
+    /**
+     * @notice gets a random number, this method is not secure and should be used for testing purposes only.
+     * @dev the random number is generated by hashing the tx.origin, the blockhash of the previous block and the current timestamp.
+     * @dev the random number is between 1 and maxValue.
+     * @param maxValue the maximum value of the random number.
+     * @return randomNumber the random number.
+     */
     function _random(uint256 maxValue) internal view returns (uint256 randomNumber) {
         randomNumber = uint256(keccak256(abi.encodePacked(
               tx.origin,
@@ -203,22 +266,42 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         ))) % maxValue + 1;
       }
 
+    /**
+     * @notice gets the admin role.
+     * @return adminRole the admin role.
+     */
     function _getAdminRole() internal view returns (bytes32 adminRole) {
         adminRole = AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
+    /**
+     * @notice gets the platform fee
+     * @return platformFee the platform fee.
+     */
     function _getPlatformFee() internal view returns (uint256 platformFee) {
         platformFee = L2NaffleBaseStorage.layout().platformFee;
     }
 
+    /**
+     * @notice sets the platform fee
+     * @param _platformFee the platform fee.
+     */
     function _setPlatformFee(uint256 _platformFee) internal {
         L2NaffleBaseStorage.layout().platformFee = _platformFee;
     }
 
+    /**
+     * @notice gets the paid ticket to open entry ratio.
+     * @return openEntryRatio the paid ticket to open entry ratio.
+     */
     function _getOpenEntryRatio() internal view returns (uint256 openEntryRatio) {
         openEntryRatio = L2NaffleBaseStorage.layout().freeTicketRatio;
     }
 
+    /**
+     * @notice sets the paid ticket to open entry ratio.
+     * @param _freeTicketRatio the paid ticket to open entry ratio.
+     */
     function _setOpenEntryRatio(uint256 _freeTicketRatio) internal {
         if (_freeTicketRatio == 0) {
             revert OpenTicketRatioCannotBeZero();
@@ -226,38 +309,76 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
     }
 
+    /**
+     * @notice gets the L1 naffle contract address
+     * @return l1NaffleContractAddress the L1 naffle contract address.
+     */
     function _getL1NaffleContractAddress() internal view returns (address l1NaffleContractAddress) {
         l1NaffleContractAddress = L2NaffleBaseStorage.layout().l1NaffleContractAddress;
     }
 
+    /**
+     * @notice sets the L1 naffle contract address
+     * @param _l1NaffleContractAddress the L1 naffle contract address.
+     */
     function _setL1NaffleContractAddress(address _l1NaffleContractAddress) internal {
         L2NaffleBaseStorage.layout().l1NaffleContractAddress = _l1NaffleContractAddress;
     }
 
+    /**
+     * @notice gets the naffle by id.
+     * @param _id the naffle id.
+     * @return naffle the naffle.
+     */
     function _getNaffleById(uint256 _id) internal view returns (NaffleTypes.L2Naffle memory naffle) {
         naffle = L2NaffleBaseStorage.layout().naffles[_id];
     }
 
+    /**
+     * @notice sets the paid ticket contract address
+     * @param _paidTicketContractAddress the paid ticket contract address.
+     */
     function _setPaidTicketContractAddress(address _paidTicketContractAddress) internal {
         L2NaffleBaseStorage.layout().paidTicketContractAddress = _paidTicketContractAddress;
     }
 
+    /**
+     * @notice gets the paid ticket contract address
+     * @return paidTicketContractAddress the paid ticket contract address.
+     */
     function _getPaidTicketContractAddress() internal view returns (address paidTicketContractAddress) {
         paidTicketContractAddress = L2NaffleBaseStorage.layout().paidTicketContractAddress;
     }
 
+    /**
+     * @notice sets the open entry ticket contract address
+     * @param _openEntryTicketContractAddress the open entry ticket contract address.
+     */
     function _setOpenEntryTicketContractAddress(address _openEntryTicketContractAddress) internal {
         L2NaffleBaseStorage.layout().openEntryTicketContractAddress = _openEntryTicketContractAddress;
     }
 
+    /**
+     * @notice gets the open entry ticket contract address
+     * @return openEntryTicketContractAddress the open entry ticket contract address.
+     */
     function _getOpenEntryTicketContractAddress() internal view returns (address openEntryTicketContractAddress) {
         openEntryTicketContractAddress = L2NaffleBaseStorage.layout().openEntryTicketContractAddress;
     }
 
+    /**
+     * @notice sets the L1 messenger contract address
+     * @param _l1MessengerContractAddress the L1 messenger contract address.
+     */
     function _setL1MessengerContractAddress(address _l1MessengerContractAddress) internal {
         L2NaffleBaseStorage.layout().l1MessengerContractAddress = _l1MessengerContractAddress;
     }
 
+    /**
+     * @notice withdraw the platform fees to the specified address.
+     * @param _amount the amount to withdraw.
+     * @param _to the address to withdraw the funds to.
+     */
     function _withdrawPlatformFees(uint256 _amount, address _to) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         if (layout.platformFeesAccumulated < _amount) {
