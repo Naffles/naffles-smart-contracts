@@ -44,7 +44,7 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
 
     /**
      * @inheritdoc IL1NaffleAdmin
-     *
+     */
     function setFoundersKeyAddress(address _foundersKeyAddress) external onlyRole(_getAdminRole()) {
         _setFoundersKeyAddress(_foundersKeyAddress);
     }

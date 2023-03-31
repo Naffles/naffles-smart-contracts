@@ -9,7 +9,7 @@ import "../../../../../contracts/libraries/NaffleTypes.sol";
 interface IL2OpenEntryTicketView {
     /**
      * @notice get admin role
-     * @return l2NaffleContractAddress the address of the L2 Naffle contract.
+     * @return adminRole the admin role.
      */
     function getAdminRole() external view returns (bytes32 adminRole);
 

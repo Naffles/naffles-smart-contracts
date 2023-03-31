@@ -9,7 +9,7 @@ import "../../../../../contracts/libraries/NaffleTypes.sol";
 interface IL2PaidTicketView {
     /**
      * @notice get admin role.
-     * @param ticketId the id of the ticket.
+     * @return adminRole the admin role.
      */
     function getAdminRole() external view returns (bytes32 adminRole);
 

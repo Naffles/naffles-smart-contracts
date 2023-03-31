@@ -23,18 +23,6 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
     }
 
     /**
-     * @inheritdoc IL2OpenEntryTicketBase
-     */
-    function adminMint(address _to, uint256 _amount) external onlyRole(_getAdminRole()){
-        for (uint256 i = 0; i < _amount; i++) {
-            uint256 ticketId = _totalSupply() + 1;
-            _mint(_to, ticketId);
-            NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0, false);
-            L2OpenEntryTicketStorage.layout().openEntryTickets[ticketId] = ticket;
-        }
-    }
-
-    /**
      * @inheritdoc SolidStateERC721
      */
     function _handleApproveMessageValue(
