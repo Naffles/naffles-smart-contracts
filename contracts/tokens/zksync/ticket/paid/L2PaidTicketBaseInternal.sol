@@ -46,9 +46,9 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             ++count;
         }
 
-        return ticketIds;
-
         emit PaidTicketsMinted(_to, ticketIds, _naffleId, _ticketPriceInWei, startingTicketId);
+
+        return ticketIds;
     }
 
     /**
