@@ -69,7 +69,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         ticket.ticketIdOnNaffle = 0;
         l.openEntryTickets[totalTicketId] = ticket;
 
-        emit TicketDetachedFromNaffle(_naffleId, _naffleTicketId, owner);
+        emit TicketDetachedFromNaffle(_naffleId, totalTicketId, _naffleTicketId, owner);
     }
 
     /**

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
+import "../../../contracts/libraries/NaffleTypes.sol";
+
 /**
  * @title interface for L1NaffleBaseInternal
  */
@@ -62,8 +64,8 @@ interface IL1NaffleBaseInternal {
         uint256 paidTicketSpots,
         uint256 ticketPriceInWei,
         uint256 endTime,
-        uint256 naffleType,
-        uint256 tokenContractType
+        NaffleTypes.NaffleType naffleType,
+        NaffleTypes.TokenContractType tokenContractType
     );
 
     /**

@@ -109,7 +109,6 @@ interface IL2NaffleBaseInternal {
      * @notice emitted when a tickets are bought.
      * @param naffleId id of the naffle.
      * @param buyer address of the buyer.
-     * @param amount amount of tickets bought.
      * @param ticketIds ids of the tickets bought.
      * @param ticketPriceInWei price of the ticket in wei.
      */
@@ -128,7 +127,7 @@ interface IL2NaffleBaseInternal {
      */
     event OpenEntryTicketsUsed(
         uint256 indexed naffleId,
-        address indexed buyer,
+        address indexed owner,
         uint256[] ticketIds
     );
 

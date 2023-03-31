@@ -54,11 +54,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _params.ethTokenAddress,
             _params.nftId,
             _params.paidTicketSpots,
-            _params.freeTicketSpots,
+            freeTicketSpots,
             _params.ticketPriceInWei,
             _params.endTime,
-            _params.naffleTokenType,
-            _params.naffleType
+            _params.naffleType,
+            _params.naffleTokenType
         );
     }
 
