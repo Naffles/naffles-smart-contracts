@@ -91,25 +91,25 @@ def deployed_l2_naffle_view_facet(from_admin) -> L2NaffleView:
 
 
 @pytest.fixture()
-def deployed_l2_paid_ticket_diamond(admin, from_admin) -> L1NaffleDiamond:
+def deployed_l2_paid_ticket_diamond(admin, from_admin) -> L2PaidTicketDiamond:
     diamond = L2PaidTicketDiamond.deploy(admin, from_admin)
     return diamond
 
 
 @pytest.fixture()
-def deployed_l2_paid_ticket_base_facet(from_admin) -> L1NaffleBase:
+def deployed_l2_paid_ticket_base_facet(from_admin) -> L2PaidTicketBase:
     facet = L2PaidTicketBase.deploy(from_admin)
     return facet
 
 
 @pytest.fixture()
-def deployed_l2_paid_ticket_admin_facet(from_admin) -> L1NaffleAdmin:
+def deployed_l2_paid_ticket_admin_facet(from_admin) -> L2PaidTicketAdmin:
     facet = L2PaidTicketAdmin.deploy(from_admin)
     return facet
 
 
 @pytest.fixture()
-def deployed_l2_paid_ticket_view_facet(from_admin) -> L1NaffleView:
+def deployed_l2_paid_ticket_view_facet(from_admin) -> L2PaidTicketView:
     facet = L2PaidTicketView.deploy(from_admin)
     return facet
 

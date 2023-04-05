@@ -22,4 +22,8 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
     function setL1NaffleContractAddress(address _l1NaffleContractAddress) external onlyRole(_getAdminRole()) {
         _setL1NaffleContractAddress(_l1NaffleContractAddress);
     }
+
+    function setPaidTicketContractAddress(address _paidTicketContractAddress) external onlyRole(_getAdminRole()) {
+        _setPaidTicketContractAddress(_paidTicketContractAddress);
+    }
 }

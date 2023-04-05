@@ -3,7 +3,7 @@ from brownie import L2NaffleAdmin, L2NaffleBase, L2NaffleView, interface
 from scripts.util import add_facet, get_selectors, remove_duplicated_selectors
 
 
-def setup_diamond_with_facets(
+def setup_l2_naffle_diamond_with_facets(
     from_admin,
     deployed_l2_naffle_diamond,
     deployed_l2_naffle_base_facet,
@@ -48,7 +48,7 @@ def test_facet_deployment(
 ):
     start_facet_number = len(deployed_l2_naffle_diamond.facets())
 
-    setup_diamond_with_facets(
+    setup_l2_naffle_diamond_with_facets(
         from_admin,
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_base_facet,

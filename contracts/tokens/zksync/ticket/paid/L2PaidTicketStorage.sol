@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
+import "../../../../libraries/NaffleTypes.sol";
+
 
 library L2PaidTicketStorage {
     bytes32 internal constant STORAGE_SLOT =
@@ -8,6 +10,10 @@ library L2PaidTicketStorage {
 
     struct Layout {
         address l2NaffleContractAddress;
+        // naffle id => ticket id on naffle => ticket id
+        mapping(uint256 => mapping(uint256 => uint256)) naffleIdNaffleTicketIdTicketId;
+        // ticket id => paid ticket
+        mapping(uint256 => NaffleTypes.PaidTicket) paidTickets;
     }
 
     function layout() internal pure returns (Layout storage s) {

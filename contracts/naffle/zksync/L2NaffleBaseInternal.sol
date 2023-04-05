@@ -6,11 +6,11 @@ import "../../libraries/NaffleTypes.sol";
 import '@solidstate/contracts/interfaces/IERC165.sol';
 import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
-
-import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleBaseInternal.sol";
+import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
+import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     function _createNaffle(
@@ -39,6 +39,36 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffleTokenType: _params.naffleTokenType,
             naffleType: _params.naffleType
         });
+    }
+
+    function _buyTickets(
+        uint256 _amount,
+        uint256 _naffleId
+    ) internal returns (uint256[] memory ticketIds) {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+        if (msg.value < _amount * naffle.ticketPriceInWei) {
+            revert NotEnoughFunds(msg.value);
+        }
+        uint256 ticketSpots = naffle.paidTicketSpots;
+        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD && naffle.numberOfPaidTickets + _amount > naffle.paidTicketSpots) {
+            revert NotEnoughPaidTicketSpots(naffle.paidTicketSpots);
+        }
+        uint256 startingTicketId = naffle.numberOfPaidTickets + 1;
+        naffle.numberOfPaidTickets = naffle.numberOfPaidTickets + _amount;
+        ticketIds = IL2PaidTicketBase(layout.paidTicketContractAddress).mintTickets(
+            msg.sender,
+            _amount,
+            _naffleId,
+            naffle.ticketPriceInWei,
+            startingTicketId
+        );
     }
 
     function _getAdminRole() internal view returns (bytes32) {
@@ -74,5 +104,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     function _getNaffleById(uint256 _id) internal view returns (NaffleTypes.L2Naffle memory) {
         return L2NaffleBaseStorage.layout().naffles[_id];
+    }
+
+    function _setPaidTicketContractAddress(address _paidTicketContractAddress) internal {
+        L2NaffleBaseStorage.layout().paidTicketContractAddress = _paidTicketContractAddress;
+    }
+
+    function _getPaidTicketContractAddress() internal view returns (address) {
+        return L2NaffleBaseStorage.layout().paidTicketContractAddress;
     }
 }

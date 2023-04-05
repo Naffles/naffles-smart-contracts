@@ -6,4 +6,5 @@ interface IL2NaffleAdmin {
     function setFreeTicketRatio(uint256 _freeTicketRatio) external;
     function setAdmin(address _admin) external;
     function setL1NaffleContractAddress(address _l1NaffleContractAddress) external;
+    function setPaidTicketContractAddress(address _paidTicketContractAddress) external;
 }
