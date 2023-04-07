@@ -27,6 +27,9 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+hardhat/node_modules
+hardhat/artifacts-zk
+hardhat/cache-zk
 
 /node_modules
 /.idea
