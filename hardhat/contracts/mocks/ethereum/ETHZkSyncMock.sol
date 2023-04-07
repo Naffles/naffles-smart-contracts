@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "@zksync/contracts/l1/zksync/interfaces/IMailbox.sol";
+import "@matterlabs/zksync-contracts/l1/contracts/zksync/interfaces/IMailbox.sol";
 
 contract ETHZkSyncMock is IMailbox {
     bool public called = false;

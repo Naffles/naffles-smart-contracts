@@ -2,7 +2,7 @@
 pragma solidity ^0.8.17;
 
 import "../../libraries/NaffleTypes.sol";
-import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
+import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 library L1NaffleBaseStorage {
     bytes32 internal constant STORAGE_SLOT =

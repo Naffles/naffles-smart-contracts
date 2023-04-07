@@ -5,7 +5,7 @@ import "./L2NaffleBaseInternal.sol";
 import "../../libraries/NaffleTypes.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleBase.sol";
-import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
+import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     modifier onlyL1NaffleContract() {

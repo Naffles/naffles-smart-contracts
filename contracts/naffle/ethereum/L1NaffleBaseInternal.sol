@@ -6,11 +6,11 @@ import "../../libraries/NaffleTypes.sol";
 import '@solidstate/contracts/interfaces/IERC165.sol';
 import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
-import "@zksync/contracts/l1/zksync/interfaces/IZkSync.sol";
+import "@matterlabs/zksync-contracts/l1/contracts/zksync/interfaces/IZkSync.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBaseInternal.sol";
-import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
+import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;

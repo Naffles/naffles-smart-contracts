@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
-import "@zksync/contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
+import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 contract L1MessengerMock is IL1Messenger {
     bool public called = false;
