@@ -16,7 +16,7 @@ def deploy(
     publish_source: bool = True,
 ) -> str:
     if not account:
-        account = accounts.load("naffles")
+        account = accounts.load("naffle")
     deployed = FoundersKeyStaking.deploy(
         {"from": account},
         publish_source=publish_source,
