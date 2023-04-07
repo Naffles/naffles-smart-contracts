@@ -107,7 +107,7 @@ def test_create_naffle(
             address,
             NAFFLE_ID,
             NFT_ID,
-            PAID_TICKET_SPOTS,
+            1000,
             TICKET_PRICE,
             endtime,
             STANDARD_NAFFLE_TYPE,
@@ -117,7 +117,7 @@ def test_create_naffle(
     )
 
     naffle = view_facet.getNaffleById(NAFFLE_ID)
-    expected_open_entry_ticket_spots = 0
+    expected_free_ticket_spots = 10
     expected_number_of_tickets_bought = 0
     expected_naffle_status = 0  # active
     expected_winning_ticket_type = 0  # none
@@ -128,8 +128,8 @@ def test_create_naffle(
         address,
         NAFFLE_ID,
         NFT_ID,
-        PAID_TICKET_SPOTS,
-        expected_open_entry_ticket_spots,
+        1000,
+        expected_free_ticket_spots,
         expected_number_of_tickets_bought,
         expected_number_of_tickets_bought,
         TICKET_PRICE,
