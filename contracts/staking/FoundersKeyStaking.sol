@@ -2,11 +2,11 @@
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/interfaces/IERC721.sol";
-import "@openzeppelinUpgradeable/contracts/token/ERC721/utils/ERC721HolderUpgradeable.sol";
-import "@openzeppelinUpgradeable/contracts/proxy/utils/Initializable.sol";
-import "@openzeppelinUpgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelinUpgradeable/contracts/access/OwnableUpgradeable.sol";
-import "@openzeppelinUpgradeable/contracts/security/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../../interfaces/IFoundersKey.sol";
 import "../../interfaces/ISoulboundFoundersKey.sol";
 

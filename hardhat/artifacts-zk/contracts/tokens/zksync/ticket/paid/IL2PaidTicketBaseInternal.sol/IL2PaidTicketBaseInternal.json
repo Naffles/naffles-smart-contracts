@@ -1,0 +1,123 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "IL2PaidTicketBaseInternal",
+  "sourceName": "contracts/tokens/zksync/ticket/paid/IL2PaidTicketBaseInternal.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "ticketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidTicketId",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum NaffleTypes.NaffleStatus",
+          "name": "status",
+          "type": "uint8"
+        }
+      ],
+      "name": "NaffleNotCancelled",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotAllowed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "NotTicketOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "RefundFailed",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "naffleId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "ticketId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "ticketIdOnNaffle",
+          "type": "uint256"
+        }
+      ],
+      "name": "PaidTicketRefundedAndBurned",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "ticketIds",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "naffleId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "ticketPriceInWei",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "startingTicketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "PaidTicketsMinted",
+      "type": "event"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

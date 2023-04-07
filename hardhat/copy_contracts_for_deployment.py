@@ -15,10 +15,11 @@ def copy():
             pass
     brownie_interfaces = f"{brownie_root}/interfaces"
     for path, _, files in os.walk(brownie_interfaces):
-        new_path = path.replace(brownie_interfaces, f"{root_dir}/contracts")
-        for file in files:
-            if file.endswith(".sol"):
-                shutil.copy(f"{path}/{file}", f"{new_path}/{file}")
+        new_path = path.replace(brownie_interfaces, f"{root_dir}/interfaces")
+        try:
+            shutil.copytree(f"{path}", f"{new_path}")
+        except FileExistsError:
+            pass
 
 
 if __name__ == "__main__":
