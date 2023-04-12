@@ -21,9 +21,6 @@ MINIMUM_TICKET_PRICE = 2
 def setup_l1_naffle_contract(
     admin_facet, deployed_founders_key_staking, eth_zksync, from_admin
 ):
-    admin_facet.setMinimumNaffleDuration(MINIMUM_NAFFLE_DURATION, from_admin)
-    admin_facet.setMinimumPaidTicketSpots(MINIMUM_PAID_TICKET_SPOTS, from_admin)
-    admin_facet.setMinimumPaidTicketPriceInWei(MINIMUM_TICKET_PRICE, from_admin)
     admin_facet.setZkSyncAddress(eth_zksync.address, from_admin)
     admin_facet.setZkSyncNaffleContractAddress(ZKSYNC_ADDRESS, from_admin)
     admin_facet.setFoundersKeyAddress(deployed_founders_key_staking.address, from_admin)

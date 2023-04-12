@@ -9,13 +9,11 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
 from tests.test_helper import (
-    FREE_TICKET_RATIO,
     NAFFLE_ID,
     NFT_ID,
     PAID_TICKET_SPOTS,
     DEFAULT_END_DATE,
     ERC721,
-    PLATFORM_FEE,
     STANDARD_NAFFLE_TYPE,
     TICKET_PRICE,
     UNLIMITED_NAFFLE_TYPE,
@@ -31,8 +29,6 @@ def setup_l2_naffle_contract(
     l1_messenger_contract,
     from_admin,
 ):
-    admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
-    admin_facet.setOpenEntryRatio(FREE_TICKET_RATIO, from_admin)
     admin_facet.setL1NaffleContractAddress(l1_naffle_contract.address, from_admin)
     admin_facet.setPaidTicketContractAddress(paid_ticket_contract.address, from_admin)
     admin_facet.setL1MessengerContractAddress(l1_messenger_contract.address, from_admin)

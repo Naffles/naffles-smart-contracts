@@ -1,0 +1,17 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "IERC165BaseInternal",
+  "sourceName": "@solidstate/contracts/introspection/ERC165/base/IERC165BaseInternal.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "ERC165Base__InvalidInterfaceId",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}
