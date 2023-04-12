@@ -369,7 +369,6 @@ def test_process_message_from_l2_set_winner(
 
     _naffleId = 1
 
-    _zkSyncAddress = zksync_l1_message_account.address
     _l2BlockNumber = 123
     _index = 0
     _l2TxNumberInBlock = 1
@@ -379,7 +378,6 @@ def test_process_message_from_l2_set_winner(
 
     encoded_data = encode(["string", "uint256", "address"], [action, _naffleId, address.address])
     base_facet.consumeSetWinnerMessage(
-        _zkSyncAddress,
         _l2BlockNumber,
         _index,
         _l2TxNumberInBlock,
@@ -393,7 +391,7 @@ def test_process_message_from_l2_set_winner(
     assert view_facet.getNaffleById(_naffleId, from_address)[4] == address.address
 
 
-def test_process_message_from_l2_set_winner(
+def test_process_message_from_l2_set_winner_failed_message_inclusion(
     address,
     from_address,
     from_admin,
@@ -417,7 +415,6 @@ def test_process_message_from_l2_set_winner(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock_false_return_values, from_admin
     )
 
-    _zkSyncAddress = zksync_l1_message_account.address
     _l2BlockNumber = 123
     _index = 0
     _l2TxNumberInBlock = 1
@@ -428,7 +425,6 @@ def test_process_message_from_l2_set_winner(
     encoded_data = encode(["string", "uint256", "address"], [action, 1, address.address])
     with brownie.reverts(get_error_message("FailedMessageInclusion")):
         base_facet.consumeSetWinnerMessage(
-            _zkSyncAddress,
             _l2BlockNumber,
             _index,
             _l2TxNumberInBlock,

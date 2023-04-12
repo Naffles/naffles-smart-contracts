@@ -348,7 +348,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @notice gets the admin role.
      * @return adminRole the admin role.
      */
-    function _getAdminRole() internal view returns (bytes32 adminRole) {
+    function _getAdminRole() internal pure returns (bytes32 adminRole) {
         adminRole = AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
