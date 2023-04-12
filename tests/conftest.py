@@ -30,8 +30,11 @@ from brownie import (
 )
 from brownie.network.account import _PrivateKeyAccount, Account
 
-from tests.test_helper import L2Diamonds
+
+
 from scripts.staking.deploy_staking_contract import deploy
+from tests.test_helper import L2Diamonds
+
 
 
 @pytest.fixture
@@ -66,8 +69,24 @@ def deployed_test_naffle_diamond(from_admin) -> TestNaffleDiamond:
 
 
 @pytest.fixture()
-def deployed_l1_naffle_diamond(admin, from_admin) -> L1NaffleDiamond:
-    diamond = L1NaffleDiamond.deploy(admin, from_admin)
+def deployed_l1_naffle_diamond(
+    admin,
+    from_admin,
+    deployed_erc721a_mock,
+) -> L1NaffleDiamond:
+    from tests.contracts.naffle.ethereum.test_l1_naffle_base import (
+        MINIMUM_NAFFLE_DURATION, MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE
+    )
+    diamond = L1NaffleDiamond.deploy(
+        admin,
+        MINIMUM_NAFFLE_DURATION,
+        MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE,
+        deployed_erc721a_mock.address,
+        deployed_erc721a_mock.address,
+        from_admin
+    )
     return diamond
 
 
@@ -90,8 +109,25 @@ def deployed_l1_naffle_view_facet(from_admin) -> L1NaffleView:
 
 
 @pytest.fixture()
-def deployed_l2_naffle_diamond(admin, from_admin) -> L2NaffleDiamond:
-    diamond = L2NaffleDiamond.deploy(admin, from_admin)
+def deployed_l2_naffle_diamond(
+    admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_messenger_mock,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_open_entry_ticket_diamond,
+    from_admin
+) -> L2NaffleDiamond:
+    from tests.test_helper import PLATFORM_FEE, FREE_TICKET_RATIO
+    diamond = L2NaffleDiamond.deploy(
+        admin,
+        PLATFORM_FEE,
+        FREE_TICKET_RATIO,
+        deployed_l1_messenger_mock.address,
+        deployed_l2_paid_ticket_diamond.address,
+        deployed_l2_open_entry_ticket_diamond.address,
+        deployed_l1_naffle_diamond,
+        from_admin
+    )
     return diamond
 
 

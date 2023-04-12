@@ -1,21 +1,18 @@
 import datetime
 
+
+
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
-
 PLATFORM_FEE = 100
 FREE_TICKET_RATIO = 100
 NAFFLE_ID = 1
 NAFFLE_STATUS_ACTIVE = 0
-
 PAID_TICKET_SPOTS = 2
 TICKET_PRICE = 10000
-
 DEFAULT_END_DATE = datetime.datetime.now().timestamp() + 1000
-
 ERC721 = 0
 ERC1155 = 1
-
 NFT_ID = 1
 
 
@@ -37,9 +34,6 @@ class L2Diamonds:
         deployed_l2_naffle_base_facet,
         deployed_l1_messenger_mock,
     ):
-        from tests.contracts.naffle.zksync.test_l2_naffle_base import (
-            setup_l2_naffle_contract,
-        )
         from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
             setup_l2_naffle_diamond_with_facets,
         )
@@ -97,6 +91,7 @@ class L2Diamonds:
 
         # We set admin as the l1 contract,
         # so we can call create naffle from admin.
+        from tests.contracts.naffle.zksync.test_l2_naffle_base import setup_l2_naffle_contract
         setup_l2_naffle_contract(
             self.naffle_admin_facet,
             from_admin["from"],

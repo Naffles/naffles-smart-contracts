@@ -2,7 +2,7 @@ import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 
 import "@matterlabs/hardhat-zksync-deploy";
-import "@matterlabs/hardhat-zksync-solc";
+// import "@matterlabs/hardhat-zksync-solc";
 
 require('hardhat-dependency-compiler');
 
@@ -47,5 +47,11 @@ module.exports = {
   },
   solidity: {
     version: "0.8.17",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 2000,
+      }
+    }
   },
 };
