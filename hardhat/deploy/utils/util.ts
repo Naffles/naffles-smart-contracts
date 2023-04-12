@@ -1,12 +1,5 @@
 import fs from 'fs';
 
-export interface L1NaffleDiamondAddresses {
-  L1NaffleDiamond: string;
-  L1NaffleBase: string;
-  L1NaffleView: string;
-  L1NaffleAdmin: string;
-}
-
 export function createDir(_dirPath: string): void {
   if (!fs.existsSync(_dirPath)) {
     try {
