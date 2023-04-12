@@ -1,0 +1,171 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IL1NaffleView",
+  "sourceName": "interfaces/naffle/ethereum/IL1NaffleView.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getAdminRole",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "adminRole",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getFoundersKeyAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "foundersKeyAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getFoundersKeyPlaceholderAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "foundersKeyPlaceholderAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMinimumNaffleDuration",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "minimumNaffleDuration",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMinimumPaidTicketPriceInWei",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "minimumPaidTicketPriceInWei",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMinimumPaidTicketSpots",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "minimumPaidTicketSpots",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_id",
+          "type": "uint256"
+        }
+      ],
+      "name": "getNaffleById",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "tokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "nftId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "naffleId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "winner",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "cancelled",
+              "type": "bool"
+            },
+            {
+              "internalType": "enum NaffleTypes.TokenContractType",
+              "name": "naffleTokenType",
+              "type": "uint8"
+            }
+          ],
+          "internalType": "struct NaffleTypes.L1Naffle",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getZkSyncAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "zkSyncAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getZkSyncNaffleContractAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "zkSyncNaffleContractAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

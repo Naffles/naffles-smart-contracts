@@ -320,7 +320,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
      * @param _naffleId the id of the naffle.
      * @return naffle the naffle.
      */
-    function _getNaffleById(uint256 _naffleId) public view returns (NaffleTypes.L1Naffle memory naffle) {
+    function _getNaffleById(uint256 _naffleId) internal view returns (NaffleTypes.L1Naffle memory naffle) {
         naffle = L1NaffleBaseStorage.layout().naffles[_naffleId];
     }
 }
