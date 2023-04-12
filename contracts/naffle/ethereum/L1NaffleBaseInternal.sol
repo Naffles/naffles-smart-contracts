@@ -138,7 +138,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
 
     /**
      * @notice consumes a message from L2. Stores that the message has been processed.
-     * @param _zkSyncAddress the address of the zkSync contract.
      * @param _l2BlockNumber the block number of the L2 block.
      * @param _index the index of the message in the L2 block.
      * @param _l2TxNumberInBlock the transaction number in the L2 block.
@@ -146,7 +145,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
      * @param _proof the proof of the message.
      */
     function _consumeMessageFromL2(
-        address _zkSyncAddress,
         uint256 _l2BlockNumber,
         uint256 _index,
         uint16 _l2TxNumberInBlock,
@@ -193,7 +191,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
      * @notice gets the admin role.
      * @return adminRole the admin role.
      */
-    function _getAdminRole() internal view returns (bytes32 adminRole) {
+    function _getAdminRole() internal pure returns (bytes32 adminRole) {
         adminRole = AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
@@ -313,7 +311,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
      * @notice gets the L1 messenger address.
      * @return l1MessengerAddress the L1 messenger address.
      */
-    function _getL1MessengerAddress() internal view returns (address l1MessengerAddress) {
+    function _getL1MessengerAddress() internal pure returns (address l1MessengerAddress) {
         l1MessengerAddress = L1NaffleBaseStorage.L1_MESSENGER_ADDRESS;
     }
 

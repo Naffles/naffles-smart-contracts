@@ -35,7 +35,6 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
      * @inheritdoc IL1NaffleBase
      */
     function consumeSetWinnerMessage(
-        address _zkSyncAddress,
         uint256 _l2BlockNumber,
         uint256 _index,
         uint16 _l2TxNumberInBlock,
@@ -43,7 +42,6 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         bytes32[] calldata _proof
     ) external {
         _consumeMessageFromL2(
-            _zkSyncAddress,
             _l2BlockNumber,
             _index,
             _l2TxNumberInBlock,

@@ -364,7 +364,6 @@ def test_process_message_from_l2_cancel_naffle(
 
     _naffleId = 1
 
-    _zkSyncAddress = zksync_l1_message_account.address
     _l2BlockNumber = 123
     _index = 0
     _l2TxNumberInBlock = 1
@@ -375,7 +374,6 @@ def test_process_message_from_l2_cancel_naffle(
 
     encoded_data = encode(["string", "uint256"], [action, one])
     admin_facet.consumeAdminCancelMessage(
-        _zkSyncAddress,
         _l2BlockNumber,
         _index,
         _l2TxNumberInBlock,
@@ -437,7 +435,6 @@ def test_process_message_from_l2_message_already_processed(
 
     _naffleId = 1
 
-    _zkSyncAddress = zksync_l1_message_account.address
     _l2BlockNumber = 123
     _index = 0
     _l2TxNumberInBlock = 1
@@ -448,7 +445,6 @@ def test_process_message_from_l2_message_already_processed(
 
     encoded_data = encode(["string", "uint256"], [action, one])
     admin_facet.consumeAdminCancelMessage(
-        _zkSyncAddress,
         _l2BlockNumber,
         _index,
         _l2TxNumberInBlock,
@@ -460,7 +456,6 @@ def test_process_message_from_l2_message_already_processed(
 
     with brownie.reverts(get_error_message("MessageAlreadyProcessed")):
         admin_facet.consumeAdminCancelMessage(
-            _zkSyncAddress,
             _l2BlockNumber,
             _index,
             _l2TxNumberInBlock,
@@ -498,10 +493,8 @@ def test_process_message_from_l2_message_not_allowed(
     deployed_erc721a_mock.setApprovalForAll(
         deployed_l1_naffle_diamond.address, True, from_address
     )
-    nft_id = 1
     _naffleId = 1
 
-    _zkSyncAddress = zksync_l1_message_account.address
     _l2BlockNumber = 123
     _index = 0
     _l2TxNumberInBlock = 1
@@ -513,7 +506,6 @@ def test_process_message_from_l2_message_not_allowed(
     encoded_data = encode(["string", "uint256"], [action, one])
     with brownie.reverts():
         admin_facet.consumeAdminCancelMessage(
-            _zkSyncAddress,
             _l2BlockNumber,
             _index,
             _l2TxNumberInBlock,
@@ -565,7 +557,6 @@ def test_process_message_from_l2_failed_message_inclusion(
 
     _naffleId = 1
 
-    _zkSyncAddress = zksync_l1_message_account.address
     _l2BlockNumber = 123
     _index = 0
     _l2TxNumberInBlock = 1
@@ -577,7 +568,6 @@ def test_process_message_from_l2_failed_message_inclusion(
     encoded_data = encode(["string", "uint256"], [action, one])
     with brownie.reverts(get_error_message("FailedMessageInclusion")):
         admin_facet.consumeAdminCancelMessage(
-            _zkSyncAddress,
             _l2BlockNumber,
             _index,
             _l2TxNumberInBlock,

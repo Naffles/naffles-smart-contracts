@@ -98,7 +98,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      * @notice get the admin role.
      * @return adminRole the admin role.
      */
-    function _getAdminRole() internal view returns (bytes32 adminRole) {
+    function _getAdminRole() internal pure returns (bytes32 adminRole) {
         adminRole = AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 

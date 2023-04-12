@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 
 import "../../../contracts/libraries/NaffleTypes.sol";
 
+
 /**
  * @title interface for L1 Naffle Base.
  */
@@ -29,13 +30,13 @@ interface IL1NaffleBase {
 
     /**
      * @notice consumes the setWinner message from ZkSync, sends the NFT to the winner.
-     * @param _zkSyncAddress address of the zkSync contract.
      * @param _l2BlockNumber block number of the L2 block.
      * @param _index index of the message in the block.
      * @param _l2TxNumberInBlock transaction number in the block.
+     * @param _message message to consume.
+     * @param _proof proof of the message.
      */
     function consumeSetWinnerMessage(
-        address _zkSyncAddress,
         uint256 _l2BlockNumber,
         uint256 _index,
         uint16 _l2TxNumberInBlock,
