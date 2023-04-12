@@ -106,9 +106,8 @@ async function main()  {
 
   const l1NaffleDiamondSelectors = new Set();
 
-  const l1NaffleDiamondOriginalCuts = [l1NaffleDiamondImpl].map((facet) => {
-    return Object.keys(facet.interface.functions).map((fn) => facet.interface.getSighash(fn))
-  })[0];
+  const l1NaffleDiamondOriginalCuts = Object.keys(l1NaffleDiamondImpl.interface.functions)
+  .map((fn) => l1NaffleDiamondImpl.interface.getSighash(fn));
 
   console.log("l1nafflediamondoriginalcuts: ", l1NaffleDiamondOriginalCuts)
 
