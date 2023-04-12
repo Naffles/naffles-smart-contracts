@@ -67,7 +67,6 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
      * @inheritdoc IL1NaffleAdmin
      */
     function consumeAdminCancelMessage(
-        address _zkSyncAddress,
         uint256 _l2BlockNumber,
         uint256 _index,
         uint16 _l2TxNumberInBlock,
@@ -75,7 +74,6 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
         bytes32[] calldata _proof
     ) external onlyRole(_getAdminRole()) {
         _consumeMessageFromL2(
-            _zkSyncAddress,
             _l2BlockNumber,
             _index,
             _l2TxNumberInBlock,

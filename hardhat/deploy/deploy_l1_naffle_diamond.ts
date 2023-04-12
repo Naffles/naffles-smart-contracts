@@ -106,6 +106,12 @@ async function main()  {
 
   const l1NaffleDiamondSelectors = new Set();
 
+  const l1NaffleDiamondOriginalCuts = [l1NaffleDiamondImpl].map((facet) => {
+    return Object.keys(facet.interface.functions).map((fn) => facet.interface.getSighash(fn))
+  })[0];
+
+  console.log("l1nafflediamondoriginalcuts: ", l1NaffleDiamondOriginalCuts)
+
   const l1NaffleDiamondCuts = [
     l1NaffleBaseImpl,
     l1NaffleViewImpl,
@@ -121,27 +127,12 @@ async function main()  {
         .filter((fn) => !ERC165Selectors.has(facet.interface.getSighash(fn)))
         .filter((fn) => !AccessControlSelectors.has(facet.interface.getSighash(fn)))
         .filter((fn) => !OwnableSelectors.has(facet.interface.getSighash(fn)))
+        // filter fn is not in original diamond
+        .filter((fn) => !l1NaffleDiamondOriginalCuts.includes(facet.interface.getSighash(fn)))
 
         .map((fn) => facet.interface.getSighash(fn)),
     };
   });
-
-  console.log("cust for diamond: ", l1NaffleDiamondCuts)
-  console.log("selectors for diamond: " , l1NaffleDiamondSelectors)
-      // go through every object in l1nafflediamondcuts and check if a selector in the selectors array is in any of the other selector arrays
-  // if it is, remove it from the selectors array
-  for (let i = 0; i < l1NaffleDiamondCuts.length; i++) {
-    for (let j = 0; j < l1NaffleDiamondCuts.length; j++) {
-      if (i !== j) {
-        l1NaffleDiamondCuts[i].selectors = l1NaffleDiamondCuts[i].selectors.filter(
-          (selector) => !l1NaffleDiamondCuts[j].selectors.includes(selector),
-        );
-      }
-    }
-  }
-
-  console.log("Selectors for diamond: ", l1NaffleDiamondCuts)
-
 
   console.log("Cutting facets into diamond..")
 

@@ -27,41 +27,10 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export declare namespace NaffleTypes {
-  export type L1NaffleStruct = {
-    tokenAddress: PromiseOrValue<string>;
-    nftId: PromiseOrValue<BigNumberish>;
-    naffleId: PromiseOrValue<BigNumberish>;
-    owner: PromiseOrValue<string>;
-    winner: PromiseOrValue<string>;
-    cancelled: PromiseOrValue<boolean>;
-    naffleTokenType: PromiseOrValue<BigNumberish>;
-  };
-
-  export type L1NaffleStructOutput = [
-    string,
-    BigNumber,
-    BigNumber,
-    string,
-    string,
-    boolean,
-    number
-  ] & {
-    tokenAddress: string;
-    nftId: BigNumber;
-    naffleId: BigNumber;
-    owner: string;
-    winner: string;
-    cancelled: boolean;
-    naffleTokenType: number;
-  };
-}
-
 export interface L1NaffleAdminInterface extends utils.Interface {
   functions: {
-    "_getNaffleById(uint256)": FunctionFragment;
     "acceptOwnership()": FunctionFragment;
-    "consumeAdminCancelMessage(address,uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
+    "consumeAdminCancelMessage(uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -82,7 +51,6 @@ export interface L1NaffleAdminInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_getNaffleById"
       | "acceptOwnership"
       | "consumeAdminCancelMessage"
       | "getRoleAdmin"
@@ -104,17 +72,12 @@ export interface L1NaffleAdminInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "_getNaffleById",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "acceptOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "consumeAdminCancelMessage",
     values: [
-      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -184,10 +147,6 @@ export interface L1NaffleAdminInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_getNaffleById",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "acceptOwnership",
     data: BytesLike
@@ -392,21 +351,11 @@ export interface L1NaffleAdmin extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [NaffleTypes.L1NaffleStructOutput] & {
-        naffle: NaffleTypes.L1NaffleStructOutput;
-      }
-    >;
-
     acceptOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     consumeAdminCancelMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -493,17 +442,11 @@ export interface L1NaffleAdmin extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  _getNaffleById(
-    _naffleId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<NaffleTypes.L1NaffleStructOutput>;
-
   acceptOwnership(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   consumeAdminCancelMessage(
-    _zkSyncAddress: PromiseOrValue<string>,
     _l2BlockNumber: PromiseOrValue<BigNumberish>,
     _index: PromiseOrValue<BigNumberish>,
     _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -590,15 +533,9 @@ export interface L1NaffleAdmin extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<NaffleTypes.L1NaffleStructOutput>;
-
     acceptOwnership(overrides?: CallOverrides): Promise<void>;
 
     consumeAdminCancelMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -765,17 +702,11 @@ export interface L1NaffleAdmin extends BaseContract {
   };
 
   estimateGas: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     acceptOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     consumeAdminCancelMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -863,17 +794,11 @@ export interface L1NaffleAdmin extends BaseContract {
   };
 
   populateTransaction: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     acceptOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     consumeAdminCancelMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,

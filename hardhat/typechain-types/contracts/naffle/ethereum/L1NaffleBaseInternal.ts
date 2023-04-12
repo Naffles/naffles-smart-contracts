@@ -6,16 +6,10 @@ import type {
   BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  PopulatedTransaction,
   Signer,
   utils,
 } from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
+import type { EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -25,52 +19,8 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export declare namespace NaffleTypes {
-  export type L1NaffleStruct = {
-    tokenAddress: PromiseOrValue<string>;
-    nftId: PromiseOrValue<BigNumberish>;
-    naffleId: PromiseOrValue<BigNumberish>;
-    owner: PromiseOrValue<string>;
-    winner: PromiseOrValue<string>;
-    cancelled: PromiseOrValue<boolean>;
-    naffleTokenType: PromiseOrValue<BigNumberish>;
-  };
-
-  export type L1NaffleStructOutput = [
-    string,
-    BigNumber,
-    BigNumber,
-    string,
-    string,
-    boolean,
-    number
-  ] & {
-    tokenAddress: string;
-    nftId: BigNumber;
-    naffleId: BigNumber;
-    owner: string;
-    winner: string;
-    cancelled: boolean;
-    naffleTokenType: number;
-  };
-}
-
 export interface L1NaffleBaseInternalInterface extends utils.Interface {
-  functions: {
-    "_getNaffleById(uint256)": FunctionFragment;
-  };
-
-  getFunction(nameOrSignatureOrTopic: "_getNaffleById"): FunctionFragment;
-
-  encodeFunctionData(
-    functionFragment: "_getNaffleById",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-
-  decodeFunctionResult(
-    functionFragment: "_getNaffleById",
-    data: BytesLike
-  ): Result;
+  functions: {};
 
   events: {
     "L1NaffleCancelled(uint256)": EventFragment;
@@ -203,28 +153,9 @@ export interface L1NaffleBaseInternal extends BaseContract {
   once: OnEvent<this>;
   removeListener: OnEvent<this>;
 
-  functions: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [NaffleTypes.L1NaffleStructOutput] & {
-        naffle: NaffleTypes.L1NaffleStructOutput;
-      }
-    >;
-  };
+  functions: {};
 
-  _getNaffleById(
-    _naffleId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<NaffleTypes.L1NaffleStructOutput>;
-
-  callStatic: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<NaffleTypes.L1NaffleStructOutput>;
-  };
+  callStatic: {};
 
   filters: {
     "L1NaffleCancelled(uint256)"(naffleId?: null): L1NaffleCancelledEventFilter;
@@ -296,17 +227,7 @@ export interface L1NaffleBaseInternal extends BaseContract {
     ): RoleRevokedEventFilter;
   };
 
-  estimateGas: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
+  estimateGas: {};
 
-  populateTransaction: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+  populateTransaction: {};
 }

@@ -25,7 +25,7 @@ import type {
 
 export interface IL1NaffleBaseInterface extends utils.Interface {
   functions: {
-    "consumeSetWinnerMessage(address,uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
+    "consumeSetWinnerMessage(uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
     "createNaffle(address,uint256,uint256,uint256,uint256,uint8)": FunctionFragment;
   };
 
@@ -36,7 +36,6 @@ export interface IL1NaffleBaseInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "consumeSetWinnerMessage",
     values: [
-      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -96,7 +95,6 @@ export interface IL1NaffleBase extends BaseContract {
 
   functions: {
     consumeSetWinnerMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -117,7 +115,6 @@ export interface IL1NaffleBase extends BaseContract {
   };
 
   consumeSetWinnerMessage(
-    _zkSyncAddress: PromiseOrValue<string>,
     _l2BlockNumber: PromiseOrValue<BigNumberish>,
     _index: PromiseOrValue<BigNumberish>,
     _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -138,7 +135,6 @@ export interface IL1NaffleBase extends BaseContract {
 
   callStatic: {
     consumeSetWinnerMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -162,7 +158,6 @@ export interface IL1NaffleBase extends BaseContract {
 
   estimateGas: {
     consumeSetWinnerMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -184,7 +179,6 @@ export interface IL1NaffleBase extends BaseContract {
 
   populateTransaction: {
     consumeSetWinnerMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,

@@ -27,40 +27,9 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
-export declare namespace NaffleTypes {
-  export type L1NaffleStruct = {
-    tokenAddress: PromiseOrValue<string>;
-    nftId: PromiseOrValue<BigNumberish>;
-    naffleId: PromiseOrValue<BigNumberish>;
-    owner: PromiseOrValue<string>;
-    winner: PromiseOrValue<string>;
-    cancelled: PromiseOrValue<boolean>;
-    naffleTokenType: PromiseOrValue<BigNumberish>;
-  };
-
-  export type L1NaffleStructOutput = [
-    string,
-    BigNumber,
-    BigNumber,
-    string,
-    string,
-    boolean,
-    number
-  ] & {
-    tokenAddress: string;
-    nftId: BigNumber;
-    naffleId: BigNumber;
-    owner: string;
-    winner: string;
-    cancelled: boolean;
-    naffleTokenType: number;
-  };
-}
-
 export interface L1NaffleBaseInterface extends utils.Interface {
   functions: {
-    "_getNaffleById(uint256)": FunctionFragment;
-    "consumeSetWinnerMessage(address,uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
+    "consumeSetWinnerMessage(uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
     "createNaffle(address,uint256,uint256,uint256,uint256,uint8)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
@@ -75,7 +44,6 @@ export interface L1NaffleBaseInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_getNaffleById"
       | "consumeSetWinnerMessage"
       | "createNaffle"
       | "getRoleAdmin"
@@ -90,13 +58,8 @@ export interface L1NaffleBaseInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "_getNaffleById",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "consumeSetWinnerMessage",
     values: [
-      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -169,10 +132,6 @@ export interface L1NaffleBaseInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_getNaffleById",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "consumeSetWinnerMessage",
     data: BytesLike
@@ -341,17 +300,7 @@ export interface L1NaffleBase extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [NaffleTypes.L1NaffleStructOutput] & {
-        naffle: NaffleTypes.L1NaffleStructOutput;
-      }
-    >;
-
     consumeSetWinnerMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -430,13 +379,7 @@ export interface L1NaffleBase extends BaseContract {
     ): Promise<[boolean]>;
   };
 
-  _getNaffleById(
-    _naffleId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<NaffleTypes.L1NaffleStructOutput>;
-
   consumeSetWinnerMessage(
-    _zkSyncAddress: PromiseOrValue<string>,
     _l2BlockNumber: PromiseOrValue<BigNumberish>,
     _index: PromiseOrValue<BigNumberish>,
     _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -515,13 +458,7 @@ export interface L1NaffleBase extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<NaffleTypes.L1NaffleStructOutput>;
-
     consumeSetWinnerMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -671,13 +608,7 @@ export interface L1NaffleBase extends BaseContract {
   };
 
   estimateGas: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     consumeSetWinnerMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -757,13 +688,7 @@ export interface L1NaffleBase extends BaseContract {
   };
 
   populateTransaction: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     consumeSetWinnerMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,

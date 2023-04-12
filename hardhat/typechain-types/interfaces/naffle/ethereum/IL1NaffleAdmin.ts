@@ -25,7 +25,7 @@ import type {
 
 export interface IL1NaffleAdminInterface extends utils.Interface {
   functions: {
-    "consumeAdminCancelMessage(address,uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
+    "consumeAdminCancelMessage(uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
     "setFoundersKeyAddress(address)": FunctionFragment;
     "setFoundersKeyPlaceholderAddress(address)": FunctionFragment;
@@ -52,7 +52,6 @@ export interface IL1NaffleAdminInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "consumeAdminCancelMessage",
     values: [
-      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -158,7 +157,6 @@ export interface IL1NaffleAdmin extends BaseContract {
 
   functions: {
     consumeAdminCancelMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -209,7 +207,6 @@ export interface IL1NaffleAdmin extends BaseContract {
   };
 
   consumeAdminCancelMessage(
-    _zkSyncAddress: PromiseOrValue<string>,
     _l2BlockNumber: PromiseOrValue<BigNumberish>,
     _index: PromiseOrValue<BigNumberish>,
     _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -260,7 +257,6 @@ export interface IL1NaffleAdmin extends BaseContract {
 
   callStatic: {
     consumeAdminCancelMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -314,7 +310,6 @@ export interface IL1NaffleAdmin extends BaseContract {
 
   estimateGas: {
     consumeAdminCancelMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
@@ -366,7 +361,6 @@ export interface IL1NaffleAdmin extends BaseContract {
 
   populateTransaction: {
     consumeAdminCancelMessage(
-      _zkSyncAddress: PromiseOrValue<string>,
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,

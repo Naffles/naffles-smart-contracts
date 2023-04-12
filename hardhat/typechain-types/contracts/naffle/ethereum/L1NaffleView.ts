@@ -57,7 +57,6 @@ export declare namespace NaffleTypes {
 
 export interface L1NaffleViewInterface extends utils.Interface {
   functions: {
-    "_getNaffleById(uint256)": FunctionFragment;
     "getAdminRole()": FunctionFragment;
     "getFoundersKeyAddress()": FunctionFragment;
     "getFoundersKeyPlaceholderAddress()": FunctionFragment;
@@ -71,7 +70,6 @@ export interface L1NaffleViewInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_getNaffleById"
       | "getAdminRole"
       | "getFoundersKeyAddress"
       | "getFoundersKeyPlaceholderAddress"
@@ -83,10 +81,6 @@ export interface L1NaffleViewInterface extends utils.Interface {
       | "getZkSyncNaffleContractAddress"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "_getNaffleById",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "getAdminRole",
     values?: undefined
@@ -124,10 +118,6 @@ export interface L1NaffleViewInterface extends utils.Interface {
     values?: undefined
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_getNaffleById",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getAdminRole",
     data: BytesLike
@@ -297,15 +287,6 @@ export interface L1NaffleView extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [NaffleTypes.L1NaffleStructOutput] & {
-        naffle: NaffleTypes.L1NaffleStructOutput;
-      }
-    >;
-
     getAdminRole(overrides?: CallOverrides): Promise<[string]>;
 
     getFoundersKeyAddress(overrides?: CallOverrides): Promise<[string]>;
@@ -334,11 +315,6 @@ export interface L1NaffleView extends BaseContract {
     ): Promise<[string]>;
   };
 
-  _getNaffleById(
-    _naffleId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<NaffleTypes.L1NaffleStructOutput>;
-
   getAdminRole(overrides?: CallOverrides): Promise<string>;
 
   getFoundersKeyAddress(overrides?: CallOverrides): Promise<string>;
@@ -361,11 +337,6 @@ export interface L1NaffleView extends BaseContract {
   getZkSyncNaffleContractAddress(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<NaffleTypes.L1NaffleStructOutput>;
-
     getAdminRole(overrides?: CallOverrides): Promise<string>;
 
     getFoundersKeyAddress(overrides?: CallOverrides): Promise<string>;
@@ -463,11 +434,6 @@ export interface L1NaffleView extends BaseContract {
   };
 
   estimateGas: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getAdminRole(overrides?: CallOverrides): Promise<BigNumber>;
 
     getFoundersKeyAddress(overrides?: CallOverrides): Promise<BigNumber>;
@@ -497,11 +463,6 @@ export interface L1NaffleView extends BaseContract {
   };
 
   populateTransaction: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getAdminRole(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getFoundersKeyAddress(

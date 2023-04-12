@@ -41,36 +41,6 @@ export declare namespace IDiamondWritableInternal {
   };
 }
 
-export declare namespace NaffleTypes {
-  export type L1NaffleStruct = {
-    tokenAddress: PromiseOrValue<string>;
-    nftId: PromiseOrValue<BigNumberish>;
-    naffleId: PromiseOrValue<BigNumberish>;
-    owner: PromiseOrValue<string>;
-    winner: PromiseOrValue<string>;
-    cancelled: PromiseOrValue<boolean>;
-    naffleTokenType: PromiseOrValue<BigNumberish>;
-  };
-
-  export type L1NaffleStructOutput = [
-    string,
-    BigNumber,
-    BigNumber,
-    string,
-    string,
-    boolean,
-    number
-  ] & {
-    tokenAddress: string;
-    nftId: BigNumber;
-    naffleId: BigNumber;
-    owner: string;
-    winner: string;
-    cancelled: boolean;
-    naffleTokenType: number;
-  };
-}
-
 export declare namespace IDiamondReadable {
   export type FacetStruct = {
     target: PromiseOrValue<string>;
@@ -85,7 +55,6 @@ export declare namespace IDiamondReadable {
 
 export interface L1NaffleDiamondInterface extends utils.Interface {
   functions: {
-    "_getNaffleById(uint256)": FunctionFragment;
     "acceptOwnership()": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
     "facetAddress(bytes4)": FunctionFragment;
@@ -107,7 +76,6 @@ export interface L1NaffleDiamondInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_getNaffleById"
       | "acceptOwnership"
       | "diamondCut"
       | "facetAddress"
@@ -127,10 +95,6 @@ export interface L1NaffleDiamondInterface extends utils.Interface {
       | "transferOwnership"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "_getNaffleById",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "acceptOwnership",
     values?: undefined
@@ -198,10 +162,6 @@ export interface L1NaffleDiamondInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_getNaffleById",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "acceptOwnership",
     data: BytesLike
@@ -413,15 +373,6 @@ export interface L1NaffleDiamond extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [NaffleTypes.L1NaffleStructOutput] & {
-        naffle: NaffleTypes.L1NaffleStructOutput;
-      }
-    >;
-
     acceptOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -507,11 +458,6 @@ export interface L1NaffleDiamond extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  _getNaffleById(
-    _naffleId: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<NaffleTypes.L1NaffleStructOutput>;
-
   acceptOwnership(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -589,11 +535,6 @@ export interface L1NaffleDiamond extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<NaffleTypes.L1NaffleStructOutput>;
-
     acceptOwnership(overrides?: CallOverrides): Promise<void>;
 
     diamondCut(
@@ -760,11 +701,6 @@ export interface L1NaffleDiamond extends BaseContract {
   };
 
   estimateGas: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     acceptOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -841,11 +777,6 @@ export interface L1NaffleDiamond extends BaseContract {
   };
 
   populateTransaction: {
-    _getNaffleById(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     acceptOwnership(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

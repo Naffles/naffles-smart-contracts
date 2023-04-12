@@ -13,11 +13,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_zkSyncAddress",
-        type: "address",
-      },
-      {
         internalType: "uint256",
         name: "_l2BlockNumber",
         type: "uint256",

@@ -225,62 +225,6 @@ const _abi = [
     name: "RoleRevoked",
     type: "event",
   },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_naffleId",
-        type: "uint256",
-      },
-    ],
-    name: "_getNaffleById",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "address",
-            name: "tokenAddress",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "nftId",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "naffleId",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "owner",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "winner",
-            type: "address",
-          },
-          {
-            internalType: "bool",
-            name: "cancelled",
-            type: "bool",
-          },
-          {
-            internalType: "enum NaffleTypes.TokenContractType",
-            name: "naffleTokenType",
-            type: "uint8",
-          },
-        ],
-        internalType: "struct NaffleTypes.L1Naffle",
-        name: "naffle",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
 ] as const;
 
 export class L1NaffleBaseInternal__factory {
