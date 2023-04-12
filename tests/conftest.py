@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 from brownie import (
     Contract,
@@ -32,25 +30,11 @@ from brownie import (
 )
 from brownie.network.account import _PrivateKeyAccount, Account
 
-from tests.contracts.naffle.ethereum.test_l1_naffle_base import MINIMUM_NAFFLE_DURATION, MINIMUM_PAID_TICKET_SPOTS, \
-    MINIMUM_TICKET_PRICE
+
 
 from scripts.staking.deploy_staking_contract import deploy
 from tests.test_helper import L2Diamonds
 
-
-STANDARD_NAFFLE_TYPE = 0
-UNLIMITED_NAFFLE_TYPE = 1
-PLATFORM_FEE = 100
-FREE_TICKET_RATIO = 100
-NAFFLE_ID = 1
-NAFFLE_STATUS_ACTIVE = 0
-PAID_TICKET_SPOTS = 2
-TICKET_PRICE = 10000
-DEFAULT_END_DATE = datetime.datetime.now().timestamp() + 1000
-ERC721 = 0
-ERC1155 = 1
-NFT_ID = 1
 
 
 @pytest.fixture
@@ -89,15 +73,18 @@ def deployed_l1_naffle_diamond(
     admin,
     from_admin,
     deployed_erc721a_mock,
-    deployed_founders_key_staking
 ) -> L1NaffleDiamond:
+    from tests.contracts.naffle.ethereum.test_l1_naffle_base import (
+        MINIMUM_NAFFLE_DURATION, MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE
+    )
     diamond = L1NaffleDiamond.deploy(
         admin,
         MINIMUM_NAFFLE_DURATION,
         MINIMUM_PAID_TICKET_SPOTS,
         MINIMUM_TICKET_PRICE,
-        deployed_founders_key_staking.address,
-        deployed_founders_key_staking.address,
+        deployed_erc721a_mock.address,
+        deployed_erc721a_mock.address,
         from_admin
     )
     return diamond

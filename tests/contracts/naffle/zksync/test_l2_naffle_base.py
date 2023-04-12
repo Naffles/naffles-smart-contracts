@@ -16,8 +16,7 @@ from tests.test_helper import (
     ERC721,
     STANDARD_NAFFLE_TYPE,
     TICKET_PRICE,
-    UNLIMITED_NAFFLE_TYPE,
-    create_naffle_and_mint_tickets,
+    create_naffle_and_mint_tickets, UNLIMITED_NAFFLE_TYPE,
 )
 
 
