@@ -1,7 +1,10 @@
 from brownie import Contract
-from scripts.staking.deploy_staking_contract import (FoundersKeyStaking,
-                                                     SoulboundFoundersKey,
-                                                     deploy)
+
+from scripts.staking.deploy_staking_contract import (
+    FoundersKeyStaking,
+    SoulboundFoundersKey,
+    deploy,
+)
 
 
 def test_deploy_staking_contract(admin, deployed_erc721a_mock):

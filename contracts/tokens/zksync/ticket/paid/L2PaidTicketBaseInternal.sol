@@ -11,10 +11,7 @@ import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.s
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 
 
-
 abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
-    event Log(string message, uint data);
-
     function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei, uint256 startingTicketId) internal returns(uint256[] memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         uint256[] memory ticketIds = new uint256[](_amount);

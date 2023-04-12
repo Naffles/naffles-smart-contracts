@@ -36,14 +36,18 @@ def create_naffle_and_mint_tickets(
     naffle_type=STANDARD_NAFFLE_TYPE,
     number_of_tickets=PAID_TICKET_SPOTS,
 ):
-    from tests.contracts.naffle.zksync.test_l2_naffle_diamond import \
-        setup_l2_naffle_diamond_with_facets
-    from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_base import \
-        setup_paid_ticket_contract
-    from tests.contracts.naffle.zksync.test_l2_naffle_base import \
-        setup_l2_naffle_contract
-    from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import \
-        setup_paid_ticket_diamond_with_facets
+    from tests.contracts.naffle.zksync.test_l2_naffle_base import (
+        setup_l2_naffle_contract,
+    )
+    from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
+        setup_l2_naffle_diamond_with_facets,
+    )
+    from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_base import (
+        setup_paid_ticket_contract,
+    )
+    from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
+        setup_paid_ticket_diamond_with_facets,
+    )
 
     (
         naffle_access_control,

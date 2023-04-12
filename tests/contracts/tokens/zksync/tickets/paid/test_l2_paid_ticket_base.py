@@ -63,8 +63,7 @@ def test_mint_tickets_for_address(
     )
     assert (
         brownie.interface.IERC721Base(
-            deployed_l2_paid_ticket_diamond.address).balanceOf(
-            address, {"from": address}
-        )
+            deployed_l2_paid_ticket_diamond.address
+        ).balanceOf(address, {"from": address})
         == 2
     )
