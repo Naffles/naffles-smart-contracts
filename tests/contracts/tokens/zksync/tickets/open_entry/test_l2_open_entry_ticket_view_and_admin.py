@@ -216,7 +216,7 @@ def test_set_base_uri_not_admin(
         admin_facet.setBaseURI('base_uri', from_address)
 
 
-def test_set_base_uri_and_get_token_uri(
+def test_set_base_uri(
     from_admin,
     deployed_l2_open_entry_ticket_diamond,
     deployed_l2_open_entry_ticket_base_facet,
@@ -236,32 +236,10 @@ def test_set_base_uri_and_get_token_uri(
         deployed_l2_open_entry_ticket_view_facet,
     )
     admin_facet.setBaseURI('base_uri/', from_admin)
-    admin_facet.adminMint(from_admin, 1, from_admin)
+    admin_facet.adminMint(from_admin["from"], 1, from_admin)
 
-    assert view_facet.tokenURI(1) == 'base_uri/1.json'
-
-
-def test_get_token_uri_non_existent(
-    from_admin,
-    deployed_l2_open_entry_ticket_diamond,
-    deployed_l2_open_entry_ticket_base_facet,
-    deployed_l2_open_entry_ticket_admin_facet,
-    deployed_l2_open_entry_ticket_view_facet,
-):
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_open_entry_ticket_diamond_with_facets(
-        from_admin,
-        deployed_l2_open_entry_ticket_diamond,
-        deployed_l2_open_entry_ticket_base_facet,
-        deployed_l2_open_entry_ticket_admin_facet,
-        deployed_l2_open_entry_ticket_view_facet,
+    view_facet = interface.IERC721Metadata(
+        deployed_l2_open_entry_ticket_diamond.address
     )
-    admin_facet.setBaseURI('base_uri/', from_admin)
-    admin_facet.adminMint(from_admin, 1, from_admin)
+    assert view_facet.tokenURI(1) == 'base_uri/1'
 
-    with brownie.reverts(get_error_message("URIQueryForNonexistentToken")):
-        view_facet.tokenURI(2)

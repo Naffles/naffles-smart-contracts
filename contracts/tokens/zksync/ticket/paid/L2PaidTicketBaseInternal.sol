@@ -7,11 +7,11 @@ import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
-import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataInternal.sol";
+import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 
 
-abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal, ERC721MetadataInternal {
+abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
     function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei, uint256 startingTicketId) internal returns(uint256[] memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         uint256[] memory ticketIds = new uint256[](_amount);
@@ -59,13 +59,5 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
     function _getTicketById(uint256 _ticketId) internal view returns (NaffleTypes.PaidTicket memory) {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         return l.paidTickets[_ticketId];
-    }
-
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual override(ERC721BaseInternal, ERC721MetadataInternal) {
-        super._beforeTokenTransfer(from, to, tokenId);
     }
 }

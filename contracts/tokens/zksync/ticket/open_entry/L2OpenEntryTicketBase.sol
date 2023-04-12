@@ -36,7 +36,7 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
         address from,
         address to,
         uint256 tokenId
-    ) internal virtual override(L2OpenEntryTicketBaseInternal, SolidStateERC721) {
+    ) internal virtual override(ERC721BaseInternal, SolidStateERC721) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 

@@ -24,8 +24,4 @@ contract L2PaidTicketView is IL2PaidTicketView, L2PaidTicketBaseInternal {
     function getTotalSupply() external view returns (uint256) {
         return _totalSupply();
     }
-
-    function tokenURI(uint256 _tokenId) external view returns (string memory) {
-        return _tokenURI(_tokenId);
-    }
 }

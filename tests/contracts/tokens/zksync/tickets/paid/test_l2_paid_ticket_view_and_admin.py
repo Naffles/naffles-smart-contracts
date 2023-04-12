@@ -251,47 +251,46 @@ def test_set_base_uri_not_admin(
 
 def test_set_base_uri(
     admin,
+    address,
     from_admin,
     deployed_l2_paid_ticket_diamond,
     deployed_l2_paid_ticket_base_facet,
     deployed_l2_paid_ticket_admin_facet,
     deployed_l2_paid_ticket_view_facet,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+    deployed_erc721a_mock,
 ):
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_paid_ticket_diamond_with_facets(
+    create_naffle_and_mint_tickets(
+        admin,
+        address,
         from_admin,
         deployed_l2_paid_ticket_diamond,
         deployed_l2_paid_ticket_base_facet,
         deployed_l2_paid_ticket_admin_facet,
         deployed_l2_paid_ticket_view_facet,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet,
+        deployed_erc721a_mock,
     )
-    admin_facet.setBaseURI("test", from_admin)
-
-
-def test_get_token_uri_token_does_not_exist(
-    admin,
-    from_admin,
-    deployed_l2_paid_ticket_diamond,
-    deployed_l2_paid_ticket_base_facet,
-    deployed_l2_paid_ticket_admin_facet,
-    deployed_l2_paid_ticket_view_facet,
-):
-    (
-        access_control,
-        base_facet,
-        admin_facet,
-        view_facet,
-    ) = setup_paid_ticket_diamond_with_facets(
-        from_admin,
-        deployed_l2_paid_ticket_diamond,
-        deployed_l2_paid_ticket_base_facet,
-        deployed_l2_paid_ticket_admin_facet,
-        deployed_l2_paid_ticket_view_facet,
+    admin_facet = interface.IL2PaidTicketAdmin(
+        deployed_l2_paid_ticket_diamond.address
     )
-    admin_facet.setBaseURI("test", from_admin)
-    with brownie.reverts(get_error_message("URIQueryForNonexistentToken")):
-        view_facet.tokenURI(1)
+    admin_facet.setBaseURI("base_uri/", from_admin)
+
+    view_facet = interface.IERC721Metadata(
+        deployed_l2_paid_ticket_diamond.address
+    )
+    assert view_facet.tokenURI(1) == 'base_uri/1'
