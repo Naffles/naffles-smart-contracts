@@ -21,4 +21,8 @@ contract L2OpenEntryTicketView is IL2OpenEntryTicketView, L2OpenEntryTicketBaseI
     function getOpenEntryTicketById(uint256 _ticketId) external view returns (NaffleTypes.OpenEntryTicket memory) {
         return _getOpenEntryTicketById(_ticketId);
     }
+
+    function tokenURI(uint256 _tokenId) external view returns (string memory) {
+        return _tokenURI(_tokenId);
+    }
 }
