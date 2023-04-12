@@ -7,11 +7,11 @@ import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
+import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
-import "../../../TokenURIInternal.sol";
 
 
-abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal, TokenURIInternal {
+abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal, ERC721MetadataInternal{
     function _attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, uint256 startingTicketId, address owner) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         for (uint256 i = 0; i < _ticketIds.length; i++) {
@@ -41,7 +41,9 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         L2OpenEntryTicketStorage.layout().l2NaffleContractAddress = _l2NaffleContractAddress;
     }
 
-
+    function _setBaseURI(string memory _baseURI) internal {
+        ERC721MetadataStorage.layout().baseURI = _baseURI;
+    }
 
     function _getTotalSupply() internal view returns (uint256) {
         return _totalSupply();
@@ -59,5 +61,14 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
             NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0, false);
             L2OpenEntryTicketStorage.layout().openEntryTickets[ticketId] = ticket;
         }
+    }
+
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721BaseInternal, ERC721MetadataInternal) {
+        super._beforeTokenTransfer(from, to, tokenId);
     }
 }
