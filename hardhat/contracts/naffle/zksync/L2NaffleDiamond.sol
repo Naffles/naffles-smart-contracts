@@ -12,6 +12,7 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         uint256 _platformFee,
         uint256 _openEntryRatio,
         address _l1MessengerContractAddress,
+        address _l1NaffleContractAddress,
         address _paidTicketContractAddress,
         address _openEntryTicketContractAddress
     ) SolidStateDiamond() {
@@ -19,6 +20,7 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         _setPlatformFee(_platformFee);
         _setOpenEntryRatio(_openEntryRatio);
         _setL1MessengerContractAddress(_l1MessengerContractAddress);
+        _setL1NaffleContractAddress(_l1NaffleContractAddress);
         _setPaidTicketContractAddress(_paidTicketContractAddress);
         _setOpenEntryTicketContractAddress(_openEntryTicketContractAddress);
     }

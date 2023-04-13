@@ -89,6 +89,7 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     );
 
     console.log('L2OpenEntryTicketDiamond addresses:', l2OpenEntryTicketDiamondAddresses);
+    return l2OpenEntryTicketDiamondAddresses;
   } catch (error) {
     console.log(error);
     process.exit(1)

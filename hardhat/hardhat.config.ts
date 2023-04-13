@@ -6,8 +6,6 @@ import "@matterlabs/hardhat-zksync-solc";
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
 
-require('hardhat-dependency-compiler');
-
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 

@@ -23,7 +23,7 @@ async function deployFacet(Factory, deployer) {
   return instance;
 }
 
-async function main() {
+export default async function main() {
   const [deployer] = await ethers.getSigners();
 
   const dirPath = `data`;
