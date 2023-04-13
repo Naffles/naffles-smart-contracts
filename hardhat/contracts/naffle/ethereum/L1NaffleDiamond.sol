@@ -13,6 +13,7 @@ contract L1NaffleDiamond is SolidStateDiamond, AccessControl, L1NaffleBaseIntern
         uint256 _minimumNaffleDuration,
         uint256 _minimumPaidTicketSpots,
         uint256 _minimumTicketPriceInWei,
+        address _zksyncContractAddress,
         address _foundersKeyContractAddress,
         address _foundersKeyPlaceholderAddress
     ) SolidStateDiamond() {
@@ -22,5 +23,6 @@ contract L1NaffleDiamond is SolidStateDiamond, AccessControl, L1NaffleBaseIntern
         _setMinimumPaidTicketPriceInWei(_minimumTicketPriceInWei);
         _setFoundersKeyAddress(_foundersKeyContractAddress);
         _setFoundersKeyPlaceholderAddress(_foundersKeyPlaceholderAddress);
+        _setZkSyncAddress(_zksyncContractAddress);
     }
 }

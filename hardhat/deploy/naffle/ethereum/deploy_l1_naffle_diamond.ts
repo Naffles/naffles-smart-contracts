@@ -23,6 +23,13 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
   const network = hre.network.name;
   createDir(`/${dirPath}/${network}`);
 
+  let zkSyncContract;
+  if (network === 'goerli') {
+    zkSyncContract = "0x1908e2BF4a88F91E4eF0DC72f02b8Ea36BEa2319"
+  } else {
+    zkSyncContract = "0x32400084c286cf3e17e7b677ea9583e60a000324"
+  }
+
   console.log('Deploying contracts with the account:', deployer.address);
 
   console.log('Deploying L1NaffleDiamond..');
@@ -31,6 +38,7 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
     MINIMUM_NAFFLE_DURATION,
     MINIMUM_PAID_TICKET_SPOTS,
     MINIMUM_TICKET_PRICE_IN_WEI,
+    zkSyncContract,
     foundersKeyAddress,
     foundersKeyPlaceholderAddress,
     {}
