@@ -74,10 +74,7 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
 
   const l1NaffleDiamondCutTx = await l1NaffleDiamondImpl
     .connect(deployer)
-    .diamondCut(l1NaffleDiamondCuts, ethers.constants.AddressZero, '0x', {
-      gasPrice: GAS_PRICE,
-      gasLimit: GAS_LIMIT,
-  });
+    .diamondCut(l1NaffleDiamondCuts, ethers.constants.AddressZero, '0x', {});
 
   await l1NaffleDiamondCutTx.wait();
   console.log('Successfully cut L1Naffle facets into L1NaffleDiamond');

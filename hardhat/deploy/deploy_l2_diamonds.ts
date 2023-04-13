@@ -29,8 +29,8 @@ export default async function (
     const tx = await l2PaidTicketAdmin.connect(deployer.zkWallet).setL2NaffleContractAddress(wallet.address)
     await tx.wait();
 
-    const l2OpenEntryTicketAdmin = ethers.getContractAt("L2OpenEntryTicketAdmin", l2OpenEntryTicketDiamondAddresses["l2OpenEntryTicketDiamond"]);
-    const tx2 = await l2OpenEntryTicketAdmin.connect(wallet).setL2NaffleContractAddress(l2NaffleDiamondAddresses["l2NaffleDiamond"]);
+    const l2OpenEntryTicketAdmin = await ethers.getContractAt("L2OpenEntryTicketAdmin", l2OpenEntryTicketDiamondAddresses["l2OpenEntryTicketDiamond"]);
+    const tx2 = await l2OpenEntryTicketAdmin.connect(deployer.zkWallet).setL2NaffleContractAddress(l2NaffleDiamondAddresses["l2NaffleDiamond"]);
     await tx2.wait();
     console.log("L2Naffle address set to " + l2NaffleDiamondAddresses["l2NaffleDiamond"])
 }
