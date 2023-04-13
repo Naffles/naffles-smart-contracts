@@ -2,7 +2,7 @@ import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 
 import "@matterlabs/hardhat-zksync-deploy";
-import "@matterlabs/hardhat-zksync-solc";
+import "@matterlabs/hardhat-zksync-solc"; // comment out to compile for ethereum.
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
 
@@ -39,7 +39,8 @@ module.exports = {
         zksync: true,
     },
     goerli: {
-        url: "https://goerli.infura.io/v3/" + INFURA_API_KEY
+        url: "https://goerli.infura.io/v3/" + INFURA_API_KEY,
+        accounts: [PRIVATE_KEY]
     },
     zkSyncTestnet,
   },

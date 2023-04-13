@@ -13,19 +13,17 @@ const L1_MESSENGER_CONTRACT = "0x0000000000000000000000000000000000008008"
 
 export default async function (
     hre: HardhatRuntimeEnvironment,
+    deployedPrivateKey: string,
     paidTicketAddress: string,
     openEntryTicketAddress: string,
-    l1NaffleDiamondContract: string
+    l1NaffleDiamondContract: string,
 ) {
   try {
     const dirPath = `data`;
     const network = hre.network.name;
     createDir(`/${dirPath}/${network}`);
 
-    //   const wallet = new Wallet(process.env.PRIVATE_KEY);
-    const wallet = new Wallet("0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110");
-
-    // Create deployer object and load the artifact of the contract we want to deploy.
+    const wallet = new Wallet(deployedPrivateKey);
     const deployer = new Deployer(hre, wallet);
 
     console.log('Deploying contracts with the account:', wallet.address);

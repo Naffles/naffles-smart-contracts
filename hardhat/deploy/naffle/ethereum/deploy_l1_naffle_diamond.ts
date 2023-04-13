@@ -18,10 +18,7 @@ async function deployFacet(Factory, deployer) {
   return await new Factory(deployer).deploy({gasPrice: GAS_PRICE, gasLimit: GAS_LIMIT});
 }
 
-export default async function main() {
-  const FOUNDERS_KEY_CONTRACT_ADDRESS = process.env.foundersKeyContractAddress;
-  const FOUNDERS_KEY_PLACEHOLDER_ADDRESS = process.env.foundersKeyPlaceholderAddress;
-
+export default async function main(foundersKeyAddress: string, foundersKeyPlaceholderAddress: string) {
   const [deployer] = await ethers.getSigners();
 
   const dirPath = `data`;
@@ -36,8 +33,8 @@ export default async function main() {
     MINIMUM_NAFFLE_DURATION,
     MINIMUM_PAID_TICKET_SPOTS,
     MINIMUM_TICKET_PRICE_IN_WEI,
-    FOUNDERS_KEY_CONTRACT_ADDRESS,
-    FOUNDERS_KEY_PLACEHOLDER_ADDRESS,
+      foundersKeyAddress,
+      foundersKeyPlaceholderAddress,
     {
       gasPrice: GAS_PRICE,
       gasLimit: GAS_LIMIT,
@@ -95,6 +92,8 @@ export default async function main() {
     L1NaffleBase: l1NaffleBaseImpl.address,
     L1NaffleAdmin: l1NaffleAdminImpl.address,
     L1NaffleView: l1NaffleViewImpl.address,
+    FoundersKeyAddress: foundersKeyAddress,
+    FoundersKeyPlaceholderAddress: foundersKeyPlaceholderAddress,
   };
 
   createFile(
