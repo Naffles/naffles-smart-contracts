@@ -1,16 +1,14 @@
 import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
 import { Wallet, Provider} from "zksync-web3";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { Provider } from "zksync-web3";
 import { ethers } from "ethers";
-import {createDir, createFile} from "./utils/util";
+import {createDir, createFile} from "../../utils/util";
 
 const GAS_PRICE = ethers.utils.parseUnits('20', 'gwei');
 const GAS_LIMIT = 4000000;
 
 export default async function (hre: HardhatRuntimeEnvironment) {
   try {
-    const provider = Provider.getDefaultProvider();
     const dirPath = `data`;
     const network = hre.network.name;
     createDir(`/${dirPath}/${network}`);

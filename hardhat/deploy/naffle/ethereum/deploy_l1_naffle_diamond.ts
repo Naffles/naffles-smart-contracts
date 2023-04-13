@@ -5,9 +5,9 @@ import {
   L1NaffleBase__factory,
   L1NaffleAdmin__factory,
   L1NaffleView__factory
-} from '../typechain-types';
+} from '../../../typechain-types';
 
-import { createDir, createFile} from './utils/util';
+import { createDir, createFile} from '../../utils/util';
 
 const MINIMUM_NAFFLE_DURATION = 60 * 60 * 24; // 1 day
 const MINIMUM_PAID_TICKET_SPOTS = 10;
