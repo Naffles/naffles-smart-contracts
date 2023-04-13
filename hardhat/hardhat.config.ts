@@ -35,7 +35,7 @@ module.exports = {
     hardhat: {
       zksync: true,
     },
-    testnet: {
+    zksynclocalhost: {
         url: "http://localhost:3050",
         ethNetwork: "hardhat",
         zksync: true,

@@ -20,7 +20,6 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   const artifact = await deployer.loadArtifact("L2NaffleDiamond");
   const l2NaffleDiamond = await deployer.deploy(artifact, [wallet.address])
 
-  // Show the contract info.
   const contractAddress = l2NaffleDiamond.address;
   console.log(`${artifact.contractName} was deployed to ${contractAddress}`);
 }
