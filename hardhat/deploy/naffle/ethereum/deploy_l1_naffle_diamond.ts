@@ -1,29 +1,27 @@
-import hre from 'hardhat';
-import { ethers } from 'hardhat';
+import hre, {ethers} from 'hardhat';
 import {
-  L1NaffleDiamond__factory,
-  L1NaffleBase__factory,
   L1NaffleAdmin__factory,
+  L1NaffleBase__factory,
+  L1NaffleDiamond__factory,
   L1NaffleView__factory
 } from '../../../typechain-types';
 
-import { createDir, createFile} from '../../utils/util';
+import {createDir, createFile} from '../../utils/util';
 
 const MINIMUM_NAFFLE_DURATION = 60 * 60 * 24; // 1 day
 const MINIMUM_PAID_TICKET_SPOTS = 10;
 const MINIMUM_TICKET_PRICE_IN_WEI = ethers.utils.parseEther('0.001');
-const FOUNDERS_KEY_CONTRACT_ADDRESS = ethers.constants.AddressZero;
-const FOUNDERS_KEY_PLACEHOLDER_ADDRESS = ethers.constants.AddressZero;
-
 const GAS_PRICE = ethers.utils.parseUnits('20', 'gwei');
 const GAS_LIMIT = 4000000;
 
 async function deployFacet(Factory, deployer) {
-  const instance = await new Factory(deployer).deploy({ gasPrice: GAS_PRICE, gasLimit: GAS_LIMIT });
-  return instance;
+  return await new Factory(deployer).deploy({gasPrice: GAS_PRICE, gasLimit: GAS_LIMIT});
 }
 
 export default async function main() {
+  const FOUNDERS_KEY_CONTRACT_ADDRESS = process.env.foundersKeyContractAddress;
+  const FOUNDERS_KEY_PLACEHOLDER_ADDRESS = process.env.foundersKeyPlaceholderAddress;
+
   const [deployer] = await ethers.getSigners();
 
   const dirPath = `data`;
