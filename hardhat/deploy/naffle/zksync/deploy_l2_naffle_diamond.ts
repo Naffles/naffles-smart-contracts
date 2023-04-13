@@ -4,9 +4,6 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ethers } from "ethers";
 import {createDir, createFile} from "../../utils/util";
 
-const GAS_PRICE = ethers.utils.parseUnits('20', 'gwei');
-const GAS_LIMIT = 4000000;
-
 const PLATFORM_FEE = 500 // 5%
 const OPEN_ENTRY_RATIO = 100 // 1%
 const L1_MESSENGER_CONTRACT = "0x0000000000000000000000000000000000008008"
@@ -84,10 +81,7 @@ export default async function (
     console.log('l2NaffleDiamondCuts', l2NaffleDiamondCuts)
 
     const l2NaffleDiamondCutTx = await l2NaffleDiamondImpl
-        .diamondCut(l2NaffleDiamondCuts, ethers.constants.AddressZero, "0x", {
-          gasPrice: GAS_PRICE,
-          gasLimit: GAS_LIMIT
-        });
+        .diamondCut(l2NaffleDiamondCuts, ethers.constants.AddressZero, "0x", {});
     await l2NaffleDiamondCutTx.wait();
     console.log(`Successfully cut facets into diamond at ${l2NaffleDiamondImpl.address}`);
 

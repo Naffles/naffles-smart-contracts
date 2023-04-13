@@ -4,9 +4,6 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ethers } from "ethers";
 import {createDir, createFile} from "../../utils/util";
 
-const GAS_PRICE = ethers.utils.parseUnits('20', 'gwei');
-const GAS_LIMIT = 4000000;
-
 export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKey: string) {
   try {
     const dirPath = `data`;
@@ -68,10 +65,7 @@ export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKe
     console.log('l2OpenEntryTicketDiamondCuts', l2OpenEntryTicketDiamondCuts)
 
     const l2OpenEntryTicketDiamondCutTx = await l2OpenEntryTicketDiamondImpl
-      .diamondCut(l2OpenEntryTicketDiamondCuts, ethers.constants.AddressZero, "0x", {
-        gasPrice: GAS_PRICE,
-        gasLimit: GAS_LIMIT
-      });
+      .diamondCut(l2OpenEntryTicketDiamondCuts, ethers.constants.AddressZero, "0x", {});
     await l2OpenEntryTicketDiamondCutTx.wait();
     console.log(`Successfully cut facets into diamond at ${l2OpenEntryTicketDiamondImpl.address}`);
 

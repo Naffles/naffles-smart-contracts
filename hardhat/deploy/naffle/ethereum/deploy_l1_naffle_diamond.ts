@@ -11,11 +11,9 @@ import {createDir, createFile} from '../../utils/util';
 const MINIMUM_NAFFLE_DURATION = 60 * 60 * 24; // 1 day
 const MINIMUM_PAID_TICKET_SPOTS = 10;
 const MINIMUM_TICKET_PRICE_IN_WEI = ethers.utils.parseEther('0.001');
-const GAS_PRICE = ethers.utils.parseUnits('20', 'gwei');
-const GAS_LIMIT = 4000000;
 
 async function deployFacet(Factory, deployer) {
-  return await new Factory(deployer).deploy({gasPrice: GAS_PRICE, gasLimit: GAS_LIMIT});
+  return await new Factory(deployer).deploy({});
 }
 
 export default async function main(foundersKeyAddress: string, foundersKeyPlaceholderAddress: string) {
@@ -35,10 +33,7 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
     MINIMUM_TICKET_PRICE_IN_WEI,
     foundersKeyAddress,
     foundersKeyPlaceholderAddress,
-    {
-      gasPrice: GAS_PRICE,
-      gasLimit: GAS_LIMIT,
-    }
+    {}
   );
   console.log(`Successfully deployed L1NaffleDiamond at ${l1NaffleDiamondImpl.address}`);
 

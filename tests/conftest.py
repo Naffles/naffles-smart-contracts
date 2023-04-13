@@ -27,14 +27,12 @@ from brownie import (
     TestValueFacet,
     TestValueFacetUpgraded,
     accounts,
+    ZERO_ADDRESS
 )
 from brownie.network.account import _PrivateKeyAccount, Account
 
-
-
 from scripts.staking.deploy_staking_contract import deploy
 from tests.test_helper import L2Diamonds
-
 
 
 @pytest.fixture
@@ -83,6 +81,7 @@ def deployed_l1_naffle_diamond(
         MINIMUM_NAFFLE_DURATION,
         MINIMUM_PAID_TICKET_SPOTS,
         MINIMUM_TICKET_PRICE,
+        ZERO_ADDRESS,
         deployed_erc721a_mock.address,
         deployed_erc721a_mock.address,
         from_admin
