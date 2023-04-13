@@ -7,12 +7,13 @@ import {createDir, createFile} from "../../utils/util";
 const GAS_PRICE = ethers.utils.parseUnits('20', 'gwei');
 const GAS_LIMIT = 4000000;
 
-export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKey: string) {
+export default async function main(hre: HardhatRuntimeEnvironment, deployerPrivateKey: string) {
   try {
     const dirPath = `data`;
     const network = hre.network.name;
     createDir(`/${dirPath}/${network}`);
 
+    console.log('Deployer private key:', deployerPrivateKey)
     const wallet = new Wallet(deployerPrivateKey);
 
     // Create deployer object and load the artifact of the contract we want to deploy.

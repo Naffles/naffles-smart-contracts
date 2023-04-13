@@ -6,6 +6,7 @@ import {createDir, createFile} from "../../utils/util";
 
 const GAS_PRICE = ethers.utils.parseUnits('20', 'gwei');
 const GAS_LIMIT = 4000000;
+
 export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKey: string) {
   try {
     const dirPath = `data`;

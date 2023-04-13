@@ -33,8 +33,8 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
     MINIMUM_NAFFLE_DURATION,
     MINIMUM_PAID_TICKET_SPOTS,
     MINIMUM_TICKET_PRICE_IN_WEI,
-      foundersKeyAddress,
-      foundersKeyPlaceholderAddress,
+    foundersKeyAddress,
+    foundersKeyPlaceholderAddress,
     {
       gasPrice: GAS_PRICE,
       gasLimit: GAS_LIMIT,
@@ -103,10 +103,3 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
 
   console.log('L1NaffleDiamondAddresses: ', l1NaffleDiamondAddresses);
 }
-
-main()
-    .then(() => process.exit(0))
-    .catch((error) => {
-        console.error(error);
-        process.exit(1);
-});
