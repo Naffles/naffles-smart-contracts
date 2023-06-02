@@ -19,7 +19,6 @@ export default async function main() {
         foundersKeyPlaceholderAddress = erc721Mock.address;
         console.log("Founders key address: ", foundersKeyAddress);
         console.log("Founders key placeholder address: ", foundersKeyPlaceholderAddress);
-
     }
 
     await deployL1NaffleDiamond(foundersKeyAddress, foundersKeyPlaceholderAddress);

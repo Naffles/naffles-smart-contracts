@@ -2,9 +2,15 @@ import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 
 import "@matterlabs/hardhat-zksync-deploy";
-import "@matterlabs/hardhat-zksync-solc"; // comment out to compile for ethereum.
+// import "@matterlabs/hardhat-zksync-solc"; // comment out to compile for ethereum.
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
+
+require("./tasks/ethereum/deploy_erc721a_mock")
+require("./tasks/ethereum/set_founders_key_address")
+require("./tasks/ethereum/mint_mock_nfts")
+require("./tasks/ethereum/create_naffle")
+require("./tasks/ethereum/init_l1_naffle_contract")
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY
