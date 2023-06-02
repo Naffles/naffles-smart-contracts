@@ -25,8 +25,9 @@ interface IL1NaffleBase {
         uint256 _paidTicketSpots,
         uint256 _ticketPriceInWei,
         uint256 _endTime,
-        NaffleTypes.NaffleType _naffleType
-    ) external returns (uint256 naffleId, bytes32 txHash);
+        NaffleTypes.NaffleType _naffleType,
+        NaffleTypes.L2MessageParams calldata _l2MessageParams
+    ) external payable returns (uint256 naffleId, bytes32 txHash);
 
     /**
      * @notice consumes the setWinner message from ZkSync, sends the NFT to the winner.

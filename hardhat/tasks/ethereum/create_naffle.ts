@@ -1,7 +1,10 @@
 import { task } from "hardhat/config"
+import { Contract, Wallet, Provider } from "zksync-web3";
+
 
 task("create-naffle", "Creates a naffle on the L1 contract")
     .addParam("l1nafflecontractaddress", "L1 naffle diamond contract address")
+    .addParam("l2nafflecontractaddress", "L2 naffle diamond contract address")
     .addParam("nftcontractaddress", "contract address of nft to naffle")
     .addParam("nfttokenid", "token id of nft to naffle")
     .addParam("ticketspots", "amount")

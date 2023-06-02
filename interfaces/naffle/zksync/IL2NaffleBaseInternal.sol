@@ -142,7 +142,8 @@ interface IL2NaffleBaseInternal {
      * @notice emitted when a naffle is finished and winner is drawn.
      * @param naffleId id of the naffle.
      * @param winner address of the winner.
+     * @param winningTicketIdOnNaffle id of the winning ticket on the naffle.
      * @param messageHash hash of the transaction sent to the L1.
      */
-    event L2NaffleFinished(uint256 indexed naffleId, address winner, bytes32 messageHash);
+    event L2NaffleFinished(uint256 indexed naffleId, address winner, uint256 winningTicketIdOnNaffle, bytes32 messageHash);
 }
