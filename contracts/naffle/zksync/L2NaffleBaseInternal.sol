@@ -283,7 +283,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         emit L2NaffleFinished(
             _naffleId,
             winner,
-            winningTicketIdOnNaffle,
+            naffle.winningTicketId,
             messageHash
         );
     }

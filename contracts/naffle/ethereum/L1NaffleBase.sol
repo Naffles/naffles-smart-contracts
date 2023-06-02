@@ -19,15 +19,17 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         uint256 _paidTicketSpots,
         uint256 _ticketPriceInWei,
         uint256 _endTime,
-        NaffleTypes.NaffleType _naffleType
-    ) external returns (uint256 naffleId, bytes32 txHash) {
+        NaffleTypes.NaffleType _naffleType,
+        NaffleTypes.L2MessageParams calldata _l2MessageParams
+    ) external payable returns (uint256 naffleId, bytes32 txHash) {
         return _createNaffle(
             _ethTokenAddress,
             _nftId,
             _paidTicketSpots,
             _ticketPriceInWei,
             _endTime,
-            _naffleType
+            _naffleType,
+            _l2MessageParams
         );
     }
 

@@ -334,7 +334,8 @@ def test_process_message_from_l2_cancel_naffle(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
-    zksync_l1_message_account
+    zksync_l1_message_account,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -359,7 +360,8 @@ def test_process_message_from_l2_cancel_naffle(
         MINIMUM_TICKET_PRICE,
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
-        from_address,
+        l2_message_params,
+        from_address
     )
 
     _naffleId = 1
@@ -407,7 +409,8 @@ def test_process_message_from_l2_message_already_processed(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
-    zksync_l1_message_account
+    zksync_l1_message_account,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -432,6 +435,7 @@ def test_process_message_from_l2_message_already_processed(
         MINIMUM_TICKET_PRICE,
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
+        l2_message_params,
         from_address,
     )
 
@@ -535,7 +539,8 @@ def test_process_message_from_l2_failed_message_inclusion(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock_false_return_values,
-    zksync_l1_message_account
+    zksync_l1_message_account,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -560,6 +565,7 @@ def test_process_message_from_l2_failed_message_inclusion(
         MINIMUM_TICKET_PRICE,
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
+        l2_message_params,
         from_address,
     )
 

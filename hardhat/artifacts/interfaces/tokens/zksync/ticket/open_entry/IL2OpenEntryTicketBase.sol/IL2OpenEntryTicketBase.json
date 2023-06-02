@@ -1,0 +1,57 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IL2OpenEntryTicketBase",
+  "sourceName": "interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_naffleId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_ticketIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startingTicketId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "attachToNaffle",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_naffleId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_naffleTicketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "detachFromNaffle",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

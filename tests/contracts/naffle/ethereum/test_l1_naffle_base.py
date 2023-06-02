@@ -42,6 +42,7 @@ def test_create_naffle_not_allowed(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -64,7 +65,8 @@ def test_create_naffle_not_allowed(
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
-            from_address,
+            l2_message_params,
+            from_address
         )
 
 
@@ -77,6 +79,7 @@ def test_create_naffle_invalid_end_time(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -100,7 +103,8 @@ def test_create_naffle_invalid_end_time(
             MINIMUM_TICKET_PRICE,
             end_time,
             STANDARD_NAFFLE_TYPE,
-            from_address,
+            l2_message_params,
+            from_address
         )
 
 
@@ -113,6 +117,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -142,7 +147,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 10000,
             STANDARD_NAFFLE_TYPE,
-            from_address,
+            l2_message_params,  from_address
         )
 
 
@@ -155,6 +160,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -183,7 +189,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 10000,
             UNLIMITED_NAFFLE_TYPE,
-            from_address,
+            l2_message_params,  from_address
         )
 
 
@@ -196,6 +202,7 @@ def test_create_naffle_invalid_token_type(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -218,7 +225,7 @@ def test_create_naffle_invalid_token_type(
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
-            from_address,
+            l2_message_params,  from_address
         )
 
 
@@ -231,6 +238,7 @@ def test_create_naffle_invalid_token_type(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -253,7 +261,7 @@ def test_create_naffle_invalid_token_type(
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
-            from_address,
+            l2_message_params,  from_address
         )
 
 
@@ -266,6 +274,7 @@ def test_create_naffle_no_approval(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -289,7 +298,7 @@ def test_create_naffle_no_approval(
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
-            from_address,
+            l2_message_params,  from_address
         )
 
 
@@ -302,6 +311,7 @@ def test_create_naffle_zksync_called(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -326,7 +336,8 @@ def test_create_naffle_zksync_called(
         MINIMUM_TICKET_PRICE,
         datetime.datetime.now().timestamp() + 1000,
         STANDARD_NAFFLE_TYPE,
-        from_address,
+        l2_message_params,
+        from_address
     )
     assert deployed_eth_zksync_mock.called()
 
@@ -342,7 +353,8 @@ def test_process_message_from_l2_set_winner(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
-    zksync_l1_message_account
+    zksync_l1_message_account,
+    l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -368,6 +380,7 @@ def test_process_message_from_l2_set_winner(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         from_address,
+        l2_message_params
     )
 
     _naffleId = 1

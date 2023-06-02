@@ -264,3 +264,8 @@ def deployed_l1_messenger_mock(from_admin) -> L1MessengerMock:
 @pytest.fixture
 def deployed_founders_key_staking_mock(from_admin) -> FoundersKeyStakingMock:
     return FoundersKeyStakingMock.deploy(from_admin)
+
+
+@pytest.fixture
+def l2_message_params() -> dict:
+    return [10000000, 1]
