@@ -40,7 +40,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         uint256 _paidTicketSpots,
         uint256 _ticketPriceInWei,
         uint256 _endTime,
-        NaffleTypes.NaffleType _naffleType
+        NaffleTypes.NaffleType _naffleType,
+        NaffleTypes.L2MessageParams calldata _l2MessageParams
     ) internal returns (uint256 naffleId, bytes32 txHash) {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
 
@@ -105,10 +106,11 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
               "createNaffle((address, address, uint256, uint256, uint256, uint256, uint8))",
                 params
             ),
-            10000,
-            800,
+
+            _l2MessageParams.l2GasLimit,
+            _l2MessageParams.l2GasPerPubdataByteLimit,
             new bytes[](0),
-            address(0)
+            msg.sender
         );
 
         emit L1NaffleCreated(naffleId, msg.sender, _ethTokenAddress, _nftId, _paidTicketSpots, _ticketPriceInWei, _endTime, _naffleType, tokenContractType);
