@@ -2,6 +2,11 @@
 pragma solidity ^0.8.17;
 
 library NaffleTypes {
+    struct L2MessageParams {
+        uint256 l2GasLimit;
+        uint256 l2GasPerPubdataByteLimit;
+    }
+
     struct CreateZkSyncNaffleParams {
         address ethTokenAddress;
         address owner;

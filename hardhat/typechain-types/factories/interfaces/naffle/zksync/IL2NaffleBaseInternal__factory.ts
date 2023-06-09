@@ -220,6 +220,12 @@ const _abi = [
       },
       {
         indexed: false,
+        internalType: "uint256",
+        name: "winningTicketIdOnNaffle",
+        type: "uint256",
+      },
+      {
+        indexed: false,
         internalType: "bytes32",
         name: "messageHash",
         type: "bytes32",

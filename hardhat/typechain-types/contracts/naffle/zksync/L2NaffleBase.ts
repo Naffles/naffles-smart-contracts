@@ -165,7 +165,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
   events: {
     "L2NaffleCancelled(uint256,bytes32)": EventFragment;
     "L2NaffleCreated(uint256,address,address,uint256,uint256,uint256,uint256,uint256,uint8,uint8)": EventFragment;
-    "L2NaffleFinished(uint256,address,bytes32)": EventFragment;
+    "L2NaffleFinished(uint256,address,uint256,bytes32)": EventFragment;
     "OpenEntryTicketsUsed(uint256,address,uint256[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -228,10 +228,11 @@ export type L2NaffleCreatedEventFilter = TypedEventFilter<L2NaffleCreatedEvent>;
 export interface L2NaffleFinishedEventObject {
   naffleId: BigNumber;
   winner: string;
+  winningTicketIdOnNaffle: BigNumber;
   messageHash: string;
 }
 export type L2NaffleFinishedEvent = TypedEvent<
-  [BigNumber, string, string],
+  [BigNumber, string, BigNumber, string],
   L2NaffleFinishedEventObject
 >;
 
@@ -531,14 +532,16 @@ export interface L2NaffleBase extends BaseContract {
       tokenContractType?: null
     ): L2NaffleCreatedEventFilter;
 
-    "L2NaffleFinished(uint256,address,bytes32)"(
+    "L2NaffleFinished(uint256,address,uint256,bytes32)"(
       naffleId?: PromiseOrValue<BigNumberish> | null,
       winner?: null,
+      winningTicketIdOnNaffle?: null,
       messageHash?: null
     ): L2NaffleFinishedEventFilter;
     L2NaffleFinished(
       naffleId?: PromiseOrValue<BigNumberish> | null,
       winner?: null,
+      winningTicketIdOnNaffle?: null,
       messageHash?: null
     ): L2NaffleFinishedEventFilter;
 

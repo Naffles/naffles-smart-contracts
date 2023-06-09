@@ -9,6 +9,7 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -27,10 +28,22 @@ import type {
   PromiseOrValue,
 } from "../../../common";
 
+export declare namespace NaffleTypes {
+  export type L2MessageParamsStruct = {
+    l2GasLimit: PromiseOrValue<BigNumberish>;
+    l2GasPerPubdataByteLimit: PromiseOrValue<BigNumberish>;
+  };
+
+  export type L2MessageParamsStructOutput = [BigNumber, BigNumber] & {
+    l2GasLimit: BigNumber;
+    l2GasPerPubdataByteLimit: BigNumber;
+  };
+}
+
 export interface L1NaffleBaseInterface extends utils.Interface {
   functions: {
     "consumeSetWinnerMessage(uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
-    "createNaffle(address,uint256,uint256,uint256,uint256,uint8)": FunctionFragment;
+    "createNaffle(address,uint256,uint256,uint256,uint256,uint8,(uint256,uint256))": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -75,7 +88,8 @@ export interface L1NaffleBaseInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      NaffleTypes.L2MessageParamsStruct
     ]
   ): string;
   encodeFunctionData(
@@ -316,7 +330,8 @@ export interface L1NaffleBase extends BaseContract {
       _ticketPriceInWei: PromiseOrValue<BigNumberish>,
       _endTime: PromiseOrValue<BigNumberish>,
       _naffleType: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _l2MessageParams: NaffleTypes.L2MessageParamsStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getRoleAdmin(
@@ -395,7 +410,8 @@ export interface L1NaffleBase extends BaseContract {
     _ticketPriceInWei: PromiseOrValue<BigNumberish>,
     _endTime: PromiseOrValue<BigNumberish>,
     _naffleType: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    _l2MessageParams: NaffleTypes.L2MessageParamsStruct,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getRoleAdmin(
@@ -474,6 +490,7 @@ export interface L1NaffleBase extends BaseContract {
       _ticketPriceInWei: PromiseOrValue<BigNumberish>,
       _endTime: PromiseOrValue<BigNumberish>,
       _naffleType: PromiseOrValue<BigNumberish>,
+      _l2MessageParams: NaffleTypes.L2MessageParamsStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber, string] & { naffleId: BigNumber; txHash: string }>;
 
@@ -624,7 +641,8 @@ export interface L1NaffleBase extends BaseContract {
       _ticketPriceInWei: PromiseOrValue<BigNumberish>,
       _endTime: PromiseOrValue<BigNumberish>,
       _naffleType: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _l2MessageParams: NaffleTypes.L2MessageParamsStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getRoleAdmin(
@@ -704,7 +722,8 @@ export interface L1NaffleBase extends BaseContract {
       _ticketPriceInWei: PromiseOrValue<BigNumberish>,
       _endTime: PromiseOrValue<BigNumberish>,
       _naffleType: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _l2MessageParams: NaffleTypes.L2MessageParamsStruct,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(

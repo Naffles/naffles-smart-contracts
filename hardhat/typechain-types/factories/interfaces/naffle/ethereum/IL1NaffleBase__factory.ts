@@ -80,6 +80,23 @@ const _abi = [
         name: "_naffleType",
         type: "uint8",
       },
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "l2GasLimit",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "l2GasPerPubdataByteLimit",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct NaffleTypes.L2MessageParams",
+        name: "_l2MessageParams",
+        type: "tuple",
+      },
     ],
     name: "createNaffle",
     outputs: [
@@ -94,7 +111,7 @@ const _abi = [
         type: "bytes32",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
 ] as const;
