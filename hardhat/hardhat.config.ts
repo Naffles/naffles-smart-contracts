@@ -7,10 +7,11 @@ import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
 
 require("./tasks/ethereum/deploy_erc721a_mock")
-require("./tasks/ethereum/set_founders_key_address")
+require("./tasks/ethereum/l1_naffle_admin/set_founders_key_address")
 require("./tasks/ethereum/mint_mock_nfts")
-require("./tasks/ethereum/create_naffle")
-require("./tasks/ethereum/init_l1_naffle_contract")
+require("./tasks/ethereum/l1_naffle_base/create_naffle")
+require("./tasks/ethereum/l1_naffle_admin/init_l1_naffle_contract")
+require("./tasks/ethereum/l1_naffle_view/read_l1_naffle_variables")
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY

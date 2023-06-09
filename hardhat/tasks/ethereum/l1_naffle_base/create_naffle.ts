@@ -40,6 +40,8 @@ task("create-naffle", "Creates a naffle on the L1 contract")
             // Get the current L1 gas price
             const l1GasPrice = await hre.ethers.provider.getGasPrice();
 
+            console.log("l1GasPrice: ", l1GasPrice.toString());
+
             const l2Params = {
                 ethTokenAddress: taskArgs.nftcontractaddress,
                 owner: signers[0].address,
@@ -58,9 +60,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
 
             const l2GasLimit = await l2provider.estimateGasL1(prepareTransaction)
 
-
-
-
+            console.log("l2GasLimit: ", l2GasLimit.toString());
 
             const baseCost = await wallet.getBaseCost({
                 // L2 computation
@@ -68,6 +68,8 @@ task("create-naffle", "Creates a naffle on the L1 contract")
                 // L1 gas price
                 gasPrice: l1GasPrice,
             });
+
+            console.log("baseCost: ", baseCost.toString());
 
             // Send the transaction【13†source】
             const tx = await contractInstance.createNaffle(
@@ -77,20 +79,20 @@ task("create-naffle", "Creates a naffle on the L1 contract")
                 hre.ethers.utils.parseEther("0.001"),
                 next_week,
                 taskArgs.naffletype,
-                [l2GasLimit, utils.REQUIRED_L1_TO_L2_GAS_PER_PUBDATA_LIMIT],
                 {
-                    gasLimit,
-                    gasPrice,
-                    value: baseCost.add(gasPrice.mul(gasLimit)) // This is the total cost of the transactionI apologize for the sudden cut-off again. Here's the final part of the script:
+                    l2GasLimit: l2GasLimit,
+                    l2GasPerPubdataByteLimit: utils.REQUIRED_L1_TO_L2_GAS_PER_PUBDATA_LIMIT
+                },
+                {
+                    value: baseCost.add(l1GasPrice.mul(l2GasLimit))
                 }
               );
 
-              // Wait for the transaction to be mined【14†source】
               const receipt = await tx.wait();
               console.log(`Transaction successful with hash: ${receipt.transactionHash}`);
-            } catch (error) {
-              console.error(`Error in transaction: ${error}`);
-            }
+        } catch (error) {
+          console.error(`Error in transaction: ${error}`);
+        }
 
 
         // --- old code
@@ -124,4 +126,5 @@ task("create-naffle", "Creates a naffle on the L1 contract")
         // } catch (e) {
         //     console.log(e)
         // }
+
     });
