@@ -41,7 +41,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         uint256 _ticketPriceInWei,
         uint256 _endTime,
         NaffleTypes.NaffleType _naffleType,
-        NaffleTypes.L2MessageParams calldata _l2MessageParams
+        NaffleTypes.L2MessageParams memory _l2MessageParams
     ) internal returns (uint256 naffleId, bytes32 txHash) {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
 

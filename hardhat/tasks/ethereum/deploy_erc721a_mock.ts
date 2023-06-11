@@ -8,7 +8,7 @@ task("deploy-erc721-mock", "Deploy the erc721a mock contract")
         const deployed_mock = await mock.deploy(
         );
 
-        await deployed_mock.mint(await deployer.getAddress(), 1);
+        await deployed_mock.mint(await deployer.getAddress(), 100);
 
         await deployed_mock.deployed();
         console.log(`deployed to ${deployed_mock.address}`);
