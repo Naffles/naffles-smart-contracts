@@ -103,7 +103,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             layout.zkSyncNaffleContractAddress,
             0,
             abi.encodeWithSignature(
-              "createNaffle((address, address, uint256, uint256, uint256, uint256, uint8))",
+              "createNaffle((address, address, uint256, uint256, uint256, uint256, uint256, uint8, uint8))",
                 params
             ),
             _l2MessageParams.l2GasLimit,

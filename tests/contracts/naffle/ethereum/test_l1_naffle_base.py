@@ -376,8 +376,8 @@ def test_process_message_from_l2_set_winner(
         MINIMUM_TICKET_PRICE,
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
+        l2_message_params,
         from_address,
-        l2_message_params
     )
 
     _naffleId = 1

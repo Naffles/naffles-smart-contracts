@@ -20,10 +20,6 @@ task("create-naffle", "Creates a naffle on the L1 contract")
           throw new Error("Wallet private key is not configured in env file");
       }
 
-      if (!WALLET_PRIV_KEY) {
-        throw new Error("Wallet private key is not configured in env file");
-      }
-
     const signers = await hre.ethers.getSigners()
 
     const INFURA_API_KEY = process.env.INFURA_API_KEY || "";

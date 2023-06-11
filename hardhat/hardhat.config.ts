@@ -13,6 +13,9 @@ require("./tasks/ethereum/l1_naffle_base/create_naffle")
 require("./tasks/ethereum/l1_naffle_admin/init_l1_naffle_contract")
 require("./tasks/ethereum/l1_naffle_view/read_l1_naffle_variables")
 
+require("./tasks/zksync/l2_naffle_base/create-l2-naffle")
+require("./tasks/zksync/l2_naffle_view/read_l2_naffle_variables");
+
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 
@@ -49,7 +52,11 @@ module.exports = {
         url: "https://goerli.infura.io/v3/" + INFURA_API_KEY,
         accounts: [PRIVATE_KEY]
     },
-    zkSyncTestnet,
+    zkSyncTestnet: {
+      url: "https://testnet.era.zksync.dev",
+      ethNetwork: "goerli",
+      zksync: true,
+    }
   },
   solidity: {
     version: "0.8.17",
