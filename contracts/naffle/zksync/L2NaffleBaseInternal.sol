@@ -269,7 +269,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert InvalidNaffleStatus(naffle.status);
         }
 
-        if (naffle.endTime > block.timestamp) {
+        if (naffle.numberOfPaidTickets != naffle.paidTicketSpots && naffle.endTime > block.timestamp) {
             revert NaffleNotEndedYet(naffle.endTime);
         }
 

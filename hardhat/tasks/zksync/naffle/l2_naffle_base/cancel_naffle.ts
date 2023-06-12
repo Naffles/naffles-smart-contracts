@@ -2,7 +2,7 @@ import { task } from "hardhat/config"
 import { Wallet, Provider, } from "zksync-web3";
 import {getPrivateKey, getRPCEndpoint} from "../../../util";
 
-task("owner-cancel-naffle", "Creates naffle on l2 as test")
+task("owner-cancel-naffle", "cancel naffle on l2 as owner")
   .addParam("l2nafflecontractaddress", "The address of the Naffle Diamond contract deployed on the zkSync Layer 2 (L2) network.")
   .addParam("naffleid", "The ID of the Naffle event you wish to cancel.")
   .setAction(async (taskArgs, hre) => {

@@ -19,6 +19,7 @@ task("buy-tickets", "Creates naffle on l2 as test")
 
     console.log("Getting naffle info..")
     const naffle = await l2ContractViewInstance.connect(walletL2).getNaffleById(hre.ethers.BigNumber.from(taskArgs.naffleid))
+    console.log(naffle)
     const ticketPrice = naffle.ticketPriceInWei
     const ticketAmount = parseInt(taskArgs.amount)
     const value: BigNumber = ticketPrice.mul(ticketAmount)

@@ -18,6 +18,8 @@ require("./tasks/ethereum/naffle/l1_naffle_view/read_l1_naffle_variables")
 require("./tasks/zksync/naffle/l2_naffle_base/create_l2_naffle")
 require("./tasks/zksync/naffle/l2_naffle_base/buy_tickets");
 require("./tasks/zksync/naffle/l2_naffle_base/mint_and_attach_open_entry_tickets");
+require("./tasks/zksync/naffle/l2_naffle_base/cancel_naffle");
+require("./tasks/zksync/naffle/l2_naffle_base/draw_winner");
 
 require("./tasks/zksync/naffle/l2_naffle_view/read_l2_naffle_variables");
 
