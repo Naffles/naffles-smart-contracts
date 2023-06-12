@@ -11,13 +11,6 @@ task("buy-tickets", "Creates naffle on l2 as test")
     const l2provider = new Provider(getRPCEndpoint(hre.network.name));
     const walletL2 = new Wallet(getPrivateKey(true), l2provider);
 
-    console.log(taskArgs.l2nafflecontractaddress)
-    console.log(taskArgs.naffleid)
-    console.log(taskArgs.amount)
-
-
-    console.log(walletL2.address)
-
     const contractBaseFactory = await hre.ethers.getContractFactory("L2NaffleBase");
     const l2ContractInstance = contractBaseFactory.attach(taskArgs.l2nafflecontractaddress);
 
@@ -26,8 +19,6 @@ task("buy-tickets", "Creates naffle on l2 as test")
 
     console.log("Getting naffle info..")
     const naffle = await l2ContractViewInstance.connect(walletL2).getNaffleById(hre.ethers.BigNumber.from(taskArgs.naffleid))
-    console.log(naffle)
-
     const ticketPrice = naffle.ticketPriceInWei
     const ticketAmount = parseInt(taskArgs.amount)
     const value: BigNumber = ticketPrice.mul(ticketAmount)
