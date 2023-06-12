@@ -37,7 +37,8 @@ task("buy-tickets", "Creates naffle on l2 as test")
       ticketAmount,
       taskArgs.naffleid,
       {
-        value: value
+        value: hre.ethers.BigNumber.from("20000000000000000"),
+        gasLimit: 1000000
       }
     )
 

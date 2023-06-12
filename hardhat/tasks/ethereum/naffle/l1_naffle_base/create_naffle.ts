@@ -88,8 +88,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
         l2GasPerPubdataByteLimit: utils.REQUIRED_L1_TO_L2_GAS_PER_PUBDATA_LIMIT
       },
       {
-        // value: baseCost,
-        value: hre.ethers.utils.parseEther("0.01"),
+        value: baseCost,
         gasPrice: gasPrice
       }
     );
