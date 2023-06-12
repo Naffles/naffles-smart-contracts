@@ -7,15 +7,17 @@ import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
 
 require("./tasks/ethereum/deploy_erc721a_mock")
-require("./tasks/ethereum/l1_naffle_admin/set_founders_key_address")
+require("./tasks/ethereum/naffle/l1_naffle_admin/set_founders_key_address")
 require("./tasks/ethereum/mint_mock_nfts")
-require("./tasks/ethereum/l1_naffle_base/create_naffle")
-require("./tasks/ethereum/l1_naffle_admin/init_l1_naffle_contract")
-require("./tasks/ethereum/l1_naffle_view/read_l1_naffle_variables")
+require("./tasks/ethereum/naffle/l1_naffle_base/create_naffle")
+require("./tasks/ethereum/naffle/l1_naffle_admin/init_l1_naffle_contract")
+require("./tasks/ethereum/naffle/l1_naffle_view/read_l1_naffle_variables")
 
-require("./tasks/zksync/l2_naffle_base/create-l2-naffle")
-require("./tasks/zksync/l2_naffle_view/read_l2_naffle_variables");
-require("./tasks/zksync/l2_naffle_admin/set_l1_naffle_contract");
+require("./tasks/zksync/naffle/l2_naffle_base/create_l2_naffle")
+require("./tasks/zksync/naffle/l2_naffle_base/buy_tickets");
+require("./tasks/zksync/naffle/l2_naffle_view/read_l2_naffle_variables");
+require("./tasks/zksync/naffle/l2_naffle_admin/set_l1_naffle_contract");
+require("./tasks/zksync/naffle/l2_naffle_admin/set_l2_ticket_contracts");
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY

@@ -1,74 +1,5 @@
-// IZkSync zksync = IZkSync(layout.zkSyncAddress);
-// NaffleTypes.CreateZkSyncNaffleParams memory params = NaffleTypes.CreateZkSyncNaffleParams({
-//   ethTokenAddress: _ethTokenAddress,
-//   owner: msg.sender,
-//   naffleId: naffleId,
-//   nftId: _nftId,
-//   paidTicketSpots: _paidTicketSpots,
-//   ticketPriceInWei: _ticketPriceInWei,
-//   endTime: _endTime,
-//   naffleType: _naffleType,
-//   naffleTokenType: tokenContractType
-// });
-//
-// txHash = zksync.requestL2Transaction{value: msg.value}(
-//   layout.zkSyncNaffleContractAddress,
-//     0,
-//     abi.encodeWithSignature(
-//       "createNaffle((address, address, uint256, uint256, uint256, uint256, uint256, uint8, uint8))",
-//       params
-//     ),
-//     _l2MessageParams.l2GasLimit,
-//     _l2MessageParams.l2GasPerPubdataByteLimit,
-//     new bytes[](0),
-//     msg.sender
-// );
-
-
 import { task } from "hardhat/config"
-import {type BigNumber} from "ethers";
-import { Contract, Wallet, Provider, utils, } from "zksync-web3";
-import * as ethers from "ethers";
-
-const ABI = [
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_greeting",
-        type: "string",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    inputs: [],
-    name: "greet",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_greeting",
-        type: "string",
-      },
-    ],
-    name: "setGreeting",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-];
+import { Wallet, Provider, } from "zksync-web3";
 
 task("create-l2-naffle", "Creates naffle on l2 as test")
   .addParam("l2nafflecontractaddress", "L2 naffle diamond contract address")
@@ -97,18 +28,12 @@ task("create-l2-naffle", "Creates naffle on l2 as test")
 
     const walletL2 = new Wallet(WALLET_PRIV_KEY, l2provider, l1provider);
 
-    // const abi = require('./../../../artifacts-zk/contracts/naffle/zksync/L2NaffleBase.sol/L2NaffleBase.json').abi;
-    // const l2ContractInstance = new Contract(taskArgs.l2nafflecontractaddress, abi, walletL2);
-
     console.log("SETTING l1 contract to this wallet")
     const contractFactory = await hre.ethers.getContractFactory("L2NaffleAdmin");
     const l2ContractAdminInstance = contractFactory.attach(taskArgs.l2nafflecontractaddress);
 
     const transaction = await l2ContractAdminInstance.connect(walletL2).setL1NaffleContractAddress("0xAE4eFd482e3d94E2c6f4330C1a293c7B758814c2")
     const tx = await transaction.wait()
-
-    console.log("SET l1 contract to this wallet")
-    return
 
     const contractBaseFactory = await hre.ethers.getContractFactory("L2NaffleBase");
     const l2ContractInstance = contractBaseFactory.attach(taskArgs.l2nafflecontractaddress);
