@@ -298,7 +298,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
 
         layout.platformFeesAccumulated = layout.platformFeesAccumulated + platformFee;
-        (bool success, ) = msg.sender.call{value: amountToTransfer}("");
+        (bool success, ) = naffle.owner.call{value: amountToTransfer}("");
         if (!success) {
             revert UnableToSendFunds();
         }
