@@ -12,7 +12,7 @@ task("read-l2-naffle-variables", "Sets the founders key on the naffle contract")
     }
 
     const L2_RPC_ENDPOINT = "https://testnet.era.zksync.dev"
-    
+
     const l2provider = new Provider(L2_RPC_ENDPOINT);
     const walletL2 = new Wallet(WALLET_PRIV_KEY, l2provider);
 

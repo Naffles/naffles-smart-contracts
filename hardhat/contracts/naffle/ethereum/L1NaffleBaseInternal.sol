@@ -87,25 +87,25 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         });
 
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
-        NaffleTypes.CreateZkSyncNaffleParams memory params = NaffleTypes.CreateZkSyncNaffleParams({
-            ethTokenAddress: _ethTokenAddress,
-            owner: msg.sender,
-            naffleId: naffleId,
-            nftId: _nftId,
-            paidTicketSpots: _paidTicketSpots,
-            ticketPriceInWei: _ticketPriceInWei,
-            endTime: _endTime,
-            naffleType: _naffleType,
-            naffleTokenType: tokenContractType
-        });
+        bytes memory data = abi.encodeWithSignature(
+            "createNaffle((address,address,uint256,uint256,uint256,uint256,uint256,uint8,uint8))",
+            NaffleTypes.CreateZkSyncNaffleParams({
+                ethTokenAddress: _ethTokenAddress,
+                owner: msg.sender,
+                naffleId: naffleId,
+                nftId: _nftId,
+                paidTicketSpots: _paidTicketSpots,
+                ticketPriceInWei: _ticketPriceInWei,
+                endTime: _endTime,
+                naffleType: _naffleType,
+                naffleTokenType: tokenContractType
+            })
+        );
 
         txHash = zksync.requestL2Transaction{value: msg.value}(
             layout.zkSyncNaffleContractAddress,
             0,
-            abi.encodeWithSignature(
-              "createNaffle((address, address, uint256, uint256, uint256, uint256, uint256, uint8, uint8))",
-                params
-            ),
+            data,
             _l2MessageParams.l2GasLimit,
             _l2MessageParams.l2GasPerPubdataByteLimit,
             new bytes[](0),

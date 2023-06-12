@@ -88,7 +88,6 @@ task("create-l2-naffle", "Creates naffle on l2 as test")
     }
 
     const INFURA_API_KEY = process.env.INFURA_API_KEY || "";
-    // const L2_RPC_ENDPOINT = "https://goerli-api.zksync.io/jsrpc";
     const L2_RPC_ENDPOINT = "https://testnet.era.zksync.dev"
     const infura_url = "https://goerli.infura.io/v3/" + INFURA_API_KEY
     console.log("infura url: " + infura_url)
@@ -98,17 +97,21 @@ task("create-l2-naffle", "Creates naffle on l2 as test")
 
     const walletL2 = new Wallet(WALLET_PRIV_KEY, l2provider, l1provider);
 
-    const abi = require('./../../../artifacts/contracts/naffle/zksync/L2NaffleBase.sol/L2NaffleBase.json').abi;
-    const l2ContractInstance = new Contract(taskArgs.l2nafflecontractaddress, abi, walletL2);
+    // const abi = require('./../../../artifacts-zk/contracts/naffle/zksync/L2NaffleBase.sol/L2NaffleBase.json').abi;
+    // const l2ContractInstance = new Contract(taskArgs.l2nafflecontractaddress, abi, walletL2);
 
     console.log("SETTING l1 contract to this wallet")
     const contractFactory = await hre.ethers.getContractFactory("L2NaffleAdmin");
     const l2ContractAdminInstance = contractFactory.attach(taskArgs.l2nafflecontractaddress);
 
-    const transaction = await l2ContractAdminInstance.connect(walletL2).setL1NaffleContractAddress(walletL2.address)
+    const transaction = await l2ContractAdminInstance.connect(walletL2).setL1NaffleContractAddress("0xAE4eFd482e3d94E2c6f4330C1a293c7B758814c2")
     const tx = await transaction.wait()
 
     console.log("SET l1 contract to this wallet")
+    return
+
+    const contractBaseFactory = await hre.ethers.getContractFactory("L2NaffleBase");
+    const l2ContractInstance = contractBaseFactory.attach(taskArgs.l2nafflecontractaddress);
 
     const endTime = Math.floor(Date.now() / 1000) + 604800
     const l2Params = {
@@ -123,22 +126,50 @@ task("create-l2-naffle", "Creates naffle on l2 as test")
         naffleTokenType: 0
     }
 
-      console.log("Preparing transaction")
+    console.log("Preparing transaction")
 
-      const prepareTransaction = await l2ContractInstance.connect(walletL2).populateTransaction.createNaffle(
-        l2Params
-      )
-      console.log(prepareTransaction)
-    //
-    // const prepareTransaction = {
-    //   data: '0x86665093000000000000000000000000ae4efd482e3d94e2c6f4330c1a293c7b758814c200000000000000000000000077d373d69bd7a55e0bbdf6cd290083cfe11643c40000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000c800000000000000000000000000000000000000000000000000038d7ea4c6800000000000000000000000000000000000000000000000000000000000648ef31800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
-    //   to: '0xD71f9c07bd63Fe3Dcc6d542BD59ea897fc581F17'
-    // }
+    const prepareTransaction = await l2ContractInstance.connect(walletL2).populateTransaction.createNaffle(
+      l2Params
+    )
+    console.log(prepareTransaction)
+   const calldata = prepareTransaction.data
 
-      console.log("***")
+    const l1GasPrice = await l1provider.getGasPrice();
+    console.log("l1GasPrice", l1GasPrice)
 
+    // const l2GasLimit = await l2provider.estimateGasL1(prepareTransaction)
+    // console.log("l2GasLimit", l2GasLimit)
 
-      const l2GasLimit = await l2provider.estimateGasL1(prepareTransaction)
-      console.log("l2GasLimit", l2GasLimit)
+    const l2gaslimit = 1000000
+
+    const baseCost = await walletL2.getBaseCost({
+      // L2 computation
+      gasLimit: l2gaslimit,
+      // L1 gas price
+      gasPrice: l1GasPrice,
+    });
+
+    console.log("baseCost", baseCost)
+
+    console.log("CAlldata", calldata)
+
+    const createNaffleViaL1Transaction = await walletL2.requestExecute({
+      contractAddress: taskArgs.l2nafflecontractaddress,
+      calldata,
+      l2GasLimit: l2gaslimit,
+      refundRecipient: walletL2.address,
+      overrides: {
+        value: baseCost,
+        gasPrice: l1GasPrice,
+      }
+    })
+
+    console.log("creating naffle")
+
+    const naffletx = await l2ContractInstance.connect(walletL2).createNaffle(
+      l2Params
+    )
+    const naffleTxReceipt = await naffletx.wait()
+    console.log(naffleTxReceipt)
   }
 );

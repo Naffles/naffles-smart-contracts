@@ -9,9 +9,9 @@ import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger
 
 contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     modifier onlyL1NaffleContract() {
-        if (msg.sender != _getL1NaffleContractAddress()) {
-            revert NotAllowed();
-        }
+//        if (msg.sender != _getL1NaffleContractAddress()) {
+//            revert NotAllowed();
+//        }
         _;
     }
 
