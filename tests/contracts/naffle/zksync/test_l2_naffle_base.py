@@ -12,11 +12,10 @@ from tests.test_helper import (
     NAFFLE_ID,
     NFT_ID,
     PAID_TICKET_SPOTS,
-    DEFAULT_END_DATE,
     ERC721,
     STANDARD_NAFFLE_TYPE,
     TICKET_PRICE,
-    create_naffle_and_mint_tickets, UNLIMITED_NAFFLE_TYPE,
+    create_naffle_and_mint_tickets, UNLIMITED_NAFFLE_TYPE, get_end_time,
 )
 
 
@@ -78,7 +77,7 @@ def test_create_naffle_not_allowed(
                 NFT_ID,
                 PAID_TICKET_SPOTS,
                 TICKET_PRICE,
-                DEFAULT_END_DATE,
+                get_end_time(),
                 STANDARD_NAFFLE_TYPE,
                 ERC721,
             ),
@@ -488,7 +487,7 @@ def test_owner_cancel_naffle_not_allowed(
         deployed_erc721a_mock,
     )
 
-    chain.sleep(1001)
+    chain.sleep(100001)
     with brownie.reverts(get_error_message("NotAllowed")):
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_admin)
 
@@ -507,7 +506,7 @@ def test_draw_winner_not_owner(
         l2_diamonds,
         deployed_erc721a_mock,
     )
-    chain.sleep(1001)
+    chain.sleep(100001)
     with brownie.reverts(get_error_message("NotAllowed")):
         l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_admin)
 
@@ -519,14 +518,30 @@ def test_draw_winner_naffle_not_ended_yet(
     l2_diamonds,
     deployed_erc721a_mock,
 ):
+    end_time = get_end_time()
     create_naffle_and_mint_tickets(
         address,
         from_admin,
         l2_diamonds,
-        deployed_erc721a_mock
+        deployed_erc721a_mock,
+        number_of_tickets=200,
+        end_time=end_time
     )
-    chain.sleep(1001)
-    with brownie.reverts(get_error_message("NotAllowed")):
+
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
+
+    print("Naffle end time: ", end_time)
+    print("Chain time: ", chain.time())
+
+    if (end_time> chain.time()):
+        print("Naffle not ended yet")
+    else:
+        print("Naffle ended")
+
+
+
+    print(naffle)
+    with brownie.reverts(get_error_message("NaffleNotEndedYet", ["uint256"], [int(end_time)])):
         l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
 
 
@@ -545,7 +560,7 @@ def test_draw_winner_not_owner_sends_funds_to_owner(
         deployed_erc721a_mock,
     )
     old_balance = address.balance()
-    chain.sleep(1001)
+    chain.sleep(100001)
 
     l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
 
@@ -571,7 +586,6 @@ def test_owner_cancel_naffle_not_ended_yet(
         l2_diamonds,
         deployed_erc721a_mock
     )
-    chain.sleep(1001)
     with brownie.reverts(get_error_message("NotAllowed")):
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(NAFFLE_ID, from_admin)
 
@@ -620,7 +634,7 @@ def test_owner_cancel_naffle_invalid_status(
         number_of_tickets=200,
     )
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(1, from_admin)
-    chain.sleep(1001)
+    chain.sleep(100001)
 
     with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [2])):
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
@@ -641,7 +655,7 @@ def test_owner_cancel_naffle_invalid_type(
         naffle_type=UNLIMITED_NAFFLE_TYPE,
     )
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(1, from_admin)
-    chain.sleep(1001)
+    chain.sleep(100001)
 
     with brownie.reverts(get_error_message("InvalidNaffleType", ["uint8"], [1])):
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)

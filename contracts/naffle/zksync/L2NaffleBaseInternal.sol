@@ -237,7 +237,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
         // only owners can draw winners pre end time when not all tickets are sold.
-        if (naffle.numberOfPaidTickets < naffle.paidTicketSpots && naffle.endTime > block.timestamp) {
+        if (naffle.endTime > block.timestamp && naffle.paidTicketSpots != naffle.numberOfPaidTickets) {
             revert NaffleNotEndedYet(naffle.endTime);
         }
 

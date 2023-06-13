@@ -1,6 +1,4 @@
-import datetime
-
-
+from brownie import chain
 
 STANDARD_NAFFLE_TYPE = 0
 UNLIMITED_NAFFLE_TYPE = 1
@@ -10,11 +8,13 @@ NAFFLE_ID = 1
 NAFFLE_STATUS_ACTIVE = 0
 PAID_TICKET_SPOTS = 2
 TICKET_PRICE = 10000
-DEFAULT_END_DATE = datetime.datetime.now().timestamp() + 1000
 ERC721 = 0
 ERC1155 = 1
 NFT_ID = 1
 
+
+def get_end_time():
+    return chain.time() + 100000
 
 class L2Diamonds:
     def __init__(
@@ -122,6 +122,7 @@ def create_naffle_and_mint_tickets(
     deployed_erc721a_mock,
     naffle_type=STANDARD_NAFFLE_TYPE,
     number_of_tickets=PAID_TICKET_SPOTS,
+    end_time=get_end_time()
 ):
     l2_diamonds.naffle_base_facet.createNaffle(
         (
@@ -131,7 +132,7 @@ def create_naffle_and_mint_tickets(
             NFT_ID,
             number_of_tickets,
             TICKET_PRICE,
-            DEFAULT_END_DATE,
+            end_time,
             naffle_type,
             ERC721,
         ),

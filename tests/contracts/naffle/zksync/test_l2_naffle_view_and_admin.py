@@ -14,12 +14,11 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
 from tests.test_helper import (
-    DEFAULT_END_DATE,
     NAFFLE_ID,
     NFT_ID,
     PAID_TICKET_SPOTS,
     TICKET_PRICE,
-    create_naffle_and_mint_tickets,
+    create_naffle_and_mint_tickets, get_end_time,
 )
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
@@ -263,11 +262,13 @@ def test_get_naffle_by_id(
     l2_diamonds,
     deployed_erc721a_mock,
 ):
+    end_time = get_end_time()
     create_naffle_and_mint_tickets(
         address,
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
+        end_time=end_time
     )
 
     naffle = brownie.interface.IL2NaffleView(l2_diamonds.deployed_l2_naffle_diamond).getNaffleById(1)
@@ -289,7 +290,7 @@ def test_get_naffle_by_id(
         number_of_tickets_bought,
         number_of_open_entry_tickets,
         TICKET_PRICE,
-        DEFAULT_END_DATE,
+        end_time,
         winning_ticket_id,
         winning_ticket_type,
         status,
