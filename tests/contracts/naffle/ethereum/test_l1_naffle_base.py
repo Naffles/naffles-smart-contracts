@@ -3,6 +3,7 @@ import datetime
 import brownie
 from brownie import ZERO_ADDRESS
 from eth_abi import encode
+from web3 import Web3
 
 from scripts.util import ZKSYNC_ADDRESS, get_error_message
 from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
@@ -390,11 +391,13 @@ def test_process_message_from_l2_set_winner(
     action = "setWinner"
 
     encoded_data = encode(["string", "uint256", "address"], [action, _naffleId, address.address])
+    keccak_encoded_data = Web3.keccak(encoded_data)
     base_facet.consumeSetWinnerMessage(
         _l2BlockNumber,
         _index,
         _l2TxNumberInBlock,
         # cancel, 1
+        keccak_encoded_data,
         encoded_data,
         _proof,
         from_admin
@@ -403,6 +406,70 @@ def test_process_message_from_l2_set_winner(
     assert deployed_erc721a_mock.ownerOf(nft_id) == address.address
     assert view_facet.getNaffleById(_naffleId, from_address)[4] == address.address
 
+
+def test_process_message_from_l2_set_winner_invalid_hash(
+    address,
+    from_address,
+    from_admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+    deployed_founders_key_staking,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    zksync_l1_message_account,
+    l2_message_params
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    setup_l1_naffle_contract(
+        admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
+    )
+    deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
+    deployed_erc721a_mock.setApprovalForAll(
+        deployed_l1_naffle_diamond.address, True, from_address
+    )
+    nft_id = 1
+
+    base_facet.createNaffle(
+        deployed_erc721a_mock.address,
+        nft_id,
+        MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE,
+        datetime.datetime.now().timestamp() + 100000,
+        STANDARD_NAFFLE_TYPE,
+        l2_message_params,
+        from_address,
+    )
+
+    _naffleId = 1
+
+    _l2BlockNumber = 123
+    _index = 0
+    _l2TxNumberInBlock = 1
+    _proof = ["0x01"]
+
+    action = "setWinner"
+
+    encoded_data = encode(["string", "uint256", "address"], [action, _naffleId, address.address])
+    keccak_encoded_data = Web3.keccak(encode(["string", "uint256", "address"], [action, 2, address.address]))
+    with brownie.reverts(get_error_message("FailedMessageInclusion")):
+        base_facet.consumeSetWinnerMessage(
+            _l2BlockNumber,
+            _index,
+            _l2TxNumberInBlock,
+            # cancel, 1
+            keccak_encoded_data,
+            encoded_data,
+            _proof,
+            from_admin
+        )
 
 def test_process_message_from_l2_set_winner_failed_message_inclusion(
     address,
@@ -436,12 +503,14 @@ def test_process_message_from_l2_set_winner_failed_message_inclusion(
     action = "setWinner"
 
     encoded_data = encode(["string", "uint256", "address"], [action, 1, address.address])
+    keccak_encoded_data = Web3.keccak(encoded_data)
     with brownie.reverts(get_error_message("FailedMessageInclusion")):
         base_facet.consumeSetWinnerMessage(
             _l2BlockNumber,
             _index,
             _l2TxNumberInBlock,
             # cancel, 1
+            keccak_encoded_data,
             encoded_data,
             _proof,
             from_admin
