@@ -16,5 +16,5 @@ task("set-l2-naffle-contract-on-paid", "set l1 naffle contract address on l2 naf
     const tx = await contractInstance.connect(walletL2).setL2NaffleContractAddress(taskArgs.l2nafflecontractaddress);
     console.log("setL2NaffleContractAddress tx: ", tx);
     await tx.wait();
-    console.log("l2 naffle contract address set to", taskArgs.l1nafflecontractaddress);
+    console.log("l2 naffle contract address set to", taskArgs.l2nafflecontractaddress);
   });
