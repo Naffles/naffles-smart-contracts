@@ -17,9 +17,9 @@ export default async function (
     const l2NaffleDiamondAddresses = await deployL2NaffleDiamond(
         hre,
         deployerPrivateKey,
-        l1_naffle_contract_address,
         l2PaidTicketDiamondAddresses["l2PaidTicketDiamond"],
-        l2OpenEntryTicketDiamondAddresses["l2OpenEntryTicketDiamond"]
+        l2OpenEntryTicketDiamondAddresses["l2OpenEntryTicketDiamond"],
+        l1_naffle_contract_address
     );
 
     const wallet = new Wallet(deployerPrivateKey);
