@@ -223,26 +223,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         );
     }
 
-    /**
-     * @notice draw a winner for a naffle. platform fees are taken and the winner is chosen and send to L1.
-     * @dev if the caller is not the owner of the naffle a NotAllowed error is thrown.
-     * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
-     * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
-     * @dev if the naffle is not finished a NaffleNotEndedYet error is thrown.
-     * @dev if there are no tickets a NoTicketsBought error is thrown.
-     * @dev if the funds can't get send to the owner a UnableToSendFunds error is thrown.
-     * @param _naffleId the id of the naffle.
-     */
-    function _ownerDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
-        if (naffle.owner != msg.sender) {
-            revert NotAllowed();
-        }
-        return _drawWinnerInternal(naffle, _naffleId);
-    }
-
-
      /**
      * @notice draw a winner for a naffle. platform fees are taken and the winner is chosen and send to L1.
      * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
@@ -252,7 +232,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @dev if the funds can't get send to the owner a UnableToSendFunds error is thrown.
      * @param _naffleId the id of the naffle.
      */
-    function _adminDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
+    function _drawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
@@ -267,10 +247,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
-        }
-
-        if (naffle.numberOfPaidTickets != naffle.paidTicketSpots && naffle.endTime > block.timestamp) {
-            revert NaffleNotEndedYet(naffle.endTime);
         }
 
         if (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries == 0) {

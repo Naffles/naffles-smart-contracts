@@ -115,7 +115,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ownerDrawWinner",
+    name: "drawWinner",
     outputs: [
       {
         internalType: "bytes32",

@@ -54,13 +54,6 @@ interface IL2NaffleAdmin {
     function setL1MessengerContractAddress(address _l1MessengerContractAddress) external;
 
     /**
-     * @notice admin draw winner, draws a winner if the naffle is in a valid state to draw a winner
-     * @param _naffleId the naffle id
-     * @return messageHash the message hash of the message sent to L1
-     */
-    function adminDrawWinner(uint256 _naffleId) external returns (bytes32 messageHash);
-
-    /**
      * @notice withdraw platform fees, fails if the amount is greater than the platform fees balance
      * @param _amount the amount to withdraw
      * @param _to the address to withdraw to

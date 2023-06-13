@@ -493,7 +493,7 @@ def test_owner_cancel_naffle_not_allowed(
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_admin)
 
 
-def test_draw_winner_not_owner(
+def test_draw_winner_not_owner_sends_funds_to_owner(
     admin,
     address,
     from_admin,
@@ -507,9 +507,18 @@ def test_draw_winner_not_owner(
         l2_diamonds,
         deployed_erc721a_mock,
     )
+    old_balance = address.balance()
     chain.sleep(1001)
-    with brownie.reverts(get_error_message("NotAllowed")):
-        l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_admin)
+
+    l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
+
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
+
+    assert naffle[11] == 2  # paid ticket type
+    assert naffle[12] == 4  # naffle status finished
+
+    assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.99)
+
 
 
 def test_owner_cancel_naffle_not_ended_yet(
@@ -527,7 +536,7 @@ def test_owner_cancel_naffle_not_ended_yet(
     )
     chain.sleep(1001)
     with brownie.reverts(get_error_message("NotAllowed")):
-        l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_admin)
+        l2_diamonds.naffle_base_facet.ownerCancelNaffle(NAFFLE_ID, from_admin)
 
 
 def test_draw_winner(
@@ -545,7 +554,7 @@ def test_draw_winner(
         deployed_erc721a_mock,
     )
     old_balance = address.balance()
-    l2_diamonds.naffle_base_facet.ownerDrawWinner(1, from_address)
+    l2_diamonds.naffle_base_facet.drawWinner(1, from_address)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 

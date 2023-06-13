@@ -8,13 +8,13 @@ task("draw-winner", "Draws the winner for a naffle")
   .addParam("naffleid", "The unique identifier of the Naffle event for which draw the winner.")
   .setAction(async (taskArgs, hre) => {
       const l2provider = new Provider(getRPCEndpoint(hre.network.name));
-      const walletL2 = new Wallet(getPrivateKey(true), l2provider);
+      const walletL2 = new Wallet(getPrivateKey(), l2provider);
 
       const contractBaseFactory = await hre.ethers.getContractFactory("L2NaffleBase");
       const l2ContractInstance = contractBaseFactory.attach(taskArgs.l2nafflecontractaddress);
 
       console.log("drawing winner..")
-      const drawWinnerTransaction= await l2ContractInstance.connect(walletL2).ownerDrawWinner(
+      const drawWinnerTransaction= await l2ContractInstance.connect(walletL2).drawWinner(
         parseInt(taskArgs.naffleid)
       )
 

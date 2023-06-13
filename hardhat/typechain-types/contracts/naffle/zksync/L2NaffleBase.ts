@@ -72,7 +72,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "ownerCancelNaffle(uint256)": FunctionFragment;
-    "ownerDrawWinner(uint256)": FunctionFragment;
+    "drawWinner(uint256)": FunctionFragment;
     "renounceRole(bytes32)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "useOpenEntryTickets(uint256[],uint256)": FunctionFragment;
@@ -86,7 +86,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
       | "grantRole"
       | "hasRole"
       | "ownerCancelNaffle"
-      | "ownerDrawWinner"
+      | "drawWinner"
       | "renounceRole"
       | "revokeRole"
       | "useOpenEntryTickets"
@@ -117,7 +117,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "ownerDrawWinner",
+    functionFragment: "drawWinner",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -149,7 +149,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "ownerDrawWinner",
+    functionFragment: "drawWinner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -362,7 +362,7 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    ownerDrawWinner(
+    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -418,7 +418,7 @@ export interface L2NaffleBase extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  ownerDrawWinner(
+  drawWinner(
     _naffleId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -474,7 +474,7 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    ownerDrawWinner(
+    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -637,7 +637,7 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    ownerDrawWinner(
+    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -694,7 +694,7 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    ownerDrawWinner(
+    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
