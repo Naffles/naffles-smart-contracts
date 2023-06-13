@@ -66,6 +66,15 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     /**
      * @inheritdoc IL2NaffleBase
      */
+    function ownerDrawWinner(uint256 _naffleId) external returns (bytes32) {
+        return _ownerDrawWinner(
+            _naffleId
+        );
+    }
+
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
     function drawWinner(uint256 _naffleId) external returns (bytes32) {
         return _drawWinner(
             _naffleId

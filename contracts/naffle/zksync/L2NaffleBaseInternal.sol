@@ -236,6 +236,22 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
+        // only owners can draw winners pre end time when not all tickets are sold.
+        if (naffle.numberOfPaidTickets < naffle.paidTicketSpots && naffle.endTime > block.timestamp) {
+            revert NaffleNotEndedYet(naffle.endTime);
+        }
+
+        return _drawWinnerInternal(naffle, _naffleId);
+    }
+
+    function _ownerDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
+        if (naffle.owner != msg.sender) {
+            revert NotAllowed();
+        }
+
         return _drawWinnerInternal(naffle, _naffleId);
     }
 

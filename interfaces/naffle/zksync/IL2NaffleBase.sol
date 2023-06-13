@@ -46,8 +46,14 @@ interface IL2NaffleBase {
     ) external;
 
     /**
-     * @notice end a naffle.
+     * @notice get the winner of a naffle.
      * @param _naffleId id of the naffle.
      */
     function drawWinner(uint256 _naffleId) external returns (bytes32);
+
+    /**
+     * @notice get the winner of a naffle. can be called before the naffle is sold out or ended.
+     * @param _naffleId id of the naffle.
+     */
+    function ownerDrawWinner(uint256 _naffleId) external view returns (address);
 }
