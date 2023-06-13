@@ -493,6 +493,43 @@ def test_owner_cancel_naffle_not_allowed(
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_admin)
 
 
+def test_draw_winner_not_owner(
+    admin,
+    address,
+    from_admin,
+    from_address,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    chain.sleep(1001)
+    with brownie.reverts(get_error_message("NotAllowed")):
+        l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_admin)
+
+
+def test_draw_winner_naffle_not_ended_yet(
+    address,
+    from_address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock
+    )
+    chain.sleep(1001)
+    with brownie.reverts(get_error_message("NotAllowed")):
+        l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
+
+
 def test_draw_winner_not_owner_sends_funds_to_owner(
     admin,
     address,
