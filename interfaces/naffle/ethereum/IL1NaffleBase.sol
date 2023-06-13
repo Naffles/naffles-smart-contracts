@@ -34,6 +34,7 @@ interface IL1NaffleBase {
      * @param _l2BlockNumber block number of the L2 block.
      * @param _index index of the message in the block.
      * @param _l2TxNumberInBlock transaction number in the block.
+     * @param _messageHash the hashed message send by L2
      * @param _message message to consume.
      * @param _proof proof of the message.
      */
@@ -41,6 +42,25 @@ interface IL1NaffleBase {
         uint256 _l2BlockNumber,
         uint256 _index,
         uint16 _l2TxNumberInBlock,
+        bytes32 _messageHash,
+        bytes calldata _message,
+        bytes32[] calldata _proof
+    ) external;
+
+    /**
+     * @notice consumes the setWinner message from ZkSync, sends the NFT to the winner.
+     * @param _l2BlockNumber block number of the L2 block.
+     * @param _index index of the message in the block.
+     * @param _l2TxNumberInBlock transaction number in the block.
+     * @param _messageHash the hashed message send by L2
+     * @param _message message to consume.
+     * @param _proof proof of the message.
+     */
+    function consumeCancelMessage(
+        uint256 _l2BlockNumber,
+        uint256 _index,
+        uint16 _l2TxNumberInBlock,
+        bytes32 _messageHash,
         bytes calldata _message,
         bytes32[] calldata _proof
     ) external;

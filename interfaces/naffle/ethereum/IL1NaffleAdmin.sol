@@ -52,20 +52,4 @@ interface IL1NaffleAdmin {
      * @param _admin the new admin address.
      */
     function setAdmin(address _admin) external;
-
-    /**
-     * @notice consumes the admin cancel message from L2, cancels the naffle on L1 and returns the NFT to the owner.
-     * @param _l2BlockNumber block number of the L2 block.
-     * @param _index index of the message in the block.
-     * @param _l2TxNumberInBlock transaction number in the block.
-     * @param _message message to consume.
-     * @param _proof proof of the message.
-     */
-    function consumeAdminCancelMessage(
-        uint256 _l2BlockNumber,
-        uint256 _index,
-        uint16 _l2TxNumberInBlock,
-        bytes calldata _message,
-        bytes32[] calldata _proof
-    ) external;
 }

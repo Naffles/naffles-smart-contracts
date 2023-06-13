@@ -286,7 +286,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         uint256 platformFee = totalFundsRaised * layout.platformFee / 10000;
         uint256 amountToTransfer = totalFundsRaised - platformFee;
 
-        bytes memory message = abi.encode("setWinner", _naffleId, winner);
+        bytes memory message = abi.encode("setWinner", _naffleId, naffle.winningTicketId);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
 
         layout.platformFeesAccumulated = layout.platformFeesAccumulated + platformFee;

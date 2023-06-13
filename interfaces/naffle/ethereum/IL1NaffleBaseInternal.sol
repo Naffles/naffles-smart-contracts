@@ -35,14 +35,9 @@ interface IL1NaffleBaseInternal {
     error MessageAlreadyProcessed();
 
     /**
-     * @notice thrown when the L2 message is not included in the block.
+     * @notice thrown when the L2 message is invalid
      */
     error FailedMessageInclusion();
-
-    /**
-     * @notice thrown when the L2 message does not include a valid action.
-     */
-    error InvalidAction();
 
     /**
      * @notice emitted when a naffle is created.

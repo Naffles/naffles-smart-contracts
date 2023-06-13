@@ -10,7 +10,7 @@ import "@matterlabs/zksync-contracts/l1/contracts/zksync/interfaces/IZkSync.sol"
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBaseInternal.sol";
-import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
+import "@matterlabs/zksync-contracts/l1/contracts/zksync/Storage.sol";
 
 abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
@@ -142,6 +142,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
      * @param _l2BlockNumber the block number of the L2 block.
      * @param _index the index of the message in the L2 block.
      * @param _l2TxNumberInBlock the transaction number in the L2 block.
+     * @param _messageHash the hashed message send by L2
      * @param _message the message that is consumed.
      * @param _proof the proof of the message.
      */
@@ -149,16 +150,22 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         uint256 _l2BlockNumber,
         uint256 _index,
         uint16 _l2TxNumberInBlock,
+        bytes32 _messageHash,
         bytes memory _message,
-        bytes32[] calldata _proof
+        bytes32[] memory _proof
     ) internal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         if (layout.isL2ToL1MessageProcessed[_l2BlockNumber][_index]) {
             revert MessageAlreadyProcessed();
         }
 
+        if (keccak256(_message) != _messageHash) {
+            revert FailedMessageInclusion();
+        }
+
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
-        L2Message memory message = L2Message({
+
+        L2Message memory l2Message = L2Message({
             sender: layout.zkSyncNaffleContractAddress,
             data: _message,
             txNumberInBlock: _l2TxNumberInBlock
@@ -167,7 +174,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         bool success = zksync.proveL2MessageInclusion(
             _l2BlockNumber,
             _index,
-            message,
+            l2Message,
             _proof
         );
         if (!success) {
