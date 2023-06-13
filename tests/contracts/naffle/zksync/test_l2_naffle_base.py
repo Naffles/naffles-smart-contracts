@@ -530,17 +530,6 @@ def test_draw_winner_naffle_not_ended_yet(
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 
-    print("Naffle end time: ", end_time)
-    print("Chain time: ", chain.time())
-
-    if (end_time> chain.time()):
-        print("Naffle not ended yet")
-    else:
-        print("Naffle ended")
-
-
-
-    print(naffle)
     with brownie.reverts(get_error_message("NaffleNotEndedYet", ["uint256"], [int(end_time)])):
         l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
 
