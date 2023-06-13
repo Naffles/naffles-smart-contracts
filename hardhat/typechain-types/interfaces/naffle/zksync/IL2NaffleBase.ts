@@ -64,8 +64,8 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
   functions: {
     "buyTickets(uint256,uint256)": FunctionFragment;
     "createNaffle((address,address,uint256,uint256,uint256,uint256,uint256,uint8,uint8))": FunctionFragment;
-    "ownerCancelNaffle(uint256)": FunctionFragment;
     "drawWinner(uint256)": FunctionFragment;
+    "ownerCancelNaffle(uint256)": FunctionFragment;
     "useOpenEntryTickets(uint256[],uint256)": FunctionFragment;
   };
 
@@ -73,8 +73,8 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "buyTickets"
       | "createNaffle"
-      | "ownerCancelNaffle"
       | "drawWinner"
+      | "ownerCancelNaffle"
       | "useOpenEntryTickets"
   ): FunctionFragment;
 
@@ -87,11 +87,11 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
     values: [NaffleTypes.CreateZkSyncNaffleParamsStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "ownerCancelNaffle",
+    functionFragment: "drawWinner",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "drawWinner",
+    functionFragment: "ownerCancelNaffle",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -104,12 +104,9 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
     functionFragment: "createNaffle",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "drawWinner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownerCancelNaffle",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "drawWinner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -158,12 +155,12 @@ export interface IL2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    ownerCancelNaffle(
+    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    drawWinner(
+    ownerCancelNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -186,12 +183,12 @@ export interface IL2NaffleBase extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  ownerCancelNaffle(
+  drawWinner(
     _naffleId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  drawWinner(
+  ownerCancelNaffle(
     _naffleId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -214,15 +211,15 @@ export interface IL2NaffleBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    ownerCancelNaffle(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    ownerCancelNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     useOpenEntryTickets(
       _ticketIds: PromiseOrValue<BigNumberish>[],
@@ -245,12 +242,12 @@ export interface IL2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    ownerCancelNaffle(
+    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    drawWinner(
+    ownerCancelNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -274,12 +271,12 @@ export interface IL2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    ownerCancelNaffle(
+    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    drawWinner(
+    ownerCancelNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

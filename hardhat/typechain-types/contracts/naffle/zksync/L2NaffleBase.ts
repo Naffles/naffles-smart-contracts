@@ -68,11 +68,11 @@ export interface L2NaffleBaseInterface extends utils.Interface {
   functions: {
     "buyTickets(uint256,uint256)": FunctionFragment;
     "createNaffle((address,address,uint256,uint256,uint256,uint256,uint256,uint8,uint8))": FunctionFragment;
+    "drawWinner(uint256)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
     "ownerCancelNaffle(uint256)": FunctionFragment;
-    "drawWinner(uint256)": FunctionFragment;
     "renounceRole(bytes32)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "useOpenEntryTickets(uint256[],uint256)": FunctionFragment;
@@ -82,11 +82,11 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "buyTickets"
       | "createNaffle"
+      | "drawWinner"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
       | "ownerCancelNaffle"
-      | "drawWinner"
       | "renounceRole"
       | "revokeRole"
       | "useOpenEntryTickets"
@@ -99,6 +99,10 @@ export interface L2NaffleBaseInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "createNaffle",
     values: [NaffleTypes.CreateZkSyncNaffleParamsStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "drawWinner",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -114,10 +118,6 @@ export interface L2NaffleBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ownerCancelNaffle",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "drawWinner",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -138,6 +138,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     functionFragment: "createNaffle",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "drawWinner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
@@ -146,10 +147,6 @@ export interface L2NaffleBaseInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownerCancelNaffle",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "drawWinner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -340,6 +337,11 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    drawWinner(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -358,11 +360,6 @@ export interface L2NaffleBase extends BaseContract {
     ): Promise<[boolean]>;
 
     ownerCancelNaffle(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -396,6 +393,11 @@ export interface L2NaffleBase extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  drawWinner(
+    _naffleId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -414,11 +416,6 @@ export interface L2NaffleBase extends BaseContract {
   ): Promise<boolean>;
 
   ownerCancelNaffle(
-    _naffleId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  drawWinner(
     _naffleId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -452,6 +449,11 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    drawWinner(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -473,11 +475,6 @@ export interface L2NaffleBase extends BaseContract {
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    drawWinner(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -615,6 +612,11 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    drawWinner(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -633,11 +635,6 @@ export interface L2NaffleBase extends BaseContract {
     ): Promise<BigNumber>;
 
     ownerCancelNaffle(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -672,6 +669,11 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    drawWinner(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -690,11 +692,6 @@ export interface L2NaffleBase extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     ownerCancelNaffle(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

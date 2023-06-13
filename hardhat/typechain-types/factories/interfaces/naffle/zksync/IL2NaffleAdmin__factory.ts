@@ -26,25 +26,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_naffleId",
-        type: "uint256",
-      },
-    ],
-    name: "adminDrawWinner",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "messageHash",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "address",
         name: "_admin",
         type: "address",

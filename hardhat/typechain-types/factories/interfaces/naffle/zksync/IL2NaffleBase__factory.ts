@@ -102,8 +102,14 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ownerCancelNaffle",
-    outputs: [],
+    name: "drawWinner",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -115,14 +121,8 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "drawWinner",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    name: "ownerCancelNaffle",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

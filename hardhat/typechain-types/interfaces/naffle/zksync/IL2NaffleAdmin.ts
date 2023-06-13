@@ -26,7 +26,6 @@ import type {
 export interface IL2NaffleAdminInterface extends utils.Interface {
   functions: {
     "adminCancelNaffle(uint256)": FunctionFragment;
-    "adminDrawWinner(uint256)": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
     "setL1MessengerContractAddress(address)": FunctionFragment;
     "setL1NaffleContractAddress(address)": FunctionFragment;
@@ -40,7 +39,6 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "adminCancelNaffle"
-      | "adminDrawWinner"
       | "setAdmin"
       | "setL1MessengerContractAddress"
       | "setL1NaffleContractAddress"
@@ -53,10 +51,6 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "adminCancelNaffle",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "adminDrawWinner",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -94,10 +88,6 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "adminCancelNaffle",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "adminDrawWinner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
@@ -165,11 +155,6 @@ export interface IL2NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    adminDrawWinner(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setAdmin(
       _admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -213,11 +198,6 @@ export interface IL2NaffleAdmin extends BaseContract {
   };
 
   adminCancelNaffle(
-    _naffleId: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  adminDrawWinner(
     _naffleId: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -269,11 +249,6 @@ export interface IL2NaffleAdmin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    adminDrawWinner(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     setAdmin(
       _admin: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -324,11 +299,6 @@ export interface IL2NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    adminDrawWinner(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     setAdmin(
       _admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -373,11 +343,6 @@ export interface IL2NaffleAdmin extends BaseContract {
 
   populateTransaction: {
     adminCancelNaffle(
-      _naffleId: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    adminDrawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
