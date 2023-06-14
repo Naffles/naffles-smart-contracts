@@ -1,5 +1,5 @@
 import {task} from "hardhat/config";
-import {Provider, Wallet} from "zksync-web3";
+import {Provider, utils, Wallet} from "zksync-web3";
 
 task("set-l1-naffle-contract", "set l1 naffle contract address on l2 naffle contract")
   .addParam("l2nafflecontractaddress", "L2 naffle diamond contract address")
@@ -20,8 +20,8 @@ task("set-l1-naffle-contract", "set l1 naffle contract address on l2 naffle cont
     const contractFactory = await hre.ethers.getContractFactory("L2NaffleAdmin");
     const contractInstance = contractFactory.attach(taskArgs.l2nafflecontractaddress);
 
-    const tx = await contractInstance.connect(walletL2).setL1NaffleContractAddress(taskArgs.l1nafflecontractaddress);
+    const tx = await contractInstance.connect(walletL2).setL1NaffleContractAddress(utils.applyL1ToL2Alias(taskArgs.l1nafflecontractaddress));
     console.log("setL1NaffleContractAddress tx: ", tx);
     await tx.wait();
-    console.log("l1 contract address set to ", taskArgs.l1nafflecontractaddress);
+    console.log("l1 contract address set to alias", utils.applyL1ToL2Alias(taskArgs.l1nafflecontractaddress));
   });

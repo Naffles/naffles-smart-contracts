@@ -129,6 +129,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_naffleId",
+        type: "uint256",
+      },
+    ],
+    name: "ownerDrawWinner",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256[]",
         name: "_ticketIds",
         type: "uint256[]",

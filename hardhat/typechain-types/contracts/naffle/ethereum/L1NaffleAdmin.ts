@@ -30,7 +30,6 @@ import type {
 export interface L1NaffleAdminInterface extends utils.Interface {
   functions: {
     "acceptOwnership()": FunctionFragment;
-    "consumeAdminCancelMessage(uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -52,7 +51,6 @@ export interface L1NaffleAdminInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "acceptOwnership"
-      | "consumeAdminCancelMessage"
       | "getRoleAdmin"
       | "grantRole"
       | "hasRole"
@@ -74,16 +72,6 @@ export interface L1NaffleAdminInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "acceptOwnership",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "consumeAdminCancelMessage",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BytesLike>[]
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
@@ -149,10 +137,6 @@ export interface L1NaffleAdminInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "acceptOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "consumeAdminCancelMessage",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -355,15 +339,6 @@ export interface L1NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    consumeAdminCancelMessage(
-      _l2BlockNumber: PromiseOrValue<BigNumberish>,
-      _index: PromiseOrValue<BigNumberish>,
-      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-      _message: PromiseOrValue<BytesLike>,
-      _proof: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -446,15 +421,6 @@ export interface L1NaffleAdmin extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  consumeAdminCancelMessage(
-    _l2BlockNumber: PromiseOrValue<BigNumberish>,
-    _index: PromiseOrValue<BigNumberish>,
-    _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-    _message: PromiseOrValue<BytesLike>,
-    _proof: PromiseOrValue<BytesLike>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   getRoleAdmin(
     role: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -534,15 +500,6 @@ export interface L1NaffleAdmin extends BaseContract {
 
   callStatic: {
     acceptOwnership(overrides?: CallOverrides): Promise<void>;
-
-    consumeAdminCancelMessage(
-      _l2BlockNumber: PromiseOrValue<BigNumberish>,
-      _index: PromiseOrValue<BigNumberish>,
-      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-      _message: PromiseOrValue<BytesLike>,
-      _proof: PromiseOrValue<BytesLike>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -706,15 +663,6 @@ export interface L1NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    consumeAdminCancelMessage(
-      _l2BlockNumber: PromiseOrValue<BigNumberish>,
-      _index: PromiseOrValue<BigNumberish>,
-      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-      _message: PromiseOrValue<BytesLike>,
-      _proof: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -795,15 +743,6 @@ export interface L1NaffleAdmin extends BaseContract {
 
   populateTransaction: {
     acceptOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    consumeAdminCancelMessage(
-      _l2BlockNumber: PromiseOrValue<BigNumberish>,
-      _index: PromiseOrValue<BigNumberish>,
-      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-      _message: PromiseOrValue<BytesLike>,
-      _proof: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

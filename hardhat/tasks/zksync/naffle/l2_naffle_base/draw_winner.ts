@@ -21,7 +21,7 @@ task("draw-winner", "Draws the winner for a naffle")
     console.log(naffle)
 
     console.log("drawing winner..")
-    const drawWinnerTransaction= await l2ContractInstance.connect(walletL2).drawWinner(
+    const drawWinnerTransaction= await l2ContractInstance.connect(walletL2).ownerDrawWinner(
       parseInt(taskArgs.naffleid)
     )
 

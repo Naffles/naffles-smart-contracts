@@ -33,6 +33,49 @@ const _abi = [
         type: "uint16",
       },
       {
+        internalType: "bytes32",
+        name: "_messageHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes",
+        name: "_message",
+        type: "bytes",
+      },
+      {
+        internalType: "bytes32[]",
+        name: "_proof",
+        type: "bytes32[]",
+      },
+    ],
+    name: "consumeCancelMessage",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_l2BlockNumber",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_index",
+        type: "uint256",
+      },
+      {
+        internalType: "uint16",
+        name: "_l2TxNumberInBlock",
+        type: "uint16",
+      },
+      {
+        internalType: "bytes32",
+        name: "_messageHash",
+        type: "bytes32",
+      },
+      {
         internalType: "bytes",
         name: "_message",
         type: "bytes",

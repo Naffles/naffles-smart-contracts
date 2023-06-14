@@ -16,11 +16,6 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [],
-    name: "InvalidAction",
-    type: "error",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",

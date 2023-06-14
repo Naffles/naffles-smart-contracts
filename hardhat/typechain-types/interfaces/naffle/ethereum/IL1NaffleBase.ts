@@ -38,20 +38,36 @@ export declare namespace NaffleTypes {
 
 export interface IL1NaffleBaseInterface extends utils.Interface {
   functions: {
-    "consumeSetWinnerMessage(uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
+    "consumeCancelMessage(uint256,uint256,uint16,bytes32,bytes,bytes32[])": FunctionFragment;
+    "consumeSetWinnerMessage(uint256,uint256,uint16,bytes32,bytes,bytes32[])": FunctionFragment;
     "createNaffle(address,uint256,uint256,uint256,uint256,uint8,(uint256,uint256))": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "consumeSetWinnerMessage" | "createNaffle"
+    nameOrSignatureOrTopic:
+      | "consumeCancelMessage"
+      | "consumeSetWinnerMessage"
+      | "createNaffle"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "consumeCancelMessage",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>[]
+    ]
+  ): string;
   encodeFunctionData(
     functionFragment: "consumeSetWinnerMessage",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>[]
     ]
@@ -69,6 +85,10 @@ export interface IL1NaffleBaseInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "consumeCancelMessage",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "consumeSetWinnerMessage",
     data: BytesLike
@@ -108,10 +128,21 @@ export interface IL1NaffleBase extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    consumeCancelMessage(
+      _l2BlockNumber: PromiseOrValue<BigNumberish>,
+      _index: PromiseOrValue<BigNumberish>,
+      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+      _messageHash: PromiseOrValue<BytesLike>,
+      _message: PromiseOrValue<BytesLike>,
+      _proof: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     consumeSetWinnerMessage(
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+      _messageHash: PromiseOrValue<BytesLike>,
       _message: PromiseOrValue<BytesLike>,
       _proof: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -129,10 +160,21 @@ export interface IL1NaffleBase extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  consumeCancelMessage(
+    _l2BlockNumber: PromiseOrValue<BigNumberish>,
+    _index: PromiseOrValue<BigNumberish>,
+    _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+    _messageHash: PromiseOrValue<BytesLike>,
+    _message: PromiseOrValue<BytesLike>,
+    _proof: PromiseOrValue<BytesLike>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   consumeSetWinnerMessage(
     _l2BlockNumber: PromiseOrValue<BigNumberish>,
     _index: PromiseOrValue<BigNumberish>,
     _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+    _messageHash: PromiseOrValue<BytesLike>,
     _message: PromiseOrValue<BytesLike>,
     _proof: PromiseOrValue<BytesLike>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -150,10 +192,21 @@ export interface IL1NaffleBase extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    consumeCancelMessage(
+      _l2BlockNumber: PromiseOrValue<BigNumberish>,
+      _index: PromiseOrValue<BigNumberish>,
+      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+      _messageHash: PromiseOrValue<BytesLike>,
+      _message: PromiseOrValue<BytesLike>,
+      _proof: PromiseOrValue<BytesLike>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     consumeSetWinnerMessage(
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+      _messageHash: PromiseOrValue<BytesLike>,
       _message: PromiseOrValue<BytesLike>,
       _proof: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
@@ -174,10 +227,21 @@ export interface IL1NaffleBase extends BaseContract {
   filters: {};
 
   estimateGas: {
+    consumeCancelMessage(
+      _l2BlockNumber: PromiseOrValue<BigNumberish>,
+      _index: PromiseOrValue<BigNumberish>,
+      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+      _messageHash: PromiseOrValue<BytesLike>,
+      _message: PromiseOrValue<BytesLike>,
+      _proof: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     consumeSetWinnerMessage(
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+      _messageHash: PromiseOrValue<BytesLike>,
       _message: PromiseOrValue<BytesLike>,
       _proof: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -196,10 +260,21 @@ export interface IL1NaffleBase extends BaseContract {
   };
 
   populateTransaction: {
+    consumeCancelMessage(
+      _l2BlockNumber: PromiseOrValue<BigNumberish>,
+      _index: PromiseOrValue<BigNumberish>,
+      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+      _messageHash: PromiseOrValue<BytesLike>,
+      _message: PromiseOrValue<BytesLike>,
+      _proof: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     consumeSetWinnerMessage(
       _l2BlockNumber: PromiseOrValue<BigNumberish>,
       _index: PromiseOrValue<BigNumberish>,
       _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
+      _messageHash: PromiseOrValue<BytesLike>,
       _message: PromiseOrValue<BytesLike>,
       _proof: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }

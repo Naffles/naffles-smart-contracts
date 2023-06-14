@@ -57,6 +57,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
     )
     const gasPrice = await l1provider.getGasPrice();
 
+    console.log("ESTIMATING GAS")
     const gasLimit = await l2provider.estimateL1ToL2Execute({
       contractAddress: taskArgs.l2nafflecontractaddress,
       calldata: prepareTransaction.data,

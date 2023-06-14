@@ -25,7 +25,6 @@ import type {
 
 export interface IL1NaffleAdminInterface extends utils.Interface {
   functions: {
-    "consumeAdminCancelMessage(uint256,uint256,uint16,bytes,bytes32[])": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
     "setFoundersKeyAddress(address)": FunctionFragment;
     "setFoundersKeyPlaceholderAddress(address)": FunctionFragment;
@@ -38,7 +37,6 @@ export interface IL1NaffleAdminInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "consumeAdminCancelMessage"
       | "setAdmin"
       | "setFoundersKeyAddress"
       | "setFoundersKeyPlaceholderAddress"
@@ -49,16 +47,6 @@ export interface IL1NaffleAdminInterface extends utils.Interface {
       | "setZkSyncNaffleContractAddress"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "consumeAdminCancelMessage",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BytesLike>[]
-    ]
-  ): string;
   encodeFunctionData(
     functionFragment: "setAdmin",
     values: [PromiseOrValue<string>]
@@ -92,10 +80,6 @@ export interface IL1NaffleAdminInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "consumeAdminCancelMessage",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setFoundersKeyAddress",
@@ -156,15 +140,6 @@ export interface IL1NaffleAdmin extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    consumeAdminCancelMessage(
-      _l2BlockNumber: PromiseOrValue<BigNumberish>,
-      _index: PromiseOrValue<BigNumberish>,
-      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-      _message: PromiseOrValue<BytesLike>,
-      _proof: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setAdmin(
       _admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -205,15 +180,6 @@ export interface IL1NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
-
-  consumeAdminCancelMessage(
-    _l2BlockNumber: PromiseOrValue<BigNumberish>,
-    _index: PromiseOrValue<BigNumberish>,
-    _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-    _message: PromiseOrValue<BytesLike>,
-    _proof: PromiseOrValue<BytesLike>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   setAdmin(
     _admin: PromiseOrValue<string>,
@@ -256,15 +222,6 @@ export interface IL1NaffleAdmin extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    consumeAdminCancelMessage(
-      _l2BlockNumber: PromiseOrValue<BigNumberish>,
-      _index: PromiseOrValue<BigNumberish>,
-      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-      _message: PromiseOrValue<BytesLike>,
-      _proof: PromiseOrValue<BytesLike>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setAdmin(
       _admin: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -309,15 +266,6 @@ export interface IL1NaffleAdmin extends BaseContract {
   filters: {};
 
   estimateGas: {
-    consumeAdminCancelMessage(
-      _l2BlockNumber: PromiseOrValue<BigNumberish>,
-      _index: PromiseOrValue<BigNumberish>,
-      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-      _message: PromiseOrValue<BytesLike>,
-      _proof: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     setAdmin(
       _admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -360,15 +308,6 @@ export interface IL1NaffleAdmin extends BaseContract {
   };
 
   populateTransaction: {
-    consumeAdminCancelMessage(
-      _l2BlockNumber: PromiseOrValue<BigNumberish>,
-      _index: PromiseOrValue<BigNumberish>,
-      _l2TxNumberInBlock: PromiseOrValue<BigNumberish>,
-      _message: PromiseOrValue<BytesLike>,
-      _proof: PromiseOrValue<BytesLike>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     setAdmin(
       _admin: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
