@@ -43,7 +43,7 @@ interface IL2NaffleBase {
      * @param _paidTicketIds ids of the paid tickets.
      * @param _owner owner of the tickets.
      */
-    function refundticketsForNaffle(
+    function refundTicketsForNaffle(
         uint256 _naffleId,
         uint256[] memory _openEntryTicketIds,
         uint256[] memory _paidTicketIds,
