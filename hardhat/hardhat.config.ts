@@ -30,7 +30,11 @@ require("./tasks/zksync/naffle/l2_naffle_admin/set_l2_ticket_contracts");
 require("./tasks/zksync/naffle/l2_naffle_admin/cancel_naffle");
 
 require("./tasks/zksync/tokens/paid/paid_ticket_view/read_paid_ticket_variables");
+
 require("./tasks/zksync/tokens/paid/paid_ticket_admin/set_l2_naffle_contract");
+
+require("./tasks/zksync/tokens/paid/paid_ticket_base/refund_and_burn_ticket");
+
 
 require("./tasks/zksync/tokens/open_entry/open_entry_ticket_view/read_open_entry_ticket_variables");
 require("./tasks/zksync/tokens/open_entry/open_entry_ticket_admin/set_l2_naffle_contract");

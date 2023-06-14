@@ -26,10 +26,6 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
       ["setWinner", taskArgs.naffleid, taskArgs.winneraddress]
     );
 
-    const result=  await l2provider.getTransactionReceipt(taskArgs.l2transactionhash);
-
-    console.log("transaction receipt: ", result)
-
     const { l1BatchNumber, l1BatchTxIndex , blockNumber } = await l2provider.getTransactionReceipt(taskArgs.l2transactionhash);
     console.log("blockNumber: ", blockNumber)
 
@@ -60,14 +56,10 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
     );
 
     console.log("res: ", res);
-    return
-
-
 
     const singers = await hre.ethers.getSigners();
     const signer = singers[0];
     // setting proof on l1
-
     const consumeWinnerTranscation = await l1ContractInstance.connect(signer).consumeSetWinnerMessage(
       l1BatchNumber,
       proof.id,
