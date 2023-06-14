@@ -4,7 +4,7 @@ import deployL2NaffleDiamond from "./naffle/zksync/deploy_l2_naffle_diamond";
 
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ethers } from 'hardhat';
-import {Wallet} from "zksync-web3";
+import {Wallet, utils} from "zksync-web3";
 import {Deployer} from "@matterlabs/hardhat-zksync-deploy";
 
 export default async function (
@@ -33,4 +33,10 @@ export default async function (
     const tx2 = await l2OpenEntryTicketAdmin.connect(deployer.zkWallet).setL2NaffleContractAddress(l2NaffleDiamondAddresses["l2NaffleDiamond"]);
     await tx2.wait();
     console.log("L2Naffle address set to " + l2NaffleDiamondAddresses["l2NaffleDiamond"])
+
+    console.log("Setting l1 naffle diamond contract")
+    const l2NaffleDiamond = await ethers.getContractAt("L2NaffleAdmin", l2NaffleDiamondAddresses["l2NaffleDiamond"]);
+    const tx3 = await l2NaffleDiamond.connect(deployer.zkWallet).setL1NaffleContractAddress(utils.applyL1ToL2Alias(l1_naffle_contract_address));
+    await tx3.wait();
+    console.log("L1Naffle address set to " + utils.applyL1ToL2Alias(l1_naffle_contract_address));
 }

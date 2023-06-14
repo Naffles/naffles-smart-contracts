@@ -1,5 +1,6 @@
 import { ethers } from 'hardhat';
 
+
 export default async function main() {
     const l1NaffleAddress = process.env.l1NaffleAddress;
     const l2NaffleAddress = process.env.l2NaffleAddress;
