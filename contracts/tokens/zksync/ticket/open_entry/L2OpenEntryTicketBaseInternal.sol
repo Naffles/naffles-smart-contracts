@@ -53,7 +53,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      * @param _naffleId the id of the naffle.
      * @param _naffleTicketIds the id of the ticket on the naffle.
      */
-    function _detachFromNaffle(uint256 _naffleId, uint256[] _naffleTicketIds) internal {
+    function _detachFromNaffle(uint256 _naffleId, uint256[] memory _naffleTicketIds) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
 

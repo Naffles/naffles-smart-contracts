@@ -197,7 +197,7 @@ def test_detach_from_naffle_naffle_not_cancelled(
         get_error_message("NaffleNotCancelled", ["uint8"], [NAFFLE_STATUS_ACTIVE])
     ):
         l2_diamonds.open_entry_base_facet.detachFromNaffle(
-            NAFFLE_ID, ticket_id_on_naffle, from_admin
+            NAFFLE_ID, [ticket_id_on_naffle], from_admin
         )
 
 
@@ -221,33 +221,7 @@ def test_detach_from_naffle_invalid_ticket_id(
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
 
     with brownie.reverts(get_error_message("InvalidTicketId", ["uint256"], [2])):
-        l2_diamonds.open_entry_base_facet.detachFromNaffle(NAFFLE_ID, 2, from_address)
-
-
-def test_detach_from_naffle_not_owner(
-    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-        number_of_tickets=200,
-    )
-    ticket_id_on_naffle = 1
-
-    l2_diamonds.open_entry_base_facet.attachToNaffle(
-        NAFFLE_ID, [ticket_id_on_naffle], ticket_id_on_naffle, address,
-        {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
-    )
-    l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
-
-    with brownie.reverts(
-        get_error_message("NotTicketOwner", ["address"], [admin.address])
-    ):
-        l2_diamonds.open_entry_base_facet.detachFromNaffle(
-            NAFFLE_ID, ticket_id_on_naffle, from_admin
-        )
+        l2_diamonds.open_entry_base_facet.detachFromNaffle(NAFFLE_ID, [2], from_address)
 
 
 def test_detach_from_naffle_success(
@@ -268,7 +242,7 @@ def test_detach_from_naffle_success(
     )
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
     l2_diamonds.open_entry_base_facet.detachFromNaffle(
-        NAFFLE_ID, ticket_id_on_naffle, from_address
+        NAFFLE_ID, [ticket_id_on_naffle], from_address
     )
     ticket = l2_diamonds.open_entry_view_facet.getOpenEntryTicketById(1)
     assert ticket == (0, 0, False)

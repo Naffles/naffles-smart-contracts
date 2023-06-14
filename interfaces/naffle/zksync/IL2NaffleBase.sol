@@ -37,6 +37,20 @@ interface IL2NaffleBase {
     ) external;
 
     /**
+     * @notice refund and burns tickets for a naffle.
+     * @param _naffleId id of the naffle.
+     * @param _openEntryTicketIds ids of the open entry tickets.
+     * @param _paidTicketIds ids of the paid tickets.
+     * @param _owner owner of the tickets.
+     */
+    function refundticketsForNaffle(
+        uint256 _naffleId,
+        uint256[] memory _openEntryTicketIds,
+        uint256[] memory _paidTicketIds,
+        address _owner
+    ) external;
+
+    /**
      * @notice cancel a naffle.
      * @dev method can be called by the owner of a naffle.
      * @param _naffleId id of the naffle.

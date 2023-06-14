@@ -71,32 +71,32 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
 
         for (uint i = 0; i < length; ++i) {
             uint256 ticketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
+            _burn(ticketId);
 
             if (ticketId == 0) {
                 revert InvalidTicketId(_naffleTicketIds[i]);
             }
 
-            delete l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
-            NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[ticketId];
-
-            if (_owner != _ownerOf(paidTicket)) {
+            if (_owner != _ownerOf(l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketId])) {
                 revert NotTicketOwner(msg.sender);
             }
+
+            delete l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
+            NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[ticketId];
 
             // We reset the naffle id so we know this is refunded because we can't delete custom structs.
             paidTicket.naffleId = 0;
             paidTicket.ticketIdOnNaffle = 0;
-            _burn(ticketId);
 
             totalTicketIds[i] = ticketId;
         }
 
-        (bool success, ) = owner.call{value: length * naffle.ticketPriceInWei}("");
+        (bool success, ) = _owner.call{value: length * naffle.ticketPriceInWei}("");
         if (!success) {
             revert RefundFailed();
         }
 
-        emit PaidTicketsRefundedAndBurned(owner, _naffleId, totalTicketIds, _naffleTicketIds);
+        emit PaidTicketsRefundedAndBurned(_owner, _naffleId, totalTicketIds, _naffleTicketIds);
     }
 
     /**

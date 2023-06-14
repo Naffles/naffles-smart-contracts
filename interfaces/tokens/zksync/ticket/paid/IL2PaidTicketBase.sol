@@ -25,5 +25,5 @@ interface IL2PaidTicketBase {
      * @param _naffleTicketIds the id of the ticket on the naffle.
      * @param _owner the owner of the tickets.
      */
-    function refundAndBurnTicket(uint256 _naffleId, uint256[] _naffleTicketIds, address _owner) external;
+    function refundAndBurnTickets(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) external;
 }
