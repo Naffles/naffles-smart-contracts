@@ -9,7 +9,7 @@ task("mint-and-attach-open-entry-tickets", "Creates naffle on l2 as test")
   .addParam("naffleid", "The ID of the Naffle event you wish to attach tickets to.")
   .setAction(async (taskArgs, hre) => {
     const l2provider = new Provider(getRPCEndpoint(hre.network.name));
-    const walletL2 = new Wallet(getPrivateKey(), l2provider);
+    const walletL2 = new Wallet(getPrivateKey(true), l2provider);
 
     const contractBaseFactory = await hre.ethers.getContractFactory("L2NaffleBase");
     const l2ContractInstance = contractBaseFactory.attach(taskArgs.l2nafflecontractaddress);

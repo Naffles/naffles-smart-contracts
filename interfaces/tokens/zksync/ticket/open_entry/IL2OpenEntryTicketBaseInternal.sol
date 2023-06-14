@@ -59,5 +59,5 @@ interface IL2OpenEntryTicketBaseInternal {
      * @param naffleTicketId the id of the ticket on the naffle.
      * @param owner the owner of the tickets.
      */
-    event TicketDetachedFromNaffle(uint256 indexed naffleId, uint256 ticketId, uint256 naffleTicketId, address indexed owner);
+    event TicketsDetachedFromNaffle(uint256 indexed naffleId, uint256[] ticketIds, uint256[] naffleTicketId, address indexed owner);
 }

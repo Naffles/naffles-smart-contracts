@@ -21,7 +21,7 @@ interface IL2OpenEntryTicketBase {
      * @notice detach from naffle, removes the tickets from the naffle.
      * @dev method is called from the naffle contract.
      * @param _naffleId id of the naffle.
-     * @param _naffleTicketId id of the ticket on the naffle.
+     * @param _naffleTicketIds ids of the tickets on the naffle.
      */
-    function detachFromNaffle(uint256 _naffleId, uint256 _naffleTicketId) external;
+    function detachFromNaffle(uint256 _naffleId, uint256[] _naffleTicketId) external;
 }

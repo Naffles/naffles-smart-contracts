@@ -18,8 +18,8 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
     /**
      * @inheritdoc IL2OpenEntryTicketBase
      */
-    function detachFromNaffle(uint256 _naffleId, uint256 _naffleTicketId) external {
-        _detachFromNaffle(_naffleId, _naffleTicketId);
+    function detachFromNaffle(uint256 _naffleId, uint256[] _naffleTicketIds) external {
+        _detachFromNaffle(_naffleId, _naffleTicketIds);
     }
 
     /**
