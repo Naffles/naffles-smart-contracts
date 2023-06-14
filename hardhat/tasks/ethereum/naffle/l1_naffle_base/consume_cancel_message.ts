@@ -6,9 +6,8 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
   .addParam("l1nafflecontractaddress", "The Ethereum Layer 1 (L1) address of the deployed Naffle Diamond contract.")
   .addParam("l2nafflecontractaddress", "The zkSync Layer 2 (L2) address of the deployed Naffle Diamond contract.")
   .addParam("l2transactionhash", "The hash of the l2 transaction where the message was sent.")
-  .addParam("winneraddress", "The address of the winner of the Naffle")
-  .addParam("naffleid", "The id of the naffle of which to get the winner message")
-  .addParam("l2messagehash", "The hash of the l2 message where the winner was set.")
+  .addParam("naffleid", "The id of the naffle of which to get the cancel message")
+  .addParam("l2messagehash", "The hash of the l2 message of the cancelled naffle.")
   .setAction(async (taskArgs, hre) => {
     const l1provider = new Provider(getInfuraURL(hre.network.name));
     const l2provider = new Provider(getRPCEndpoint(hre.network.name));
@@ -22,8 +21,8 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
     console.log("providedHash: ", providedHash)
 
     let message = hre.ethers.utils.defaultAbiCoder.encode(
-      ["string", "uint256", "address"],
-      ["setWinner", taskArgs.naffleid, taskArgs.winneraddress]
+      ["string", "uint256"],
+      ["cancel", taskArgs.naffleid]
     );
 
     const result=  await l2provider.getTransactionReceipt(taskArgs.l2transactionhash);
@@ -62,13 +61,11 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
     console.log("res: ", res);
     return
 
-
-
     const singers = await hre.ethers.getSigners();
     const signer = singers[0];
     // setting proof on l1
 
-    const consumeWinnerTranscation = await l1ContractInstance.connect(signer).consumeSetWinnerMessage(
+    const consumeWinnerTranscation = await l1ContractInstance.connect(signer).consumeCancelMessage(
       l1BatchNumber,
       proof.id,
       l1BatchTxIndex,
