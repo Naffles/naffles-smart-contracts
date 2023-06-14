@@ -25,8 +25,8 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
     /**
      * @inheritdoc IL2PaidTicketBase
      */
-    function refundAndBurnTicket(uint256 _naffleId, uint256 _naffleTicketId) external {
-        _refundAndBurnTicket(_naffleId, _naffleTicketId);
+    function refundAndBurnTickets(uint256 _naffleId, uint256[] _naffleTicketIds, address _owner) external {
+        _refundAndBurnTickets(_naffleId, _naffleTicketIds, _owner);
     }
 
     /**
