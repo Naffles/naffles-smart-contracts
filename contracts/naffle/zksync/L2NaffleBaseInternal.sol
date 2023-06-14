@@ -134,6 +134,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
+
         if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
             revert InvalidNaffleStatus(naffle.status);
         }
@@ -150,6 +151,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
                 _paidTicketIds,
                 _owner
             );
+            (bool success, ) = _owner.call{value: _paidTicketIds.length * naffle.ticketPriceInWei}("");
+            if (!success) {
+                revert UnableToSendFunds();
+            }
         }
     }
 

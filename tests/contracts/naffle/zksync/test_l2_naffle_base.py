@@ -648,3 +648,44 @@ def test_owner_cancel_naffle_invalid_type(
 
     with brownie.reverts(get_error_message("InvalidNaffleType", ["uint8"], [1])):
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
+
+
+def test_refund_tickets_invalid_naffle_id(
+    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
+    )
+
+    with brownie.reverts(get_error_message("InvalidNaffleId", ["uint256"], [2])):
+        l2_diamonds.naffle_admin_facet.adminCancelNaffle(2, from_admin)
+
+
+def test_refund_tickets_success(
+    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
+    )
+
+    old_balance = address.balance()
+
+    l2_diamonds.naffle_base_facet.useOpenEntryTickets(
+        [1], 1, from_address
+    )
+
+    l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
+
+    l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
+        NAFFLE_ID, [1], [1, 2], address.address, from_address
+    )
+
+    assert address.balance() == old_balance + (TICKET_PRICE * 2)

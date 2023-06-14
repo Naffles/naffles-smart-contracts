@@ -73,13 +73,11 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             return;
         }
 
-        uint256 totalRefund = 0;
-
         for (uint i = 0; i < length; ++i) {
             uint256 ticketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
 
             if (_owner != _ownerOf(ticketId)) {
-                revert NotTicketOwner(msg.sender);
+                revert NotTicketOwner(_owner);
             }
             _burn(ticketId);
 
@@ -91,13 +89,7 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             paidTicket.naffleId = 0;
             paidTicket.ticketIdOnNaffle = 0;
 
-            totalRefund += paidTicket.ticketPriceInWei;
             totalTicketIds[i] = ticketId;
-        }
-
-        (bool success, ) = _owner.call{value: totalRefund}("");
-        if (!success) {
-            revert RefundFailed();
         }
 
         emit PaidTicketsRefundedAndBurned(_owner, _naffleId, totalTicketIds, _naffleTicketIds);
