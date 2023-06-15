@@ -46,9 +46,9 @@ const _abi = [
         type: "uint256",
       },
       {
-        internalType: "uint256",
-        name: "_naffleTicketId",
-        type: "uint256",
+        internalType: "uint256[]",
+        name: "_naffleTicketIds",
+        type: "uint256[]",
       },
     ],
     name: "detachFromNaffle",

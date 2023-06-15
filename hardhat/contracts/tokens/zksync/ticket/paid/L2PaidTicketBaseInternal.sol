@@ -49,15 +49,16 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
     }
 
     /**
-     * @notice refunds a ticket and burns it.
+     * @notice refunds tickets and burns them.
      * @dev if the status of the naffle is not cancelled a NaffleNotCancelled error is thrown.
      * @dev if the ticket id is invalid an InvalidTicketId error is thrown.
      * @dev if the msg.sender is not the owner of the ticket a NotTicketOwner error is thrown.
      * @dev if the refund fails a RefundFailed error is thrown.
      * @param _naffleId the id of the naffle.
-     * @param _naffleTicketId the id of the ticket on the naffle.
+     * @param _naffleTicketIds the id of the ticket on the naffle.
+     * @param _owner the owner of the tickets.
      */
-    function _refundAndBurnTicket(uint256 _naffleId, uint256 _naffleTicketId) internal {
+    function _refundAndBurnTickets(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) internal {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
 
@@ -65,30 +66,33 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             revert NaffleNotCancelled(naffle.status);
         }
 
-        uint256 totalTicketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketId];
-        if (totalTicketId == 0) {
-            revert InvalidTicketId(_naffleTicketId);
+        uint256 length = _naffleTicketIds.length;
+        uint256[] memory totalTicketIds = new uint256[](length);
+
+        if (length == 0) {
+            return;
         }
 
-        delete l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketId];
-        NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[totalTicketId];
+        for (uint i = 0; i < length; ++i) {
+            uint256 ticketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
 
-        address owner = _ownerOf(totalTicketId);
-        if (owner != msg.sender) {
-            revert NotTicketOwner(msg.sender);
+            if (_owner != _ownerOf(ticketId)) {
+                revert NotTicketOwner(_owner);
+            }
+            _burn(ticketId);
+
+            delete l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
+            NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[ticketId];
+
+            // We reset the naffle id so we know this is refunded because we can't delete custom structs.
+            paidTicket.ticketPriceInWei = 0;
+            paidTicket.naffleId = 0;
+            paidTicket.ticketIdOnNaffle = 0;
+
+            totalTicketIds[i] = ticketId;
         }
 
-        (bool success, ) = owner.call{value: paidTicket.ticketPriceInWei}("");
-        if (!success) {
-            revert RefundFailed();
-        }
-
-        // We reset the naffle id so we know this is refunded because we can't delete custom structs.
-        paidTicket.naffleId = 0;
-        paidTicket.ticketIdOnNaffle = 0;
-        _burn(totalTicketId);
-
-        emit PaidTicketRefundedAndBurned(owner, _naffleId, totalTicketId, _naffleTicketId);
+        emit PaidTicketsRefundedAndBurned(_owner, _naffleId, totalTicketIds, _naffleTicketIds);
     }
 
     /**

@@ -42,6 +42,23 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     /**
      * @inheritdoc IL2NaffleBase
      */
+    function refundTicketsForNaffle(
+        uint256 _naffleId,
+        uint256[] memory _openEntryTicketIds,
+        uint256[] memory _paidTicketIds,
+        address _owner
+    ) external {
+        _refundTicketsForNaffle(
+            _naffleId,
+            _openEntryTicketIds,
+            _paidTicketIds,
+            _owner
+        );
+    }
+
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
     function useOpenEntryTickets(
         uint256[] memory _ticketIds,
         uint256 _naffleId

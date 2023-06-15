@@ -119,8 +119,8 @@ export interface L2PaidTicketViewInterface extends utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "PaidTicketRefundedAndBurned(address,uint256,uint256,uint256)": EventFragment;
     "PaidTicketsMinted(address,uint256[],uint256,uint256,uint256)": EventFragment;
+    "PaidTicketsRefundedAndBurned(address,uint256,uint256[],uint256[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -129,10 +129,10 @@ export interface L2PaidTicketViewInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "PaidTicketRefundedAndBurned"
-  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaidTicketsMinted"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "PaidTicketsRefundedAndBurned"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -163,20 +163,6 @@ export type ApprovalForAllEvent = TypedEvent<
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
-export interface PaidTicketRefundedAndBurnedEventObject {
-  owner: string;
-  naffleId: BigNumber;
-  ticketId: BigNumber;
-  ticketIdOnNaffle: BigNumber;
-}
-export type PaidTicketRefundedAndBurnedEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber],
-  PaidTicketRefundedAndBurnedEventObject
->;
-
-export type PaidTicketRefundedAndBurnedEventFilter =
-  TypedEventFilter<PaidTicketRefundedAndBurnedEvent>;
-
 export interface PaidTicketsMintedEventObject {
   owner: string;
   ticketIds: BigNumber[];
@@ -191,6 +177,20 @@ export type PaidTicketsMintedEvent = TypedEvent<
 
 export type PaidTicketsMintedEventFilter =
   TypedEventFilter<PaidTicketsMintedEvent>;
+
+export interface PaidTicketsRefundedAndBurnedEventObject {
+  owner: string;
+  naffleId: BigNumber;
+  ticketIds: BigNumber[];
+  ticketIdsOnNaffle: BigNumber[];
+}
+export type PaidTicketsRefundedAndBurnedEvent = TypedEvent<
+  [string, BigNumber, BigNumber[], BigNumber[]],
+  PaidTicketsRefundedAndBurnedEventObject
+>;
+
+export type PaidTicketsRefundedAndBurnedEventFilter =
+  TypedEventFilter<PaidTicketsRefundedAndBurnedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -363,19 +363,6 @@ export interface L2PaidTicketView extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "PaidTicketRefundedAndBurned(address,uint256,uint256,uint256)"(
-      owner?: PromiseOrValue<string> | null,
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      ticketIdOnNaffle?: null
-    ): PaidTicketRefundedAndBurnedEventFilter;
-    PaidTicketRefundedAndBurned(
-      owner?: PromiseOrValue<string> | null,
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      ticketIdOnNaffle?: null
-    ): PaidTicketRefundedAndBurnedEventFilter;
-
     "PaidTicketsMinted(address,uint256[],uint256,uint256,uint256)"(
       owner?: PromiseOrValue<string> | null,
       ticketIds?: null,
@@ -390,6 +377,19 @@ export interface L2PaidTicketView extends BaseContract {
       ticketPriceInWei?: null,
       startingTicketId?: null
     ): PaidTicketsMintedEventFilter;
+
+    "PaidTicketsRefundedAndBurned(address,uint256,uint256[],uint256[])"(
+      owner?: PromiseOrValue<string> | null,
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      ticketIdsOnNaffle?: null
+    ): PaidTicketsRefundedAndBurnedEventFilter;
+    PaidTicketsRefundedAndBurned(
+      owner?: PromiseOrValue<string> | null,
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      ticketIdsOnNaffle?: null
+    ): PaidTicketsRefundedAndBurnedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,

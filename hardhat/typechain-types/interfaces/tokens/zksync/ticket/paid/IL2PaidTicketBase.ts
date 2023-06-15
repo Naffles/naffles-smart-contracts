@@ -26,11 +26,11 @@ import type {
 export interface IL2PaidTicketBaseInterface extends utils.Interface {
   functions: {
     "mintTickets(address,uint256,uint256,uint256,uint256)": FunctionFragment;
-    "refundAndBurnTicket(uint256,uint256)": FunctionFragment;
+    "refundAndBurnTickets(uint256,uint256[],address)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "mintTickets" | "refundAndBurnTicket"
+    nameOrSignatureOrTopic: "mintTickets" | "refundAndBurnTickets"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -44,8 +44,12 @@ export interface IL2PaidTicketBaseInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "refundAndBurnTicket",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "refundAndBurnTickets",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<string>
+    ]
   ): string;
 
   decodeFunctionResult(
@@ -53,7 +57,7 @@ export interface IL2PaidTicketBaseInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "refundAndBurnTicket",
+    functionFragment: "refundAndBurnTickets",
     data: BytesLike
   ): Result;
 
@@ -96,9 +100,10 @@ export interface IL2PaidTicketBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    refundAndBurnTicket(
+    refundAndBurnTickets(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -112,9 +117,10 @@ export interface IL2PaidTicketBase extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  refundAndBurnTicket(
+  refundAndBurnTickets(
     _naffleId: PromiseOrValue<BigNumberish>,
-    _naffleTicketId: PromiseOrValue<BigNumberish>,
+    _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+    _owner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -128,9 +134,10 @@ export interface IL2PaidTicketBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    refundAndBurnTicket(
+    refundAndBurnTickets(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -147,9 +154,10 @@ export interface IL2PaidTicketBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    refundAndBurnTicket(
+    refundAndBurnTickets(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -164,9 +172,10 @@ export interface IL2PaidTicketBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    refundAndBurnTicket(
+    refundAndBurnTickets(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

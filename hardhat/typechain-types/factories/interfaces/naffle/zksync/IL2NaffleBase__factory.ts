@@ -148,6 +148,34 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_naffleId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_openEntryTicketIds",
+        type: "uint256[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_paidTicketIds",
+        type: "uint256[]",
+      },
+      {
+        internalType: "address",
+        name: "_owner",
+        type: "address",
+      },
+    ],
+    name: "refundTicketsForNaffle",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256[]",
         name: "_ticketIds",
         type: "uint256[]",

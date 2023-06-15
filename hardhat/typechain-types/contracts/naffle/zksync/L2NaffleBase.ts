@@ -74,6 +74,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     "hasRole(bytes32,address)": FunctionFragment;
     "ownerCancelNaffle(uint256)": FunctionFragment;
     "ownerDrawWinner(uint256)": FunctionFragment;
+    "refundTicketsForNaffle(uint256,uint256[],uint256[],address)": FunctionFragment;
     "renounceRole(bytes32)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "useOpenEntryTickets(uint256[],uint256)": FunctionFragment;
@@ -89,6 +90,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
       | "hasRole"
       | "ownerCancelNaffle"
       | "ownerDrawWinner"
+      | "refundTicketsForNaffle"
       | "renounceRole"
       | "revokeRole"
       | "useOpenEntryTickets"
@@ -127,6 +129,15 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "refundTicketsForNaffle",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceRole",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -157,6 +168,10 @@ export interface L2NaffleBaseInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "ownerDrawWinner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "refundTicketsForNaffle",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -379,6 +394,14 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    refundTicketsForNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+      _paidTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     renounceRole(
       role: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -437,6 +460,14 @@ export interface L2NaffleBase extends BaseContract {
 
   ownerDrawWinner(
     _naffleId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  refundTicketsForNaffle(
+    _naffleId: PromiseOrValue<BigNumberish>,
+    _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+    _paidTicketIds: PromiseOrValue<BigNumberish>[],
+    _owner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -500,6 +531,14 @@ export interface L2NaffleBase extends BaseContract {
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    refundTicketsForNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+      _paidTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceRole(
       role: PromiseOrValue<BytesLike>,
@@ -669,6 +708,14 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    refundTicketsForNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+      _paidTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     renounceRole(
       role: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -728,6 +775,14 @@ export interface L2NaffleBase extends BaseContract {
 
     ownerDrawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    refundTicketsForNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+      _paidTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

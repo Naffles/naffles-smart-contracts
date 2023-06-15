@@ -256,14 +256,14 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "ticketId",
-        type: "uint256",
+        internalType: "uint256[]",
+        name: "ticketIds",
+        type: "uint256[]",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "naffleTicketId",
+        name: "startingTicketId",
         type: "uint256",
       },
       {
@@ -273,7 +273,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "TicketDetachedFromNaffle",
+    name: "TicketsAttachedToNaffle",
     type: "event",
   },
   {
@@ -293,18 +293,12 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint256",
-        name: "startingTicketId",
-        type: "uint256",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
+        internalType: "uint256[]",
+        name: "naffleTicketId",
+        type: "uint256[]",
       },
     ],
-    name: "TicketsAttachedToNaffle",
+    name: "TicketsDetachedFromNaffle",
     type: "event",
   },
   {

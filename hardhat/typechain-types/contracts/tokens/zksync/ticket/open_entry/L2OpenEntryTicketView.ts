@@ -105,8 +105,8 @@ export interface L2OpenEntryTicketViewInterface extends utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
-    "TicketDetachedFromNaffle(uint256,uint256,uint256,address)": EventFragment;
     "TicketsAttachedToNaffle(uint256,uint256[],uint256,address)": EventFragment;
+    "TicketsDetachedFromNaffle(uint256,uint256[],uint256[])": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
@@ -115,8 +115,8 @@ export interface L2OpenEntryTicketViewInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TicketDetachedFromNaffle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TicketsAttachedToNaffle"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TicketsDetachedFromNaffle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -181,20 +181,6 @@ export type RoleRevokedEvent = TypedEvent<
 
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 
-export interface TicketDetachedFromNaffleEventObject {
-  naffleId: BigNumber;
-  ticketId: BigNumber;
-  naffleTicketId: BigNumber;
-  owner: string;
-}
-export type TicketDetachedFromNaffleEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, string],
-  TicketDetachedFromNaffleEventObject
->;
-
-export type TicketDetachedFromNaffleEventFilter =
-  TypedEventFilter<TicketDetachedFromNaffleEvent>;
-
 export interface TicketsAttachedToNaffleEventObject {
   naffleId: BigNumber;
   ticketIds: BigNumber[];
@@ -208,6 +194,19 @@ export type TicketsAttachedToNaffleEvent = TypedEvent<
 
 export type TicketsAttachedToNaffleEventFilter =
   TypedEventFilter<TicketsAttachedToNaffleEvent>;
+
+export interface TicketsDetachedFromNaffleEventObject {
+  naffleId: BigNumber;
+  ticketIds: BigNumber[];
+  naffleTicketId: BigNumber[];
+}
+export type TicketsDetachedFromNaffleEvent = TypedEvent<
+  [BigNumber, BigNumber[], BigNumber[]],
+  TicketsDetachedFromNaffleEventObject
+>;
+
+export type TicketsDetachedFromNaffleEventFilter =
+  TypedEventFilter<TicketsDetachedFromNaffleEvent>;
 
 export interface TransferEventObject {
   from: string;
@@ -358,19 +357,6 @@ export interface L2OpenEntryTicketView extends BaseContract {
       sender?: PromiseOrValue<string> | null
     ): RoleRevokedEventFilter;
 
-    "TicketDetachedFromNaffle(uint256,uint256,uint256,address)"(
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      naffleTicketId?: null,
-      owner?: PromiseOrValue<string> | null
-    ): TicketDetachedFromNaffleEventFilter;
-    TicketDetachedFromNaffle(
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      naffleTicketId?: null,
-      owner?: PromiseOrValue<string> | null
-    ): TicketDetachedFromNaffleEventFilter;
-
     "TicketsAttachedToNaffle(uint256,uint256[],uint256,address)"(
       naffleId?: PromiseOrValue<BigNumberish> | null,
       ticketIds?: null,
@@ -383,6 +369,17 @@ export interface L2OpenEntryTicketView extends BaseContract {
       startingTicketId?: null,
       owner?: PromiseOrValue<string> | null
     ): TicketsAttachedToNaffleEventFilter;
+
+    "TicketsDetachedFromNaffle(uint256,uint256[],uint256[])"(
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      naffleTicketId?: null
+    ): TicketsDetachedFromNaffleEventFilter;
+    TicketsDetachedFromNaffle(
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      naffleTicketId?: null
+    ): TicketsDetachedFromNaffleEventFilter;
 
     "Transfer(address,address,uint256)"(
       from?: PromiseOrValue<string> | null,

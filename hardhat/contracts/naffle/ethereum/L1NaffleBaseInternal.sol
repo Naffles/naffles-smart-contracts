@@ -190,7 +190,14 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
      */
     function _cancelNaffle(uint256 _naffleId) internal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
-        layout.naffles[_naffleId].cancelled = true;
+        NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
+
+        naffle.cancelled = true;
+        if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
+            IERC721(naffle.tokenAddress).transferFrom(address(this), naffle.owner, naffle.nftId);
+        } else if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
+            IERC1155(naffle.tokenAddress).safeTransferFrom(address(this), naffle.owner, naffle.nftId, 1, bytes(""));
+        }
 
         emit L1NaffleCancelled(_naffleId);
     }

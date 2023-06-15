@@ -116,6 +116,45 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     /**
+     * @notice refund and burns tickets for a naffle.
+     * @param _naffleId id of the naffle.
+     * @param _openEntryTicketIds ids of the open entry tickets.
+     * @param _paidTicketIds ids of the paid tickets.
+     * @param _owner owner of the tickets.
+     */
+    function _refundTicketsForNaffle(
+        uint256 _naffleId,
+        uint256[] memory _openEntryTicketIds,
+        uint256[] memory _paidTicketIds,
+        address _owner
+    ) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
+        if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+
+        if (_openEntryTicketIds.length > 0) {
+            IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).detachFromNaffle(
+                _naffleId,
+                _openEntryTicketIds
+            );
+        }
+        if (_paidTicketIds.length > 0) {
+            IL2PaidTicketBase(layout.paidTicketContractAddress).refundAndBurnTickets(
+                _naffleId,
+                _paidTicketIds,
+                _owner
+            );
+            (bool success, ) = _owner.call{value: _paidTicketIds.length * naffle.ticketPriceInWei}("");
+            if (!success) {
+                revert UnableToSendFunds();
+            }
+        }
+    }
+
+    /**
      * @notice Use open entry tickets for a naffle. A call is made to the open entry ticket contract to attach the tickets to the naffle.
      * @dev If an invalid naffle id is passed, an InvalidNaffleId error is thrown.
      * @dev If the naffle is in an invalid state, an InvalidNaffleStatus error is thrown.

@@ -40,7 +40,7 @@ export interface L2PaidTicketBaseInterface extends utils.Interface {
     "mintTickets(address,uint256,uint256,uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
-    "refundAndBurnTicket(uint256,uint256)": FunctionFragment;
+    "refundAndBurnTickets(uint256,uint256[],address)": FunctionFragment;
     "renounceRole(bytes32)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
@@ -67,7 +67,7 @@ export interface L2PaidTicketBaseInterface extends utils.Interface {
       | "mintTickets"
       | "name"
       | "ownerOf"
-      | "refundAndBurnTicket"
+      | "refundAndBurnTickets"
       | "renounceRole"
       | "revokeRole"
       | "safeTransferFrom(address,address,uint256)"
@@ -126,8 +126,12 @@ export interface L2PaidTicketBaseInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "refundAndBurnTicket",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "refundAndBurnTickets",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -211,7 +215,7 @@ export interface L2PaidTicketBaseInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "refundAndBurnTicket",
+    functionFragment: "refundAndBurnTickets",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -257,8 +261,8 @@ export interface L2PaidTicketBaseInterface extends utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "PaidTicketRefundedAndBurned(address,uint256,uint256,uint256)": EventFragment;
     "PaidTicketsMinted(address,uint256[],uint256,uint256,uint256)": EventFragment;
+    "PaidTicketsRefundedAndBurned(address,uint256,uint256[],uint256[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -267,10 +271,10 @@ export interface L2PaidTicketBaseInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "PaidTicketRefundedAndBurned"
-  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaidTicketsMinted"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "PaidTicketsRefundedAndBurned"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -301,20 +305,6 @@ export type ApprovalForAllEvent = TypedEvent<
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
-export interface PaidTicketRefundedAndBurnedEventObject {
-  owner: string;
-  naffleId: BigNumber;
-  ticketId: BigNumber;
-  ticketIdOnNaffle: BigNumber;
-}
-export type PaidTicketRefundedAndBurnedEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber],
-  PaidTicketRefundedAndBurnedEventObject
->;
-
-export type PaidTicketRefundedAndBurnedEventFilter =
-  TypedEventFilter<PaidTicketRefundedAndBurnedEvent>;
-
 export interface PaidTicketsMintedEventObject {
   owner: string;
   ticketIds: BigNumber[];
@@ -329,6 +319,20 @@ export type PaidTicketsMintedEvent = TypedEvent<
 
 export type PaidTicketsMintedEventFilter =
   TypedEventFilter<PaidTicketsMintedEvent>;
+
+export interface PaidTicketsRefundedAndBurnedEventObject {
+  owner: string;
+  naffleId: BigNumber;
+  ticketIds: BigNumber[];
+  ticketIdsOnNaffle: BigNumber[];
+}
+export type PaidTicketsRefundedAndBurnedEvent = TypedEvent<
+  [string, BigNumber, BigNumber[], BigNumber[]],
+  PaidTicketsRefundedAndBurnedEventObject
+>;
+
+export type PaidTicketsRefundedAndBurnedEventFilter =
+  TypedEventFilter<PaidTicketsRefundedAndBurnedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -461,9 +465,10 @@ export interface L2PaidTicketBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    refundAndBurnTicket(
+    refundAndBurnTickets(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -587,9 +592,10 @@ export interface L2PaidTicketBase extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  refundAndBurnTicket(
+  refundAndBurnTickets(
     _naffleId: PromiseOrValue<BigNumberish>,
-    _naffleTicketId: PromiseOrValue<BigNumberish>,
+    _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+    _owner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -713,9 +719,10 @@ export interface L2PaidTicketBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    refundAndBurnTicket(
+    refundAndBurnTickets(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -807,19 +814,6 @@ export interface L2PaidTicketBase extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
-    "PaidTicketRefundedAndBurned(address,uint256,uint256,uint256)"(
-      owner?: PromiseOrValue<string> | null,
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      ticketIdOnNaffle?: null
-    ): PaidTicketRefundedAndBurnedEventFilter;
-    PaidTicketRefundedAndBurned(
-      owner?: PromiseOrValue<string> | null,
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      ticketIdOnNaffle?: null
-    ): PaidTicketRefundedAndBurnedEventFilter;
-
     "PaidTicketsMinted(address,uint256[],uint256,uint256,uint256)"(
       owner?: PromiseOrValue<string> | null,
       ticketIds?: null,
@@ -834,6 +828,19 @@ export interface L2PaidTicketBase extends BaseContract {
       ticketPriceInWei?: null,
       startingTicketId?: null
     ): PaidTicketsMintedEventFilter;
+
+    "PaidTicketsRefundedAndBurned(address,uint256,uint256[],uint256[])"(
+      owner?: PromiseOrValue<string> | null,
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      ticketIdsOnNaffle?: null
+    ): PaidTicketsRefundedAndBurnedEventFilter;
+    PaidTicketsRefundedAndBurned(
+      owner?: PromiseOrValue<string> | null,
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      ticketIdsOnNaffle?: null
+    ): PaidTicketsRefundedAndBurnedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -936,9 +943,10 @@ export interface L2PaidTicketBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    refundAndBurnTicket(
+    refundAndBurnTickets(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1063,9 +1071,10 @@ export interface L2PaidTicketBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    refundAndBurnTicket(
+    refundAndBurnTickets(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

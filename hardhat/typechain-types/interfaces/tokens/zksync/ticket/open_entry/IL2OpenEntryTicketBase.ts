@@ -26,7 +26,7 @@ import type {
 export interface IL2OpenEntryTicketBaseInterface extends utils.Interface {
   functions: {
     "attachToNaffle(uint256,uint256[],uint256,address)": FunctionFragment;
-    "detachFromNaffle(uint256,uint256)": FunctionFragment;
+    "detachFromNaffle(uint256,uint256[])": FunctionFragment;
   };
 
   getFunction(
@@ -44,7 +44,7 @@ export interface IL2OpenEntryTicketBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "detachFromNaffle",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>[]]
   ): string;
 
   decodeFunctionResult(
@@ -96,7 +96,7 @@ export interface IL2OpenEntryTicketBase extends BaseContract {
 
     detachFromNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -111,7 +111,7 @@ export interface IL2OpenEntryTicketBase extends BaseContract {
 
   detachFromNaffle(
     _naffleId: PromiseOrValue<BigNumberish>,
-    _naffleTicketId: PromiseOrValue<BigNumberish>,
+    _naffleTicketIds: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -126,7 +126,7 @@ export interface IL2OpenEntryTicketBase extends BaseContract {
 
     detachFromNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -144,7 +144,7 @@ export interface IL2OpenEntryTicketBase extends BaseContract {
 
     detachFromNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -160,7 +160,7 @@ export interface IL2OpenEntryTicketBase extends BaseContract {
 
     detachFromNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
-      _naffleTicketId: PromiseOrValue<BigNumberish>,
+      _naffleTicketIds: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

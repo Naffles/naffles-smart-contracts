@@ -22,29 +22,15 @@ export interface IL2PaidTicketBaseInternalInterface extends utils.Interface {
   functions: {};
 
   events: {
-    "PaidTicketRefundedAndBurned(address,uint256,uint256,uint256)": EventFragment;
     "PaidTicketsMinted(address,uint256[],uint256,uint256,uint256)": EventFragment;
+    "PaidTicketsRefundedAndBurned(address,uint256,uint256[],uint256[])": EventFragment;
   };
 
-  getEvent(
-    nameOrSignatureOrTopic: "PaidTicketRefundedAndBurned"
-  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaidTicketsMinted"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "PaidTicketsRefundedAndBurned"
+  ): EventFragment;
 }
-
-export interface PaidTicketRefundedAndBurnedEventObject {
-  owner: string;
-  naffleId: BigNumber;
-  ticketId: BigNumber;
-  ticketIdOnNaffle: BigNumber;
-}
-export type PaidTicketRefundedAndBurnedEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber],
-  PaidTicketRefundedAndBurnedEventObject
->;
-
-export type PaidTicketRefundedAndBurnedEventFilter =
-  TypedEventFilter<PaidTicketRefundedAndBurnedEvent>;
 
 export interface PaidTicketsMintedEventObject {
   owner: string;
@@ -60,6 +46,20 @@ export type PaidTicketsMintedEvent = TypedEvent<
 
 export type PaidTicketsMintedEventFilter =
   TypedEventFilter<PaidTicketsMintedEvent>;
+
+export interface PaidTicketsRefundedAndBurnedEventObject {
+  owner: string;
+  naffleId: BigNumber;
+  ticketIds: BigNumber[];
+  ticketIdsOnNaffle: BigNumber[];
+}
+export type PaidTicketsRefundedAndBurnedEvent = TypedEvent<
+  [string, BigNumber, BigNumber[], BigNumber[]],
+  PaidTicketsRefundedAndBurnedEventObject
+>;
+
+export type PaidTicketsRefundedAndBurnedEventFilter =
+  TypedEventFilter<PaidTicketsRefundedAndBurnedEvent>;
 
 export interface IL2PaidTicketBaseInternal extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -92,19 +92,6 @@ export interface IL2PaidTicketBaseInternal extends BaseContract {
   callStatic: {};
 
   filters: {
-    "PaidTicketRefundedAndBurned(address,uint256,uint256,uint256)"(
-      owner?: PromiseOrValue<string> | null,
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      ticketIdOnNaffle?: null
-    ): PaidTicketRefundedAndBurnedEventFilter;
-    PaidTicketRefundedAndBurned(
-      owner?: PromiseOrValue<string> | null,
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      ticketIdOnNaffle?: null
-    ): PaidTicketRefundedAndBurnedEventFilter;
-
     "PaidTicketsMinted(address,uint256[],uint256,uint256,uint256)"(
       owner?: PromiseOrValue<string> | null,
       ticketIds?: null,
@@ -119,6 +106,19 @@ export interface IL2PaidTicketBaseInternal extends BaseContract {
       ticketPriceInWei?: null,
       startingTicketId?: null
     ): PaidTicketsMintedEventFilter;
+
+    "PaidTicketsRefundedAndBurned(address,uint256,uint256[],uint256[])"(
+      owner?: PromiseOrValue<string> | null,
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      ticketIdsOnNaffle?: null
+    ): PaidTicketsRefundedAndBurnedEventFilter;
+    PaidTicketsRefundedAndBurned(
+      owner?: PromiseOrValue<string> | null,
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      ticketIdsOnNaffle?: null
+    ): PaidTicketsRefundedAndBurnedEventFilter;
   };
 
   estimateGas: {};

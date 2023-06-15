@@ -63,37 +63,6 @@ const _abi = [
         type: "address",
       },
       {
-        indexed: true,
-        internalType: "uint256",
-        name: "naffleId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "ticketId",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "ticketIdOnNaffle",
-        type: "uint256",
-      },
-    ],
-    name: "PaidTicketRefundedAndBurned",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
         indexed: false,
         internalType: "uint256[]",
         name: "ticketIds",
@@ -119,6 +88,37 @@ const _abi = [
       },
     ],
     name: "PaidTicketsMinted",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "naffleId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "ticketIds",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "ticketIdsOnNaffle",
+        type: "uint256[]",
+      },
+    ],
+    name: "PaidTicketsRefundedAndBurned",
     type: "event",
   },
 ] as const;

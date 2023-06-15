@@ -23,27 +23,13 @@ export interface IL2OpenEntryTicketBaseInternalInterface
   functions: {};
 
   events: {
-    "TicketDetachedFromNaffle(uint256,uint256,uint256,address)": EventFragment;
     "TicketsAttachedToNaffle(uint256,uint256[],uint256,address)": EventFragment;
+    "TicketsDetachedFromNaffle(uint256,uint256[],uint256[])": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "TicketDetachedFromNaffle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TicketsAttachedToNaffle"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TicketsDetachedFromNaffle"): EventFragment;
 }
-
-export interface TicketDetachedFromNaffleEventObject {
-  naffleId: BigNumber;
-  ticketId: BigNumber;
-  naffleTicketId: BigNumber;
-  owner: string;
-}
-export type TicketDetachedFromNaffleEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, string],
-  TicketDetachedFromNaffleEventObject
->;
-
-export type TicketDetachedFromNaffleEventFilter =
-  TypedEventFilter<TicketDetachedFromNaffleEvent>;
 
 export interface TicketsAttachedToNaffleEventObject {
   naffleId: BigNumber;
@@ -58,6 +44,19 @@ export type TicketsAttachedToNaffleEvent = TypedEvent<
 
 export type TicketsAttachedToNaffleEventFilter =
   TypedEventFilter<TicketsAttachedToNaffleEvent>;
+
+export interface TicketsDetachedFromNaffleEventObject {
+  naffleId: BigNumber;
+  ticketIds: BigNumber[];
+  naffleTicketId: BigNumber[];
+}
+export type TicketsDetachedFromNaffleEvent = TypedEvent<
+  [BigNumber, BigNumber[], BigNumber[]],
+  TicketsDetachedFromNaffleEventObject
+>;
+
+export type TicketsDetachedFromNaffleEventFilter =
+  TypedEventFilter<TicketsDetachedFromNaffleEvent>;
 
 export interface IL2OpenEntryTicketBaseInternal extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -90,19 +89,6 @@ export interface IL2OpenEntryTicketBaseInternal extends BaseContract {
   callStatic: {};
 
   filters: {
-    "TicketDetachedFromNaffle(uint256,uint256,uint256,address)"(
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      naffleTicketId?: null,
-      owner?: PromiseOrValue<string> | null
-    ): TicketDetachedFromNaffleEventFilter;
-    TicketDetachedFromNaffle(
-      naffleId?: PromiseOrValue<BigNumberish> | null,
-      ticketId?: null,
-      naffleTicketId?: null,
-      owner?: PromiseOrValue<string> | null
-    ): TicketDetachedFromNaffleEventFilter;
-
     "TicketsAttachedToNaffle(uint256,uint256[],uint256,address)"(
       naffleId?: PromiseOrValue<BigNumberish> | null,
       ticketIds?: null,
@@ -115,6 +101,17 @@ export interface IL2OpenEntryTicketBaseInternal extends BaseContract {
       startingTicketId?: null,
       owner?: PromiseOrValue<string> | null
     ): TicketsAttachedToNaffleEventFilter;
+
+    "TicketsDetachedFromNaffle(uint256,uint256[],uint256[])"(
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      naffleTicketId?: null
+    ): TicketsDetachedFromNaffleEventFilter;
+    TicketsDetachedFromNaffle(
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      ticketIds?: null,
+      naffleTicketId?: null
+    ): TicketsDetachedFromNaffleEventFilter;
   };
 
   estimateGas: {};

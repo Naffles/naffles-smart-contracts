@@ -67,6 +67,7 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
     "drawWinner(uint256)": FunctionFragment;
     "ownerCancelNaffle(uint256)": FunctionFragment;
     "ownerDrawWinner(uint256)": FunctionFragment;
+    "refundTicketsForNaffle(uint256,uint256[],uint256[],address)": FunctionFragment;
     "useOpenEntryTickets(uint256[],uint256)": FunctionFragment;
   };
 
@@ -77,6 +78,7 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
       | "drawWinner"
       | "ownerCancelNaffle"
       | "ownerDrawWinner"
+      | "refundTicketsForNaffle"
       | "useOpenEntryTickets"
   ): FunctionFragment;
 
@@ -101,6 +103,15 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "refundTicketsForNaffle",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "useOpenEntryTickets",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>]
   ): string;
@@ -117,6 +128,10 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "ownerDrawWinner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "refundTicketsForNaffle",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -180,6 +195,14 @@ export interface IL2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    refundTicketsForNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+      _paidTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     useOpenEntryTickets(
       _ticketIds: PromiseOrValue<BigNumberish>[],
       _naffleId: PromiseOrValue<BigNumberish>,
@@ -210,6 +233,14 @@ export interface IL2NaffleBase extends BaseContract {
 
   ownerDrawWinner(
     _naffleId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  refundTicketsForNaffle(
+    _naffleId: PromiseOrValue<BigNumberish>,
+    _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+    _paidTicketIds: PromiseOrValue<BigNumberish>[],
+    _owner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -245,6 +276,14 @@ export interface IL2NaffleBase extends BaseContract {
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    refundTicketsForNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+      _paidTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     useOpenEntryTickets(
       _ticketIds: PromiseOrValue<BigNumberish>[],
@@ -282,6 +321,14 @@ export interface IL2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    refundTicketsForNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+      _paidTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     useOpenEntryTickets(
       _ticketIds: PromiseOrValue<BigNumberish>[],
       _naffleId: PromiseOrValue<BigNumberish>,
@@ -313,6 +360,14 @@ export interface IL2NaffleBase extends BaseContract {
 
     ownerDrawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    refundTicketsForNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
+      _paidTicketIds: PromiseOrValue<BigNumberish>[],
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
