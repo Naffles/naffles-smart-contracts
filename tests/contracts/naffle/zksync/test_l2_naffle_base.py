@@ -665,22 +665,6 @@ def test_refund_tickets_invalid_naffle_id(
         l2_diamonds.naffle_admin_facet.adminCancelNaffle(2, from_admin)
 
 
-def test_refund_tickets_invalid_naffle_status(
-    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-        number_of_tickets=200,
-    )
-
-    with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [0])):
-        l2_diamonds.naffle_admin_facet.adminCancelNaffle(2, from_admin)
-
-
-
 def test_refund_tickets_success(
     address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
 ):

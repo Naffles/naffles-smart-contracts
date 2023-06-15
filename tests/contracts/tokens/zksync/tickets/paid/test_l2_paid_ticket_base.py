@@ -1,4 +1,5 @@
 import brownie
+from brownie import accounts
 
 from scripts.util import get_error_message
 from tests.contracts.tokens.zksync.tickets.paid.test_l2_paid_ticket_diamond import (
@@ -86,8 +87,10 @@ def test_refund_and_burn_tickets_success(
     )
 
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
+
     l2_diamonds.paid_base_facet.refundAndBurnTickets(
-        NAFFLE_ID, [1, 2], address.address, from_address
+        NAFFLE_ID, [1, 2], address.address,
+        {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
     )
 
     ticket = l2_diamonds.paid_view_facet.getTicketById(1)
@@ -110,11 +113,11 @@ def test_refund_and_burn_tickets_success_not_owner(
         number_of_tickets=200,
     )
     ticket_id_on_naffle = 1
-
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
     with brownie.reverts(get_error_message("NotTicketOwner", ["address"], [admin.address])):
         l2_diamonds.paid_base_facet.refundAndBurnTickets(
-            NAFFLE_ID, [ticket_id_on_naffle], admin, from_address
+            NAFFLE_ID, [ticket_id_on_naffle], admin,
+            {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
         )
 
 
@@ -132,7 +135,8 @@ def test_refund_and_burn_tickets_naffle_not_cancelled(
 
     with brownie.reverts(get_error_message("NaffleNotCancelled", ["uint8"], [0])):
         l2_diamonds.paid_base_facet.refundAndBurnTickets(
-            NAFFLE_ID, [ticket_id_on_naffle], admin, from_address
+            NAFFLE_ID, [ticket_id_on_naffle], admin,
+            {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
         )
 
 
