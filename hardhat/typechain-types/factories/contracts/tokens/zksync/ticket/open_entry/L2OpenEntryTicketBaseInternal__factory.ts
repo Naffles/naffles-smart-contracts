@@ -294,7 +294,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256[]",
-        name: "naffleTicketId",
+        name: "ticketIdsOnNaffle",
         type: "uint256[]",
       },
     ],

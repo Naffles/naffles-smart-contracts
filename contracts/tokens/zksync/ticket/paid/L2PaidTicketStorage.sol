@@ -14,6 +14,7 @@ library L2PaidTicketStorage {
         mapping(uint256 => mapping(uint256 => uint256)) naffleIdNaffleTicketIdTicketId;
         // ticket id => paid ticket
         mapping(uint256 => NaffleTypes.PaidTicket) paidTickets;
+        uint256 totalMinted;
     }
 
     function layout() internal pure returns (Layout storage s) {

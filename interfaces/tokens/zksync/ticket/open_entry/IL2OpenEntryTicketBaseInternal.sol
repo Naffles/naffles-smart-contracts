@@ -56,7 +56,7 @@ interface IL2OpenEntryTicketBaseInternal {
      * @notice emitted when open entry tickets are detached from a naffle.
      * @param naffleId id of the naffle.
      * @param ticketIds id of the ticket.
-     * @param naffleTicketId the id of the ticket on the naffle.
+     * @param ticketIdsOnNaffle the id of the ticket on the naffle.
      */
-    event TicketsDetachedFromNaffle(uint256 indexed naffleId, uint256[] ticketIds, uint256[] naffleTicketId);
+    event TicketsDetachedFromNaffle(uint256 indexed naffleId, uint256[] ticketIds, uint256[] ticketIdsOnNaffle);
 }

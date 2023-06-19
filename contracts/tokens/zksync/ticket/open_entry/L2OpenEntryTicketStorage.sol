@@ -15,6 +15,7 @@ library L2OpenEntryTicketStorage {
         mapping(uint256 => uint256) ticketIdNaffleTicketId;
         // ticket id => open entry ticket
         mapping(uint256 => NaffleTypes.OpenEntryTicket) openEntryTickets;
+        uint256 totalMinted;
     }
 
     function layout() internal pure returns (Layout storage s) {

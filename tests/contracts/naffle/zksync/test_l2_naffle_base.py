@@ -689,3 +689,57 @@ def test_refund_tickets_success(
     )
 
     assert address.balance() == old_balance + (TICKET_PRICE * 2)
+
+
+def test_cancel_refund_and_create_refund(
+    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
+    )
+    l2_diamonds.open_entry_admin_facet.adminMint(address, 3, from_admin)
+
+    l2_diamonds.naffle_base_facet.useOpenEntryTickets(
+        [1, 2], 1, from_address
+    )
+    l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
+
+    l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
+        NAFFLE_ID, [1,2], [1], address.address, from_address
+    )
+
+    l2_diamonds.naffle_base_facet.createNaffle(
+        (
+            deployed_erc721a_mock.address,
+            address,
+            NAFFLE_ID + 1,
+            NFT_ID + 1,
+            200,
+            TICKET_PRICE,
+            get_end_time(),
+            0,
+            ERC721,
+        ),
+        from_admin,
+    )
+
+    l2_diamonds.naffle_base_facet.buyTickets(2, 2, {"from": address, "value": TICKET_PRICE * 2})
+
+    l2_diamonds.naffle_base_facet.useOpenEntryTickets(
+        [1, 2], 2, from_address
+    )
+
+    l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
+        NAFFLE_ID, [], [2], address.address, from_address
+    )
+
+    l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID + 1, from_admin)
+    l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
+        NAFFLE_ID + 1, [1, 2], [1, 2], address.address, from_address)
+
+
+    

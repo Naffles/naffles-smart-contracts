@@ -51,9 +51,9 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      * @dev if the ticket is not found a InvalidTicketId error is thrown.
      * @dev if the owner of the ticket is not the msg.sender a NotOwnerOfTicket error is thrown.
      * @param _naffleId the id of the naffle.
-     * @param _naffleTicketIds the id of the ticket on the naffle.
+     * @param _ticketIdsOnNaffle the id of the ticket on the naffle.
      */
-    function _detachFromNaffle(uint256 _naffleId, uint256[] memory _naffleTicketIds) internal {
+    function _detachFromNaffle(uint256 _naffleId, uint256[] memory _ticketIdsOnNaffle) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
 
@@ -61,16 +61,16 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
             revert NaffleNotCancelled(naffle.status);
         }
 
-        uint256 length = _naffleTicketIds.length;
+        uint256 length = _ticketIdsOnNaffle.length;
         uint256[] memory totalTicketIds = new uint256[](length);
 
 
         for (uint i = 0; i < length; ++i) {
-            uint256 ticketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_naffleTicketIds[i]];
+            uint256 ticketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketIdsOnNaffle[i]];
             NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[ticketId];
 
             if (ticketId == 0) {
-                revert InvalidTicketId(_naffleTicketIds[i]);
+                revert InvalidTicketId(_ticketIdsOnNaffle[i]);
             }
 
             ticket.naffleId = 0;
@@ -78,7 +78,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
             totalTicketIds[i] = ticketId;
         }
 
-        emit TicketsDetachedFromNaffle(_naffleId, totalTicketIds, _naffleTicketIds);
+        emit TicketsDetachedFromNaffle(_naffleId, totalTicketIds, _ticketIdsOnNaffle);
     }
 
     /**
@@ -142,11 +142,12 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      * @param _amount the amount of tickets to mint.
      */
     function _adminMint(address _to, uint256 _amount) internal {
+        L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         for (uint256 i = 0; i < _amount; i++) {
-            uint256 ticketId = _totalSupply() + 1;
-            _mint(_to, ticketId);
+            l.totalMinted++;
+            _mint(_to, l.totalMinted);
             NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0, false);
-            L2OpenEntryTicketStorage.layout().openEntryTickets[ticketId] = ticket;
+            L2OpenEntryTicketStorage.layout().openEntryTickets[l.totalMinted] = ticket;
         }
     }
 }

@@ -37,7 +37,8 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
                 naffleId: _naffleId,
                 winningTicket: false
             });
-            totalTicketId = _totalSupply() + 1;
+            l.totalMinted++;
+            totalTicketId = l.totalMinted;
             _mint(_to, totalTicketId);
             l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle] = totalTicketId;
             l.paidTickets[totalTicketId] = paidTicket;

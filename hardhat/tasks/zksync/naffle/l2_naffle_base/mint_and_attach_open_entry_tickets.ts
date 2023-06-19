@@ -9,6 +9,7 @@ task("mint-and-attach-open-entry-tickets", "Creates naffle on l2 as test")
   .addParam("naffleid", "The ID of the Naffle event you wish to attach tickets to.")
   .setAction(async (taskArgs, hre) => {
     const l2provider = new Provider(getRPCEndpoint(hre.network.name));
+    const adminWalletL2 = new Wallet(getPrivateKey(), l2provider);
     const walletL2 = new Wallet(getPrivateKey(true), l2provider);
 
     const contractBaseFactory = await hre.ethers.getContractFactory("L2NaffleBase");
@@ -18,7 +19,7 @@ task("mint-and-attach-open-entry-tickets", "Creates naffle on l2 as test")
     const ticketAdminInstance= contractViewFactory.attach(taskArgs.openentryticketcontractaddress);
 
     console.log("minting tickets..")
-    const mintTicketsTranscation = await ticketAdminInstance.connect(walletL2).adminMint(
+    const mintTicketsTranscation = await ticketAdminInstance.connect(adminWalletL2).adminMint(
       walletL2.address,
       parseInt(taskArgs.amount)
     )

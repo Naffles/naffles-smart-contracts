@@ -198,7 +198,7 @@ export type TicketsAttachedToNaffleEventFilter =
 export interface TicketsDetachedFromNaffleEventObject {
   naffleId: BigNumber;
   ticketIds: BigNumber[];
-  naffleTicketId: BigNumber[];
+  ticketIdsOnNaffle: BigNumber[];
 }
 export type TicketsDetachedFromNaffleEvent = TypedEvent<
   [BigNumber, BigNumber[], BigNumber[]],
@@ -373,12 +373,12 @@ export interface L2OpenEntryTicketView extends BaseContract {
     "TicketsDetachedFromNaffle(uint256,uint256[],uint256[])"(
       naffleId?: PromiseOrValue<BigNumberish> | null,
       ticketIds?: null,
-      naffleTicketId?: null
+      ticketIdsOnNaffle?: null
     ): TicketsDetachedFromNaffleEventFilter;
     TicketsDetachedFromNaffle(
       naffleId?: PromiseOrValue<BigNumberish> | null,
       ticketIds?: null,
-      naffleTicketId?: null
+      ticketIdsOnNaffle?: null
     ): TicketsDetachedFromNaffleEventFilter;
 
     "Transfer(address,address,uint256)"(
