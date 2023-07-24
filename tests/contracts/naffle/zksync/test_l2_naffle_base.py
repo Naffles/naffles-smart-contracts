@@ -10,7 +10,7 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
 from tests.test_helper import (
     DEFAULT_END_DATE,
     ERC721,
-    FREE_TICKET_RATIO,
+    OPEN_ENTRY_TICKET_RATIO,
     NAFFLE_ID,
     NFT_ID,
     PAID_TICKET_SPOTS,
@@ -117,7 +117,7 @@ def test_create_naffle(
     )
 
     naffle = view_facet.getNaffleById(NAFFLE_ID)
-    expected_free_ticket_spots = 10
+    expected_open_entry_ticket_spots = 10
     expected_number_of_tickets_bought = 0
     expected_naffle_status = 0  # active
     expected_winning_ticket_type = 0  # none
@@ -129,7 +129,7 @@ def test_create_naffle(
         NAFFLE_ID,
         NFT_ID,
         1000,
-        expected_free_ticket_spots,
+        expected_open_entry_ticket_spots,
         expected_number_of_tickets_bought,
         expected_number_of_tickets_bought,
         TICKET_PRICE,

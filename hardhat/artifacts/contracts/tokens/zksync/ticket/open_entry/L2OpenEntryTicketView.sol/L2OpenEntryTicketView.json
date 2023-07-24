@@ -1,0 +1,431 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "L2OpenEntryTicketView",
+  "sourceName": "contracts/tokens/zksync/ticket/open_entry/L2OpenEntryTicketView.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "ERC721Base__BalanceQueryZeroAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC721Base__ERC721ReceiverNotImplemented",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC721Base__InvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC721Base__MintToZeroAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC721Base__NonExistentToken",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC721Base__NotOwnerOrApproved",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC721Base__NotTokenOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC721Base__SelfApproval",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC721Base__TokenAlreadyMinted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ERC721Base__TransferToZeroAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "EnumerableMap__NonExistentKey",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "ticketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "InvalidTicketId",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum NaffleTypes.NaffleStatus",
+          "name": "status",
+          "type": "uint8"
+        }
+      ],
+      "name": "NaffleNotCancelled",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotAllowed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "ticketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "NotOwnerOfTicket",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "NotTicketOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "ticketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "TicketAlreadyUsed",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "approved",
+          "type": "bool"
+        }
+      ],
+      "name": "ApprovalForAll",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "previousAdminRole",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "newAdminRole",
+          "type": "bytes32"
+        }
+      ],
+      "name": "RoleAdminChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleGranted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleRevoked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "naffleId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "ticketIds",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "startingTicketId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "TicketsAttachedToNaffle",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "naffleId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "ticketIds",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "ticketIdsOnNaffle",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "TicketsDetachedFromNaffle",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "getAdminRole",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getL2NaffleContractAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_ticketId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getOpenEntryTicketById",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "naffleId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "ticketIdOnNaffle",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "winningTicket",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct NaffleTypes.OpenEntryTicket",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_naffleId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_ticketIdOnNaffle",
+          "type": "uint256"
+        }
+      ],
+      "name": "getOwnerOfNaffleTicketId",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalSupply",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5061046c806100206000396000f3fe608060405234801561001057600080fd5b50600436106100675760003560e01c806395c95a9d1161005057806395c95a9d146100b1578063b3ecf236146100e8578063c4e41b22146100f957600080fd5b80630ec01a671461006c5780636b9dc11a1461009e575b600080fd5b610074610101565b60405173ffffffffffffffffffffffffffffffffffffffff90911681526020015b60405180910390f35b6100746100ac3660046103cc565b610146565b6100c46100bf3660046103ee565b610159565b60408051825181526020808401519082015291810151151590820152606001610095565b60005b604051908152602001610095565b6100eb61018e565b60006101417f1711c63114197c394f54d5497ead4a5b8cd22ec97e5359f1583e739cfb54a5f75473ffffffffffffffffffffffffffffffffffffffff1690565b905090565b60006101528383610198565b9392505050565b61017f604051806060016040528060008152602001600081526020016000151581525090565b61018882610205565b92915050565b6000610141610288565b60008281527f1711c63114197c394f54d5497ead4a5b8cd22ec97e5359f1583e739cfb54a5f8602090815260408083208484529091528120547f1711c63114197c394f54d5497ead4a5b8cd22ec97e5359f1583e739cfb54a5f7906101fc81610292565b95945050505050565b61022b604051806060016040528060008152602001600081526020016000151581525090565b5060009081527f1711c63114197c394f54d5497ead4a5b8cd22ec97e5359f1583e739cfb54a5fa60209081526040918290208251606081018452815481526001820154928101929092526002015460ff1615159181019190915290565b600061014161030e565b6000806102bf7f3c7bf052874fa81625121783266a03507bd2cd48b16e571c01a04e8dd3fb07a684610339565b905073ffffffffffffffffffffffffffffffffffffffff8116610188576040517f7e1a7d8b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60006101417f3c7bf052874fa81625121783266a03507bd2cd48b16e571c01a04e8dd3fb07a6610345565b6000610152838361034f565b6000610188825490565b6000818152600183016020526040812054808203610399576040517ff551fb1400000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b8360000160018203815481106103b1576103b1610407565b90600052602060002090600202016001015491505092915050565b600080604083850312156103df57600080fd5b50508035926020909101359150565b60006020828403121561040057600080fd5b5035919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fdfea2646970667358221220133515208cf923620783ec7d8d002cd2c196100ae71d00b7ddef124c610277b964736f6c63430008110033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100675760003560e01c806395c95a9d1161005057806395c95a9d146100b1578063b3ecf236146100e8578063c4e41b22146100f957600080fd5b80630ec01a671461006c5780636b9dc11a1461009e575b600080fd5b610074610101565b60405173ffffffffffffffffffffffffffffffffffffffff90911681526020015b60405180910390f35b6100746100ac3660046103cc565b610146565b6100c46100bf3660046103ee565b610159565b60408051825181526020808401519082015291810151151590820152606001610095565b60005b604051908152602001610095565b6100eb61018e565b60006101417f1711c63114197c394f54d5497ead4a5b8cd22ec97e5359f1583e739cfb54a5f75473ffffffffffffffffffffffffffffffffffffffff1690565b905090565b60006101528383610198565b9392505050565b61017f604051806060016040528060008152602001600081526020016000151581525090565b61018882610205565b92915050565b6000610141610288565b60008281527f1711c63114197c394f54d5497ead4a5b8cd22ec97e5359f1583e739cfb54a5f8602090815260408083208484529091528120547f1711c63114197c394f54d5497ead4a5b8cd22ec97e5359f1583e739cfb54a5f7906101fc81610292565b95945050505050565b61022b604051806060016040528060008152602001600081526020016000151581525090565b5060009081527f1711c63114197c394f54d5497ead4a5b8cd22ec97e5359f1583e739cfb54a5fa60209081526040918290208251606081018452815481526001820154928101929092526002015460ff1615159181019190915290565b600061014161030e565b6000806102bf7f3c7bf052874fa81625121783266a03507bd2cd48b16e571c01a04e8dd3fb07a684610339565b905073ffffffffffffffffffffffffffffffffffffffff8116610188576040517f7e1a7d8b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60006101417f3c7bf052874fa81625121783266a03507bd2cd48b16e571c01a04e8dd3fb07a6610345565b6000610152838361034f565b6000610188825490565b6000818152600183016020526040812054808203610399576040517ff551fb1400000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b8360000160018203815481106103b1576103b1610407565b90600052602060002090600202016001015491505092915050565b600080604083850312156103df57600080fd5b50508035926020909101359150565b60006020828403121561040057600080fd5b5035919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fdfea2646970667358221220133515208cf923620783ec7d8d002cd2c196100ae71d00b7ddef124c610277b964736f6c63430008110033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
