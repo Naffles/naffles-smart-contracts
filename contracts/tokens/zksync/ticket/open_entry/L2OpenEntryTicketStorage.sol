@@ -11,8 +11,6 @@ library L2OpenEntryTicketStorage {
         address l2NaffleContractAddress;
         // naffle id => ticket id on naffle => ticket id
         mapping(uint256 => mapping(uint256 => uint256)) naffleIdTicketIdOnNaffleTicketId;
-        // ticket id => ticket id on naffle
-        mapping(uint256 => uint256) ticketIdNaffleTicketId;
         // ticket id => open entry ticket
         mapping(uint256 => NaffleTypes.OpenEntryTicket) openEntryTickets;
     }

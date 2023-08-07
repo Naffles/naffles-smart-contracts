@@ -67,7 +67,7 @@ library NaffleTypes {
         uint256 naffleId;
         uint256 nftId;
         uint256 paidTicketSpots;
-        uint256 freeTicketSpots;
+        uint256 openEntryTicketSpots;
         uint256 numberOfPaidTickets;
         uint256 numberOfOpenEntries;
         uint256 ticketPriceInWei;
