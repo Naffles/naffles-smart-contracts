@@ -2,7 +2,7 @@ import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 
 import "@matterlabs/hardhat-zksync-deploy";
-import "@matterlabs/hardhat-zksync-solc"; // comment out to compile for ethereum.
+// import "@matterlabs/hardhat-zksync-solc"; // comment out to compile for ethereum.
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
 
