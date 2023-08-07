@@ -9,12 +9,15 @@ library L2NaffleBaseStorage {
 
     struct Layout {
         address l1NaffleContractAddress;
+        address l1MessengerContractAddress;
         address paidTicketContractAddress;
         address openEntryTicketContractAddress;
         // 100 = 1%
         uint256 openEntryTicketRatio;
         uint256 platformFee;
+        uint256 maxPostponeTime;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
+        uint256 platformFeesAccumulated;
     }
 
     function layout() internal pure returns (Layout storage s) {

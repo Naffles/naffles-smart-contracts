@@ -4,6 +4,7 @@ from brownie import (
     ERC721AMock,
     ETHZkSyncMock,
     FoundersKeyStaking,
+    L1MessengerMock,
     FoundersKeyStakingMock,
     L1NaffleAdmin,
     L1NaffleBase,
@@ -26,11 +27,12 @@ from brownie import (
     TestValueFacet,
     TestValueFacetUpgraded,
     accounts,
+    ZERO_ADDRESS
 )
-from brownie.network.account import _PrivateKeyAccount
+from brownie.network.account import _PrivateKeyAccount, Account
 
-from tests.test_helper import L2Diamonds
 from scripts.staking.deploy_staking_contract import deploy
+from tests.test_helper import L2Diamonds
 
 
 @pytest.fixture
@@ -65,8 +67,25 @@ def deployed_test_naffle_diamond(from_admin) -> TestNaffleDiamond:
 
 
 @pytest.fixture()
-def deployed_l1_naffle_diamond(admin, from_admin) -> L1NaffleDiamond:
-    diamond = L1NaffleDiamond.deploy(admin, from_admin)
+def deployed_l1_naffle_diamond(
+    admin,
+    from_admin,
+    deployed_erc721a_mock,
+) -> L1NaffleDiamond:
+    from tests.contracts.naffle.ethereum.test_l1_naffle_base import (
+        MINIMUM_NAFFLE_DURATION, MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE
+    )
+    diamond = L1NaffleDiamond.deploy(
+        admin,
+        MINIMUM_NAFFLE_DURATION,
+        MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE,
+        ZERO_ADDRESS,
+        deployed_erc721a_mock.address,
+        deployed_erc721a_mock.address,
+        from_admin
+    )
     return diamond
 
 
@@ -89,8 +108,25 @@ def deployed_l1_naffle_view_facet(from_admin) -> L1NaffleView:
 
 
 @pytest.fixture()
-def deployed_l2_naffle_diamond(admin, from_admin) -> L2NaffleDiamond:
-    diamond = L2NaffleDiamond.deploy(admin, from_admin)
+def deployed_l2_naffle_diamond(
+    admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_messenger_mock,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_open_entry_ticket_diamond,
+    from_admin
+) -> L2NaffleDiamond:
+    from tests.test_helper import PLATFORM_FEE, OPEN_ENTRY_TICKET_RATIO
+    diamond = L2NaffleDiamond.deploy(
+        admin,
+        PLATFORM_FEE,
+        OPEN_ENTRY_TICKET_RATIO,
+        deployed_l1_messenger_mock.address,
+        deployed_l2_paid_ticket_diamond.address,
+        deployed_l2_open_entry_ticket_diamond.address,
+        deployed_l1_naffle_diamond,
+        from_admin
+    )
     return diamond
 
 
@@ -177,6 +213,7 @@ def l2_diamonds(
     deployed_l2_naffle_view_facet,
     deployed_l2_naffle_admin_facet,
     deployed_l2_naffle_base_facet,
+    deployed_l1_messenger_mock,
 ) -> L2NaffleDiamond:
     return L2Diamonds(
         from_admin,
@@ -191,7 +228,8 @@ def l2_diamonds(
         deployed_l2_naffle_diamond,
         deployed_l2_naffle_view_facet,
         deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_base_facet
+        deployed_l2_naffle_base_facet,
+        deployed_l1_messenger_mock
     )
 
 
@@ -214,7 +252,12 @@ def deployed_erc721a_mock(from_admin) -> ERC721AMock:
 
 @pytest.fixture
 def deployed_eth_zksync_mock(from_admin) -> ETHZkSyncMock:
-    return ETHZkSyncMock.deploy(from_admin)
+    return ETHZkSyncMock.deploy(True, True, True, from_admin)
+
+
+@pytest.fixture
+def deployed_eth_zksync_mock_false_return_values(from_admin) -> ETHZkSyncMock:
+    return ETHZkSyncMock.deploy(False, False, False, from_admin)
 
 
 @pytest.fixture
@@ -244,5 +287,20 @@ def deployed_founders_key_staking(
 
 
 @pytest.fixture
+def zksync_l1_message_account() -> Account:
+    return accounts.at('0x79B2f0CbED2a565C925A8b35f2B402710564F8a2', force=True)
+
+
+@pytest.fixture
+def deployed_l1_messenger_mock(from_admin) -> L1MessengerMock:
+    return L1MessengerMock.deploy(from_admin)
+
+
+@pytest.fixture
 def deployed_founders_key_staking_mock(from_admin) -> FoundersKeyStakingMock:
     return FoundersKeyStakingMock.deploy(from_admin)
+
+
+@pytest.fixture
+def l2_message_params() -> dict:
+    return [10000000, 1]
