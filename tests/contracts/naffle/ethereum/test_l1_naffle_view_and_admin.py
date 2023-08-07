@@ -1,7 +1,7 @@
 import brownie
-from brownie import L1NaffleAdmin
+from brownie import ZERO_ADDRESS, L1NaffleAdmin
 
-from scripts.util import ZERO_ADDRESS, add_facet, get_selectors
+from scripts.util import add_facet, get_selectors
 from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
     setup_diamond_with_facets,
 )
@@ -27,7 +27,6 @@ def test_admin_facet_deployment(
 
 
 def test_get_and_set_minimum_naffle_duration(
-    admin,
     from_admin,
     deployed_l1_naffle_diamond,
     deployed_l1_naffle_base_facet,
@@ -66,7 +65,6 @@ def test_get_and_set_minimum_naffle_duration_not_admin(
 
 
 def test_get_and_set_minimum_paid_ticket_spots(
-    admin,
     from_admin,
     deployed_l1_naffle_diamond,
     deployed_l1_naffle_base_facet,
@@ -105,7 +103,6 @@ def test_get_and_set_minimum_paid_ticket_spots_not_admin(
 
 
 def test_get_and_set_minimum_ticket_price(
-    admin,
     from_admin,
     deployed_l1_naffle_diamond,
     deployed_l1_naffle_base_facet,

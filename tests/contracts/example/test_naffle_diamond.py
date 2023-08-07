@@ -1,11 +1,6 @@
-from brownie import TestValueFacet, TestValueFacetUpgraded, interface
+from brownie import ZERO_ADDRESS, TestValueFacet, TestValueFacetUpgraded, interface
 
-from scripts.util import (
-    ZERO_ADDRESS,
-    FacetCutAction,
-    get_selector_by_name,
-    get_selectors,
-)
+from scripts.util import FacetCutAction, get_selector_by_name, get_selectors
 
 
 def _add_facets(diamond, facet, from_admin):

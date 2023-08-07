@@ -15,11 +15,19 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
         _setPlatformFee(_platformFee);
     }
 
-    function setFreeTicketRatio(uint256 _freeTicketRatio) external onlyRole(_getAdminRole()) {
-        _setFreeTicketRatio(_freeTicketRatio);
+    function setOpenEntryRatio(uint256 _openEntryTicketRatio) external onlyRole(_getAdminRole()) {
+        _setOpenEntryRatio(_openEntryTicketRatio);
     }
 
     function setL1NaffleContractAddress(address _l1NaffleContractAddress) external onlyRole(_getAdminRole()) {
         _setL1NaffleContractAddress(_l1NaffleContractAddress);
+    }
+
+    function setPaidTicketContractAddress(address _paidTicketContractAddress) external onlyRole(_getAdminRole()) {
+        _setPaidTicketContractAddress(_paidTicketContractAddress);
+    }
+
+    function setOpenEntryTicketContractAddress(address _openEntryTicketContractAddress) external onlyRole(_getAdminRole()) {
+        _setOpenEntryTicketContractAddress(_openEntryTicketContractAddress);
     }
 }

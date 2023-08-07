@@ -14,12 +14,31 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         _;
     }
 
-
     function createNaffle(
         NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) external onlyL1NaffleContract {
         _createNaffle(
             _params
+        );
+    }
+
+    function buyTickets(
+        uint256 _amount,
+        uint256 _naffleId
+    ) external payable returns (uint256[] memory) {
+        return _buyTickets(
+            _amount,
+            _naffleId
+        );
+    }
+
+    function useOpenEntryTickets(
+        uint256[] memory _ticketIds,
+        uint256 _naffleId
+    ) external {
+        _useOpenEntryTickets(
+            _ticketIds,
+            _naffleId
         );
     }
 }

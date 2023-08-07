@@ -1,12 +1,35 @@
 import pytest
-from brownie import (Contract, ERC721AMock, ETHZkSyncMock, FoundersKeyStaking,
-                     FoundersKeyStakingMock, L1NaffleAdmin, L1NaffleBase,
-                     L1NaffleDiamond, L1NaffleView, L2NaffleAdmin,
-                     L2NaffleBase, L2NaffleDiamond, L2NaffleView,
-                     SoulboundFoundersKey, TestNaffleDiamond, TestValueFacet,
-                     TestValueFacetUpgraded, accounts)
+from brownie import (
+    Contract,
+    ERC721AMock,
+    ETHZkSyncMock,
+    FoundersKeyStaking,
+    FoundersKeyStakingMock,
+    L1NaffleAdmin,
+    L1NaffleBase,
+    L1NaffleDiamond,
+    L1NaffleView,
+    L2NaffleAdmin,
+    L2NaffleBase,
+    L2NaffleDiamond,
+    L2NaffleView,
+    L2OpenEntryTicketAdmin,
+    L2OpenEntryTicketBase,
+    L2OpenEntryTicketDiamond,
+    L2OpenEntryTicketView,
+    L2PaidTicketAdmin,
+    L2PaidTicketBase,
+    L2PaidTicketDiamond,
+    L2PaidTicketView,
+    SoulboundFoundersKey,
+    TestNaffleDiamond,
+    TestValueFacet,
+    TestValueFacetUpgraded,
+    accounts,
+)
 from brownie.network.account import _PrivateKeyAccount
 
+from tests.test_helper import L2Diamonds
 from scripts.staking.deploy_staking_contract import deploy
 
 
@@ -87,6 +110,89 @@ def deployed_l2_naffle_admin_facet(from_admin) -> L2NaffleAdmin:
 def deployed_l2_naffle_view_facet(from_admin) -> L2NaffleView:
     facet = L2NaffleView.deploy(from_admin)
     return facet
+
+
+@pytest.fixture()
+def deployed_l2_paid_ticket_diamond(admin, from_admin) -> L2PaidTicketDiamond:
+    diamond = L2PaidTicketDiamond.deploy(admin, from_admin)
+    return diamond
+
+
+@pytest.fixture()
+def deployed_l2_paid_ticket_base_facet(from_admin) -> L2PaidTicketBase:
+    facet = L2PaidTicketBase.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_paid_ticket_admin_facet(from_admin) -> L2PaidTicketAdmin:
+    facet = L2PaidTicketAdmin.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_paid_ticket_view_facet(from_admin) -> L2PaidTicketView:
+    facet = L2PaidTicketView.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_open_entry_ticket_diamond(
+    admin, from_admin
+) -> L2OpenEntryTicketDiamond:
+    diamond = L2OpenEntryTicketDiamond.deploy(admin, from_admin)
+    return diamond
+
+
+@pytest.fixture()
+def deployed_l2_open_entry_ticket_base_facet(from_admin) -> L2OpenEntryTicketBase:
+    facet = L2OpenEntryTicketBase.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_open_entry_ticket_admin_facet(from_admin) -> L2OpenEntryTicketAdmin:
+    facet = L2OpenEntryTicketAdmin.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def deployed_l2_open_entry_ticket_view_facet(from_admin) -> L2OpenEntryTicketView:
+    facet = L2OpenEntryTicketView.deploy(from_admin)
+    return facet
+
+
+@pytest.fixture()
+def l2_diamonds(
+    from_admin,
+    deployed_l2_paid_ticket_diamond,
+    deployed_l2_paid_ticket_base_facet,
+    deployed_l2_paid_ticket_admin_facet,
+    deployed_l2_paid_ticket_view_facet,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_view_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_base_facet,
+) -> L2NaffleDiamond:
+    return L2Diamonds(
+        from_admin,
+        deployed_l2_paid_ticket_diamond,
+        deployed_l2_paid_ticket_base_facet,
+        deployed_l2_paid_ticket_admin_facet,
+        deployed_l2_paid_ticket_view_facet,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_view_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_base_facet
+    )
 
 
 @pytest.fixture()

@@ -10,8 +10,8 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
         return _getPlatformFee();
     }
 
-    function getFreeTicketRatio() external view returns (uint256) {
-        return _getFreeTicketRatio();
+    function getOpenEntryRatio() external view returns (uint256) {
+        return _getOpenEntryRatio();
     }
 
     function getL1NaffleContractAddress() external view returns (address) {
@@ -24,5 +24,13 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
 
     function getAdminRole() external view returns (bytes32) {
         return _getAdminRole();
+    }
+
+    function getPaidTicketContractAddress() external view returns (address) {
+        return _getPaidTicketContractAddress();
+    }
+
+    function getOpenEntryTicketContractAddress() external view returns (address) {
+        return _getOpenEntryTicketContractAddress();
     }
 }

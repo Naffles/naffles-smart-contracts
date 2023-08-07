@@ -1,8 +1,9 @@
 import datetime
 
 import brownie
+from brownie import ZERO_ADDRESS
 
-from scripts.util import ZERO_ADDRESS, ZKSYNC_ADDRESS, get_error_message
+from scripts.util import ZKSYNC_ADDRESS, get_error_message
 from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
     setup_diamond_with_facets,
 )
@@ -15,7 +16,9 @@ MINIMUM_PAID_TICKET_SPOTS = 2
 MINIMUM_TICKET_PRICE = 2
 
 
-def _setup_contract(admin_facet, deployed_founders_key_staking, eth_zksync, from_admin):
+def setup_l1_naffle_contract(
+    admin_facet, deployed_founders_key_staking, eth_zksync, from_admin
+):
     admin_facet.setMinimumNaffleDuration(MINIMUM_NAFFLE_DURATION, from_admin)
     admin_facet.setMinimumPaidTicketSpots(MINIMUM_PAID_TICKET_SPOTS, from_admin)
     admin_facet.setMinimumPaidTicketPriceInWei(MINIMUM_TICKET_PRICE, from_admin)
@@ -45,7 +48,7 @@ def test_create_naffle_not_allowed(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(
+    setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
 
@@ -70,7 +73,6 @@ def test_create_naffle_invalid_end_time(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -81,7 +83,7 @@ def test_create_naffle_invalid_end_time(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(
+    setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
@@ -107,7 +109,6 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -118,7 +119,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(
+    setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
@@ -150,7 +151,6 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -161,7 +161,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(
+    setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
@@ -192,7 +192,6 @@ def test_create_naffle_invalid_token_type(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -203,7 +202,7 @@ def test_create_naffle_invalid_token_type(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(
+    setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
@@ -228,7 +227,6 @@ def test_create_naffle_invalid_token_type(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -239,7 +237,7 @@ def test_create_naffle_invalid_token_type(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(
+    setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
@@ -264,7 +262,6 @@ def test_create_naffle_no_approval(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -275,7 +272,7 @@ def test_create_naffle_no_approval(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(
+    setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
@@ -301,7 +298,6 @@ def test_create_naffle_zksync_called(
     deployed_l1_naffle_base_facet,
     deployed_l1_naffle_admin_facet,
     deployed_l1_naffle_view_facet,
-    deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
 ):
@@ -312,7 +308,7 @@ def test_create_naffle_zksync_called(
         deployed_l1_naffle_admin_facet,
         deployed_l1_naffle_view_facet,
     )
-    _setup_contract(
+    setup_l1_naffle_contract(
         admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
