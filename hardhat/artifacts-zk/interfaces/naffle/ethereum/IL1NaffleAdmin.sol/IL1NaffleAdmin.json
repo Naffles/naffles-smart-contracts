@@ -1,0 +1,116 @@
+{
+  "_format": "hh-zksolc-artifact-1",
+  "contractName": "IL1NaffleAdmin",
+  "sourceName": "interfaces/naffle/ethereum/IL1NaffleAdmin.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_admin",
+          "type": "address"
+        }
+      ],
+      "name": "setAdmin",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_foundersKeyAddress",
+          "type": "address"
+        }
+      ],
+      "name": "setFoundersKeyAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_foundersKeyPlaceholderAddress",
+          "type": "address"
+        }
+      ],
+      "name": "setFoundersKeyPlaceholderAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_minimumNaffleDuration",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMinimumNaffleDuration",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_minimumPaidTicketPriceInWei",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMinimumPaidTicketPriceInWei",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_minimumPaidTicketSpots",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMinimumPaidTicketSpots",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_zkSyncAddress",
+          "type": "address"
+        }
+      ],
+      "name": "setZkSyncAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_zkSyncNaffleContractAddress",
+          "type": "address"
+        }
+      ],
+      "name": "setZkSyncNaffleContractAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "factoryDeps": {}
+}

@@ -127,98 +127,50 @@ def test_set_admin_address_not_admin(
 
 
 def test_get_ticket_by_id(
-    admin,
     address,
     from_admin,
-    deployed_l2_paid_ticket_diamond,
-    deployed_l2_paid_ticket_base_facet,
-    deployed_l2_paid_ticket_admin_facet,
-    deployed_l2_paid_ticket_view_facet,
-    deployed_l2_open_entry_ticket_diamond,
-    deployed_l2_open_entry_ticket_base_facet,
-    deployed_l2_open_entry_ticket_admin_facet,
-    deployed_l2_open_entry_ticket_view_facet,
-    deployed_l2_naffle_diamond,
-    deployed_l2_naffle_view_facet,
-    deployed_l2_naffle_admin_facet,
-    deployed_l2_naffle_base_facet,
+    l2_diamonds,
     deployed_erc721a_mock,
 ):
     create_naffle_and_mint_tickets(
-        admin,
         address,
         from_admin,
-        deployed_l2_paid_ticket_diamond,
-        deployed_l2_paid_ticket_base_facet,
-        deployed_l2_paid_ticket_admin_facet,
-        deployed_l2_paid_ticket_view_facet,
-        deployed_l2_open_entry_ticket_diamond,
-        deployed_l2_open_entry_ticket_base_facet,
-        deployed_l2_open_entry_ticket_admin_facet,
-        deployed_l2_open_entry_ticket_view_facet,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_view_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_base_facet,
+        l2_diamonds,
         deployed_erc721a_mock,
     )
 
-    id = 1
+    ticket_id = 1
     ticket = brownie.interface.IL2PaidTicketView(
-        deployed_l2_paid_ticket_diamond).getTicketById(id, from_admin)
+        l2_diamonds.deployed_l2_paid_ticket_diamond).getTicketById(ticket_id, from_admin)
     assert ticket == (
         address,
         TICKET_PRICE,
         NAFFLE_ID,
-        id,
+        ticket_id,
         False
     )
 
 
 def test_get_ticket_by_id_on_naffle(
-    admin,
     address,
     from_admin,
-    deployed_l2_paid_ticket_diamond,
-    deployed_l2_paid_ticket_base_facet,
-    deployed_l2_paid_ticket_admin_facet,
-    deployed_l2_paid_ticket_view_facet,
-    deployed_l2_open_entry_ticket_diamond,
-    deployed_l2_open_entry_ticket_base_facet,
-    deployed_l2_open_entry_ticket_admin_facet,
-    deployed_l2_open_entry_ticket_view_facet,
-    deployed_l2_naffle_diamond,
-    deployed_l2_naffle_view_facet,
-    deployed_l2_naffle_admin_facet,
-    deployed_l2_naffle_base_facet,
+    l2_diamonds,
     deployed_erc721a_mock,
 ):
     create_naffle_and_mint_tickets(
-        admin,
         address,
         from_admin,
-        deployed_l2_paid_ticket_diamond,
-        deployed_l2_paid_ticket_base_facet,
-        deployed_l2_paid_ticket_admin_facet,
-        deployed_l2_paid_ticket_view_facet,
-        deployed_l2_open_entry_ticket_diamond,
-        deployed_l2_open_entry_ticket_base_facet,
-        deployed_l2_open_entry_ticket_admin_facet,
-        deployed_l2_open_entry_ticket_view_facet,
-        deployed_l2_naffle_diamond,
-        deployed_l2_naffle_view_facet,
-        deployed_l2_naffle_admin_facet,
-        deployed_l2_naffle_base_facet,
+        l2_diamonds,
         deployed_erc721a_mock,
     )
 
-    id = 1
+    ticket_id = 1
     ticket = brownie.interface.IL2PaidTicketView(
-        deployed_l2_paid_ticket_diamond).getTicketByIdOnNaffle(id, 1, from_admin)
+        l2_diamonds.deployed_l2_paid_ticket_diamond).getTicketByIdOnNaffle(ticket_id, 1, from_admin)
     assert ticket == (
         address,
         TICKET_PRICE,
         NAFFLE_ID,
-        id,
+        ticket_id,
         False
     )
