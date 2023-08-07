@@ -26,9 +26,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     ) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
 
-        uint256 freeTicketSpots = 0;
+        uint256 openEntryTicketSpots = 0;
         if (_params.naffleType == NaffleTypes.NaffleType.STANDARD) {
-            freeTicketSpots = _params.paidTicketSpots / layout.freeTicketRatio;
+            openEntryTicketSpots = _params.paidTicketSpots / layout.openEntryTicketRatio;
         }
 
         layout.naffles[_params.naffleId] = NaffleTypes.L2Naffle({
@@ -37,7 +37,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffleId: _params.naffleId,
             nftId: _params.nftId,
             paidTicketSpots: _params.paidTicketSpots,
-            freeTicketSpots: freeTicketSpots,
+            openEntryTicketSpots: openEntryTicketSpots,
             numberOfPaidTickets: 0,
             numberOfOpenEntries: 0,
             ticketPriceInWei: _params.ticketPriceInWei,
@@ -177,8 +177,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
 
         uint256 newOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
-        if (newOpenEntries > naffle.freeTicketSpots) {
-            revert NotEnoughOpenEntryTicketSpots(naffle.freeTicketSpots);
+        if (newOpenEntries > naffle.openEntryTicketSpots) {
+            revert NotEnoughOpenEntryTicketSpots(naffle.openEntryTicketSpots);
         }
 
         uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
@@ -413,10 +413,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @param _freeTicketRatio the paid ticket to open entry ratio.
      */
     function _setOpenEntryRatio(uint256 _freeTicketRatio) internal {
-        if (_freeTicketRatio == 0) {
+        if (_openEntryTicketRatio == 0) {
             revert OpenTicketRatioCannotBeZero();
         }
-        L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
+        L2NaffleBaseStorage.layout().openEntryTicketRatio = _openEntryTicketRatio;
     }
 
     /**

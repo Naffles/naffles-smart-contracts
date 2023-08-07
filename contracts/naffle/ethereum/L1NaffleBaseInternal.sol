@@ -62,6 +62,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             (_naffleType == NaffleTypes.NaffleType.UNLIMITED && _paidTicketSpots != 0) ||
             (_naffleType == NaffleTypes.NaffleType.STANDARD && _paidTicketSpots < layout.minimumPaidTicketSpots)
         ) {
+            // Unlimited naffles don't have an upper limit on paid or open entry tickets.
             revert InvalidPaidTicketSpots(_paidTicketSpots);
         }
 
