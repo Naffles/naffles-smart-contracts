@@ -23,4 +23,5 @@ interface IL2OpenEntryTicketAdmin {
      * @param _amount the amount to mint.
      */
     function adminMint(address _to, uint256 _amount) external;
+    function setBaseURI(string memory _baseURI) external;
 }

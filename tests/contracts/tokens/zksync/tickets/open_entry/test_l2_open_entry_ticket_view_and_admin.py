@@ -1,7 +1,7 @@
 import brownie
 from brownie import L2OpenEntryTicketAdmin, interface
 
-from scripts.util import add_facet, get_selectors
+from scripts.util import add_facet, get_selectors, get_error_message
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_base import (
     setup_open_entry_ticket_contract,
 )
@@ -214,4 +214,56 @@ def test_get_owner_of_naffle_ticket_id(
         [ticket_id], naffle_id, from_address
     )
     assert l2_diamonds.open_entry_view_facet.getOwnerOfNaffleTicketId(naffle_id, ticket_id, from_address) == address.address
+
+
+def test_set_base_uri_not_admin(
+    from_admin,
+    from_address,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+):
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_open_entry_ticket_diamond_with_facets(
+        from_admin,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+    )
+    with brownie.reverts():
+        admin_facet.setBaseURI('base_uri', from_address)
+
+
+def test_set_base_uri(
+    from_admin,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+):
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_open_entry_ticket_diamond_with_facets(
+        from_admin,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+    )
+    admin_facet.setBaseURI('base_uri/', from_admin)
+    admin_facet.adminMint(from_admin["from"], 1, from_admin)
+
+    view_facet = interface.IERC721Metadata(
+        deployed_l2_open_entry_ticket_diamond.address
+    )
+    assert view_facet.tokenURI(1) == 'base_uri/1'
 

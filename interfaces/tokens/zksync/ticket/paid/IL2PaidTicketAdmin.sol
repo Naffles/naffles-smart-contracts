@@ -17,4 +17,5 @@ interface IL2PaidTicketAdmin {
      * @param _l2NaffleContractAddress the address of the L2 Naffle contract.
      */
     function setL2NaffleContractAddress(address _l2NaffleContractAddress) external;
+    function setBaseURI(string memory _baseURI) external;
 }
