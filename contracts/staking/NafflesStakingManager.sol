@@ -77,9 +77,6 @@ contract NafflesStakingManager is Ownable{
 
         PoolStaker storage staker = poolStakers[_poolId][msg.sender];
 
-        // Update pool stakers
-        harvestRewards(_poolId);
-
         // Update current staker
         staker.amount = staker.amount + _amount;
         staker.rewardDebt = staker.amount * pool.accumulatedRewardsPerShare / REWARDS_PRECISION;
@@ -139,9 +136,7 @@ contract NafflesStakingManager is Ownable{
         uint256 rewards = blocksSinceLastReward * rewardTokensPerBlock  * pool.poolRate;
         uint256 calcAccumulatedShare = pool.accumulatedRewardsPerShare + (rewards * REWARDS_PRECISION / pool.tokensStaked);
         uint256 rewardsToHarvest = (staker.amount * calcAccumulatedShare / REWARDS_PRECISION) - staker.rewardDebt;
-        console.log("stake amount",staker.amount );
-        console.log("calc",calcAccumulatedShare);
-        console.log("Pending Amount", rewardsToHarvest);
+        
         return rewardsToHarvest;
     }
 
