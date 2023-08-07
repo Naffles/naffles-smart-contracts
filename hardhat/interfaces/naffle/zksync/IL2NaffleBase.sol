@@ -70,4 +70,14 @@ interface IL2NaffleBase {
      * @param _naffleId id of the naffle.
      */
     function ownerDrawWinner(uint256 _naffleId) external returns (bytes32);
+
+    /**
+     * @notice postpone a naffle.
+     * @param _naffleId id of the naffle.
+     * @param _newEndTime new end time of the naffle.
+     */
+    function postponeNaffle(
+        uint256 _naffleId,
+        uint256 _newEndTime
+    ) external;
 }

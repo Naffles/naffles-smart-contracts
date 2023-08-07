@@ -2,13 +2,13 @@
 pragma solidity ^0.8.17;
 
 import "./L2PaidTicketStorage.sol";
-
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBaseInternal.sol";
 import "@solidstate/contracts/interfaces/IERC721.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
+import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "../../../../libraries/NaffleTypes.sol";
 
@@ -127,8 +127,17 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
      * @notice sets the L2 naffle contract address.
      * @param _l2NaffleContractAddress the L2 naffle contract address.
      */
+
     function _setL2NaffleContractAddress(address _l2NaffleContractAddress) internal {
         L2PaidTicketStorage.layout().l2NaffleContractAddress = _l2NaffleContractAddress;
+    }
+
+    /**
+     * @notice sets the base URI.
+     * @param _baseURI the base URI.
+     */
+    function _setBaseURI(string memory _baseURI) internal {
+        ERC721MetadataStorage.layout().baseURI = _baseURI;
     }
 
     /**

@@ -13,9 +13,9 @@ interface IL2NaffleAdmin {
 
     /**
      * @notice set open entry ticket ratio, for every x tickets there will be x open entry spots. 100 = 1%
-     * @param _freeTicketRatio the new open entry ticket ratio
+     * @param _openEntryTicketRatio the new open entry ticket ratio
      */
-    function setOpenEntryRatio(uint256 _freeTicketRatio) external;
+    function setOpenEntryRatio(uint256 _openEntryTicketRatio) external;
 
     /**
      * @notice set the admin address
@@ -59,4 +59,10 @@ interface IL2NaffleAdmin {
      * @param _to the address to withdraw to
      */
     function withdrawPlatformFees(uint256 _amount, address _to) external;
+
+    /**
+     * @notice set the max postpone time
+     * @param _maxPostponeTime the new max postpone time
+     */
+    function setMaxPostponeTime(uint256 _maxPostponeTime) external;
 }

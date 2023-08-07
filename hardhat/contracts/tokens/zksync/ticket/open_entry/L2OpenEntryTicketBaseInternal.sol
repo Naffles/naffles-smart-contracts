@@ -9,7 +9,7 @@ import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
-
+import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
 
 abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
 
@@ -124,6 +124,14 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      */
     function _getTotalSupply() internal view returns (uint256 totalSupply) {
         totalSupply = _totalSupply();
+    }
+
+    /**
+     * @notice sets the base URI
+     * @param _baseURI the base URI.
+     */
+    function _setBaseURI(string memory _baseURI) internal {
+        ERC721MetadataStorage.layout().baseURI = _baseURI;
     }
 
     /**
