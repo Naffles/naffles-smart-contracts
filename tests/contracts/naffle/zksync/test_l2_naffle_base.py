@@ -8,7 +8,9 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
 from tests.test_helper import (
-    FREE_TICKET_RATIO,
+    DEFAULT_END_DATE,
+    ERC721,
+    OPEN_ENTRY_TICKET_RATIO,
     NAFFLE_ID,
     NFT_ID,
     PAID_TICKET_SPOTS,
@@ -31,7 +33,7 @@ def setup_l2_naffle_contract(
     from_admin,
 ):
     admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
-    admin_facet.setOpenEntryRatio(FREE_TICKET_RATIO, from_admin)
+    admin_facet.setOpenEntryRatio(OPEN_ENTRY_TICKET_RATIO, from_admin)
     admin_facet.setL1NaffleContractAddress(l1_naffle_contract.address, from_admin)
     admin_facet.setPaidTicketContractAddress(paid_ticket_contract.address, from_admin)
     admin_facet.setL1MessengerContractAddress(l1_messenger_contract.address, from_admin)
@@ -130,7 +132,7 @@ def test_create_naffle(
             address,
             NAFFLE_ID,
             NFT_ID,
-            PAID_TICKET_SPOTS,
+            1000,
             TICKET_PRICE,
             endtime,
             STANDARD_NAFFLE_TYPE,
@@ -140,7 +142,7 @@ def test_create_naffle(
     )
 
     naffle = view_facet.getNaffleById(NAFFLE_ID)
-    expected_open_entry_ticket_spots = 0
+    expected_open_entry_ticket_spots = 10
     expected_number_of_tickets_bought = 0
     expected_naffle_status = 0  # active
     expected_winning_ticket_type = 0  # none
@@ -151,7 +153,7 @@ def test_create_naffle(
         address,
         NAFFLE_ID,
         NFT_ID,
-        PAID_TICKET_SPOTS,
+        1000,
         expected_open_entry_ticket_spots,
         expected_number_of_tickets_bought,
         expected_number_of_tickets_bought,

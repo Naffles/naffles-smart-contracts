@@ -20,9 +20,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     ) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
 
-        uint256 freeTicketSpots = 0;
+        uint256 openEntryTicketSpots = 0;
         if (_params.naffleType == NaffleTypes.NaffleType.STANDARD) {
-            freeTicketSpots = _params.paidTicketSpots / layout.freeTicketRatio;
+            openEntryTicketSpots = _params.paidTicketSpots / layout.openEntryTicketRatio;
         }
         layout.naffles[_params.naffleId] = NaffleTypes.L2Naffle({
             ethTokenAddress: _params.ethTokenAddress,
@@ -30,7 +30,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffleId: _params.naffleId,
             nftId: _params.nftId,
             paidTicketSpots: _params.paidTicketSpots,
-            freeTicketSpots: freeTicketSpots,
+            openEntryTicketSpots: openEntryTicketSpots,
             numberOfPaidTickets: 0,
             numberOfOpenEntries: 0,
             ticketPriceInWei: _params.ticketPriceInWei,
@@ -86,8 +86,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
-        if (naffle.numberOfOpenEntries + _ticketIds.length > naffle.freeTicketSpots) {
-            revert NotEnoughOpenEntryTicketSpots(naffle.freeTicketSpots);
+        if (naffle.numberOfOpenEntries + _ticketIds.length > naffle.openEntryTicketSpots) {
+            revert NotEnoughOpenEntryTicketSpots(naffle.openEntryTicketSpots);
         }
         uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
         naffle.numberOfOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
@@ -152,14 +152,14 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     function _getOpenEntryRatio() internal view returns (uint256) {
-        return L2NaffleBaseStorage.layout().freeTicketRatio;
+        return L2NaffleBaseStorage.layout().openEntryTicketRatio;
     }
 
-    function _setOpenEntryRatio(uint256 _freeTicketRatio) internal {
-        if (_freeTicketRatio == 0) {
+    function _setOpenEntryRatio(uint256 _openEntryTicketRatio) internal {
+        if (_openEntryTicketRatio == 0) {
             revert OpenTicketRatioCannotBeZero();
         }
-        L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
+        L2NaffleBaseStorage.layout().openEntryTicketRatio = _openEntryTicketRatio;
     }
 
     function _getL1NaffleContractAddress() internal view returns (address) {
