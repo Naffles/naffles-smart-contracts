@@ -59,4 +59,10 @@ interface IL2NaffleAdmin {
      * @param _to the address to withdraw to
      */
     function withdrawPlatformFees(uint256 _amount, address _to) external;
+
+    /**
+     * @notice set the max postpone time
+     * @param _maxPostponeTime the new max postpone time
+     */
+    function setMaxPostponeTime(uint256 _maxPostponeTime) external;
 }

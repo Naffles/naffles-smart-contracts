@@ -69,5 +69,11 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
      */
     function withdrawPlatformFees(uint256 _amount, address _to) external onlyRole(_getAdminRole()) {
         _withdrawPlatformFees(_amount, _to);
+
+    /**
+     * @inheritdoc IL2NaffleAdmin
+     */
+    function setMaxPostponeTime(uint256 _maxPostponeTime) external onlyRole(_getAdminRole()) {
+        _setMaxPostponeTime(_maxPostponeTime);
     }
 }

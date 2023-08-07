@@ -628,3 +628,80 @@ def test_withdraw_platform_fee_insufficient_funds(
 
     with brownie.reverts(get_error_message("InsufficientFunds")):
         assert l2_diamonds.naffle_admin_facet.withdrawPlatformFees(amount_to_withdraw + 1, admin, from_admin)
+
+
+def test_set_max_postpone_time(
+    address,
+    from_address,
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+    deployed_founders_key_staking,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    deployed_l1_messenger_mock
+):
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_l2_naffle_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+    setup_l2_naffle_contract(
+        admin_facet,
+        from_admin["from"],
+        from_admin["from"],
+        from_admin["from"],
+        deployed_l1_messenger_mock,
+        from_admin,
+    )
+
+    admin_facet.setMaxPostponeTime(200, from_admin)
+    assert view_facet.getMaxPostponeTime() == 200
+
+
+def test_set_max_postpone_time_not_allowed(
+    address,
+    from_address,
+    from_admin,
+    deployed_l2_naffle_diamond,
+    deployed_l2_naffle_base_facet,
+    deployed_l2_naffle_admin_facet,
+    deployed_l2_naffle_view_facet,
+    deployed_founders_key_staking,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    deployed_l1_messenger_mock
+):
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_l2_naffle_diamond_with_facets(
+        from_admin,
+        deployed_l2_naffle_diamond,
+        deployed_l2_naffle_base_facet,
+        deployed_l2_naffle_admin_facet,
+        deployed_l2_naffle_view_facet,
+    )
+    setup_l2_naffle_contract(
+        admin_facet,
+        from_admin["from"],
+        from_admin["from"],
+        from_admin["from"],
+        deployed_l1_messenger_mock,
+        from_admin,
+    )
+
+    with brownie.reverts():
+        admin_facet.setMaxPostponeTime(200, from_address)
+>>>>>>> 88e350a79aeb483d2c49286cc590a55100b50413

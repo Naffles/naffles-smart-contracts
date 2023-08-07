@@ -49,4 +49,10 @@ interface IL2NaffleView {
      * @return openEntryTicketContractAddress the address of the L2 Open Entry Ticket contract.
      */
     function getOpenEntryTicketContractAddress() external view returns (address openEntryTicketContractAddress);
+
+    /**
+     * @notice gets the max postpone time.
+     * @return maxPostponeTime the max postpone time.
+     */
+    function getMaxPostponeTime() external view returns (uint256 maxPostponeTime);
 }

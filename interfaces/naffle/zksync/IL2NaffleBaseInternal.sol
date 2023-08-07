@@ -80,6 +80,24 @@ interface IL2NaffleBaseInternal {
     error InsufficientFunds();
 
     /**
+     * @notice thrown when the caller is not the naffle owner.
+     * @param owner owner of the naffle.
+     */
+    error NotNaffleOwner(address owner);
+
+    /**
+     * @notice thrown when the entTime passed is invalid.
+     * @param endTime end time of the naffle.
+     */
+    error InvalidEndTime(uint256 endTime);
+
+    /**
+     * @notice thrown when the naffle is not finished.
+     * @param endTime end time of the naffle.
+     */
+    error NaffleNotFinished(uint256 endTime);
+
+    /**
      * @notice emitted when a naffle is created.
      * @param naffleId id of the naffle.
      * @param owner address of the owner.
