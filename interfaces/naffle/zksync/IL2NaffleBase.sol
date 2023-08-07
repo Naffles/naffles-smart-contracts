@@ -36,7 +36,6 @@ interface IL2NaffleBase {
         uint256 _naffleId
     ) external;
 
-<<<<<<< HEAD
     /**
      * @notice refund and burns tickets for a naffle.
      * @param _naffleId id of the naffle.
@@ -71,10 +70,14 @@ interface IL2NaffleBase {
      * @param _naffleId id of the naffle.
      */
     function ownerDrawWinner(uint256 _naffleId) external returns (bytes32);
-=======
+
+    /**
+     * @notice postpone a naffle.
+     * @param _naffleId id of the naffle.
+     * @param _newEndTime new end time of the naffle.
+     */
     function postponeNaffle(
         uint256 _naffleId,
         uint256 _newEndTime
     ) external;
->>>>>>> 88e350a79aeb483d2c49286cc590a55100b50413
 }

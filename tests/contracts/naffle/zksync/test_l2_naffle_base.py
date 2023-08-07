@@ -29,8 +29,6 @@ def setup_l2_naffle_contract(
     l1_messenger_contract,
     from_admin,
 ):
-#     admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
-#     admin_facet.setOpenEntryRatio(OPEN_ENTRY_TICKET_RATIO, from_admin)
     admin_facet.setL1NaffleContractAddress(l1_naffle_contract.address, from_admin)
     admin_facet.setPaidTicketContractAddress(paid_ticket_contract.address, from_admin)
     admin_facet.setL1MessengerContractAddress(l1_messenger_contract.address, from_admin)
@@ -503,6 +501,7 @@ def test_postpone_naffle_invalid_naffle_type(
     deployed_erc721a_mock,
     deployed_l1_messenger_mock,
 ):
+    end_time = get_end_time()
     l2_diamonds.naffle_base_facet.createNaffle(
         (
             deployed_erc721a_mock.address,
@@ -511,16 +510,15 @@ def test_postpone_naffle_invalid_naffle_type(
             NFT_ID,
             100,
             TICKET_PRICE,
-            DEFAULT_END_DATE,
+            end_time,
             1,  # UNLIMITED NAFFLE TYPE
             ERC721,
         ),
         from_admin,
     )
 
-    endtime = datetime.datetime.now().timestamp() + 1000
     with brownie.reverts(get_error_message("InvalidNaffleType", ["uint8"], [1])):
-        l2_diamonds.naffle_base_facet.postponeNaffle(1, endtime, from_admin)
+        l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time, from_admin)
 
 
 def test_postpone_naffle_invalid_naffle_status(
@@ -538,10 +536,9 @@ def test_postpone_naffle_invalid_naffle_status(
     )
 
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(1, from_admin)
-
-    endtime = datetime.datetime.now().timestamp() + 1000
+    end_time = get_end_time()
     with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [2])):
-        l2_diamonds.naffle_base_facet.postponeNaffle(1, endtime, from_admin)
+        l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time, from_admin)
 
 
 def test_postpone_naffle_not_finished(
@@ -556,11 +553,12 @@ def test_postpone_naffle_not_finished(
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
+        end_time=get_end_time(),
     )
 
-    endtime = datetime.datetime.now().timestamp() + 1000
-    with brownie.reverts(get_error_message("NaffleNotFinished", ["uint256"], [int(DEFAULT_END_DATE)])):
-        l2_diamonds.naffle_base_facet.postponeNaffle(1, endtime, from_admin)
+    end_time = get_end_time()
+    with brownie.reverts(get_error_message("NaffleNotFinished", ["uint256"], [int(end_time)])):
+        l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time, from_admin)
 
 
 def test_postpone_naffle_not_owner(
@@ -577,10 +575,9 @@ def test_postpone_naffle_not_owner(
         l2_diamonds,
         deployed_erc721a_mock,
     )
-    chain.sleep(1001)
-    endtime = datetime.datetime.now().timestamp() + 1000
+    chain.sleep(200000)
     with brownie.reverts(get_error_message("NotNaffleOwner", ["address"], [address.address])):
-        l2_diamonds.naffle_base_facet.postponeNaffle(1, endtime, from_admin)
+        l2_diamonds.naffle_base_facet.postponeNaffle(1, get_end_time(), from_admin)
 
 
 def test_postpone_naffle_time_in_past(
@@ -592,16 +589,18 @@ def test_postpone_naffle_time_in_past(
     deployed_erc721a_mock,
     deployed_l1_messenger_mock,
 ):
+    end_time = get_end_time()
     create_naffle_and_mint_tickets(
         address,
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
+        end_time=end_time
     )
-    chain.sleep(1001)
-    endtime = datetime.datetime.now().timestamp() - 10
-    with brownie.reverts(get_error_message("InvalidEndTime", ["uint256"], [int(endtime)])):
-        l2_diamonds.naffle_base_facet.postponeNaffle(1, endtime, from_address)
+    chain.sleep(100000)
+    end_time = get_end_time() - 1000000
+    with brownie.reverts(get_error_message("InvalidEndTime", ["uint256"], [int(end_time)])):
+        l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time, from_address)
 
 
 def test_postpone_naffle_too_long(
@@ -619,10 +618,10 @@ def test_postpone_naffle_too_long(
         l2_diamonds,
         deployed_erc721a_mock,
     )
-    chain.sleep(1001)
-    endtime = datetime.datetime.now().timestamp() + 100000000000000
-    with brownie.reverts(get_error_message("InvalidEndTime", ["uint256"], [int(endtime)])):
-        l2_diamonds.naffle_base_facet.postponeNaffle(1, endtime, from_address)
+    chain.sleep(100000)
+    end_time = get_end_time() + 100000000000000
+    with brownie.reverts(get_error_message("InvalidEndTime", ["uint256"], [int(end_time)])):
+        l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time, from_address)
 
 
 def test_postpone_naffle_success(
@@ -640,11 +639,11 @@ def test_postpone_naffle_success(
         l2_diamonds,
         deployed_erc721a_mock,
     )
-    chain.sleep(1001)
-    endtime = datetime.datetime.now().timestamp() + 5000
-    l2_diamonds.naffle_base_facet.postponeNaffle(1, endtime, from_address)
+    chain.sleep(100000)
+    end_time = chain.time() + 1000
+    l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time , from_address)
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1, from_admin)
-    assert naffle[9] == endtime
+    assert naffle[9] == end_time
     assert naffle[12] == 1  # postponed
 
 

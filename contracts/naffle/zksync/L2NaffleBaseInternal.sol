@@ -359,6 +359,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (!success) {
             revert UnableToSendFunds();
         }
+    }
 
     /**
      * @notice postpone a naffle.
@@ -391,10 +392,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         naffle.status = NaffleTypes.NaffleStatus.POSTPONED;
         naffle.endTime = _newEndTime;
-    }
-
-    function _getAdminRole() internal view returns (bytes32) {
-        return AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
     /**
@@ -522,7 +519,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     /**
      * @notice sets the max postpone time
-     * @return _maxPostponeTime the max postpone time.
+     * @param _maxPostponeTime the max postpone time.
      */
     function _setMaxPostponeTime(uint256 _maxPostponeTime) internal {
         L2NaffleBaseStorage.layout().maxPostponeTime = _maxPostponeTime;
