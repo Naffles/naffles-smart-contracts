@@ -107,7 +107,6 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         owner = _ownerOf(l.naffleIdNaffleTicketIdTicketId[_naffleId][_ticketIdOnNaffle]);
     }
 
-<<<<<<< HEAD
     /**
      * @notice gets the admin role/
      * @return adminRole the admin role.
@@ -128,14 +127,17 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
      * @notice sets the L2 naffle contract address.
      * @param _l2NaffleContractAddress the L2 naffle contract address.
      */
-=======
-    function _setBaseURI(string memory _baseURI) internal {
-        ERC721MetadataStorage.layout().baseURI = _baseURI;
-    }
 
->>>>>>> 7e4cebe40801ec591a865006ea9ee11b54abf4f4
     function _setL2NaffleContractAddress(address _l2NaffleContractAddress) internal {
         L2PaidTicketStorage.layout().l2NaffleContractAddress = _l2NaffleContractAddress;
+    }
+
+    /**
+     * @notice sets the base URI.
+     * @param _baseURI the base URI.
+     */
+    function _setBaseURI(string memory _baseURI) internal {
+        ERC721MetadataStorage.layout().baseURI = _baseURI;
     }
 
     /**

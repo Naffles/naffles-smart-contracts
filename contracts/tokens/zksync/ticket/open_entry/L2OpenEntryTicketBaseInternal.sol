@@ -118,21 +118,20 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         L2OpenEntryTicketStorage.layout().l2NaffleContractAddress = _l2NaffleContractAddress;
     }
 
-<<<<<<< HEAD
     /**
      * @notice gets the total supply.
      * @return totalSupply the total supply.
      */
     function _getTotalSupply() internal view returns (uint256 totalSupply) {
         totalSupply = _totalSupply();
-=======
-    function _setBaseURI(string memory _baseURI) internal {
-        ERC721MetadataStorage.layout().baseURI = _baseURI;
     }
 
-    function _getTotalSupply() internal view returns (uint256) {
-        return _totalSupply();
->>>>>>> 7e4cebe40801ec591a865006ea9ee11b54abf4f4
+    /**
+     * @notice sets the base URI
+     * @param _baseURI the base URI.
+     */
+    function _setBaseURI(string memory _baseURI) internal {
+        ERC721MetadataStorage.layout().baseURI = _baseURI;
     }
 
     /**
