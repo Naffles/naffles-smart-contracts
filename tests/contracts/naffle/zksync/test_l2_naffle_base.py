@@ -9,7 +9,6 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
 from tests.test_helper import (
-    DEFAULT_END_DATE,
     ERC721,
     OPEN_ENTRY_TICKET_RATIO,
     NAFFLE_ID,

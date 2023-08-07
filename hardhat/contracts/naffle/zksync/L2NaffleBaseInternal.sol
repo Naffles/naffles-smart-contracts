@@ -410,13 +410,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     /**
      * @notice sets the paid ticket to open entry ratio.
-     * @param _freeTicketRatio the paid ticket to open entry ratio.
+     * @param _openEntryRatio the paid ticket to open entry ratio.
      */
     function _setOpenEntryRatio(uint256 _freeTicketRatio) internal {
-        if (_freeTicketRatio == 0) {
+        if (_openEntryRatio == 0) {
             revert OpenTicketRatioCannotBeZero();
         }
-        L2NaffleBaseStorage.layout().freeTicketRatio = _freeTicketRatio;
+        L2NaffleBaseStorage.layout().openEntryRatio = _openEntryRatio;
     }
 
     /**

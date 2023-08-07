@@ -116,11 +116,11 @@ def deployed_l2_naffle_diamond(
     deployed_l2_open_entry_ticket_diamond,
     from_admin
 ) -> L2NaffleDiamond:
-    from tests.test_helper import PLATFORM_FEE, FREE_TICKET_RATIO
+    from tests.test_helper import PLATFORM_FEE, OPEN_ENTRY_TICKET_RATIO
     diamond = L2NaffleDiamond.deploy(
         admin,
         PLATFORM_FEE,
-        FREE_TICKET_RATIO,
+        OPEN_ENTRY_TICKET_RATIO,
         deployed_l1_messenger_mock.address,
         deployed_l2_paid_ticket_diamond.address,
         deployed_l2_open_entry_ticket_diamond.address,

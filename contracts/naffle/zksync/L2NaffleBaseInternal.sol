@@ -55,7 +55,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _params.ethTokenAddress,
             _params.nftId,
             _params.paidTicketSpots,
-            freeTicketSpots,
+            openEntryTicketSpots,
             _params.ticketPriceInWei,
             _params.endTime,
             _params.naffleType,
@@ -405,18 +405,18 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @return openEntryRatio the paid ticket to open entry ratio.
      */
     function _getOpenEntryRatio() internal view returns (uint256 openEntryRatio) {
-        openEntryRatio = L2NaffleBaseStorage.layout().freeTicketRatio;
+        openEntryRatio = L2NaffleBaseStorage.layout().openEntryTicketRatio;
     }
 
     /**
      * @notice sets the paid ticket to open entry ratio.
-     * @param _freeTicketRatio the paid ticket to open entry ratio.
+     * @param _openEntryRatio the paid ticket to open entry ratio.
      */
-    function _setOpenEntryRatio(uint256 _freeTicketRatio) internal {
-        if (_openEntryTicketRatio == 0) {
+    function _setOpenEntryRatio(uint256 _openEntryRatio) internal {
+        if (_openEntryRatio == 0) {
             revert OpenTicketRatioCannotBeZero();
         }
-        L2NaffleBaseStorage.layout().openEntryTicketRatio = _openEntryTicketRatio;
+        L2NaffleBaseStorage.layout().openEntryTicketRatio = _openEntryRatio;
     }
 
     /**
