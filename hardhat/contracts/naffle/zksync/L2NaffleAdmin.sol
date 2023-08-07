@@ -25,8 +25,8 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
     /**
      * @inheritdoc IL2NaffleAdmin
      */
-    function setOpenEntryRatio(uint256 _openEntryRatio) external onlyRole(_getAdminRole()) {
-        _setOpenEntryRatio(_openEntryRatio);
+    function setOpenEntryRatio(uint256 _openEntryTicketRatio) external onlyRole(_getAdminRole()) {
+        _setOpenEntryRatio(_openEntryTicketRatio);
     }
 
     /**
