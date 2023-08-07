@@ -143,6 +143,7 @@ def test_get_ticket_by_id(
     ticket = brownie.interface.IL2PaidTicketView(
         l2_diamonds.deployed_l2_paid_ticket_diamond).getTicketById(ticket_id, from_admin)
     assert ticket == (
+        address,
         TICKET_PRICE,
         NAFFLE_ID,
         ticket_id,
@@ -167,6 +168,7 @@ def test_get_ticket_by_id_on_naffle(
     ticket = brownie.interface.IL2PaidTicketView(
         l2_diamonds.deployed_l2_paid_ticket_diamond).getTicketByIdOnNaffle(ticket_id, 1, from_admin)
     assert ticket == (
+        address,
         TICKET_PRICE,
         NAFFLE_ID,
         ticket_id,

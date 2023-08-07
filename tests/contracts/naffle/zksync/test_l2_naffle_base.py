@@ -32,7 +32,7 @@ def setup_l2_naffle_contract(
     from_admin,
 ):
     admin_facet.setPlatformFee(PLATFORM_FEE, from_admin)
-    admin_facet.setOpenEntryRatio(FREE_TICKET_RATIO, from_admin)
+    admin_facet.setOpenEntryRatio(OPEN_ENTRY_TICKET_RATIO, from_admin)
     admin_facet.setL1NaffleContractAddress(l1_naffle_contract.address, from_admin)
     admin_facet.setPaidTicketContractAddress(paid_ticket_contract.address, from_admin)
     admin_facet.setOpenEntryTicketContractAddress(
