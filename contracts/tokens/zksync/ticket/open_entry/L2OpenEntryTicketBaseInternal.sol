@@ -23,8 +23,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
                 revert NotOwnerOfTicket(ticketId);
             }
             ticket.naffleId = _naffleId;
-            ticket.ticketIdOnNaffle = startingTicketId;
-            ++startingTicketId;
+            ticket.ticketIdOnNaffle = startingTicketId + i;
         }
     }
 

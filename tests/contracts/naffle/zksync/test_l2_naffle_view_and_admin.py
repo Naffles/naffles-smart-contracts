@@ -114,7 +114,7 @@ def test_get_and_set_open_entry_ticket_ratio(
     assert view_facet.getOpenEntryRatio() == 1
 
 
-def test_set_free_ticket_ratio_cannot_be_zero(
+def test_set_open_entry_ticket_ratio_cannot_be_zero(
     from_admin,
     deployed_l2_naffle_diamond,
     deployed_l2_naffle_base_facet,
