@@ -49,7 +49,6 @@ library NaffleTypes {
     }
 
     struct OpenEntryTicket {
-        address owner;
         uint256 naffleId;
         uint256 ticketIdOnNaffle;
         bool winningTicket;
@@ -69,9 +68,9 @@ library NaffleTypes {
         uint256 naffleId;
         uint256 nftId;
         uint256 paidTicketSpots;
-        uint256 freeTicketSpots;
+        uint256 openEntryTicketSpots;
         uint256 numberOfPaidTickets;
-        uint256 numberOfFreeTickets;
+        uint256 numberOfOpenEntries;
         uint256 ticketPriceInWei;
         uint256 endTime;
         uint256 winningTicketId;

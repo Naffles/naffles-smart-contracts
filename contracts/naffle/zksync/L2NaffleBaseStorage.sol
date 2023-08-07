@@ -10,8 +10,9 @@ library L2NaffleBaseStorage {
     struct Layout {
         address l1NaffleContractAddress;
         address paidTicketContractAddress;
+        address openEntryTicketContractAddress;
         // 100 = 1%
-        uint256 freeTicketRatio;
+        uint256 openEntryTicketRatio;
         uint256 platformFee;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
     }

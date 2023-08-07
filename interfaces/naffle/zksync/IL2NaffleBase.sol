@@ -12,4 +12,9 @@ interface IL2NaffleBase {
         uint256 _amount,
         uint256 _naffleId
     ) external payable returns (uint256[] memory ticketIds);
+
+    function useOpenEntryTickets(
+        uint256[] memory _ticketIds,
+        uint256 _naffleId
+    ) external;
 }

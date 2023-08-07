@@ -9,10 +9,10 @@ library L2OpenEntryTicketStorage {
 
     struct Layout {
         address l2NaffleContractAddress;
-        // naffle id => ticket id on naffle => ticket
-        mapping(uint256 => mapping(uint256 => NaffleTypes.OpenEntryTicket)) openEntryTickets;
-        // ticket id => ticket id on naffle
-        mapping(uint256 => uint256) ticketIdNaffleTicketId;
+        // naffle id => ticket id on naffle => ticket id
+        mapping(uint256 => mapping(uint256 => uint256)) naffleIdTicketIdOnNaffleTicketId;
+        // ticket id => open entry ticket
+        mapping(uint256 => NaffleTypes.OpenEntryTicket) openEntryTickets;
     }
 
     function layout() internal pure returns (Layout storage s) {

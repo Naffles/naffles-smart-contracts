@@ -31,4 +31,14 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
             _naffleId
         );
     }
+
+    function useOpenEntryTickets(
+        uint256[] memory _ticketIds,
+        uint256 _naffleId
+    ) external {
+        _useOpenEntryTickets(
+            _ticketIds,
+            _naffleId
+        );
+    }
 }

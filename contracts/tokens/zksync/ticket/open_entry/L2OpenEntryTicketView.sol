@@ -13,4 +13,12 @@ contract L2OpenEntryTicketView is IL2OpenEntryTicketView, L2OpenEntryTicketBaseI
     function getAdminRole() external view returns (bytes32) {
         return _getAdminRole();
     }
+
+    function getTotalSupply() external view returns (uint256) {
+        return _getTotalSupply();
+    }
+
+    function getOpenEntryTicketById(uint256 _ticketId) external view returns (NaffleTypes.OpenEntryTicket memory) {
+        return _getOpenEntryTicketById(_ticketId);
+    }
 }
