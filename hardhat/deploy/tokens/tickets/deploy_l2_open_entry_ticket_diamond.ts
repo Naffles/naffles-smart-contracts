@@ -81,7 +81,37 @@ export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKe
         JSON.stringify(l2OpenEntryTicketDiamondAddresses, null, 2)
     );
 
+
+
     console.log('L2OpenEntryTicketDiamond addresses:', l2OpenEntryTicketDiamondAddresses);
+
+    console.log("waiting for 30 seconds for the diamond to be indexed on etherscan");
+    await new Promise(resolve => setTimeout(resolve, 30000));
+
+    console.log("verifying L2OpenEntryTicketDiamond on etherscan");
+    await hre.run("verify:verify", {
+      address: l2OpenEntryTicketDiamondImpl.address,
+      constructorArguments: [wallet.address],
+    });
+
+    console.log("verifying L2OpenEntryTicketBase on etherscan");
+    await hre.run("verify:verify", {
+      address: l2OpenEntryTicketBaseImpl.address,
+      constructorArguments: [],
+    });
+
+    console.log("verifying L2OpenEntryTicketAdmin on etherscan");
+    await hre.run("verify:verify", {
+      address: l2OpenEntryTicketAdminImpl.address,
+      constructorArguments: [],
+    });
+
+    console.log("verifying L2OpenEntryTicketView on etherscan");
+    await hre.run("verify:verify", {
+      address: l2OpenEntryTicketViewImpl.address,
+      constructorArguments: [],
+    });
+
     return l2OpenEntryTicketDiamondAddresses;
   } catch (error) {
     console.log(error);

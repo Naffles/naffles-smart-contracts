@@ -12,8 +12,8 @@ const MINIMUM_NAFFLE_DURATION = 60 * 60 * 24; // 1 day
 const MINIMUM_PAID_TICKET_SPOTS = 10;
 const MINIMUM_TICKET_PRICE_IN_WEI = ethers.utils.parseEther('0.001');
 
-async function deployFacet(Factory, deployer) {
-  return await new Factory(deployer).deploy({});
+async function deployFacet(Factory, deployer, gasprice) {
+  return await new Factory(deployer).deploy({}, {gasPrice: gasprice});
 }
 
 export default async function main(foundersKeyAddress: string, foundersKeyPlaceholderAddress: string) {
@@ -30,6 +30,20 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
     zkSyncContract = "0x32400084c286cf3e17e7b677ea9583e60a000324"
   }
 
+  const currentGasPrice = await hre.ethers.provider.getGasPrice();
+  const increasedGasPrice = currentGasPrice.mul(2);
+
+  const deployAndLog = async (artifactName, args = []) => {
+    const artifact = await deployer.loadArtifact(artifactName);
+    const tx = await deployer.deploy(artifact, args, {
+      gasPrice: increasedGasPrice
+    });
+    console.log(`Transaction for ${artifactName} broadcasted with hash: ${tx.hash}`);
+    const receipt = await tx.wait();
+    console.log(`Successfully deployed ${artifactName} at ${receipt.contractAddress}`);
+    return hre.ethers.getContractAt(artifactName, receipt.contractAddress);
+  }
+
   console.log('Deploying contracts with the account:', deployer.address);
 
   console.log('Deploying L1NaffleDiamond..');
@@ -41,21 +55,24 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
     zkSyncContract,
     foundersKeyAddress,
     foundersKeyPlaceholderAddress,
-    {}
+    {
+      gasPrice: increasedGasPrice
+    }
   );
+
   console.log(`Successfully deployed L1NaffleDiamond at ${l1NaffleDiamondImpl.address}`);
 
   console.log('Deploying Diamond facets..');
   console.log('Deploying L1NaffleBase facet..');
-  const l1NaffleBaseImpl = await deployFacet(L1NaffleBase__factory, deployer);
+  const l1NaffleBaseImpl = await deployFacet(L1NaffleBase__factory, deployer, increasedGasPrice);
   console.log(`Successfully deployed L1NaffleBase facet at ${l1NaffleBaseImpl.address}`);
 
   console.log('Deploying L1NaffleAdmin facet..');
-  const l1NaffleAdminImpl = await deployFacet(L1NaffleAdmin__factory, deployer);
+  const l1NaffleAdminImpl = await deployFacet(L1NaffleAdmin__factory, deployer, increasedGasPrice);
   console.log(`Successfully deployed L1NaffleAdmin facet at ${l1NaffleAdminImpl.address}`);
 
   console.log('Deploying L1NaffleView facet..');
-  const l1NaffleViewImpl = await deployFacet(L1NaffleView__factory, deployer);
+  const l1NaffleViewImpl = await deployFacet(L1NaffleView__factory, deployer, increasedGasPrice);
   console.log(`Successfully deployed L1NaffleView facet at ${l1NaffleViewImpl.address}`);
 
   console.log('Getting selectors for diamond..');
@@ -102,4 +119,61 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
   );
 
   console.log('L1NaffleDiamondAddresses: ', l1NaffleDiamondAddresses);
+
+  console.log("verifying contracts..")
+
+  // wait a few blocks for etherscan to index the contract
+  console.log("waiting 30 seconds for etherscan to index the contract..");
+  await new Promise(resolve => setTimeout(resolve, 30000));
+
+  try {
+    console.log("verifying L1NaffleDiamond..");
+    await hre.run('verify:verify', {
+      address: l1NaffleDiamondImpl.address,
+      constructorArguments: [
+        deployer.address,
+        MINIMUM_NAFFLE_DURATION,
+        MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE_IN_WEI,
+        zkSyncContract,
+        foundersKeyAddress,
+        foundersKeyPlaceholderAddress,
+      ],
+    });
+  } catch (error) {
+    console.error("Failed to verify L1NaffleDiamond:", error.message);
+  }
+
+// Verify L1NaffleBase
+  try {
+    console.log("verifying L1NaffleBase..");
+    await hre.run('verify:verify', {
+      address: l1NaffleBaseImpl.address,
+      constructorArguments: [],
+    });
+  } catch (error) {
+    console.error("Failed to verify L1NaffleBase:", error.message);
+  }
+
+// Verify L1NaffleAdmin
+  try {
+    console.log("verifying L1NaffleAdmin..");
+    await hre.run('verify:verify', {
+      address: l1NaffleAdminImpl.address,
+      constructorArguments: [],
+    });
+  } catch (error) {
+    console.error("Failed to verify L1NaffleAdmin:", error.message);
+  }
+
+// Verify L1NaffleView
+  try {
+    console.log("verifying L1NaffleView..");
+    await hre.run('verify:verify', {
+      address: l1NaffleViewImpl.address,
+      constructorArguments: [],
+    });
+  } catch (error) {
+    console.error("Failed to verify L1NaffleView:", error.message);
+  }
 }
