@@ -44,6 +44,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "_baseURI",
+        type: "string",
+      },
+    ],
+    name: "setBaseURI",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "_l2NaffleContractAddress",
         type: "address",

@@ -38,6 +38,7 @@ export interface L2PaidTicketAdminInterface extends utils.Interface {
     "renounceRole(bytes32)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
+    "setBaseURI(string)": FunctionFragment;
     "setL2NaffleContractAddress(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
@@ -53,6 +54,7 @@ export interface L2PaidTicketAdminInterface extends utils.Interface {
       | "renounceRole"
       | "revokeRole"
       | "setAdmin"
+      | "setBaseURI"
       | "setL2NaffleContractAddress"
       | "transferOwnership"
   ): FunctionFragment;
@@ -91,6 +93,10 @@ export interface L2PaidTicketAdminInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setBaseURI",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setL2NaffleContractAddress",
     values: [PromiseOrValue<string>]
   ): string;
@@ -120,6 +126,7 @@ export interface L2PaidTicketAdminInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setBaseURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setL2NaffleContractAddress",
     data: BytesLike
@@ -336,6 +343,11 @@ export interface L2PaidTicketAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setBaseURI(
+      _baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setL2NaffleContractAddress(
       _l2NaffleContractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -388,6 +400,11 @@ export interface L2PaidTicketAdmin extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setBaseURI(
+    _baseURI: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setL2NaffleContractAddress(
     _l2NaffleContractAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -435,6 +452,11 @@ export interface L2PaidTicketAdmin extends BaseContract {
 
     setAdmin(
       _admin: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setBaseURI(
+      _baseURI: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -596,6 +618,11 @@ export interface L2PaidTicketAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setBaseURI(
+      _baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setL2NaffleContractAddress(
       _l2NaffleContractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -646,6 +673,11 @@ export interface L2PaidTicketAdmin extends BaseContract {
 
     setAdmin(
       _admin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setBaseURI(
+      _baseURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

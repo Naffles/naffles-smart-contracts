@@ -153,6 +153,24 @@ const _abi = [
         type: "uint256",
       },
       {
+        internalType: "uint256",
+        name: "_newEndTime",
+        type: "uint256",
+      },
+    ],
+    name: "postponeNaffle",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_naffleId",
+        type: "uint256",
+      },
+      {
         internalType: "uint256[]",
         name: "_openEntryTicketIds",
         type: "uint256[]",

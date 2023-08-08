@@ -19,6 +19,17 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "endTime",
+        type: "uint256",
+      },
+    ],
+    name: "InvalidEndTime",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "naffleId",
         type: "uint256",
       },
@@ -57,6 +68,17 @@ const _abi = [
       },
     ],
     name: "NaffleNotEndedYet",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "endTime",
+        type: "uint256",
+      },
+    ],
+    name: "NaffleNotFinished",
     type: "error",
   },
   {
@@ -105,6 +127,17 @@ const _abi = [
       },
     ],
     name: "NotEnoughPaidTicketSpots",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+    ],
+    name: "NotNaffleOwner",
     type: "error",
   },
   {

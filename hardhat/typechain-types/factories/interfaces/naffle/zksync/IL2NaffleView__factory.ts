@@ -37,6 +37,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getMaxPostponeTime",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "maxPostponeTime",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -75,7 +88,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "freeTicketSpots",
+            name: "openEntryTicketSpots",
             type: "uint256",
           },
           {

@@ -27,6 +27,7 @@ export interface IL2OpenEntryTicketAdminInterface extends utils.Interface {
   functions: {
     "adminMint(address,uint256)": FunctionFragment;
     "setAdmin(address)": FunctionFragment;
+    "setBaseURI(string)": FunctionFragment;
     "setL2NaffleContractAddress(address)": FunctionFragment;
   };
 
@@ -34,6 +35,7 @@ export interface IL2OpenEntryTicketAdminInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "adminMint"
       | "setAdmin"
+      | "setBaseURI"
       | "setL2NaffleContractAddress"
   ): FunctionFragment;
 
@@ -46,12 +48,17 @@ export interface IL2OpenEntryTicketAdminInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setBaseURI",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setL2NaffleContractAddress",
     values: [PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(functionFragment: "adminMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setBaseURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setL2NaffleContractAddress",
     data: BytesLike
@@ -98,6 +105,11 @@ export interface IL2OpenEntryTicketAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setBaseURI(
+      _baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setL2NaffleContractAddress(
       _l2NaffleContractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -115,6 +127,11 @@ export interface IL2OpenEntryTicketAdmin extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setBaseURI(
+    _baseURI: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setL2NaffleContractAddress(
     _l2NaffleContractAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -129,6 +146,11 @@ export interface IL2OpenEntryTicketAdmin extends BaseContract {
 
     setAdmin(
       _admin: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setBaseURI(
+      _baseURI: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -152,6 +174,11 @@ export interface IL2OpenEntryTicketAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setBaseURI(
+      _baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setL2NaffleContractAddress(
       _l2NaffleContractAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -167,6 +194,11 @@ export interface IL2OpenEntryTicketAdmin extends BaseContract {
 
     setAdmin(
       _admin: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setBaseURI(
+      _baseURI: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

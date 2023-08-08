@@ -29,6 +29,7 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
     "setAdmin(address)": FunctionFragment;
     "setL1MessengerContractAddress(address)": FunctionFragment;
     "setL1NaffleContractAddress(address)": FunctionFragment;
+    "setMaxPostponeTime(uint256)": FunctionFragment;
     "setOpenEntryRatio(uint256)": FunctionFragment;
     "setOpenEntryTicketContractAddress(address)": FunctionFragment;
     "setPaidTicketContractAddress(address)": FunctionFragment;
@@ -42,6 +43,7 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
       | "setAdmin"
       | "setL1MessengerContractAddress"
       | "setL1NaffleContractAddress"
+      | "setMaxPostponeTime"
       | "setOpenEntryRatio"
       | "setOpenEntryTicketContractAddress"
       | "setPaidTicketContractAddress"
@@ -64,6 +66,10 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setL1NaffleContractAddress",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMaxPostponeTime",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setOpenEntryRatio",
@@ -97,6 +103,10 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setL1NaffleContractAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMaxPostponeTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -170,8 +180,13 @@ export interface IL2NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setMaxPostponeTime(
+      _maxPostponeTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setOpenEntryRatio(
-      _freeTicketRatio: PromiseOrValue<BigNumberish>,
+      _openEntryTicketRatio: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -217,8 +232,13 @@ export interface IL2NaffleAdmin extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setMaxPostponeTime(
+    _maxPostponeTime: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setOpenEntryRatio(
-    _freeTicketRatio: PromiseOrValue<BigNumberish>,
+    _openEntryTicketRatio: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -264,8 +284,13 @@ export interface IL2NaffleAdmin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setMaxPostponeTime(
+      _maxPostponeTime: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setOpenEntryRatio(
-      _freeTicketRatio: PromiseOrValue<BigNumberish>,
+      _openEntryTicketRatio: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -314,8 +339,13 @@ export interface IL2NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setMaxPostponeTime(
+      _maxPostponeTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setOpenEntryRatio(
-      _freeTicketRatio: PromiseOrValue<BigNumberish>,
+      _openEntryTicketRatio: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -362,8 +392,13 @@ export interface IL2NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setMaxPostponeTime(
+      _maxPostponeTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setOpenEntryRatio(
-      _freeTicketRatio: PromiseOrValue<BigNumberish>,
+      _openEntryTicketRatio: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -28,7 +28,7 @@ export declare namespace NaffleTypes {
     naffleId: PromiseOrValue<BigNumberish>;
     nftId: PromiseOrValue<BigNumberish>;
     paidTicketSpots: PromiseOrValue<BigNumberish>;
-    freeTicketSpots: PromiseOrValue<BigNumberish>;
+    openEntryTicketSpots: PromiseOrValue<BigNumberish>;
     numberOfPaidTickets: PromiseOrValue<BigNumberish>;
     numberOfOpenEntries: PromiseOrValue<BigNumberish>;
     ticketPriceInWei: PromiseOrValue<BigNumberish>;
@@ -62,7 +62,7 @@ export declare namespace NaffleTypes {
     naffleId: BigNumber;
     nftId: BigNumber;
     paidTicketSpots: BigNumber;
-    freeTicketSpots: BigNumber;
+    openEntryTicketSpots: BigNumber;
     numberOfPaidTickets: BigNumber;
     numberOfOpenEntries: BigNumber;
     ticketPriceInWei: BigNumber;
@@ -79,6 +79,7 @@ export interface IL2NaffleViewInterface extends utils.Interface {
   functions: {
     "getAdminRole()": FunctionFragment;
     "getL1NaffleContractAddress()": FunctionFragment;
+    "getMaxPostponeTime()": FunctionFragment;
     "getNaffleById(uint256)": FunctionFragment;
     "getOpenEntryRatio()": FunctionFragment;
     "getOpenEntryTicketContractAddress()": FunctionFragment;
@@ -90,6 +91,7 @@ export interface IL2NaffleViewInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "getAdminRole"
       | "getL1NaffleContractAddress"
+      | "getMaxPostponeTime"
       | "getNaffleById"
       | "getOpenEntryRatio"
       | "getOpenEntryTicketContractAddress"
@@ -103,6 +105,10 @@ export interface IL2NaffleViewInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getL1NaffleContractAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMaxPostponeTime",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -132,6 +138,10 @@ export interface IL2NaffleViewInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getL1NaffleContractAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxPostponeTime",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -193,6 +203,10 @@ export interface IL2NaffleView extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { l1NaffleContractAddress: string }>;
 
+    getMaxPostponeTime(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { maxPostponeTime: BigNumber }>;
+
     getNaffleById(
       _id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -219,6 +233,8 @@ export interface IL2NaffleView extends BaseContract {
 
   getL1NaffleContractAddress(overrides?: CallOverrides): Promise<string>;
 
+  getMaxPostponeTime(overrides?: CallOverrides): Promise<BigNumber>;
+
   getNaffleById(
     _id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -236,6 +252,8 @@ export interface IL2NaffleView extends BaseContract {
     getAdminRole(overrides?: CallOverrides): Promise<string>;
 
     getL1NaffleContractAddress(overrides?: CallOverrides): Promise<string>;
+
+    getMaxPostponeTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     getNaffleById(
       _id: PromiseOrValue<BigNumberish>,
@@ -260,6 +278,8 @@ export interface IL2NaffleView extends BaseContract {
 
     getL1NaffleContractAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getMaxPostponeTime(overrides?: CallOverrides): Promise<BigNumber>;
+
     getNaffleById(
       _id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -280,6 +300,10 @@ export interface IL2NaffleView extends BaseContract {
     getAdminRole(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getL1NaffleContractAddress(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMaxPostponeTime(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

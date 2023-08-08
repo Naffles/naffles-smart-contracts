@@ -67,6 +67,7 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
     "drawWinner(uint256)": FunctionFragment;
     "ownerCancelNaffle(uint256)": FunctionFragment;
     "ownerDrawWinner(uint256)": FunctionFragment;
+    "postponeNaffle(uint256,uint256)": FunctionFragment;
     "refundTicketsForNaffle(uint256,uint256[],uint256[],address)": FunctionFragment;
     "useOpenEntryTickets(uint256[],uint256)": FunctionFragment;
   };
@@ -78,6 +79,7 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
       | "drawWinner"
       | "ownerCancelNaffle"
       | "ownerDrawWinner"
+      | "postponeNaffle"
       | "refundTicketsForNaffle"
       | "useOpenEntryTickets"
   ): FunctionFragment;
@@ -101,6 +103,10 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "ownerDrawWinner",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "postponeNaffle",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "refundTicketsForNaffle",
@@ -128,6 +134,10 @@ export interface IL2NaffleBaseInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "ownerDrawWinner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "postponeNaffle",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -195,6 +205,12 @@ export interface IL2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    postponeNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _newEndTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     refundTicketsForNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
       _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
@@ -233,6 +249,12 @@ export interface IL2NaffleBase extends BaseContract {
 
   ownerDrawWinner(
     _naffleId: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  postponeNaffle(
+    _naffleId: PromiseOrValue<BigNumberish>,
+    _newEndTime: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -276,6 +298,12 @@ export interface IL2NaffleBase extends BaseContract {
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    postponeNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _newEndTime: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     refundTicketsForNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
@@ -321,6 +349,12 @@ export interface IL2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    postponeNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _newEndTime: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     refundTicketsForNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
       _openEntryTicketIds: PromiseOrValue<BigNumberish>[],
@@ -360,6 +394,12 @@ export interface IL2NaffleBase extends BaseContract {
 
     ownerDrawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    postponeNaffle(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _newEndTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

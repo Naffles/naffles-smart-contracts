@@ -66,7 +66,20 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_freeTicketRatio",
+        name: "_maxPostponeTime",
+        type: "uint256",
+      },
+    ],
+    name: "setMaxPostponeTime",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_openEntryTicketRatio",
         type: "uint256",
       },
     ],

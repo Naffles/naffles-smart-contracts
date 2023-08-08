@@ -10,7 +10,6 @@ export default async function main(hre: HardhatRuntimeEnvironment, deployerPriva
     const network = hre.network.name;
     createDir(`/${dirPath}/${network}`);
 
-    console.log('Deployer private key:', deployerPrivateKey)
     const wallet = new Wallet(deployerPrivateKey);
 
     // Create deployer object and load the artifact of the contract we want to deploy.
