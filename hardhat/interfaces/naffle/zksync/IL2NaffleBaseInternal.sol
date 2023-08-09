@@ -104,7 +104,7 @@ interface IL2NaffleBaseInternal {
      * @param ethTokenAddress address of the ETH token.
      * @param nftId id of the NFT.
      * @param paidTicketSpots number of paid ticket spots.
-     * @param freeTicketSpots number of free ticket spots.
+     * @param openEntryTicketSpots number of free ticket spots.
      * @param ticketPriceInWei price of the ticket in wei.
      * @param endTime end time of the naffle.
      * @param naffleType type of the naffle.
@@ -116,7 +116,7 @@ interface IL2NaffleBaseInternal {
         address indexed ethTokenAddress,
         uint256 nftId,
         uint256 paidTicketSpots,
-        uint256 freeTicketSpots,
+        uint256 openEntryTicketSpots,
         uint256 ticketPriceInWei,
         uint256 endTime,
         NaffleTypes.NaffleType indexed naffleType,
