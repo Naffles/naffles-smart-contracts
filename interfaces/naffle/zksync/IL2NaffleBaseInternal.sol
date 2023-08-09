@@ -170,6 +170,5 @@ interface IL2NaffleBaseInternal {
      * @param naffleId id of the naffle.
      * @param newEndTime new end time of the naffle.
      */
-    event L2NafflePostponed(uint256 indexed_naffleId, uint256 _newEndTime);
-);
+    event L2NafflePostponed(uint256 indexed naffleId, uint256 newEndTime);
 }
