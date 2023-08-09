@@ -98,6 +98,42 @@ export default async function (
     );
 
     console.log('L2NaffleDiamond addresses:', l2NaffleDiamondAddresses);
+
+    console.log("waiting for 30 seconds for the diamond to be indexed on etherscan");
+    await new Promise(resolve => setTimeout(resolve, 30000));
+
+    console.log("verifying L2NaffleDiamond on etherscan");
+    await hre.run("verify:verify", {
+      address: l2NaffleDiamondImpl.address,
+      constructorArguments: [
+        wallet.address,
+        PLATFORM_FEE,
+        OPEN_ENTRY_RATIO,
+        L1_MESSENGER_CONTRACT,
+        l1NaffleDiamondContract,
+        paidTicketAddress,
+        openEntryTicketAddress,
+      ],
+    });
+
+    console.log("verifying L2NaffleBase on etherscan");
+    await hre.run("verify:verify", {
+      address: l2NaffleBaseImpl.address,
+      constructorArguments: [],
+    });
+
+    console.log("verifying L2NaffleAdmin on etherscan");
+    await hre.run("verify:verify", {
+      address: l2NaffleAdminImpl.address,
+      constructorArguments: [],
+    });
+
+    console.log("verifying L2NaffleView on etherscan");
+    await hre.run("verify:verify", {
+      address: l2NaffleViewImpl.address,
+      constructorArguments: [],
+    });
+
     return l2NaffleDiamondAddresses;
   } catch (error) {
     console.log(error);

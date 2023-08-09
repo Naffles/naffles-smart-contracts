@@ -2,9 +2,11 @@ import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 
 import "@matterlabs/hardhat-zksync-deploy";
-import "@matterlabs/hardhat-zksync-solc"; // comment out to compile for ethereum.
+import "@matterlabs/hardhat-zksync-solc"; // comment out to compile / deploy for ethereum.
+import "@matterlabs/hardhat-zksync-verify"; // comment out to compile / deploy for ethereum.
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
+// import "@nomiclabs/hardhat-etherscan"; // comment out to compile / deploy for zksync.
 
 require("./tasks/ethereum/deploy_erc721a_mock")
 require("./tasks/ethereum/mint_mock_nfts")
@@ -45,6 +47,7 @@ require("./tasks/zksync/tokens/open_entry/open_entry_ticket_base/detach_tickets"
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
 
 module.exports = {
   zksolc: {
@@ -70,7 +73,11 @@ module.exports = {
       url: "https://testnet.era.zksync.dev",
       ethNetwork: "goerli",
       zksync: true,
+      verifyURL: "https://zksync2-testnet-explorer.zksync.dev/contract_verification",
     }
+  },
+  etherscan: {
+    apiKey: ETHERSCAN_API_KEY
   },
   solidity: {
     version: "0.8.17",

@@ -90,7 +90,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
       },
       {
         value: baseCost,
-        gasPrice: gasPrice
+        gasPrice: gasPrice,
       }
     );
     console.log(tx)
