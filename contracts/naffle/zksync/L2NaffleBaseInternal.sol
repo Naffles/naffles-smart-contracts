@@ -392,6 +392,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         naffle.status = NaffleTypes.NaffleStatus.POSTPONED;
         naffle.endTime = _newEndTime;
+
+        emit L2NafflePostponed(
+            _naffleId,
+            _newEndTime
+        );
     }
 
     /**

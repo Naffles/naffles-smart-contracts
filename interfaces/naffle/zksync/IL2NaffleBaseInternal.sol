@@ -164,4 +164,12 @@ interface IL2NaffleBaseInternal {
      * @param messageHash hash of the transaction sent to the L1.
      */
     event L2NaffleFinished(uint256 indexed naffleId, address winner, uint256 winningTicketIdOnNaffle, bytes32 messageHash);
+
+    /**
+     * @notice emitted when a naffle is postponed.
+     * @param naffleId id of the naffle.
+     * @param newEndTime new end time of the naffle.
+     */
+    event L2NafflePostponed(uint256 indexed_naffleId, uint256 _newEndTime);
+);
 }
