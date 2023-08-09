@@ -26,6 +26,7 @@ export interface L2NaffleBaseInternalInterface extends utils.Interface {
     "L2NaffleCancelled(uint256,bytes32)": EventFragment;
     "L2NaffleCreated(uint256,address,address,uint256,uint256,uint256,uint256,uint256,uint8,uint8)": EventFragment;
     "L2NaffleFinished(uint256,address,uint256,bytes32)": EventFragment;
+    "L2NafflePostponed(uint256,uint256)": EventFragment;
     "OpenEntryTicketsUsed(uint256,address,uint256[])": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
@@ -36,6 +37,7 @@ export interface L2NaffleBaseInternalInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "L2NaffleCancelled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "L2NaffleCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "L2NaffleFinished"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "L2NafflePostponed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OpenEntryTicketsUsed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
@@ -61,7 +63,7 @@ export interface L2NaffleCreatedEventObject {
   ethTokenAddress: string;
   nftId: BigNumber;
   paidTicketSpots: BigNumber;
-  freeTicketSpots: BigNumber;
+  openEntryTicketSpots: BigNumber;
   ticketPriceInWei: BigNumber;
   endTime: BigNumber;
   naffleType: number;
@@ -98,6 +100,18 @@ export type L2NaffleFinishedEvent = TypedEvent<
 
 export type L2NaffleFinishedEventFilter =
   TypedEventFilter<L2NaffleFinishedEvent>;
+
+export interface L2NafflePostponedEventObject {
+  naffleId: BigNumber;
+  newEndTime: BigNumber;
+}
+export type L2NafflePostponedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  L2NafflePostponedEventObject
+>;
+
+export type L2NafflePostponedEventFilter =
+  TypedEventFilter<L2NafflePostponedEvent>;
 
 export interface OpenEntryTicketsUsedEventObject {
   naffleId: BigNumber;
@@ -208,7 +222,7 @@ export interface L2NaffleBaseInternal extends BaseContract {
       ethTokenAddress?: PromiseOrValue<string> | null,
       nftId?: null,
       paidTicketSpots?: null,
-      freeTicketSpots?: null,
+      openEntryTicketSpots?: null,
       ticketPriceInWei?: null,
       endTime?: null,
       naffleType?: PromiseOrValue<BigNumberish> | null,
@@ -220,7 +234,7 @@ export interface L2NaffleBaseInternal extends BaseContract {
       ethTokenAddress?: PromiseOrValue<string> | null,
       nftId?: null,
       paidTicketSpots?: null,
-      freeTicketSpots?: null,
+      openEntryTicketSpots?: null,
       ticketPriceInWei?: null,
       endTime?: null,
       naffleType?: PromiseOrValue<BigNumberish> | null,
@@ -239,6 +253,15 @@ export interface L2NaffleBaseInternal extends BaseContract {
       winningTicketIdOnNaffle?: null,
       messageHash?: null
     ): L2NaffleFinishedEventFilter;
+
+    "L2NafflePostponed(uint256,uint256)"(
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      newEndTime?: null
+    ): L2NafflePostponedEventFilter;
+    L2NafflePostponed(
+      naffleId?: PromiseOrValue<BigNumberish> | null,
+      newEndTime?: null
+    ): L2NafflePostponedEventFilter;
 
     "OpenEntryTicketsUsed(uint256,address,uint256[])"(
       naffleId?: PromiseOrValue<BigNumberish> | null,

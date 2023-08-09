@@ -205,7 +205,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "freeTicketSpots",
+        name: "openEntryTicketSpots",
         type: "uint256",
       },
       {
@@ -265,6 +265,25 @@ const _abi = [
       },
     ],
     name: "L2NaffleFinished",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "naffleId",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "newEndTime",
+        type: "uint256",
+      },
+    ],
+    name: "L2NafflePostponed",
     type: "event",
   },
   {
