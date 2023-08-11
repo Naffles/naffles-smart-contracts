@@ -52,4 +52,10 @@ interface IL1NaffleAdmin {
      * @param _admin the new admin address.
      */
     function setAdmin(address _admin) external;
+
+    /**
+     * @notice sets the VRF Manager address.
+     * @param _vrfManager the new VRF Manager address.
+     */
+    function setVRFManager(address _vrfManager) external;
 }

@@ -66,6 +66,19 @@ interface IL1NaffleBase {
     ) external;
 
     /**
+     * @notice sets the random number for the naffle.
+     * @param _naffleId id of the naffle.
+     * @param _randomNumber random number for the naffle.
+     */
+    function setNaffleRandomNumber(uint256 _naffleId, uint256 _randomNumber) external; 
+
+    /**
+     * @notice requests a random number for the naffle.
+     * @param _naffleId id of the naffle.
+     */
+    function requestNaffleRandomNumber(uint256 _naffleId) external;
+
+    /**
      * Thrown when the call is not supported.
      */
     error NotSupported();
