@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 
 import "./L1NaffleBaseStorage.sol";
 import "../../libraries/NaffleTypes.sol";
+import "../../../interfaces/vrf/ethereum/INaffleVRF.sol";
 import '@solidstate/contracts/interfaces/IERC165.sol';
 import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
@@ -85,7 +86,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             owner: msg.sender,
             winner: address(0),
             cancelled: false,
-            naffleTokenType: tokenContractType
+            naffleTokenType: tokenContractType,
+            randomNumber: 0
         });
 
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
@@ -202,6 +204,25 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         }
 
         emit L1NaffleCancelled(_naffleId);
+    }
+
+    /**
+     * @notice sets the random number of a naffle.
+     * @param _naffleId the id of the naffle.
+     * @param _randomNumber the random number.
+     */
+    function _setNaffleRandomNumber(uint256 _naffleId, uint256 _randomNumber) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
+
+        naffle.randomNumber = _randomNumber;
+
+        emit L1NaffleRandomNumberSet(_naffleId, _randomNumber);
+    }
+
+    function _requestNaffleRandomNumber(uint256 _naffleId) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        INaffleVRF(layout.naffleVRFAddress).drawWinner(_naffleId);
     }
 
     /**

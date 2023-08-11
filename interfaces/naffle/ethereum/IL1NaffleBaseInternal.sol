@@ -80,4 +80,14 @@ interface IL1NaffleBaseInternal {
     event L1NaffleCancelled(
         uint256 naffleId
     );
+
+    /**
+     * @notice emitted when a 
+     * @param naffleId id of the naffle.
+     * @param randomNumber random number.
+     */
+    event L1NaffleRandomNumberSet(
+        uint256 indexed naffleId,
+        uint256 randomNumber
+    );
 }

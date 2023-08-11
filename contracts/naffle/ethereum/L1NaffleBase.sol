@@ -90,14 +90,14 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
      * @inheritdoc IL1NaffleBase
      */
     function setNaffleRandomNumber(uint256 _naffleId, uint256 _randomNumber) external onlyNaffleVRF() {
-        _setWinningTicket(_naffleId, _winningTicket);
+        _setNaffleRandomNumber(_naffleId, _randomNumber);
     }
 
     /**
      * @inheritdoc IL1NaffleBase
      */
     function requestNaffleRandomNumber(uint256 _naffleId) external onlyRole(_getAdminRole()) {
-        _requestRandomNumber(_naffleId);
+        _requestNaffleRandomNumber(_naffleId);
     }
 
     /**

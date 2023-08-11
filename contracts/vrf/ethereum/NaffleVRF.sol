@@ -1,15 +1,16 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
+import "../../../interfaces/vrf/ethereum/INaffleVRF.sol";
 
-contract NaffleVRF is VRFConsumerBaseV2, Ownable {
+contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     error NotAllowed();
-    error InvalidChainlinkRequestId();
+    error InvalidChainlinkRequestId(uint256 requestId);
 
     event NaffleWinnerRolled(uint256 indexed naffleId);
     event ChainlinkRequestFulfilled(uint256 indexed requestId, uint256 indexed naffleId, uint256 winningNumber);
@@ -32,7 +33,6 @@ contract NaffleVRF is VRFConsumerBaseV2, Ownable {
         bool exists;
         uint256[] randomWords;
         uint256 naffleId;
-        uint256 totalNumberOfTickets;
     }
 
      constructor (
@@ -43,7 +43,7 @@ contract NaffleVRF is VRFConsumerBaseV2, Ownable {
         uint16 _requestConfirmations,
         address _L1NaffleDiamondAddress 
     ) VRFConsumerBaseV2(_vrfCoordinator) {
-        COORDINATOR = VRFCoordinatorV2Interface(vrfCoordinator);
+        COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
         L1NaffleDiamondAddress = _L1NaffleDiamondAddress;
         setChainlinkVRFSettings(_subscriptionId, _gasLaneKeyHash, _callbackGasLimit, _requestConfirmations);
     }
@@ -55,6 +55,9 @@ contract NaffleVRF is VRFConsumerBaseV2, Ownable {
         _;
     }
 
+    /* 
+     * @inheritdoc INaffleVRF 
+     */
     function drawWinner(uint256 _naffleId) external onlyL1NaffleContract {
         uint256 requestId = COORDINATOR.requestRandomWords(
             chainlinkVRFGasLaneKeyHash,
@@ -75,7 +78,7 @@ contract NaffleVRF is VRFConsumerBaseV2, Ownable {
         emit NaffleWinnerRolled(_naffleId);
     }
 
-    function fulfillRandomWords(bytes32 requestId, uint256[] memory randomWords) internal override {
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         ChainlinkRequestStatus storage status = chainlinkRequestStatus[requestId];
         if (!status.exists) {
             revert InvalidChainlinkRequestId(requestId);

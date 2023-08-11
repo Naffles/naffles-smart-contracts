@@ -51,6 +51,7 @@ library NaffleTypes {
         address winner;
         bool cancelled;
         TokenContractType naffleTokenType;
+        uint256 randomNumber;
     }
 
     struct OpenEntryTicket {
