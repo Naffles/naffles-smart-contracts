@@ -17,6 +17,8 @@ import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketVi
 import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
+    bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
+
     /**
      * @notice create a new naffle.
      * @param _params the parameters for the naffle.
@@ -43,6 +45,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             ticketPriceInWei: _params.ticketPriceInWei,
             endTime: _params.endTime,
             winningTicketId: 0,
+            randomNumberRequested: false,
             winningTicketType: NaffleTypes.TicketType.NONE,
             status: NaffleTypes.NaffleStatus.ACTIVE,
             naffleTokenType: _params.naffleTokenType,
@@ -271,7 +274,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @dev if the funds can't get send to the owner a UnableToSendFunds error is thrown.
      * @param _naffleId the id of the naffle.
      */
-    function _drawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
+    function _drawWinner(uint256 _naffleId) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
@@ -280,10 +283,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NaffleNotEndedYet(naffle.endTime);
         }
 
-        return _drawWinnerInternal(naffle, _naffleId);
+        return _drawWinnerInternal(naffle);
     }
 
-    function _ownerDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
+    function _ownerDrawWinner(uint256 _naffleId) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
@@ -291,13 +294,16 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NotAllowed();
         }
 
-        return _drawWinnerInternal(naffle, _naffleId);
+        return _drawWinnerInternal(naffle);
     }
 
-    function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle, uint256 _naffleId) internal returns (bytes32 messageHash) {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+    function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle) internal {
+        if (naffle.randomNumberRequested == true) {
+            revert RandomNumberAlreadyRequested();
+        }
+
         if (naffle.ethTokenAddress == address(0)) {
-            revert InvalidNaffleId(_naffleId);
+            revert InvalidNaffleId(naffle.naffleId);
         }
 
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
@@ -308,6 +314,15 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NoTicketsBought();
         }
 
+        naffle.randomNumberRequested = true;
+        emit RandomNumberRequested(naffle.naffleId);
+    }
+
+
+    function _setWinnerInternal(uint256 _naffleId, uint256 _randomNumber) internal returns (bytes32 messageHash) {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+        
         uint256 winningTicketId = _random(naffle.numberOfPaidTickets + naffle.numberOfOpenEntries);
         address winner;
         if (winningTicketId <= naffle.numberOfPaidTickets) {

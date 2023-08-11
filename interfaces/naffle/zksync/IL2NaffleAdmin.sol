@@ -65,4 +65,10 @@ interface IL2NaffleAdmin {
      * @param _maxPostponeTime the new max postpone time
      */
     function setMaxPostponeTime(uint256 _maxPostponeTime) external;
+
+    /**
+     * @notice set the VRF manager address
+     * @param _vrfManager the new VRF manager address
+     */
+    function setVRFManager(address _vrfManager) external;
 }

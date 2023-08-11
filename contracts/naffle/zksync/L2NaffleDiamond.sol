@@ -17,6 +17,7 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         address _openEntryTicketContractAddress
     ) SolidStateDiamond() {
         _grantRole(_getAdminRole(), _admin);
+        _grantRole(VRF_ROLE, _admin);
         _setPlatformFee(_platformFee);
         _setOpenEntryRatio(_openEntryRatio);
         _setL1MessengerContractAddress(_l1MessengerContractAddress);

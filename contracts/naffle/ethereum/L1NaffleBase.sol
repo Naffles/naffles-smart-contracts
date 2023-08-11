@@ -87,20 +87,6 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
     }
 
     /**
-     * @inheritdoc IL1NaffleBase
-     */
-    function setNaffleRandomNumber(uint256 _naffleId, uint256 _randomNumber) external onlyNaffleVRF() {
-        _setNaffleRandomNumber(_naffleId, _randomNumber);
-    }
-
-    /**
-     * @inheritdoc IL1NaffleBase
-     */
-    function requestNaffleRandomNumber(uint256 _naffleId) external onlyRole(_getAdminRole()) {
-        _requestNaffleRandomNumber(_naffleId);
-    }
-
-    /**
      * @inheritdoc IERC721Receiver
      */
     function onERC721Received(
