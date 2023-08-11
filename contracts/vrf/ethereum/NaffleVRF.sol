@@ -5,6 +5,7 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
 contract NaffleVRF is VRFConsumerBaseV2, Ownable {
     error NotAllowed();
@@ -82,10 +83,10 @@ contract NaffleVRF is VRFConsumerBaseV2, Ownable {
         status.fulfilled = true;
         status.randomWords = randomWords;
 
-        // send random word to L1NaffleDiamond 
-        
-
-        emit ChainlinkRequestFulfilled(requestId, status.naffleId, winning_number);
+        // send random number to L1NaffleDiamond 
+        IL1NaffleBase(L1NaffleDiamondAddress).setNaffleRandomNumber(status.naffleId, randomWords[0]);
+         
+        emit ChainlinkRequestFulfilled(requestId, status.naffleId, randomWords[0]);
     }
 
     function setChainlinkVRFSettings(
