@@ -62,4 +62,11 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
     function setAdmin(address _admin) external onlyOwner {
         _grantRole(_getAdminRole(), _admin);
     }
+
+    /**
+     * @inheritdoc IL1NaffleAdmin
+     */
+    function setVRFManager(address _vrfManager) external onlyRole(_getAdminRole()) {
+        _grantRole(VRF_ROLE, _vrfManager);
+    }
 }

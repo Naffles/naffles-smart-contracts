@@ -15,6 +15,7 @@ library L1NaffleBaseStorage {
         address zkSyncNaffleContractAddress;
         address foundersKeyAddress;
         address foundersKeyPlaceholderAddress;
+        address naffleVRFAddress;
         uint256 numberOfNaffles;
         uint256 minimumNaffleDuration;
         uint256 minimumPaidTicketSpots;

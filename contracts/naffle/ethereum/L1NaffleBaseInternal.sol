@@ -15,6 +15,7 @@ import "@matterlabs/zksync-contracts/l1/contracts/zksync/Storage.sol";
 abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
+    bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
 
     /**
      * @notice create a new naffle. When the naffle is created, a message is sent to the L2 naffle contract.
@@ -338,5 +339,21 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
      */
     function _getNaffleById(uint256 _naffleId) internal view returns (NaffleTypes.L1Naffle memory naffle) {
         naffle = L1NaffleBaseStorage.layout().naffles[_naffleId];
+    }
+
+    /**
+     * @notice get the naffle VRF address.
+     * @return naffleVRFAddress the naffle VRF address.
+     */
+    function _getNaffleVRFAddress() internal view returns (address naffleVRFAddress) {
+        naffleVRFAddress = L1NaffleBaseStorage.layout().naffleVRFAddress;
+    }
+
+    /**
+     * @notice sets the naffle VRF address.
+     * @param _naffleVRFAddress the naffle VRF address.
+     */
+    function _setNaffleVRFAddress(address _naffleVRFAddress) internal {
+        L1NaffleBaseStorage.layout().naffleVRFAddress = _naffleVRFAddress;
     }
 }

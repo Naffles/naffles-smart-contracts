@@ -10,6 +10,13 @@ import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
 
 contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
+    modifier onlyNaffleVRF() {
+        if (msg.sender != _getNaffleVRFAddress()) {
+            revert NotAllowed();
+        }
+        _;
+    }
+
     /**
      * @inheritdoc IL1NaffleBase
      */
@@ -77,6 +84,17 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         );
         (string memory action, uint256 naffleId) = abi.decode(_message, (string, uint256));
         _cancelNaffle(naffleId);
+    }
+
+    /**
+     * @inheritdoc IL1NaffleBase
+     */
+    function setNaffleRandomNumber(uint256 _naffleId, uint256 _randomNumber) external onlyNaffleVRF() {
+        _setWinningTicket(_naffleId, _winningTicket);
+    }
+
+    function requestNaffleRandomNumber(uint256 _naffleId) external onlyRole(_getAdminRole()) {
+        _requestRandomNumber(_naffleId);
     }
 
     /**

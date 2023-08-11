@@ -18,6 +18,7 @@ contract L1NaffleDiamond is SolidStateDiamond, AccessControl, L1NaffleBaseIntern
         address _foundersKeyPlaceholderAddress
     ) SolidStateDiamond() {
         _grantRole(AccessControlStorage.DEFAULT_ADMIN_ROLE, _admin);
+        _grantRole(VRF_ROLE, _admin);
         _setMinimumNaffleDuration(_minimumNaffleDuration);
         _setMinimumPaidTicketSpots(_minimumPaidTicketSpots);
         _setMinimumPaidTicketPriceInWei(_minimumTicketPriceInWei);
