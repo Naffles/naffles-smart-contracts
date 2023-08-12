@@ -10,13 +10,6 @@ import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 
 
 contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IERC721Receiver, IERC1155Receiver {
-    modifier onlyNaffleVRF() {
-        if (msg.sender != _getNaffleVRFAddress()) {
-            revert NotAllowed();
-        }
-        _;
-    }
-
     /**
      * @inheritdoc IL1NaffleBase
      */

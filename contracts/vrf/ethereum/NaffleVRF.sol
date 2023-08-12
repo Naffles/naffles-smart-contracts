@@ -22,6 +22,8 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     uint16 public chainlinkVRFRequestConfirmations;
     bytes32 public chainlinkVRFGasLaneKeyHash;
 
+    address public VRFManager;
+
     // RequestId -> ChainlinkRequestStatus
     mapping(uint256 => ChainlinkRequestStatus) chainlinkRequestStatus;
     mapping(uint256 => uint256) naffleIdToChainlinkRequestId;
@@ -42,10 +44,11 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     ) VRFConsumerBaseV2(_vrfCoordinator) {
         COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
         setChainlinkVRFSettings(_subscriptionId, _gasLaneKeyHash, _callbackGasLimit, _requestConfirmations);
+        VRFManager = msg.sender;
     }
 
-    modifier onlyL1NaffleContract() {
-        if (msg.sender != L1NaffleDiamondAddress) {
+    modifier onlyVRFManager() {
+        if (msg.sender != VRFManager) {
             revert NotAllowed();
         }
         _;
@@ -54,7 +57,7 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     /* 
      * @inheritdoc INaffleVRF 
      */
-    function drawWinner(uint256 _naffleId) external onlyL1NaffleContract {
+    function drawWinner(uint256 _naffleId) external onlyVRFManager {
         uint256 requestId = COORDINATOR.requestRandomWords(
             chainlinkVRFGasLaneKeyHash,
             chainlinkVRFSubscriptionId,
@@ -97,4 +100,7 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
         chainlinkVRFRequestConfirmations = _requestConfirmations;
     }
 
+    function setVRFManager(address _newVRFManager) public onlyOwner {
+        VRFManager = _newVRFManager;
+    }
 }
