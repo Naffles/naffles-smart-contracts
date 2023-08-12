@@ -111,7 +111,6 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         );
     }
 
-
     /**
      * @inheritdoc IL2NaffleBase
      */
