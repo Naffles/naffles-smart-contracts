@@ -72,6 +72,16 @@ interface IL2NaffleBase {
     function ownerDrawWinner(uint256 _naffleId) external;
 
     /**
+     * @notice set the winner of a naffle.
+     * @param _naffleId id of the naffle.
+     * @param _randomNumber random number of the winner.
+     */
+    function setWinner(
+        uint256 _naffleId,
+        uint256 _randomNumber
+    ) external returns (bytes32);
+
+    /**
      * @notice postpone a naffle.
      * @param _naffleId id of the naffle.
      * @param _newEndTime new end time of the naffle.

@@ -194,6 +194,20 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             msg.sender,
             _ticketIds
         );
+
+        _checkIfNaffleIsFinished(naffle);
+    }
+
+    /**
+     * @notice checks if the naffle is sold out, if so it requests a random number for the naffle
+     * @param _naffle the naffle to check.
+     */
+    function _checkIfNaffleIsFinished(
+        NaffleTypes.L2Naffle storage _naffle
+    ) internal {
+        if (_naffle.numberOfOpenEntries == _naffle.openEntryTicketSpots && _naffle.numberOfPaidTickets == _naffle.paidTicketSpots) {
+            _requestRandomNumber(_naffle);
+        }
     }
 
     /**
@@ -298,10 +312,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle) internal {
-        if (naffle.randomNumberRequested == true) {
-            revert RandomNumberAlreadyRequested();
-        }
-
         if (naffle.ethTokenAddress == address(0)) {
             revert InvalidNaffleId(naffle.naffleId);
         }
@@ -314,16 +324,22 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NoTicketsBought();
         }
 
+        _requestRandomNumber(naffle);
+    }
+
+    function _requestRandomNumber(NaffleTypes.L2Naffle storage naffle) {
+        if (naffle.randomNumberRequested == true) {
+            revert RandomNumberAlreadyRequested();
+        }
         naffle.randomNumberRequested = true;
         emit RandomNumberRequested(naffle.naffleId);
     }
 
-
-    function _setWinnerInternal(uint256 _naffleId, uint256 _randomNumber) internal returns (bytes32 messageHash) {
+    function _setWinner(uint256 _naffleId, uint256 _randomNumber) internal returns (bytes32 messageHash) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
         
-        uint256 winningTicketId = _random(naffle.numberOfPaidTickets + naffle.numberOfOpenEntries);
+        uint256 winningTicketId = _randomNumber % (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries) + 1;
         address winner;
         if (winningTicketId <= naffle.numberOfPaidTickets) {
             naffle.winningTicketType = NaffleTypes.TicketType.PAID;

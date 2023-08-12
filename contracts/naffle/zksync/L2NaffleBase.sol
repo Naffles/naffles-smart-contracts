@@ -101,6 +101,20 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     /**
      * @inheritdoc IL2NaffleBase
      */
+    function setWinner(
+        uint256 _naffleId,
+        uint256 _randomNumber
+    ) external returns (bytes32) {
+        return _setWinner(
+            _naffleId,
+            _randomNumber
+        );
+    }
+
+
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
     function postponeNaffle(
         uint256 _naffleId,
         uint256 _newEndTime

@@ -22,9 +22,7 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     uint16 public chainlinkVRFRequestConfirmations;
     bytes32 public chainlinkVRFGasLaneKeyHash;
 
-    address public L1NaffleDiamondAddress;
-
-      // RequestId -> ChainlinkRequestStatus
+    // RequestId -> ChainlinkRequestStatus
     mapping(uint256 => ChainlinkRequestStatus) chainlinkRequestStatus;
     mapping(uint256 => uint256) naffleIdToChainlinkRequestId;
 
@@ -40,11 +38,9 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
         uint64 _subscriptionId,
         bytes32 _gasLaneKeyHash,
         uint32 _callbackGasLimit,
-        uint16 _requestConfirmations,
-        address _L1NaffleDiamondAddress 
+        uint16 _requestConfirmations
     ) VRFConsumerBaseV2(_vrfCoordinator) {
         COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
-        L1NaffleDiamondAddress = _L1NaffleDiamondAddress;
         setChainlinkVRFSettings(_subscriptionId, _gasLaneKeyHash, _callbackGasLimit, _requestConfirmations);
     }
 
@@ -86,9 +82,6 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
         status.fulfilled = true;
         status.randomWords = randomWords;
 
-        // send random number to L1NaffleDiamond 
-        IL1NaffleBase(L1NaffleDiamondAddress).setNaffleRandomNumber(status.naffleId, randomWords[0]);
-         
         emit ChainlinkRequestFulfilled(requestId, status.naffleId, randomWords[0]);
     }
 
