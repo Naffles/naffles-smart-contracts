@@ -26,6 +26,8 @@ from brownie import (
     TestNaffleDiamond,
     TestValueFacet,
     TestValueFacetUpgraded,
+    VRFCoordinatorV2Mock,
+    NaffleVRF,
     accounts,
     ZERO_ADDRESS
 )
@@ -304,3 +306,25 @@ def deployed_founders_key_staking_mock(from_admin) -> FoundersKeyStakingMock:
 @pytest.fixture
 def l2_message_params() -> dict:
     return [10000000, 1]
+
+
+@pytest.fixture
+def coordinator_mock(from_admin):
+    return VRFCoordinatorV2Mock.deploy(12345, from_admin);
+
+
+@pytest.fixture
+def gas_lane_key_hash():
+    return b"0x746573740a"
+
+
+@pytest.fixture
+def naffle_vrf(coordinator_mock, gas_lane_key_hash, from_admin):
+    return NaffleVRF.deploy(
+        coordinator_mock.address,
+        1,
+        gas_lane_key_hash,
+        100000,
+        3,
+        from_admin
+    )

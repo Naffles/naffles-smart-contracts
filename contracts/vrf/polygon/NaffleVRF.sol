@@ -6,10 +6,11 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
-import "../../../interfaces/vrf/ethereum/INaffleVRF.sol";
+import "../../../interfaces/vrf/polygon/INaffleVRF.sol";
 
 contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     error NotAllowed();
+    error naffleAlreadyRolled(uint256 naffleId);
     error InvalidChainlinkRequestId(uint256 requestId);
 
     event NaffleWinnerRolled(uint256 indexed naffleId);
@@ -25,13 +26,13 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     address public VRFManager;
 
     // RequestId -> ChainlinkRequestStatus
-    mapping(uint256 => ChainlinkRequestStatus) chainlinkRequestStatus;
-    mapping(uint256 => uint256) naffleIdToChainlinkRequestId;
+    mapping(uint256 => ChainlinkRequestStatus) public chainlinkRequestStatus;
+    mapping(uint256 => uint256) public naffleIdToChainlinkRequestId;
 
     struct ChainlinkRequestStatus {
         bool fulfilled;
         bool exists;
-        uint256[] randomWords;
+        uint256 randomNumber;
         uint256 naffleId;
     }
 
@@ -58,6 +59,10 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
      * @inheritdoc INaffleVRF
      */
     function drawWinner(uint256 _naffleId) external onlyVRFManager {
+        if (chainlinkRequestStatus[naffleIdToChainlinkRequestId[_naffleId]].exists == true) {
+            revert naffleAlreadyRolled(_naffleId);
+        }
+
         uint256 requestId = COORDINATOR.requestRandomWords(
             chainlinkVRFGasLaneKeyHash,
             chainlinkVRFSubscriptionId,
@@ -67,9 +72,9 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
        );
        // storing the chainlink request
        chainlinkRequestStatus[requestId] = ChainlinkRequestStatus({
-            randomWords: new uint256[](0),
             fulfilled: false,
             exists: true,
+            randomNumber: 0,
             naffleId: _naffleId
         });
         naffleIdToChainlinkRequestId[_naffleId] = requestId;
@@ -83,7 +88,7 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
             revert InvalidChainlinkRequestId(requestId);
         }
         status.fulfilled = true;
-        status.randomWords = randomWords;
+        status.randomNumber = randomWords[0];
 
         emit ChainlinkRequestFulfilled(requestId, status.naffleId, randomWords[0]);
     }
