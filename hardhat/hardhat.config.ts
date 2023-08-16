@@ -2,11 +2,11 @@ import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 
 import "@matterlabs/hardhat-zksync-deploy";
-import "@matterlabs/hardhat-zksync-solc"; // comment out to compile / deploy for ethereum.
-import "@matterlabs/hardhat-zksync-verify"; // comment out to compile / deploy for ethereum.
+// import "@matterlabs/hardhat-zksync-solc"; // comment out to compile / deploy for ethereum.
+// import "@matterlabs/hardhat-zksync-verify"; // comment out to compile / deploy for ethereum.
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
-// import "@nomiclabs/hardhat-etherscan"; // comment out to compile / deploy for zksync.
+import "@nomiclabs/hardhat-etherscan"; // comment out to compile / deploy for zksync.
 
 require("./tasks/ethereum/deploy_erc721a_mock")
 require("./tasks/ethereum/mint_mock_nfts")
@@ -67,6 +67,14 @@ module.exports = {
     },
     goerli: {
         url: "https://goerli.infura.io/v3/" + INFURA_API_KEY,
+        accounts: [PRIVATE_KEY]
+    },
+    polygon: {
+        url: "https://polygon-mainnet.infura.io/v3/" + INFURA_API_KEY,
+        accounts: [PRIVATE_KEY]
+    },
+    mumbai: {
+        url: "https://polygon-mumbai.infura.io/v3/" + INFURA_API_KEY,
         accounts: [PRIVATE_KEY]
     },
     zkSyncTestnet: {

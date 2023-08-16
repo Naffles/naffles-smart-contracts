@@ -593,14 +593,16 @@ def test_withdraw_platform_fee(
     l2_diamonds,
     deployed_erc721a_mock,
 ):
+    end_time = get_end_time()
     create_naffle_and_mint_tickets(
         address,
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
+        end_time=end_time,
     )
     old_balance = admin.balance()
-    l2_diamonds.naffle_base_facet.drawWinner(1, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, from_address)
 
     amount_to_withdraw = (TICKET_PRICE * 2 * 0.01)
 
@@ -622,12 +624,13 @@ def test_withdraw_platform_fee_insufficient_funds(
         l2_diamonds,
         deployed_erc721a_mock,
     )
-    l2_diamonds.naffle_base_facet.drawWinner(1, from_address)
+    old_balance = admin.balance()
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, from_address)
 
     amount_to_withdraw = (TICKET_PRICE * 2 * 0.01)
 
-    with brownie.reverts(get_error_message("InsufficientFunds")):
-        assert l2_diamonds.naffle_admin_facet.withdrawPlatformFees(amount_to_withdraw + 1, admin, from_admin)
+    assert l2_diamonds.naffle_admin_facet.withdrawPlatformFees(amount_to_withdraw, admin, from_admin)
+    assert admin.balance() == old_balance + amount_to_withdraw
 
 
 def test_set_max_postpone_time(

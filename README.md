@@ -18,6 +18,7 @@ in the hardhat.config.js file and then run the following command:
 
 *After deployment the contract addresses can be found in the data folder*    
 
+
 #### 1. deploy ethereum contract(s)
 To deploy the contracts for ethereum, call the following from the hardhat folder 
 
@@ -36,3 +37,12 @@ To deploy the contracts for zksync, call the following from the hardhat folder
 To update the l1 naffle diamond contract with the l2 naffle contract address, call the following from the hardhat folder 
 
 ```l2NaffleAddress=0x l1NaffleAddress=0x npx hardhat run --network networkname localhost deploy/update_l1_with_l2_contract```
+
+
+#### 4. deploying VRF
+
+to deploy the vrf to a network
+
+Something to note here is that when copying the contracts from brownie to hardhat, the chainlink imports need to be adjusted by removing /vrf from the import path. 
+
+```vrfCoordinator=0x77D373d69Bd7a55E0Bbdf6cD290083Cfe11643C4 subscriptionId=1 gasLaneKeyHashString=test callbackGasLimit=1000000000 requestConfirmation=3 yarn hardhat run deploy/vrf/polygon/deploy_vrf.ts --network networkname```

@@ -59,6 +59,19 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     /**
      * @inheritdoc IL2NaffleBase
      */
+    function setWinner(
+        uint256 _naffleId,
+        uint256 _randomNumber
+    ) external returns (bytes32) {
+        return _setWinner(
+            _naffleId,
+            _randomNumber
+        );
+    }
+
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
     function useOpenEntryTickets(
         uint256[] memory _ticketIds,
         uint256 _naffleId
@@ -83,8 +96,8 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     /**
      * @inheritdoc IL2NaffleBase
      */
-    function ownerDrawWinner(uint256 _naffleId) external returns (bytes32) {
-        return _ownerDrawWinner(
+    function ownerDrawWinner(uint256 _naffleId) external {
+        _ownerDrawWinner(
             _naffleId
         );
     }
@@ -92,8 +105,8 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     /**
      * @inheritdoc IL2NaffleBase
      */
-    function drawWinner(uint256 _naffleId) external returns (bytes32) {
-        return _drawWinner(
+    function drawWinner(uint256 _naffleId) external {
+        _drawWinner(
             _naffleId
         );
     }
