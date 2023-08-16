@@ -37,7 +37,8 @@ hardhat/cache-zk/
 /.idea
 *.tsbuildinfo
 
-
+node_modules/
+typechain-types/
 
 # VS Code workspace config
 workspace.code-workspace
