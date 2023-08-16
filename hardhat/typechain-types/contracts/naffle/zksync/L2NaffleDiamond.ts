@@ -221,6 +221,7 @@ export interface L2NaffleDiamondInterface extends utils.Interface {
     "L2NafflePostponed(uint256,uint256)": EventFragment;
     "OpenEntryTicketsUsed(uint256,address,uint256[])": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "RandomNumberRequested(uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -234,6 +235,7 @@ export interface L2NaffleDiamondInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "L2NafflePostponed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OpenEntryTicketsUsed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RandomNumberRequested"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -344,6 +346,17 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface RandomNumberRequestedEventObject {
+  naffleId: BigNumber;
+}
+export type RandomNumberRequestedEvent = TypedEvent<
+  [BigNumber],
+  RandomNumberRequestedEventObject
+>;
+
+export type RandomNumberRequestedEventFilter =
+  TypedEventFilter<RandomNumberRequestedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -746,6 +759,13 @@ export interface L2NaffleDiamond extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "RandomNumberRequested(uint256)"(
+      naffleId?: PromiseOrValue<BigNumberish> | null
+    ): RandomNumberRequestedEventFilter;
+    RandomNumberRequested(
+      naffleId?: PromiseOrValue<BigNumberish> | null
+    ): RandomNumberRequestedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,

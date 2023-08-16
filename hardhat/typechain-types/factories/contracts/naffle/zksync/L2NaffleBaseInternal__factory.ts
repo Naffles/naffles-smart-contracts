@@ -147,6 +147,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "RandomNumberAlreadyRequested",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "UnableToSendFunds",
     type: "error",
   },
@@ -309,6 +314,19 @@ const _abi = [
       },
     ],
     name: "OpenEntryTicketsUsed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "naffleId",
+        type: "uint256",
+      },
+    ],
+    name: "RandomNumberRequested",
     type: "event",
   },
   {

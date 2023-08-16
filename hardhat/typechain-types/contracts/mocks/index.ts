@@ -5,6 +5,8 @@ import type * as ethereum from "./ethereum";
 export type { ethereum };
 import type * as staking from "./staking";
 export type { staking };
+import type * as vrf from "./vrf";
+export type { vrf };
 import type * as zksync from "./zksync";
 export type { zksync };
 export type { ERC721AMock } from "./ERC721AMock";

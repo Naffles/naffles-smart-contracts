@@ -13,6 +13,14 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "VRFCoordinatorV2Interface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VRFCoordinatorV2Interface__factory>;
+    getContractFactory(
+      name: "VRFConsumerBaseV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VRFConsumerBaseV2__factory>;
+    getContractFactory(
       name: "IAllowList",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IAllowList__factory>;
@@ -401,6 +409,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FoundersKeyStakingMock__factory>;
     getContractFactory(
+      name: "VRFCoordinatorV2Mock",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VRFCoordinatorV2Mock__factory>;
+    getContractFactory(
       name: "L1MessengerMock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.L1MessengerMock__factory>;
@@ -505,6 +517,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.L2PaidTicketView__factory>;
     getContractFactory(
+      name: "NaffleVRF",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NaffleVRF__factory>;
+    getContractFactory(
       name: "ITestValueFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ITestValueFacet__factory>;
@@ -588,7 +604,21 @@ declare module "hardhat/types/runtime" {
       name: "IL2PaidTicketView",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IL2PaidTicketView__factory>;
+    getContractFactory(
+      name: "INaffleVRF",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.INaffleVRF__factory>;
 
+    getContractAt(
+      name: "VRFCoordinatorV2Interface",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VRFCoordinatorV2Interface>;
+    getContractAt(
+      name: "VRFConsumerBaseV2",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VRFConsumerBaseV2>;
     getContractAt(
       name: "IAllowList",
       address: string,
@@ -1075,6 +1105,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.FoundersKeyStakingMock>;
     getContractAt(
+      name: "VRFCoordinatorV2Mock",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VRFCoordinatorV2Mock>;
+    getContractAt(
       name: "L1MessengerMock",
       address: string,
       signer?: ethers.Signer
@@ -1205,6 +1240,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.L2PaidTicketView>;
     getContractAt(
+      name: "NaffleVRF",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NaffleVRF>;
+    getContractAt(
       name: "ITestValueFacet",
       address: string,
       signer?: ethers.Signer
@@ -1309,6 +1349,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IL2PaidTicketView>;
+    getContractAt(
+      name: "INaffleVRF",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.INaffleVRF>;
 
     // default types
     getContractFactory(

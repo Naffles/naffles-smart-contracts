@@ -4,7 +4,6 @@ pragma solidity ^0.8.17;
 import "@chainlink/contracts/src/v0.8/vrf/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 import "../../../interfaces/vrf/polygon/INaffleVRF.sol";
 

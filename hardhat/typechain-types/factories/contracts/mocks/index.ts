@@ -3,5 +3,6 @@
 /* eslint-disable */
 export * as ethereum from "./ethereum";
 export * as staking from "./staking";
+export * as vrf from "./vrf";
 export * as zksync from "./zksync";
 export { ERC721AMock__factory } from "./ERC721AMock__factory";

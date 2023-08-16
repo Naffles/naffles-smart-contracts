@@ -130,6 +130,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_vrfManager",
+        type: "address",
+      },
+    ],
+    name: "setVRFManager",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_amount",
         type: "uint256",

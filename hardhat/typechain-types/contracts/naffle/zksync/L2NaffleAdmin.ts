@@ -46,6 +46,7 @@ export interface L2NaffleAdminInterface extends utils.Interface {
     "setOpenEntryTicketContractAddress(address)": FunctionFragment;
     "setPaidTicketContractAddress(address)": FunctionFragment;
     "setPlatformFee(uint256)": FunctionFragment;
+    "setVRFManager(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "withdrawPlatformFees(uint256,address)": FunctionFragment;
   };
@@ -69,6 +70,7 @@ export interface L2NaffleAdminInterface extends utils.Interface {
       | "setOpenEntryTicketContractAddress"
       | "setPaidTicketContractAddress"
       | "setPlatformFee"
+      | "setVRFManager"
       | "transferOwnership"
       | "withdrawPlatformFees"
   ): FunctionFragment;
@@ -139,6 +141,10 @@ export interface L2NaffleAdminInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setVRFManager",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
@@ -201,6 +207,10 @@ export interface L2NaffleAdminInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setVRFManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
@@ -216,6 +226,7 @@ export interface L2NaffleAdminInterface extends utils.Interface {
     "L2NafflePostponed(uint256,uint256)": EventFragment;
     "OpenEntryTicketsUsed(uint256,address,uint256[])": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "RandomNumberRequested(uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -228,6 +239,7 @@ export interface L2NaffleAdminInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "L2NafflePostponed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OpenEntryTicketsUsed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RandomNumberRequested"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -326,6 +338,17 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export interface RandomNumberRequestedEventObject {
+  naffleId: BigNumber;
+}
+export type RandomNumberRequestedEvent = TypedEvent<
+  [BigNumber],
+  RandomNumberRequestedEventObject
+>;
+
+export type RandomNumberRequestedEventFilter =
+  TypedEventFilter<RandomNumberRequestedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -485,6 +508,11 @@ export interface L2NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setVRFManager(
+      _vrfManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -575,6 +603,11 @@ export interface L2NaffleAdmin extends BaseContract {
 
   setPlatformFee(
     _platformFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setVRFManager(
+    _vrfManager: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -669,6 +702,11 @@ export interface L2NaffleAdmin extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setVRFManager(
+      _vrfManager: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -757,6 +795,13 @@ export interface L2NaffleAdmin extends BaseContract {
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnershipTransferredEventFilter;
+
+    "RandomNumberRequested(uint256)"(
+      naffleId?: PromiseOrValue<BigNumberish> | null
+    ): RandomNumberRequestedEventFilter;
+    RandomNumberRequested(
+      naffleId?: PromiseOrValue<BigNumberish> | null
+    ): RandomNumberRequestedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -887,6 +932,11 @@ export interface L2NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setVRFManager(
+      _vrfManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       account: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -978,6 +1028,11 @@ export interface L2NaffleAdmin extends BaseContract {
 
     setPlatformFee(
       _platformFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setVRFManager(
+      _vrfManager: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -78,6 +78,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     "refundTicketsForNaffle(uint256,uint256[],uint256[],address)": FunctionFragment;
     "renounceRole(bytes32)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
+    "setWinner(uint256,uint256)": FunctionFragment;
     "useOpenEntryTickets(uint256[],uint256)": FunctionFragment;
   };
 
@@ -95,6 +96,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
       | "refundTicketsForNaffle"
       | "renounceRole"
       | "revokeRole"
+      | "setWinner"
       | "useOpenEntryTickets"
   ): FunctionFragment;
 
@@ -152,6 +154,10 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setWinner",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "useOpenEntryTickets",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>]
   ): string;
@@ -189,6 +195,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setWinner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "useOpenEntryTickets",
     data: BytesLike
@@ -200,6 +207,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
     "L2NaffleFinished(uint256,address,uint256,bytes32)": EventFragment;
     "L2NafflePostponed(uint256,uint256)": EventFragment;
     "OpenEntryTicketsUsed(uint256,address,uint256[])": EventFragment;
+    "RandomNumberRequested(uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -211,6 +219,7 @@ export interface L2NaffleBaseInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "L2NaffleFinished"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "L2NafflePostponed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OpenEntryTicketsUsed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RandomNumberRequested"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -297,6 +306,17 @@ export type OpenEntryTicketsUsedEvent = TypedEvent<
 
 export type OpenEntryTicketsUsedEventFilter =
   TypedEventFilter<OpenEntryTicketsUsedEvent>;
+
+export interface RandomNumberRequestedEventObject {
+  naffleId: BigNumber;
+}
+export type RandomNumberRequestedEvent = TypedEvent<
+  [BigNumber],
+  RandomNumberRequestedEventObject
+>;
+
+export type RandomNumberRequestedEventFilter =
+  TypedEventFilter<RandomNumberRequestedEvent>;
 
 export interface RoleAdminChangedEventObject {
   role: string;
@@ -443,6 +463,12 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setWinner(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _randomNumber: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     useOpenEntryTickets(
       _ticketIds: PromiseOrValue<BigNumberish>[],
       _naffleId: PromiseOrValue<BigNumberish>,
@@ -518,6 +544,12 @@ export interface L2NaffleBase extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setWinner(
+    _naffleId: PromiseOrValue<BigNumberish>,
+    _randomNumber: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   useOpenEntryTickets(
     _ticketIds: PromiseOrValue<BigNumberish>[],
     _naffleId: PromiseOrValue<BigNumberish>,
@@ -539,7 +571,7 @@ export interface L2NaffleBase extends BaseContract {
     drawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<void>;
 
     getRoleAdmin(
       role: PromiseOrValue<BytesLike>,
@@ -566,7 +598,7 @@ export interface L2NaffleBase extends BaseContract {
     ownerDrawWinner(
       _naffleId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<void>;
 
     postponeNaffle(
       _naffleId: PromiseOrValue<BigNumberish>,
@@ -592,6 +624,12 @@ export interface L2NaffleBase extends BaseContract {
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setWinner(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _randomNumber: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     useOpenEntryTickets(
       _ticketIds: PromiseOrValue<BigNumberish>[],
@@ -667,6 +705,13 @@ export interface L2NaffleBase extends BaseContract {
       owner?: PromiseOrValue<string> | null,
       ticketIds?: null
     ): OpenEntryTicketsUsedEventFilter;
+
+    "RandomNumberRequested(uint256)"(
+      naffleId?: PromiseOrValue<BigNumberish> | null
+    ): RandomNumberRequestedEventFilter;
+    RandomNumberRequested(
+      naffleId?: PromiseOrValue<BigNumberish> | null
+    ): RandomNumberRequestedEventFilter;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
       role?: PromiseOrValue<BytesLike> | null,
@@ -784,6 +829,12 @@ export interface L2NaffleBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setWinner(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _randomNumber: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     useOpenEntryTickets(
       _ticketIds: PromiseOrValue<BigNumberish>[],
       _naffleId: PromiseOrValue<BigNumberish>,
@@ -857,6 +908,12 @@ export interface L2NaffleBase extends BaseContract {
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setWinner(
+      _naffleId: PromiseOrValue<BigNumberish>,
+      _randomNumber: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

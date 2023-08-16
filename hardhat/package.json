@@ -35,6 +35,7 @@
     "test": "NODE_ENV=test hardhat test"
   },
   "dependencies": {
+    "@chainlink/contracts": "^0.6.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.7",
     "@typechain/ethers-v5": "^10.2.0"
   }

@@ -6,3 +6,4 @@ export * as mocks from "./mocks";
 export * as naffle from "./naffle";
 export * as staking from "./staking";
 export * as tokens from "./tokens";
+export * as vrf from "./vrf";

@@ -7,6 +7,8 @@ import type * as naffle from "./naffle";
 export type { naffle };
 import type * as tokens from "./tokens";
 export type { tokens };
+import type * as vrf from "./vrf";
+export type { vrf };
 export type { IERC721A } from "./IERC721A";
 export type { IFoundersKey } from "./IFoundersKey";
 export type { ISoulboundFoundersKey } from "./ISoulboundFoundersKey";

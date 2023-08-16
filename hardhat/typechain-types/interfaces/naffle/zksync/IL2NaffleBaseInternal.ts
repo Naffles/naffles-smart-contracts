@@ -27,6 +27,7 @@ export interface IL2NaffleBaseInternalInterface extends utils.Interface {
     "L2NaffleFinished(uint256,address,uint256,bytes32)": EventFragment;
     "L2NafflePostponed(uint256,uint256)": EventFragment;
     "OpenEntryTicketsUsed(uint256,address,uint256[])": EventFragment;
+    "RandomNumberRequested(uint256)": EventFragment;
     "TicketsBought(uint256,address,uint256[],uint256)": EventFragment;
   };
 
@@ -35,6 +36,7 @@ export interface IL2NaffleBaseInternalInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "L2NaffleFinished"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "L2NafflePostponed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OpenEntryTicketsUsed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RandomNumberRequested"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TicketsBought"): EventFragment;
 }
 
@@ -118,6 +120,17 @@ export type OpenEntryTicketsUsedEvent = TypedEvent<
 
 export type OpenEntryTicketsUsedEventFilter =
   TypedEventFilter<OpenEntryTicketsUsedEvent>;
+
+export interface RandomNumberRequestedEventObject {
+  naffleId: BigNumber;
+}
+export type RandomNumberRequestedEvent = TypedEvent<
+  [BigNumber],
+  RandomNumberRequestedEventObject
+>;
+
+export type RandomNumberRequestedEventFilter =
+  TypedEventFilter<RandomNumberRequestedEvent>;
 
 export interface TicketsBoughtEventObject {
   naffleId: BigNumber;
@@ -229,6 +242,13 @@ export interface IL2NaffleBaseInternal extends BaseContract {
       owner?: PromiseOrValue<string> | null,
       ticketIds?: null
     ): OpenEntryTicketsUsedEventFilter;
+
+    "RandomNumberRequested(uint256)"(
+      naffleId?: PromiseOrValue<BigNumberish> | null
+    ): RandomNumberRequestedEventFilter;
+    RandomNumberRequested(
+      naffleId?: PromiseOrValue<BigNumberish> | null
+    ): RandomNumberRequestedEventFilter;
 
     "TicketsBought(uint256,address,uint256[],uint256)"(
       naffleId?: PromiseOrValue<BigNumberish> | null,

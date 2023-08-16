@@ -69,6 +69,14 @@ module.exports = {
         url: "https://goerli.infura.io/v3/" + INFURA_API_KEY,
         accounts: [PRIVATE_KEY]
     },
+    polygon: {
+        url: "https://polygon-mainnet.infura.io/v3/" + INFURA_API_KEY,
+        accounts: [PRIVATE_KEY]
+    },
+    mumbai: {
+        url: "https://polygon-mumbai.infura.io/v3/" + INFURA_API_KEY,
+        accounts: [PRIVATE_KEY]
+    },
     zkSyncTestnet: {
       url: "https://testnet.era.zksync.dev",
       ethNetwork: "goerli",

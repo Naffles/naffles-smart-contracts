@@ -11,3 +11,5 @@ import type * as staking from "./staking";
 export type { staking };
 import type * as tokens from "./tokens";
 export type { tokens };
+import type * as vrf from "./vrf";
+export type { vrf };

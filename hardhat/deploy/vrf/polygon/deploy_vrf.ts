@@ -1,25 +1,35 @@
-import { ethers } from 'hardhat';
+import hre, { ethers } from 'hardhat';
 import {HardhatRuntimeEnvironment} from "hardhat/types";
 
-export default async function main(hre: HardhatRuntimeEnvironment) {
+export default async function deployVRF(hre: HardhatRuntimeEnvironment) {
   let vrfCoordinator = process.env.vrfCoordinator;
-  let subscriptionId = process.env.subscriptionId;
+  let subscriptionId = parseInt(process.env.subscriptionId);
   let gasLaneKeyHash = ethers.utils.formatBytes32String(process.env.gasLaneKeyHashString);
-  let callbackGasLimit = process.env.callbackGasLimit;
-  let _requestConfirmations = process.env.requestConfirmations;
+  let callbackGasLimit = parseInt(process.env.callbackGasLimit);
+  let requestConfirmations = parseInt(process.env.requestConfirmations);
 
   // Get the deployer account
   const [deployer] = await ethers.getSigners();
 
 // Compile and deploy the contract
   const NaffleVRF = await ethers.getContractFactory('NaffleVRF');
+
+  console.log("4")
+
+  console.log("Gas Lane Key Hash String:", gasLaneKeyHash);
+  console.log("Subscription ID:", subscriptionId);
+  console.log("Callback Gas Limit:", callbackGasLimit);
+  console.log("Request Confirmations:", requestConfirmations);
+
+
   const naffleVRF = await NaffleVRF.connect(deployer).deploy(
     vrfCoordinator,
     subscriptionId,
     gasLaneKeyHash,
     callbackGasLimit,
-    _requestConfirmations
+    requestConfirmations
   );
+  console.log("5")
 
   console.log('NaffleVRF contract deployed at:', naffleVRF.address);
 
@@ -33,13 +43,13 @@ export default async function main(hre: HardhatRuntimeEnvironment) {
       subscriptionId,
       gasLaneKeyHash,
       callbackGasLimit,
-      _requestConfirmations,
+      requestConfirmations,
     ],
   });
   console.log('Contract verified on Etherscan');
 }
 
-main()
+deployVRF(hre)
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);

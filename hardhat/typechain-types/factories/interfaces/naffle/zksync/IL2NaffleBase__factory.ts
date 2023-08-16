@@ -103,13 +103,7 @@ const _abi = [
       },
     ],
     name: "drawWinner",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -135,13 +129,7 @@ const _abi = [
       },
     ],
     name: "ownerDrawWinner",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -188,6 +176,30 @@ const _abi = [
     ],
     name: "refundTicketsForNaffle",
     outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_naffleId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_randomNumber",
+        type: "uint256",
+      },
+    ],
+    name: "setWinner",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

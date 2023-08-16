@@ -34,6 +34,7 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
     "setOpenEntryTicketContractAddress(address)": FunctionFragment;
     "setPaidTicketContractAddress(address)": FunctionFragment;
     "setPlatformFee(uint256)": FunctionFragment;
+    "setVRFManager(address)": FunctionFragment;
     "withdrawPlatformFees(uint256,address)": FunctionFragment;
   };
 
@@ -48,6 +49,7 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
       | "setOpenEntryTicketContractAddress"
       | "setPaidTicketContractAddress"
       | "setPlatformFee"
+      | "setVRFManager"
       | "withdrawPlatformFees"
   ): FunctionFragment;
 
@@ -88,6 +90,10 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setVRFManager",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "withdrawPlatformFees",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
@@ -123,6 +129,10 @@ export interface IL2NaffleAdminInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setPlatformFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setVRFManager",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -205,6 +215,11 @@ export interface IL2NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setVRFManager(
+      _vrfManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     withdrawPlatformFees(
       _amount: PromiseOrValue<BigNumberish>,
       _to: PromiseOrValue<string>,
@@ -257,6 +272,11 @@ export interface IL2NaffleAdmin extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setVRFManager(
+    _vrfManager: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   withdrawPlatformFees(
     _amount: PromiseOrValue<BigNumberish>,
     _to: PromiseOrValue<string>,
@@ -306,6 +326,11 @@ export interface IL2NaffleAdmin extends BaseContract {
 
     setPlatformFee(
       _platformFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setVRFManager(
+      _vrfManager: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -364,6 +389,11 @@ export interface IL2NaffleAdmin extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setVRFManager(
+      _vrfManager: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     withdrawPlatformFees(
       _amount: PromiseOrValue<BigNumberish>,
       _to: PromiseOrValue<string>,
@@ -414,6 +444,11 @@ export interface IL2NaffleAdmin extends BaseContract {
 
     setPlatformFee(
       _platformFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setVRFManager(
+      _vrfManager: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
