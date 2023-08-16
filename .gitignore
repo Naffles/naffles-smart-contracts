@@ -37,6 +37,8 @@ hardhat/cache-zk/
 /.idea
 *.tsbuildinfo
 
+
+
 # VS Code workspace config
 workspace.code-workspace
 
