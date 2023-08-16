@@ -78,6 +78,7 @@ library NaffleTypes {
         uint256 ticketPriceInWei;
         uint256 endTime;
         uint256 winningTicketId;
+        bool randomNumberRequested;
         TicketType winningTicketType;
         NaffleStatus status;
         TokenContractType naffleTokenType;

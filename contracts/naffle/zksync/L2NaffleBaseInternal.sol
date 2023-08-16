@@ -43,6 +43,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             ticketPriceInWei: _params.ticketPriceInWei,
             endTime: _params.endTime,
             winningTicketId: 0,
+            randomNumberRequested: false,
             winningTicketType: NaffleTypes.TicketType.NONE,
             status: NaffleTypes.NaffleStatus.ACTIVE,
             naffleTokenType: _params.naffleTokenType,
