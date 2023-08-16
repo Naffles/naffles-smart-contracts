@@ -548,15 +548,15 @@ def test_postpone_naffle_not_finished(
     deployed_erc721a_mock,
     deployed_l1_messenger_mock,
 ):
+    end_time = get_end_time()
     create_naffle_and_mint_tickets(
         address,
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
-        end_time=get_end_time(),
+        end_time=end_time
     )
 
-    end_time = get_end_time()
     with brownie.reverts(get_error_message("NaffleNotFinished", ["uint256"], [int(end_time)])):
         l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time, from_admin)
 
