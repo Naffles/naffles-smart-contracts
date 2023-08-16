@@ -644,7 +644,7 @@ def test_postpone_naffle_success(
     l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time , from_address)
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1, from_admin)
     assert naffle[9] == end_time
-    assert naffle[13] == 1  # postponed
+    assert naffle[12] == 1  # postponed
 
 
 def test_owner_cancel_naffle_not_allowed(

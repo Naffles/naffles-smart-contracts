@@ -18,6 +18,7 @@ library L2NaffleBaseStorage {
         uint256 maxPostponeTime;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
         uint256 platformFeesAccumulated;
+        mapping(uint256 => bool) naffleRandomNumberRequested;
     }
 
     function layout() internal pure returns (Layout storage s) {
