@@ -2,7 +2,8 @@ import datetime
 
 import brownie
 import pytest
-from brownie import L2NaffleAdmin, chain
+from brownie import L2NaffleAdmin, chain 
+from eth_utils import keccak
 
 from scripts.util import add_facet, get_error_message, get_selectors
 from tests.contracts.naffle.zksync.test_l2_naffle_base import (
@@ -281,6 +282,8 @@ def test_get_naffle_by_id(
     token_type = ERC721  # ERC721
     randomNumberRequested = True
 
+    print(naffle)
+
     assert naffle == (
         deployed_erc721a_mock.address,
         address,
@@ -293,7 +296,7 @@ def test_get_naffle_by_id(
         TICKET_PRICE,
         end_time,
         winning_ticket_id,
-        randomNumberRequested, 
+        randomNumberRequested,
         winning_ticket_type,
         status,
         token_type,
@@ -592,11 +595,13 @@ def test_withdraw_platform_fee(
     l2_diamonds,
     deployed_erc721a_mock,
 ):
+    end_time = get_end_time()
     create_naffle_and_mint_tickets(
         address,
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
+        end_time=end_time,
     )
     old_balance = admin.balance()
     l2_diamonds.naffle_base_facet.setWinner(1, 1, from_address)
@@ -615,6 +620,20 @@ def test_withdraw_platform_fee_insufficient_funds(
     l2_diamonds,
     deployed_erc721a_mock,
 ):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    old_balance = admin.balance()
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, from_address)
+
+    amount_to_withdraw = (TICKET_PRICE * 2 * 0.01)
+
+    assert l2_diamonds.naffle_admin_facet.withdrawPlatformFees(amount_to_withdraw, admin, from_admin)
+    assert admin.balance() == old_balance + amount_to_withdraw
+
     create_naffle_and_mint_tickets(
         address,
         from_admin,
@@ -703,3 +722,16 @@ def test_set_max_postpone_time_not_allowed(
 
     with brownie.reverts():
         admin_facet.setMaxPostponeTime(200, from_address)
+
+
+def test_set_vrf_manager(
+    admin,
+    from_address,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    assert l2_diamonds.naffle_admin_facet.setVRFManager(address, from_admin)
+    hashed_result = keccak(text="VRF_MANAGER")
+    assert l2_diamonds.naffle_access_control.hasRole(hashed_result, address)

@@ -329,8 +329,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     function _requestRandomNumber(NaffleTypes.L2Naffle storage naffle) private {
+        revert RandomNumberAlreadyRequested();
         if (naffle.randomNumberRequested == true) {
             revert RandomNumberAlreadyRequested();
+
         }
         naffle.randomNumberRequested = true;
         emit RandomNumberRequested(naffle.naffleId);
