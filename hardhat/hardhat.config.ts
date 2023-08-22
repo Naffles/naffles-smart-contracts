@@ -69,6 +69,18 @@ module.exports = {
         url: "https://goerli.infura.io/v3/" + INFURA_API_KEY,
         accounts: [PRIVATE_KEY]
     },
+<<<<<<< Updated upstream
+=======
+    polygon: {
+        url: "https://polygon-mainnet.infura.io/v3/" + INFURA_API_KEY,
+        accounts: [PRIVATE_KEY]
+    },
+    mumbai: {
+        url: "https://polygon-mainnet.infura.io/v3/" + INFURA_API_KEY,
+
+        accounts: [PRIVATE_KEY]
+    },
+>>>>>>> Stashed changes
     zkSyncTestnet: {
       url: "https://testnet.era.zksync.dev",
       ethNetwork: "goerli",
@@ -77,7 +89,17 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY
+    apiKey: ETHERSCAN_API_KEY,
+    customChains: [
+      {
+        network: "polygonMumbai",
+        chainId: 80001,
+        urls: {
+          apiURL: "https://api-testnet.polygonscan.com",
+          browserURL: "https://mumbai.polygonscan.com"
+        }
+      }
+    ]
   },
   solidity: {
     version: "0.8.17",
