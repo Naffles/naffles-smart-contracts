@@ -77,4 +77,11 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
     function setMaxPostponeTime(uint256 _maxPostponeTime) external onlyRole(_getAdminRole()) {
         _setMaxPostponeTime(_maxPostponeTime);
     }
+
+    /**
+     * @inheritdoc IL2NaffleAdmin
+     */
+    function setVRFManager(address _vrfManager) external onlyRole(_getAdminRole()) {
+        _grantRole(VRF_ROLE, _vrfManager);
+    }
 }

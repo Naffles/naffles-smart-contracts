@@ -707,7 +707,7 @@ def test_draw_winner_naffle_not_ended_yet(
         l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
 
 
-def test_draw_winner_not_owner_sends_funds_to_owner(
+def test_draw_winner_number_already_requested(
     admin,
     address,
     from_admin,
@@ -721,18 +721,28 @@ def test_draw_winner_not_owner_sends_funds_to_owner(
         l2_diamonds,
         deployed_erc721a_mock,
     )
-    old_balance = address.balance()
+    chain.sleep(100001)
+
+    with brownie.reverts(get_error_message("RandomNumberAlreadyRequested")):
+        l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
+
+
+def test_draw_winner_does_not_revert(
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=100,
+    )
     chain.sleep(100001)
 
     l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
-
-    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
-
-    assert naffle[11] == 2  # paid ticket type
-    assert naffle[12] == 4  # naffle status finished
-
-    assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.99)
-
 
 
 def test_owner_cancel_naffle_not_ended_yet(
@@ -752,7 +762,7 @@ def test_owner_cancel_naffle_not_ended_yet(
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(NAFFLE_ID, from_admin)
 
 
-def test_draw_winner(
+def test_set_winner(
     admin,
     from_address,
     address,
@@ -767,7 +777,7 @@ def test_draw_winner(
         deployed_erc721a_mock,
     )
     old_balance = address.balance()
-    l2_diamonds.naffle_base_facet.drawWinner(1, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, from_address)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 

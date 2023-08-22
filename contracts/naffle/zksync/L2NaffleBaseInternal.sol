@@ -17,6 +17,8 @@ import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketVi
 import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
+    bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
+
     /**
      * @notice create a new naffle.
      * @param _params the parameters for the naffle.
@@ -113,6 +115,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             ticketIds,
             naffle.ticketPriceInWei
         );
+
+        _checkIfNaffleIsFinished(naffle);
     }
 
     /**
@@ -191,7 +195,37 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             msg.sender,
             _ticketIds
         );
+
+        _checkIfNaffleIsFinished(naffle);
     }
+
+    /**
+     * @notice checks if the naffle is sold out, if so it requests a random number for the naffle
+     * @param _naffle the naffle to check.
+     */
+    function _checkIfNaffleIsFinished(
+        NaffleTypes.L2Naffle storage _naffle
+    ) internal {
+        if (_naffle.numberOfOpenEntries == _naffle.openEntryTicketSpots && _naffle.numberOfPaidTickets == _naffle.paidTicketSpots) {
+            _requestRandomNumber(_naffle.naffleId);
+        }
+    }
+
+    /**
+     * @notice emits event to request a random number for a naffle.
+     * @dev if the naffle has already had a random number requested an error is thrown.
+     * @param _naffleId the naffleId to request a random number for.
+     */
+    function _requestRandomNumber(uint256 _naffleId) private {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        bool randomNumberRequested = layout.naffleRandomNumberRequested[_naffleId];
+        if (randomNumberRequested == true) {
+            revert RandomNumberAlreadyRequested();
+        }
+        layout.naffleRandomNumberRequested[_naffleId] = true;
+        emit RandomNumberRequested(_naffleId);
+    }
+
 
     /**
      * @notice cancel a naffle.
@@ -263,7 +297,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
      /**
-     * @notice draw a winner for a naffle. platform fees are taken and the winner is chosen and send to L1.
+      * @notice draw a winner for a naffle.
      * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
      * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
      * @dev if the naffle is not finished a NaffleNotEndedYet error is thrown.
@@ -271,7 +305,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @dev if the funds can't get send to the owner a UnableToSendFunds error is thrown.
      * @param _naffleId the id of the naffle.
      */
-    function _drawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
+    function _drawWinner(uint256 _naffleId) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
@@ -280,10 +314,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NaffleNotEndedYet(naffle.endTime);
         }
 
-        return _drawWinnerInternal(naffle, _naffleId);
+        _drawWinnerInternal(naffle);
     }
 
-    function _ownerDrawWinner(uint256 _naffleId) internal returns (bytes32 messageHash) {
+    function _ownerDrawWinner(uint256 _naffleId) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
@@ -291,13 +325,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NotAllowed();
         }
 
-        return _drawWinnerInternal(naffle, _naffleId);
+        _drawWinnerInternal(naffle);
     }
 
-    function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle, uint256 _naffleId) internal returns (bytes32 messageHash) {
+    function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle) private {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         if (naffle.ethTokenAddress == address(0)) {
-            revert InvalidNaffleId(_naffleId);
+            revert InvalidNaffleId(naffle.naffleId);
         }
 
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
@@ -308,7 +342,22 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NoTicketsBought();
         }
 
-        uint256 winningTicketId = _random(naffle.numberOfPaidTickets + naffle.numberOfOpenEntries);
+         _requestRandomNumber(naffle.naffleId);
+    }
+
+    /**
+     * @notice set a winner for a naffle based on a random number.
+     *         platform fees are taken and the winner is chosen and send to L1.
+     * @dev if the funds can't get send to the owner a UnableToSendFunds error is thrown.
+     * @param _naffleId the id of the naffle.
+     * @param _randomNumber the random number that was generated by the Chainlink VRF.
+     */
+    function _setWinner(uint256 _naffleId, uint256 _randomNumber) internal returns (bytes32 messageHash) {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
+        uint256 winningTicketId = _randomNumber % (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries) + 1;
+
         address winner;
         if (winningTicketId <= naffle.numberOfPaidTickets) {
             naffle.winningTicketType = NaffleTypes.TicketType.PAID;
@@ -398,21 +447,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _newEndTime
         );
     }
-
-    /**
-     * @notice gets a random number, this method is not secure and should be used for testing purposes only.
-     * @dev the random number is generated by hashing the tx.origin, the blockhash of the previous block and the current timestamp.
-     * @dev the random number is between 1 and maxValue.
-     * @param maxValue the maximum value of the random number.
-     * @return randomNumber the random number.
-     */
-    function _random(uint256 maxValue) internal view returns (uint256 randomNumber) {
-        randomNumber = uint256(keccak256(abi.encodePacked(
-              tx.origin,
-              blockhash(block.number - 1),
-              block.timestamp
-        ))) % maxValue + 1;
-      }
 
     /**
      * @notice gets the admin role.

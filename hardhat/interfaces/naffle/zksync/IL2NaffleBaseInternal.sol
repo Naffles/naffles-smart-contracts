@@ -98,6 +98,17 @@ interface IL2NaffleBaseInternal {
     error NaffleNotFinished(uint256 endTime);
 
     /**
+     * @notice thrown when a random number gets requested for a naffle which already has a random number requested.
+     */
+    error RandomNumberAlreadyRequested();
+
+    /**
+     * @notice emitted when a random number is requested for a naffle.
+     * @param naffleId id of the naffle.
+     */
+    event RandomNumberRequested(uint256 indexed naffleId);
+
+    /**
      * @notice emitted when a naffle is created.
      * @param naffleId id of the naffle.
      * @param owner address of the owner.
