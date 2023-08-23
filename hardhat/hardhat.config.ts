@@ -2,11 +2,11 @@ import { config as dotEnvConfig } from "dotenv";
 dotEnvConfig();
 
 import "@matterlabs/hardhat-zksync-deploy";
-// import "@matterlabs/hardhat-zksync-solc"; // comment out to compile / deploy for ethereum.
-// import "@matterlabs/hardhat-zksync-verify"; // comment out to compile / deploy for ethereum.
+import "@matterlabs/hardhat-zksync-solc"; // comment out to compile / deploy for ethereum.
+import "@matterlabs/hardhat-zksync-verify"; // comment out to compile / deploy for ethereum.
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
-import "@nomiclabs/hardhat-etherscan"; // comment out to compile / deploy for zksync.
+// import "@nomiclabs/hardhat-etherscan"; // comment out to compile / deploy for zksync.
 
 require("./tasks/ethereum/deploy_erc721a_mock")
 require("./tasks/ethereum/mint_mock_nfts")
