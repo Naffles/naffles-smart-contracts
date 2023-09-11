@@ -1,0 +1,21 @@
+[submodule "foundry-lite-for-audit/lib/forge-std"]
+	path = foundry-lite-for-audit/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "foundry-lite-for-audit/lib/openzeppelin-contracts"]
+	path = foundry-lite-for-audit/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "foundry-lite-for-audit/lib/solidstate-solidity"]
+	path = foundry-lite-for-audit/lib/solidstate-solidity
+	url = https://github.com/solidstate-network/solidstate-solidity
+[submodule "foundry-lite-for-audit/lib/chainlink"]
+	path = foundry-lite-for-audit/lib/chainlink
+	url = https://github.com/smartcontractkit/chainlink
+[submodule "foundry-lite-for-audit/lib/era-contracts"]
+	path = foundry-lite-for-audit/lib/era-contracts
+	url = https://github.com/matter-labs/era-contracts
+[submodule "foundry-lite-for-audit/lib/openzeppelin-contracts-upgradeable"]
+	path = foundry-lite-for-audit/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
+[submodule "foundry-lite-for-audit/lib/era-system-contracts"]
+	path = foundry-lite-for-audit/lib/era-system-contracts
+	url = https://github.com/matter-labs/era-system-contracts
