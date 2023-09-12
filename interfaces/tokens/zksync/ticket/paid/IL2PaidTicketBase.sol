@@ -19,11 +19,20 @@ interface IL2PaidTicketBase {
     function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 ticketPriceInWei, uint256 startingTicketId) external returns (uint256[] memory ticketIds);
 
     /**
-     * @notice refund and burn a tickets.
+     * @notice burs tickets before refund.
      * @dev method is called from the naffle contract.
      * @param _naffleId the id of the naffle.
      * @param _naffleTicketIds the id of the ticket on the naffle.
      * @param _owner the owner of the tickets.
      */
-    function refundAndBurnTickets(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) external;
+    function burnTicketsBeforeRefund(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) external;
+
+    /**
+     * @notice burn used paid tickets before redeeming open entry tickets.
+     * @dev method is called from the naffle contract.
+     * @param _naffleId the id of the naffle.
+     * @param _paidTicketIds the ids of the paid tickets.
+     * @param _owner the owner of the tickets.
+     */
+    function burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets(uint256 _naffleId, uint256[] memory _paidTicketIds, address _owner) external;
 }

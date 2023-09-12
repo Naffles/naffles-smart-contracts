@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.17;
+pragma solidity 0.8.21;
 
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/proxy/diamond/SolidStateDiamond.sol";
@@ -14,7 +14,8 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         address _l1MessengerContractAddress,
         address _l1NaffleContractAddress,
         address _paidTicketContractAddress,
-        address _openEntryTicketContractAddress
+        address _openEntryTicketContractAddress,
+        uint256 paidToOpenEntryRedeemRatio
     ) SolidStateDiamond() {
         _grantRole(_getAdminRole(), _admin);
         _grantRole(VRF_ROLE, _admin);
@@ -24,5 +25,6 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         _setPaidTicketContractAddress(_paidTicketContractAddress);
         _setOpenEntryTicketContractAddress(_openEntryTicketContractAddress);
         _setL1NaffleContractAddress(_l1NaffleContractAddress);
+        _setPaidToOpenEntryRedeemRatio(paidToOpenEntryRedeemRatio);
     }
 }

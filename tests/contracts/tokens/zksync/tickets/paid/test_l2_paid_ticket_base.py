@@ -88,7 +88,7 @@ def test_refund_and_burn_tickets_success(
 
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
 
-    l2_diamonds.paid_base_facet.refundAndBurnTickets(
+    l2_diamonds.paid_base_facet.burnTicketsBeforeRefund(
         NAFFLE_ID, [1, 2], address.address,
         {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
     )
@@ -115,7 +115,7 @@ def test_refund_and_burn_tickets_success_not_owner(
     ticket_id_on_naffle = 1
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
     with brownie.reverts(get_error_message("NotTicketOwner", ["address"], [admin.address])):
-        l2_diamonds.paid_base_facet.refundAndBurnTickets(
+        l2_diamonds.paid_base_facet.burnTicketsBeforeRefund(
             NAFFLE_ID, [ticket_id_on_naffle], admin,
             {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
         )

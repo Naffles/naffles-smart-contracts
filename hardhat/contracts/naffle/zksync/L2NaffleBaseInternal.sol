@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.17;
+pragma solidity 0.8.21;
 
 import "./L2NaffleBaseStorage.sol";
 import "../../libraries/NaffleTypes.sol";
@@ -18,6 +18,7 @@ import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
+    uint256 internal constant DENOMINATOR = 10000;
 
     /**
      * @notice create a new naffle.
@@ -146,7 +147,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             );
         }
         if (_paidTicketIds.length > 0) {
-            IL2PaidTicketBase(layout.paidTicketContractAddress).refundAndBurnTickets(
+            IL2PaidTicketBase(layout.paidTicketContractAddress).burnTicketsBeforeRefund(
                 _naffleId,
                 _paidTicketIds,
                 _owner
@@ -156,6 +157,30 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
                 revert UnableToSendFunds();
             }
         }
+    }
+
+    /**
+     * @dev burns open entry tickets and mints new open entry tickets according to the paid ticket to open entry ratio, paidToOpenEntryRedeemRatio
+     */    
+    function _redeemOpenEntryTickets(uint256 _naffleId, uint256[] memory _paidTicketIds, address _owner) internal {
+
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+
+        //should be initialized in L2NaffleDiamond/L2NaffleAdmin
+        uint256 paidToOpenEntryRedeemRatio = layout.paidToOpenEntryRedeemRatio;
+        uint256 length = _paidTicketIds.length;
+        if (length % paidToOpenEntryRedeemRatio != 0) {
+            revert InvalidPaidToOpenEntryRatio(length, paidToOpenEntryRedeemRatio);
+        }
+
+        //burn used paid tickets - this confirms naffle is finished, and that the tokens are owned by the user and connected to the supplied naffleId
+        IL2PaidTicketBase(layout.paidTicketContractAddress).burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets(
+            _naffleId,
+            _paidTicketIds,
+            _owner
+        );
+
+        //mint new open entry tickets according to paidToOpenEntryRedeemRatio
     }
 
     /**
@@ -371,7 +396,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         naffle.status = NaffleTypes.NaffleStatus.FINISHED;
         uint256 totalFundsRaised = naffle.ticketPriceInWei * naffle.numberOfPaidTickets;
-        uint256 platformFee = totalFundsRaised * layout.platformFee / 10000;
+        uint256 platformFee = totalFundsRaised * layout.platformFee / DENOMINATOR;
         uint256 amountToTransfer = totalFundsRaised - platformFee;
 
         bytes memory message = abi.encode("setWinner", _naffleId, winner);
@@ -570,5 +595,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      */
     function _getMaxPostponeTime() internal view returns (uint256 maxPostponeTime) {
         maxPostponeTime = L2NaffleBaseStorage.layout().maxPostponeTime;
+    }
+
+    /**
+     * @notice sets the number of paid tickets one needs to burn to redeem an open entry ticket
+     */
+    function _setPaidToOpenEntryRedeemRatio(uint256 _paidToOpenEntryRedeemRatio) internal {
+        L2NaffleBaseStorage.layout().paidToOpenEntryRedeemRatio = _paidToOpenEntryRedeemRatio;
     }
 }

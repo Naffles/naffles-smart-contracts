@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.17;
+pragma solidity 0.8.21;
 
 import "./L2NaffleBaseInternal.sol";
 import "../../libraries/NaffleTypes.sol";
@@ -52,6 +52,21 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
             _naffleId,
             _openEntryTicketIds,
             _paidTicketIds,
+            _owner
+        );
+    }
+
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
+    function redeemOpenEntryTickets(
+        uint256 _naffleId,
+        uint256[] memory _paidTicketIds,
+        address _owner
+    ) external {
+         _redeemOpenEntryTickets(
+            _naffleId, 
+            _paidTicketIds, 
             _owner
         );
     }

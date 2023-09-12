@@ -51,7 +51,7 @@ const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
 
 module.exports = {
   zksolc: {
-    version: "1.3.8",
+    version: "1.3.14",
     compilerSource: "binary",
     settings: {},
   },
@@ -98,7 +98,7 @@ module.exports = {
     ]
   },
   solidity: {
-    version: "0.8.17",
+    version: "0.8.21",
     settings: {
       optimizer: {
         enabled: true,

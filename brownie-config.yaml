@@ -7,7 +7,7 @@ networks:
 dotenv: .env
 compiler:
     solc:
-        version: "0.8.17"
+        version: "0.8.21"
         viaIR: True
         optimizer:
             enabled: true

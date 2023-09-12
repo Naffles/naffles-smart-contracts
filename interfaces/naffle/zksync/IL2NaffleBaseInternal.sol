@@ -109,6 +109,13 @@ interface IL2NaffleBaseInternal {
     event RandomNumberRequested(uint256 indexed naffleId);
 
     /**
+     * @notice thrown if the number of paid tickets being burned is not divisible by the number of paid tickets needed to redeem an open entry ticket
+     * @param length the length of the ticket ids array
+     * @param paidToOpenEntryRatio the ratio of paid tickets to open entry tickets
+     */
+    error InvalidPaidToOpenEntryRatio(uint256 length, uint256 paidToOpenEntryRatio);
+
+    /**
      * @notice emitted when a naffle is created.
      * @param naffleId id of the naffle.
      * @param owner address of the owner.

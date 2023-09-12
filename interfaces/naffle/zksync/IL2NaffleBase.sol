@@ -50,6 +50,19 @@ interface IL2NaffleBase {
         address _owner
     ) external;
 
+
+    /**
+     * @notice redeem used paid tickets for open entry tickets
+     * @param _naffleId id of the naffle.
+     * @param _paidTicketIds ids of the paid tickets.
+     * @param _owner owner of the tickets.
+     */
+    function redeemOpenEntryTickets(
+        uint256 _naffleId,
+        uint256[] memory _paidTicketIds,
+        address _owner
+    ) external;
+
     /**
      * @notice cancel a naffle.
      * @dev method can be called by the owner of a naffle.

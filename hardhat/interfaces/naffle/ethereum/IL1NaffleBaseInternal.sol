@@ -40,6 +40,11 @@ interface IL1NaffleBaseInternal {
     error FailedMessageInclusion();
 
     /**
+     * @notice thrown when the msg.value for L2 gas forwarding in _createNaffle is insufficient.
+     */
+    error InsufficientL2GasForwardedForCreateNaffle();
+
+    /**
      * @notice emitted when a naffle is created.
      * @param naffleId id of the naffle.
      * @param owner address of the owner.

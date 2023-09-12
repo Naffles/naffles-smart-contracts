@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity 0.8.21;
 
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
@@ -7,7 +7,14 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 import "../../../interfaces/vrf/polygon/INaffleVRF.sol";
 
+/**
+    @title NaffleVRF
+    @dev contract for drawing winners of Naffles
+    @notice inherits from VRFConsumerBaseV2, Ownable, INaffleVRF
+ */ 
+
 contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
+    //STORAGE===================================================================
     error NotAllowed();
     error naffleAlreadyRolled(uint256 naffleId);
     error InvalidChainlinkRequestId(uint256 requestId);
@@ -35,6 +42,7 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
         uint256 naffleId;
     }
 
+    //CONSTRUCTOR================================================================
      constructor (
         address _vrfCoordinator,
         uint64 _subscriptionId,
@@ -81,6 +89,7 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
         emit NaffleWinnerRolled(_naffleId);
     }
 
+    //@dev standard chainlink VRF callback
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         ChainlinkRequestStatus storage status = chainlinkRequestStatus[requestId];
         if (!status.exists) {
@@ -92,6 +101,7 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
         emit ChainlinkRequestFulfilled(requestId, status.naffleId, randomWords[0]);
     }
 
+    ///@dev admin function to set chainlink VRF settings
     function setChainlinkVRFSettings(
         uint64 _subscriptionId,
         bytes32 _gasLaneKeyHash,

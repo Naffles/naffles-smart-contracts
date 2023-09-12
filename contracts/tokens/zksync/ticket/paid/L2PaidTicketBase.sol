@@ -25,8 +25,15 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
     /**
      * @inheritdoc IL2PaidTicketBase
      */
-    function refundAndBurnTickets(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) external onlyL2NaffleContract {
-        _refundAndBurnTickets(_naffleId, _naffleTicketIds, _owner);
+    function burnTicketsBeforeRefund(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) external onlyL2NaffleContract {
+        _burnTicketsBeforeRefund(_naffleId, _naffleTicketIds, _owner);
+    }
+
+    /**
+     * @inheritdoc IL2PaidTicketBase
+     */
+    function burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets(uint256 _naffleId, uint256[] memory _paidTicketIds, address _owner) external onlyL2NaffleContract {
+        _burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets(_naffleId, _paidTicketIds, _owner);
     }
 
     /**

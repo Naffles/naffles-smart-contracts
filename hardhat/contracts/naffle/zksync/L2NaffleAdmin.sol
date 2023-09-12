@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.17;
+pragma solidity 0.8.21;
 
 import "./L2NaffleBaseInternal.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleAdmin.sol";
@@ -83,5 +83,9 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
      */
     function setVRFManager(address _vrfManager) external onlyRole(_getAdminRole()) {
         _grantRole(VRF_ROLE, _vrfManager);
+    }
+
+    function setPaidToOpenEntryRedeemRatio(uint256 paidToOpenEntryRedeemRatio) external onlyRole(_getAdminRole()) {
+        _setPaidToOpenEntryRedeemRatio(paidToOpenEntryRedeemRatio);
     }
 }

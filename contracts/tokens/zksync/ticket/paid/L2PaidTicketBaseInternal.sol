@@ -50,16 +50,15 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
     }
 
     /**
-     * @notice refunds tickets and burns them.
+     * @notice burns tickets before theyre refunded in the L2Naffle contract
      * @dev if the status of the naffle is not cancelled a NaffleNotCancelled error is thrown.
      * @dev if the ticket id is invalid an InvalidTicketId error is thrown.
      * @dev if the msg.sender is not the owner of the ticket a NotTicketOwner error is thrown.
-     * @dev if the refund fails a RefundFailed error is thrown.
      * @param _naffleId the id of the naffle.
      * @param _naffleTicketIds the id of the ticket on the naffle.
      * @param _owner the owner of the tickets.
      */
-    function _refundAndBurnTickets(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) internal {
+    function _burnTicketsBeforeRefund(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) internal {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
 
@@ -94,6 +93,40 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         }
 
         emit PaidTicketsRefundedAndBurned(_owner, _naffleId, totalTicketIds, _naffleTicketIds);
+    }
+
+    /** [ in development - curion addition Sep 12 2023]
+     * @notice refeems used paid tickets for open entry tickets according to a stored ratio of paid tickets to open entry tickets.
+     * @dev if length of input array is not divisible by paidToOpenEntryRedeemRatio a InvalidPaidToOpenEntryRatio error is thrown.
+     * @dev no need to change any storage since the naffle is already over, as opposed to above where the ticket is refunded
+     */
+    function _burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) internal {
+        L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
+        NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
+        uint256 length = _naffleTicketIds.length;
+
+        //check that naffle is over
+        if (naffle.status != NaffleTypes.NaffleStatus.FINISHED) {
+            revert NaffleNotFinished(_naffleId);
+        }
+
+        //iterate over length and burn the paid tickets
+        for (uint256 i = 0; i < length; i++) {
+            uint256 ticketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
+
+            //check that ticket belongs to naffle - possibly redundant since the owner check will fail if there is an ticket/naffle ID mismatch
+            if (l.paidTickets[ticketId].naffleId != _naffleId) {
+                revert InvalidTicketId(ticketId);
+            }
+            
+            if (_owner != _ownerOf(ticketId)) {
+                revert NotTicketOwner(_owner);
+            }
+
+            _burn(ticketId);
+        }
+
+        //mint open entry tickets according to ratio -- in naffle contract
     }
 
     /**

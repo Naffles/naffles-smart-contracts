@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.17;
+pragma solidity 0.8.21;
 
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/proxy/diamond/SolidStateDiamond.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
 import "./L1NaffleBaseInternal.sol";
 
+/**
+    @title L1 Naffle Diamond
+    @dev diamond implementation contract for L1 Naffle
+    @notice inherits from SolidStateDiamond, AccessControl, L1NaffleBaseInternal
+ */
 
 contract L1NaffleDiamond is SolidStateDiamond, AccessControl, L1NaffleBaseInternal {
     constructor(

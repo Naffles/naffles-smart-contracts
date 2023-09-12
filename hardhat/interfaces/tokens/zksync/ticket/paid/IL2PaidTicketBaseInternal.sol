@@ -36,6 +36,18 @@ interface IL2PaidTicketBaseInternal {
     error NotTicketOwner(address sender);
 
     /**
+     * @notice thrown if the number of paid tickets being burned is not divisible by the number of paid tickets needed to redeem an open entry ticket
+     * @param length the length of the ticket ids array
+     * @param paidToOpenEntryRatio the ratio of paid tickets to open entry tickets
+     */
+    error InvalidPaidToOpenEntryRatio(uint256 length, uint256 paidToOpenEntryRatio);
+    
+    /**
+     * @notice thrown when action requiring naffle to be over is called before the naffle is over. 
+     */
+    error NaffleNotFinished(uint256 naffleId);
+
+    /**
      * @notice emitted when paid tickets are minted.
      * @param owner the owner of the tickets.
      * @param ticketIds the ids of the tickets.

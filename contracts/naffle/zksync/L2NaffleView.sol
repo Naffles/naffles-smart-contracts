@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.17;
+pragma solidity 0.8.21;
 
 import "./L2NaffleBaseInternal.sol";
 import "../../../interfaces/naffle/zksync/IL2NaffleView.sol";

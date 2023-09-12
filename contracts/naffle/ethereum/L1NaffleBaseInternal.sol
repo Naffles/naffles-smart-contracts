@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.17;
+pragma solidity 0.8.21;
 
 import "./L1NaffleBaseStorage.sol";
 import "../../libraries/NaffleTypes.sol";
@@ -8,11 +8,10 @@ import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
 import "@matterlabs/zksync-contracts/l1/contracts/zksync/interfaces/IZkSync.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
-import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBaseInternal.sol";
 import "@matterlabs/zksync-contracts/l1/contracts/zksync/Storage.sol";
 
-abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlInternal {
+abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
 
@@ -56,6 +55,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             revert InvalidEndTime(_endTime);
         }
 
+        if(msg.value < layout.minL2ForwardedGasForCreateNaffle) {
+            revert InsufficientL2GasForwardedForCreateNaffle();
+        }
+
         ++layout.numberOfNaffles;
         naffleId = layout.numberOfNaffles;
         if (
@@ -67,10 +70,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         }
 
         NaffleTypes.TokenContractType tokenContractType;
-        if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID)) {
+        if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID) && !(IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID))) {
             tokenContractType = NaffleTypes.TokenContractType.ERC721;
             IERC721(_ethTokenAddress).transferFrom(msg.sender, address(this), _nftId);
-        } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID)) {
+        } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID) && !(IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID))) {
             tokenContractType = NaffleTypes.TokenContractType.ERC1155;
             IERC1155(_ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _nftId, 1, bytes(""));
         } else {
@@ -324,19 +327,20 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
     }
 
     /**
-     * @notice gets the L1 messenger address.
-     * @return l1MessengerAddress the L1 messenger address.
-     */
-    function _getL1MessengerAddress() internal pure returns (address l1MessengerAddress) {
-        l1MessengerAddress = L1NaffleBaseStorage.L1_MESSENGER_ADDRESS;
-    }
-
-    /**
      * @notice gets the naffle by id.
      * @param _naffleId the id of the naffle.
      * @return naffle the naffle.
      */
     function _getNaffleById(uint256 _naffleId) internal view returns (NaffleTypes.L1Naffle memory naffle) {
         naffle = L1NaffleBaseStorage.layout().naffles[_naffleId];
+    }
+
+    /**
+     * @notice sets minimum gas limit to be forwarded for L2 transactions in _createNaffle
+     * @param _minL2ForwardedGasForCreateNaffle the minimum gas limit to be forwarded for L2 transactions in _createNaffle
+     * @dev set the minimum amount of wei this transaction should foward to L2. Should be much higher than the actual cost, since refunds are given
+     */
+    function _setMinL2ForwardedGas(uint256 _minL2ForwardedGasForCreateNaffle) internal {
+        L1NaffleBaseStorage.layout().minL2ForwardedGasForCreateNaffle = _minL2ForwardedGasForCreateNaffle;
     }
 }
