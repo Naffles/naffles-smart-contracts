@@ -2,6 +2,8 @@
 
 curion/naffl-384-add-feature-redeem-used-paid-tickets-for-open-entry-tickets
 
+TODO: confirm steps, write tests (hardhat would be preferred)
+
 1. added redeemOpenEntryTickets to L2NaffleBase
 2. added _redeemOpenEntryTickets to L2NaffleBaseInternal
 3. added redeemOpenEntryTickets to IL2NaffleBase
