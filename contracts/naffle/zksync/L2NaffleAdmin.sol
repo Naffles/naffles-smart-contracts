@@ -85,7 +85,17 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
         _grantRole(VRF_ROLE, _vrfManager);
     }
 
-    function setPaidToOpenEntryRedeemRatio(uint256 paidToOpenEntryRedeemRatio) external onlyRole(_getAdminRole()) {
-        _setPaidToOpenEntryRedeemRatio(paidToOpenEntryRedeemRatio);
+    /**
+     * @inheritdoc IL2NaffleAdmin
+     */
+    function setPaidToOpenEntryRedeemExchangeRate(uint256 paidToOpenEntryRedeemExchangeRate) external onlyRole(_getAdminRole()) {
+        _setPaidToOpenEntryRedeemExchangeRate(paidToOpenEntryRedeemExchangeRate);
+    }
+
+    /**
+     * @inheritdoc IL2NaffleAdmin
+     */
+    function setStakingMultipliersForOETicketRedeem(uint256[] memory _multipliers) external onlyRole(_getAdminRole()) {
+        _setStakingMultipliersForOETicketRedeem(_multipliers);
     }
 }

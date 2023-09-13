@@ -71,4 +71,14 @@ interface IL2NaffleAdmin {
      * @param _vrfManager the new VRF manager address
      */
     function setVRFManager(address _vrfManager) external;
+
+    /**
+     * @notice sets the base exchange ratio between paid tickets and open entry tickets when redeeming used paid tickets for OE tickets
+     */
+    function setPaidToOpenEntryRedeemExchangeRate(uint256 paidToOpenEntryRedeemExchangeRate) external;
+
+    /**
+     * @notice sets the multipliers for each of 1,3,6,12 months staking periods for altering exchange rate of used paid tickets to OE tickets.
+     */
+    function setStakingMultipliersForOETicketRedeem(uint256[] memory _multipliers) external;
 }

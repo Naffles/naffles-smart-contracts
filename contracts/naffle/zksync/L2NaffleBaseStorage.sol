@@ -23,6 +23,7 @@ library L2NaffleBaseStorage {
         uint256 platformFee;
         uint256 maxPostponeTime;
         uint256 paidToOpenEntryRedeemExchangeRate;
+        uint256[] stakingMultipliersForOETicketRedeem;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
         uint256 platformFeesAccumulated;
         mapping(uint256 => bool) naffleRandomNumberRequested;

@@ -189,4 +189,18 @@ interface IL2NaffleBaseInternal {
      * @param newEndTime new end time of the naffle.
      */
     event L2NafflePostponed(uint256 indexed naffleId, uint256 newEndTime);
+
+    /**
+     * @notice emitted when a used paid tickets are redeemed for open entry tickets
+     * @param naffleId id of the naffle.
+     * @param paidTicketIds ids of the paid tickets used.
+     * @param owner address of the owner.
+     * @param openEntryTicketQuantityToMint quantity of open entry tickets to mint.
+     */
+    event OpenEntryTicketsRedeemedWithUsedPaidTickets(
+        uint256 indexed naffleId,
+        uint256[] paidTicketIds,
+        address indexed owner,
+        uint256 openEntryTicketQuantityToMint
+    );
 }

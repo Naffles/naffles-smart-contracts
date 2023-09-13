@@ -19,16 +19,25 @@ import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
     uint256 internal constant DENOMINATOR = 10_000;
-    uint256 internal constant ONE_MONTH_MULTIPLIER = 1250;
-    uint256 internal constant THREE_MONTH_MULTIPLIER = 1750;
-    uint256 internal constant SIX_MONTH_MULTIPLIER = 3000;
-    uint256 internal constant TWELVE_MONTH_MULTIPLIER = 5000;
     uint256 internal constant SECONDS_IN_ONE_MONTH = 2_678_400;
     uint256 internal constant SECONDS_IN_THREE_MONTHS = 7_776_000;
     uint256 internal constant SECONDS_IN_SIX_MONTHS = 15_638_400;
     uint256 internal constant SECONDS_IN_TWELVE_MONTHS = 31_536_000;
     
-
+    //=============================================================================
+    // NAFFLE FUNCTIONS
+    // _createNaffle
+    // _checkIfNaffleIsFinished
+    // _requestRandomNumber
+    // _ownerCancelNaffle
+    // _adminCancelNaffle
+    // _cancelNaffleInternal
+    // _ownerDrawWinner
+    // _drawWinnerInternal
+    // _setWinner
+    // _postponeNaffle
+    //=============================================================================
+    
     /**
      * @notice create a new naffle.
      * @param _params the parameters for the naffle.
@@ -73,202 +82,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _params.naffleType,
             _params.naffleTokenType
         );
-    }
-
-    /**
-     * @notice Buy tickets for a naffle. A call is made to the paid ticket contract to mint the tickets to the buyer.
-     * @dev If an invalid naffle id is passed, an InvalidNaffleId error is thrown.
-     * @dev If the naffle is in an invalid state, an InvalidNaffleStatus error is thrown.
-     * @dev If the msg.value is not enough to buy the tickets, a NotEnoughFunds error is thrown.
-     * @dev If the naffle is a standard naffle and the amount of tickets to buy is greater than the number of paid ticket spots left, a NotEnoughPaidTicketSpots error is thrown.
-     * @param _amount The amount of tickets to buy.
-     * @param _naffleId The id of the naffle.
-     */
-    function _buyTickets(
-        uint256 _amount,
-        uint256 _naffleId
-    ) internal returns (uint256[] memory ticketIds) {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
-
-        if (naffle.ethTokenAddress == address(0)) {
-            revert InvalidNaffleId(_naffleId);
-        }
-        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
-            revert InvalidNaffleStatus(naffle.status);
-        }
-
-        uint256 totalPrice = _amount * naffle.ticketPriceInWei;
-        if (msg.value < totalPrice) {
-            revert NotEnoughFunds(msg.value);
-        }
-
-        uint256 newPaidTickets = naffle.numberOfPaidTickets + _amount;
-        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD && newPaidTickets > naffle.paidTicketSpots) {
-            revert NotEnoughPaidTicketSpots(naffle.paidTicketSpots);
-        }
-
-        uint256 startingTicketId = naffle.numberOfPaidTickets + 1;
-        naffle.numberOfPaidTickets = newPaidTickets;
-
-        ticketIds = IL2PaidTicketBase(layout.paidTicketContractAddress).mintTickets(
-            msg.sender,
-            _amount,
-            _naffleId,
-            naffle.ticketPriceInWei,
-            startingTicketId
-        );
-
-        emit TicketsBought(
-            _naffleId,
-            msg.sender,
-            ticketIds,
-            naffle.ticketPriceInWei
-        );
-
-        _checkIfNaffleIsFinished(naffle);
-    }
-
-    /**
-     * @notice refund and burns tickets for a naffle.
-     * @param _naffleId id of the naffle.
-     * @param _openEntryTicketIds ids of the open entry tickets.
-     * @param _paidTicketIds ids of the paid tickets.
-     * @param _owner owner of the tickets.
-     */
-    function _refundTicketsForNaffle(
-        uint256 _naffleId,
-        uint256[] memory _openEntryTicketIds,
-        uint256[] memory _paidTicketIds,
-        address _owner
-    ) internal {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
-
-        if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
-            revert InvalidNaffleStatus(naffle.status);
-        }
-
-        if (_openEntryTicketIds.length > 0) {
-            IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).detachFromNaffle(
-                _naffleId,
-                _openEntryTicketIds
-            );
-        }
-        if (_paidTicketIds.length > 0) {
-            IL2PaidTicketBase(layout.paidTicketContractAddress).burnTicketsBeforeRefund(
-                _naffleId,
-                _paidTicketIds,
-                _owner
-            );
-            (bool success, ) = _owner.call{value: _paidTicketIds.length * naffle.ticketPriceInWei}("");
-            if (!success) {
-                revert UnableToSendFunds();
-            }
-        }
-    }
-
-    /**
-     * @dev burns open entry tickets and mints new open entry tickets
-     * @dev number of paid tickets required to redeem one open entry ticket is also based on whether or not the user has staked a founders key, and if so, for how long
-     * 
-     * Concern: truncation at small quantities
-     */    
-    function _redeemOpenEntryTickets(uint256 _naffleId, uint256[] memory _paidTicketIds, address _owner) internal {
-
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-
-        //should be initialized in L2NaffleDiamond/L2NaffleAdmin
-        uint256 paidToOpenEntryRedeemExchangeRate = layout.paidToOpenEntryRedeemExchangeRate;
-        uint256 length = _paidTicketIds.length;
-
-        //get best staked founders key, see how long it was staked, assign multiplier accordingly
-        uint256 bestStakingDuration;
-        uint256 stakingDuration;
-        for(uint256 i = 0; i < layout.userToStakedFoundersKeyAmount[_owner]; i++) {
-            stakingDuration = layout.userToStakedFoundersKeyIdsToStakeDuration[_owner][i];
-            if (stakingDuration > bestStakingDuration) {
-                bestStakingDuration = stakingDuration;
-            }
-        }
-
-        uint256 stakedFoundersKeyRedeemMultiplier;
-        if(bestStakingDuration == SECONDS_IN_ONE_MONTH) stakedFoundersKeyRedeemMultiplier = ONE_MONTH_MULTIPLIER;
-        if(bestStakingDuration == SECONDS_IN_THREE_MONTHS) stakedFoundersKeyRedeemMultiplier = THREE_MONTH_MULTIPLIER;
-        if(bestStakingDuration == SECONDS_IN_SIX_MONTHS) stakedFoundersKeyRedeemMultiplier = SIX_MONTH_MULTIPLIER;
-        if(bestStakingDuration == SECONDS_IN_TWELVE_MONTHS) stakedFoundersKeyRedeemMultiplier = TWELVE_MONTH_MULTIPLIER;
-
-        uint256 thisPaidToOpenEntryRedeemExchangeRate = paidToOpenEntryRedeemExchangeRate 
-            - (paidToOpenEntryRedeemExchangeRate* stakedFoundersKeyRedeemMultiplier);
-
-        if (length % paidToOpenEntryRedeemExchangeRate  != 0) {
-            revert InvalidPaidToOpenEntryRatio(length, paidToOpenEntryRedeemExchangeRate);
-        }
-
-        uint256 openEntryTicketQuantityToMint = length / paidToOpenEntryRedeemExchangeRate;
-
-        //burn used paid tickets - this confirms naffle is finished, and that the tokens are owned by the user and connected to the supplied naffleId
-        IL2PaidTicketBase(layout.paidTicketContractAddress).burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets(
-            _naffleId,
-            _paidTicketIds,
-            _owner
-        );
-
-        //mint new open entry tickets to msg.sender
-        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).mintUponRedeemingPaidTickets(
-            msg.sender,
-            openEntryTicketQuantityToMint
-        );
-
-        //emit events - something like
-        // emit OpenEntryTicketsRedeemed(
-        //     _naffleId,
-        //     _paidTicketIds,
-        //     _owner,
-        //     openEntryTicketQuantityToMint
-        // );
-
-    }
-
-    /**
-     * @notice Use open entry tickets for a naffle. A call is made to the open entry ticket contract to attach the tickets to the naffle.
-     * @dev If an invalid naffle id is passed, an InvalidNaffleId error is thrown.
-     * @dev If the naffle is in an invalid state, an InvalidNaffleStatus error is thrown.
-     * @dev If the number of tickets to use is greater than the number of open entry ticket spots left, a NotEnoughOpenEntryTicketSpots error is thrown.
-     * @param _ticketIds The ids of the tickets to use.
-     * @param _naffleId The id of the naffle.
-     */
-    function _useOpenEntryTickets(
-        uint256[] memory _ticketIds,
-        uint256 _naffleId
-    ) internal {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
-
-        if (naffle.ethTokenAddress == address(0)) {
-            revert InvalidNaffleId(_naffleId);
-        }
-        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
-            revert InvalidNaffleStatus(naffle.status);
-        }
-
-        uint256 newOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
-        if (newOpenEntries > naffle.openEntryTicketSpots) {
-            revert NotEnoughOpenEntryTicketSpots(naffle.openEntryTicketSpots);
-        }
-
-        uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
-        naffle.numberOfOpenEntries = newOpenEntries;
-
-        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
-
-        emit OpenEntryTicketsUsed(
-            _naffleId,
-            msg.sender,
-            _ticketIds
-        );
-
-        _checkIfNaffleIsFinished(naffle);
     }
 
     /**
@@ -464,25 +277,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     /**
-     * @notice withdraw the platform fees to the specified address.
-     * @param _amount the amount to withdraw.
-     * @param _to the address to withdraw the funds to.
-     */
-    function _withdrawPlatformFees(uint256 _amount, address _to) internal {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-
-        if (layout.platformFeesAccumulated < _amount) {
-            revert InsufficientFunds();
-        }
-
-        layout.platformFeesAccumulated = layout.platformFeesAccumulated - _amount;
-        (bool success, ) = _to.call{value: _amount}("");
-        if (!success) {
-            revert UnableToSendFunds();
-        }
-    }
-
-    /**
      * @notice postpone a naffle.
      * @param _naffleId the id of the naffle.
      * @param _newEndTime the new end time of the naffle.
@@ -519,7 +313,256 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _newEndTime
         );
     }
+    //=============================================================================
+    // TICKET INTERACTIONS
+    // _buyTickets
+    // _refundTicketsForNaffle
+    // _redeemOpenEntryTickets
+    // _useOpenEntryTickets
+    //=============================================================================
+    /**
+     * @notice Buy tickets for a naffle. A call is made to the paid ticket contract to mint the tickets to the buyer.
+     * @dev If an invalid naffle id is passed, an InvalidNaffleId error is thrown.
+     * @dev If the naffle is in an invalid state, an InvalidNaffleStatus error is thrown.
+     * @dev If the msg.value is not enough to buy the tickets, a NotEnoughFunds error is thrown.
+     * @dev If the naffle is a standard naffle and the amount of tickets to buy is greater than the number of paid ticket spots left, a NotEnoughPaidTicketSpots error is thrown.
+     * @param _amount The amount of tickets to buy.
+     * @param _naffleId The id of the naffle.
+     */
+    function _buyTickets(
+        uint256 _amount,
+        uint256 _naffleId
+    ) internal returns (uint256[] memory ticketIds) {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+
+        uint256 totalPrice = _amount * naffle.ticketPriceInWei;
+        if (msg.value < totalPrice) {
+            revert NotEnoughFunds(msg.value);
+        }
+
+        uint256 newPaidTickets = naffle.numberOfPaidTickets + _amount;
+        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD && newPaidTickets > naffle.paidTicketSpots) {
+            revert NotEnoughPaidTicketSpots(naffle.paidTicketSpots);
+        }
+
+        uint256 startingTicketId = naffle.numberOfPaidTickets + 1;
+        naffle.numberOfPaidTickets = newPaidTickets;
+
+        ticketIds = IL2PaidTicketBase(layout.paidTicketContractAddress).mintTickets(
+            msg.sender,
+            _amount,
+            _naffleId,
+            naffle.ticketPriceInWei,
+            startingTicketId
+        );
+
+        emit TicketsBought(
+            _naffleId,
+            msg.sender,
+            ticketIds,
+            naffle.ticketPriceInWei
+        );
+
+        _checkIfNaffleIsFinished(naffle);
+    }
+
+    /**
+     * @notice refund and burns tickets for a naffle.
+     * @param _naffleId id of the naffle.
+     * @param _openEntryTicketIds ids of the open entry tickets.
+     * @param _paidTicketIds ids of the paid tickets.
+     * @param _owner owner of the tickets.
+     */
+    function _refundTicketsForNaffle(
+        uint256 _naffleId,
+        uint256[] memory _openEntryTicketIds,
+        uint256[] memory _paidTicketIds,
+        address _owner
+    ) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
+        if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+
+        if (_openEntryTicketIds.length > 0) {
+            IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).detachFromNaffle(
+                _naffleId,
+                _openEntryTicketIds
+            );
+        }
+        if (_paidTicketIds.length > 0) {
+            IL2PaidTicketBase(layout.paidTicketContractAddress).burnTicketsBeforeRefund(
+                _naffleId,
+                _paidTicketIds,
+                _owner
+            );
+            (bool success, ) = _owner.call{value: _paidTicketIds.length * naffle.ticketPriceInWei}("");
+            if (!success) {
+                revert UnableToSendFunds();
+            }
+        }
+    }
+
+    /**
+     * @dev burns open entry tickets and mints new open entry tickets
+     * @dev number of paid tickets required to redeem one open entry ticket is also based on whether or not the user has staked a founders key, and if so, for how long
+     * 
+     * Concern: truncation at small quantities
+     */    
+    function _redeemOpenEntryTickets(uint256 _naffleId, uint256[] memory _paidTicketIds, address _owner) internal {
+
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+
+        //should be initialized in L2NaffleDiamond/L2NaffleAdmin
+        uint256 paidToOpenEntryRedeemExchangeRate = layout.paidToOpenEntryRedeemExchangeRate;
+        uint256 length = _paidTicketIds.length;
+
+        //get best staked founders key, see how long it was staked, assign multiplier accordingly
+        uint256 bestStakingDuration;
+        uint256 stakingDuration;
+        for(uint256 i = 0; i < layout.userToStakedFoundersKeyAmount[_owner]; i++) {
+            stakingDuration = layout.userToStakedFoundersKeyIdsToStakeDuration[_owner][i];
+            if (stakingDuration > bestStakingDuration) {
+                bestStakingDuration = stakingDuration;
+            }
+        }
+
+        uint256 stakedFoundersKeyRedeemMultiplier;
+        if(bestStakingDuration == SECONDS_IN_ONE_MONTH) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[0];
+        if(bestStakingDuration == SECONDS_IN_THREE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[1];
+        if(bestStakingDuration == SECONDS_IN_SIX_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[2];
+        if(bestStakingDuration == SECONDS_IN_TWELVE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[3];
+
+        uint256 thisPaidToOpenEntryRedeemExchangeRate = paidToOpenEntryRedeemExchangeRate 
+            - (paidToOpenEntryRedeemExchangeRate* stakedFoundersKeyRedeemMultiplier);
+
+        //ensure number of paid ticket IDs supplied is divisible w no remainder by the paidToOpenEntryRedeemExchangeRate
+        if (length % paidToOpenEntryRedeemExchangeRate  != 0) {
+            revert InvalidPaidToOpenEntryRatio(length, paidToOpenEntryRedeemExchangeRate);
+        }
+
+        //assign the amount to mint based on base exchange rate and multiplier
+        uint256 openEntryTicketQuantityToMint = length / paidToOpenEntryRedeemExchangeRate;
+
+        //burn used paid tickets - this confirms naffle is finished, and that the tokens are owned by the user and connected to the supplied naffleId
+        IL2PaidTicketBase(layout.paidTicketContractAddress).burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets(
+            _naffleId,
+            _paidTicketIds,
+            _owner
+        );
+
+        //mint new open entry tickets to msg.sender
+        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).mintUponRedeemingPaidTickets(
+            msg.sender,
+            openEntryTicketQuantityToMint
+        );
+
+        //TODO: check protocol invariants 
+
+        emit OpenEntryTicketsRedeemedWithUsedPaidTickets(
+            _naffleId,
+            _paidTicketIds,
+            _owner,
+            openEntryTicketQuantityToMint
+        );
+
+    }
+
+    /**
+     * @notice Use open entry tickets for a naffle. A call is made to the open entry ticket contract to attach the tickets to the naffle.
+     * @dev If an invalid naffle id is passed, an InvalidNaffleId error is thrown.
+     * @dev If the naffle is in an invalid state, an InvalidNaffleStatus error is thrown.
+     * @dev If the number of tickets to use is greater than the number of open entry ticket spots left, a NotEnoughOpenEntryTicketSpots error is thrown.
+     * @param _ticketIds The ids of the tickets to use.
+     * @param _naffleId The id of the naffle.
+     */
+    function _useOpenEntryTickets(
+        uint256[] memory _ticketIds,
+        uint256 _naffleId
+    ) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
+        if (naffle.ethTokenAddress == address(0)) {
+            revert InvalidNaffleId(_naffleId);
+        }
+        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+
+        uint256 newOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
+        if (newOpenEntries > naffle.openEntryTicketSpots) {
+            revert NotEnoughOpenEntryTicketSpots(naffle.openEntryTicketSpots);
+        }
+
+        uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
+        naffle.numberOfOpenEntries = newOpenEntries;
+
+        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
+
+        emit OpenEntryTicketsUsed(
+            _naffleId,
+            msg.sender,
+            _ticketIds
+        );
+
+        _checkIfNaffleIsFinished(naffle);
+    }
+
+    //=============================================================================
+    // ADMIN RELATED
+    // _withdrawPlatformFees
+    //=============================================================================
+    /**
+     * @notice withdraw the platform fees to the specified address.
+     * @param _amount the amount to withdraw.
+     * @param _to the address to withdraw the funds to.
+     */
+    function _withdrawPlatformFees(uint256 _amount, address _to) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+
+        if (layout.platformFeesAccumulated < _amount) {
+            revert InsufficientFunds();
+        }
+
+        layout.platformFeesAccumulated = layout.platformFeesAccumulated - _amount;
+        (bool success, ) = _to.call{value: _amount}("");
+        if (!success) {
+            revert UnableToSendFunds();
+        }
+    }
+
+    //=============================================================================
+    // GETTERS AND SETTERS - BOTH ADMIN AND PUBLIC
+    // _getAdminRole
+    // _getPlatformFee
+    // _setPlatformFee
+    // _getOpenEntryRatio
+    // _setOpenEntryRatio
+    // _getL1NaffleContractAddress
+    // _setL1NaffleContractAddress
+    // _getNaffleById
+    // _setPaidTicketContractAddress
+    // _getPaidTicketContractAddress
+    // _setOpenEntryTicketContractAddress
+    // _getOpenEntryTicketContractAddress
+    // _setL1MessengerContractAddress
+    // _setMaxPostponeTime
+    // _getMaxPostponeTime
+    // _setPaidToOpenEntryRedeemExchangeRate
+    // _setL1StakingContractAddress
+    // _getL1StakingContractAddress
+    //=============================================================================
     /**
      * @notice gets the admin role.
      * @return adminRole the admin role.
@@ -647,8 +690,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     /**
      * @notice sets the number of paid tickets one needs to burn to redeem an open entry ticket
      */
-    function _setPaidToOpenEntryRedeemRatio(uint256 _paidToOpenEntryRedeemRatio) internal {
-        L2NaffleBaseStorage.layout().paidToOpenEntryRedeemExchangeRate = _paidToOpenEntryRedeemRatio;
+    function _setPaidToOpenEntryRedeemExchangeRate(uint256 _paidToOpenEntryRedeemExchangeRate) internal {
+        L2NaffleBaseStorage.layout().paidToOpenEntryRedeemExchangeRate = _paidToOpenEntryRedeemExchangeRate;
     }
 
     /**
@@ -680,5 +723,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      */
     function _getL1StakingContractAddress() internal view returns (address l1StakingContractAddress) {
         l1StakingContractAddress = L2NaffleBaseStorage.layout().l1StakingContractAddress;
+    }
+
+    /**
+     * @notice sets multipliers for each of 1/3/6/12 months staking period for exchange rate between used paid tickets and OE tickets
+     */
+    function _setStakingMultipliersForOETicketRedeem(uint256[] memory _multipliers) internal {
+        L2NaffleBaseStorage.layout().stakingMultipliersForOETicketRedeem = _multipliers;
     }
 }
