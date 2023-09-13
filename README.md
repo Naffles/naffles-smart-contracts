@@ -8,10 +8,7 @@ curion/naffl-384-add-feature-redeem-used-paid-tickets-for-open-entry-tickets
 4. added InvalidPaidToOpenEntryRatio error to IL2NaffleBaseInternal
 5. added burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets to L2PaidTicketBase
 6. added _burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets to L2PaidTicketInternal
-
-7. will add getUserPaidToOpenEntryRedeemExchangeRate (view and _internal and interface)
-
----
+7. added way to get multiplier from stake duration directly in L2NaffleBaseInternal with constants
 8. added userToStakedFoundersKeyIdsToStakeDuration and userToStakedFoundersKeyAmount to L2NaffleBaseStorage
 9. added setUserToStakedFoundersKeyIdsToStakeDuration in L2NaffleBase/Internal and IL2NaffleBase (only callable by staking contract)
 10. added l1StakingContractAddress to L2NaffleBaseStorage
