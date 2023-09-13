@@ -23,5 +23,13 @@ interface IL2OpenEntryTicketBase {
      * @param _naffleId id of the naffle.
      * @param _naffleTicketIds ids of the tickets on the naffle.
      */
-    function detachFromNaffle(uint256 _naffleId, uint256[] memory _naffleTicketIds) external; 
+    function detachFromNaffle(uint256 _naffleId, uint256[] memory _naffleTicketIds) external;
+
+    /**
+     * @notice mints OE tickets when redeeming used paid tickets
+     * @dev method is called from the L2Naffle contract.
+     * @param _to the address to mint the tickets to.
+     * @param _amount the amount of tickets to mint.
+     */
+    function mintUponRedeemingPaidTickets(address _to, uint256 _amount) external; 
 }

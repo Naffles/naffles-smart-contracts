@@ -18,7 +18,16 @@ import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
-    uint256 internal constant DENOMINATOR = 10000;
+    uint256 internal constant DENOMINATOR = 10_000;
+    uint256 internal constant ONE_MONTH_MULTIPLIER = 1250;
+    uint256 internal constant THREE_MONTH_MULTIPLIER = 1750;
+    uint256 internal constant SIX_MONTH_MULTIPLIER = 3000;
+    uint256 internal constant TWELVE_MONTH_MULTIPLIER = 5000;
+    uint256 internal constant SECONDS_IN_ONE_MONTH = 2_678_400;
+    uint256 internal constant SECONDS_IN_THREE_MONTHS = 7_776_000;
+    uint256 internal constant SECONDS_IN_SIX_MONTHS = 15_638_400;
+    uint256 internal constant SECONDS_IN_TWELVE_MONTHS = 31_536_000;
+    
 
     /**
      * @notice create a new naffle.
@@ -160,18 +169,43 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     /**
-     * @dev burns open entry tickets and mints new open entry tickets according to the paid ticket to open entry ratio, paidToOpenEntryRedeemRatio
+     * @dev burns open entry tickets and mints new open entry tickets
+     * @dev number of paid tickets required to redeem one open entry ticket is also based on whether or not the user has staked a founders key, and if so, for how long
+     * 
+     * Concern: truncation at small quantities
      */    
     function _redeemOpenEntryTickets(uint256 _naffleId, uint256[] memory _paidTicketIds, address _owner) internal {
 
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
 
         //should be initialized in L2NaffleDiamond/L2NaffleAdmin
-        uint256 paidToOpenEntryRedeemRatio = layout.paidToOpenEntryRedeemRatio;
+        uint256 paidToOpenEntryRedeemExchangeRate = layout.paidToOpenEntryRedeemExchangeRate;
         uint256 length = _paidTicketIds.length;
-        if (length % paidToOpenEntryRedeemRatio != 0) {
-            revert InvalidPaidToOpenEntryRatio(length, paidToOpenEntryRedeemRatio);
+
+        //get best staked founders key, see how long it was staked, assign multiplier accordingly
+        uint256 bestStakingDuration;
+        uint256 stakingDuration;
+        for(uint256 i = 0; i < layout.userToStakedFoundersKeyAmount[_owner]; i++) {
+            stakingDuration = layout.userToStakedFoundersKeyIdsToStakeDuration[_owner][i];
+            if (stakingDuration > bestStakingDuration) {
+                bestStakingDuration = stakingDuration;
+            }
         }
+
+        uint256 stakedFoundersKeyRedeemMultiplier;
+        if(bestStakingDuration == SECONDS_IN_ONE_MONTH) stakedFoundersKeyRedeemMultiplier = ONE_MONTH_MULTIPLIER;
+        if(bestStakingDuration == SECONDS_IN_THREE_MONTHS) stakedFoundersKeyRedeemMultiplier = THREE_MONTH_MULTIPLIER;
+        if(bestStakingDuration == SECONDS_IN_SIX_MONTHS) stakedFoundersKeyRedeemMultiplier = SIX_MONTH_MULTIPLIER;
+        if(bestStakingDuration == SECONDS_IN_TWELVE_MONTHS) stakedFoundersKeyRedeemMultiplier = TWELVE_MONTH_MULTIPLIER;
+
+        uint256 thisPaidToOpenEntryRedeemExchangeRate = paidToOpenEntryRedeemExchangeRate 
+            - (paidToOpenEntryRedeemExchangeRate* stakedFoundersKeyRedeemMultiplier);
+
+        if (length % paidToOpenEntryRedeemExchangeRate  != 0) {
+            revert InvalidPaidToOpenEntryRatio(length, paidToOpenEntryRedeemExchangeRate);
+        }
+
+        uint256 openEntryTicketQuantityToMint = length / paidToOpenEntryRedeemExchangeRate;
 
         //burn used paid tickets - this confirms naffle is finished, and that the tokens are owned by the user and connected to the supplied naffleId
         IL2PaidTicketBase(layout.paidTicketContractAddress).burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets(
@@ -180,7 +214,20 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _owner
         );
 
-        //mint new open entry tickets according to paidToOpenEntryRedeemRatio
+        //mint new open entry tickets to msg.sender
+        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).mintUponRedeemingPaidTickets(
+            msg.sender,
+            openEntryTicketQuantityToMint
+        );
+
+        //emit events - something like
+        // emit OpenEntryTicketsRedeemed(
+        //     _naffleId,
+        //     _paidTicketIds,
+        //     _owner,
+        //     openEntryTicketQuantityToMint
+        // );
+
     }
 
     /**
@@ -601,6 +648,37 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @notice sets the number of paid tickets one needs to burn to redeem an open entry ticket
      */
     function _setPaidToOpenEntryRedeemRatio(uint256 _paidToOpenEntryRedeemRatio) internal {
-        L2NaffleBaseStorage.layout().paidToOpenEntryRedeemRatio = _paidToOpenEntryRedeemRatio;
+        L2NaffleBaseStorage.layout().paidToOpenEntryRedeemExchangeRate = _paidToOpenEntryRedeemRatio;
+    }
+
+    /**
+     * @notice stores staking data from the L1 staking contract for purposes of calculating exchange rate when redeeming used paid for open entry tickets
+     * @dev deletes data if _user, _tokenId, _stakeDuration are all 0 (used to clear data when a user unstakes)
+     * @dev adds to staking balance if setting non-zero values, subtracts if deleting a record
+     */
+    function _setUserToStakedFoundersKeyIdsToStakeDuration(address _user, uint256 _tokenId, uint256 _stakeDuration) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+        if(_user == address(0) && _tokenId == 0 && _stakeDuration == 0) {
+            delete layout.userToStakedFoundersKeyIdsToStakeDuration[_user][_tokenId];
+            --layout.userToStakedFoundersKeyAmount[_user];
+            
+        } else {
+            layout.userToStakedFoundersKeyIdsToStakeDuration[_user][_tokenId] = _stakeDuration;
+            ++layout.userToStakedFoundersKeyAmount[_user];
+        }
+    }
+
+    /**
+     * @notice sets L1 staking contract address
+     */
+    function _setL1StakingContractAddress(address _l1StakingContractAddress) internal returns (address l1StakingContractAddress) {
+        L2NaffleBaseStorage.layout().l1StakingContractAddress = _l1StakingContractAddress;
+    }
+
+    /**
+     * @notice gets  L1 staking contract address
+     */
+    function _getL1StakingContractAddress() internal view returns (address l1StakingContractAddress) {
+        l1StakingContractAddress = L2NaffleBaseStorage.layout().l1StakingContractAddress;
     }
 }

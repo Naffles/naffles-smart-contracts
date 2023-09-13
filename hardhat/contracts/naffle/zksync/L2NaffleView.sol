@@ -30,6 +30,13 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
     /**
      * @inheritdoc IL2NaffleView
      */
+    function getL1StakingContractAddress() external view returns (address) {
+        return _getL1StakingContractAddress();
+    }
+
+    /**
+     * @inheritdoc IL2NaffleView
+     */
     function getNaffleById(uint256 _id) external view returns (NaffleTypes.L2Naffle memory) {
         return _getNaffleById(_id);
     }

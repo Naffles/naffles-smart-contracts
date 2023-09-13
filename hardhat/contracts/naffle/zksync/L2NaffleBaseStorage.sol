@@ -15,16 +15,19 @@ library L2NaffleBaseStorage {
     struct Layout {
         address l1NaffleContractAddress;
         address l1MessengerContractAddress;
+        address l1StakingContractAddress;
         address paidTicketContractAddress;
         address openEntryTicketContractAddress;
         // 100 = 1%
         uint256 openEntryTicketRatio;
         uint256 platformFee;
         uint256 maxPostponeTime;
-        uint256 paidToOpenEntryRedeemRatio;
+        uint256 paidToOpenEntryRedeemExchangeRate;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
         uint256 platformFeesAccumulated;
         mapping(uint256 => bool) naffleRandomNumberRequested;
+        mapping(address => uint256) userToStakedFoundersKeyAmount;
+        mapping(address => mapping(uint256 => uint256)) userToStakedFoundersKeyIdsToStakeDuration;
     }
 
     ///@dev Returns the storage struct from the specified slot

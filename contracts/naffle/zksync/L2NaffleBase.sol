@@ -15,6 +15,13 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         _;
     }
 
+    modifier onlyStakingContract() {
+        if (msg.sender != _getL1StakingContractAddress()) {
+            revert NotAllowed();
+        }
+        _;
+    }
+
     /**
      * @inheritdoc IL2NaffleBase
      */
@@ -138,4 +145,16 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
             _newEndTime
         );
     }
+
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
+    function setUserToStakedFoundersKeyIdsToStakeDuration(address _user, uint256 _tokenId, uint256 _stakeDuration) external onlyStakingContract {
+        _setUserToStakedFoundersKeyIdsToStakeDuration(
+            _user,
+            _tokenId,
+            _stakeDuration
+        );
+    }
+
 }

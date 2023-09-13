@@ -26,6 +26,11 @@ interface IL2NaffleView {
     function getL1NaffleContractAddress() external view returns (address l1NaffleContractAddress);
 
     /**
+     * @notice gets address of founders key staking contract
+     */
+    function getL1StakingContractAddress() external view returns (address l1StakingContractAddress);
+
+    /**
      * @notice get the admin role.
      * @return adminRole the admin role.
      */

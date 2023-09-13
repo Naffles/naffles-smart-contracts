@@ -103,4 +103,10 @@ interface IL2NaffleBase {
         uint256 _naffleId,
         uint256 _randomNumber
     ) external returns (bytes32);
+
+    /**
+     * @notice sets the length a founders key is staked - called when staking by the staking contract (L1->L2)
+     */    
+    function setUserToStakedFoundersKeyIdsToStakeDuration(address _user, uint256 _tokenId, uint256 _stakeDuration) external;
+
 }

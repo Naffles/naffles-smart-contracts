@@ -11,6 +11,9 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "../../interfaces/IFoundersKey.sol";
 import "../../interfaces/ISoulboundFoundersKey.sol";
 
+import "@matterlabs/zksync-contracts/l1/contracts/zksync/interfaces/IZkSync.sol";
+ 
+
 /**
     @title FoundersKeyStaking
     @dev contract for staking Founders Keys and minting/burning SoulboundFoundersKeys
@@ -30,6 +33,9 @@ contract FoundersKeyStaking is
     IFoundersKey public FoundersKey;
     ISoulboundFoundersKey public SoulboundFoundersKey;
 
+    address public zkSyncAddress;
+    address public zkSyncNaffleContractAddress;
+
     enum StakingPeriod {
         ONE_MONTH,
         THREE_MONTHS,
@@ -46,6 +52,11 @@ contract FoundersKeyStaking is
         uint16 nftId;
         uint256 stakedSince;
         StakingPeriod stakingPeriod;
+    }
+
+    struct L2MessageParams {
+        uint256 l2GasLimit;
+        uint256 l2GasPerPubdataByteLimit;
     }
 
     mapping(uint16 => uint) private nftIdToIndex;
@@ -74,7 +85,8 @@ contract FoundersKeyStaking is
 
     function initialize(
         address _foundersKeyAddress,
-        address _soulboundFoundersKeyAddress
+        address _soulboundFoundersKeyAddress,
+        address _zkSyncAddress
     ) public initializer {
         __FoundersKeyStaking_init(
             _foundersKeyAddress,
@@ -83,6 +95,8 @@ contract FoundersKeyStaking is
         __Ownable_init();
         __Pausable_init();
         __UUPSUpgradeable_init();
+
+        zkSyncAddress = _zkSyncAddress;
     }
 
     function __FoundersKeyStaking_init(
@@ -116,8 +130,9 @@ contract FoundersKeyStaking is
      */
     function stake(
         uint16 _nftId,
-        StakingPeriod _stakingPeriod
-    ) external whenNotPaused nonReentrant {
+        StakingPeriod _stakingPeriod,
+        L2MessageParams memory _l2MessageParams
+    ) external payable whenNotPaused nonReentrant returns (bytes32 txHash) {
 
         if(nftIdToIndex[_nftId] != 0) {
             revert NFTAlreadyStaked(_nftId);
@@ -134,6 +149,25 @@ contract FoundersKeyStaking is
         stakeInfoArray.push(stakeInfo);
         nftIdToIndex[_nftId] = index;
 
+        // update staking data storage on zksync
+        IZkSync zksync = IZkSync(zkSyncAddress);
+        bytes memory data = abi.encodeWithSignature(
+            "setUserToStakedFoundersKeyIdsToStakeDuration(address, uint256, uint256)",
+            msg.sender,
+            _nftId,
+            _getStakingPeriod(_stakingPeriod)
+        );
+
+        txHash = zksync.requestL2Transaction{value: msg.value}(
+            zkSyncNaffleContractAddress,
+            0,
+            data,
+            _l2MessageParams.l2GasLimit,
+            _l2MessageParams.l2GasPerPubdataByteLimit,
+            new bytes[](0),
+            msg.sender
+        );
+
         FoundersKey.transferFrom(msg.sender, address(this), _nftId);
         SoulboundFoundersKey.safeMint(msg.sender, _nftId);
 
@@ -145,7 +179,10 @@ contract FoundersKeyStaking is
         @param _nftId the ID of the NFT to unstake
         @dev reverts if the NFT is not staked or is locked
      */
-    function unstake(uint16 _nftId) external nonReentrant {
+    function unstake(
+        uint16 _nftId,         
+        L2MessageParams memory _l2MessageParams
+    ) external payable nonReentrant returns (bytes32 txHash) {
         uint index = nftIdToIndex[_nftId];
         StakeInfo[] storage stakeInfoArray = userStakeInfo[msg.sender];
         StakeInfo memory stakeInfo = stakeInfoArray[index];
@@ -172,6 +209,25 @@ contract FoundersKeyStaking is
         // Delete the current index and modify the one that was swapped to reflect the new struct instance
         delete nftIdToIndex[_nftId];
         nftIdToIndex[stakeInfoArray[index].nftId] = index;
+
+        // update staking data storage on zksync - if all are 0, triggers deletion of staking data on L2
+        IZkSync zksync = IZkSync(zkSyncAddress);
+        bytes memory data = abi.encodeWithSignature(
+            "setUserToStakedFoundersKeyIdsToStakeDuration(address, uint256, uint256)",
+            address(0),
+            0,
+            0
+        );
+
+        txHash = zksync.requestL2Transaction{value: msg.value}(
+            zkSyncNaffleContractAddress,
+            0,
+            data,
+            _l2MessageParams.l2GasLimit,
+            _l2MessageParams.l2GasPerPubdataByteLimit,
+            new bytes[](0),
+            msg.sender
+        );
 
         SoulboundFoundersKey.burn(_nftId);
         FoundersKey.transferFrom(address(this), msg.sender, _nftId);
@@ -259,6 +315,24 @@ contract FoundersKeyStaking is
         SoulboundFoundersKey = ISoulboundFoundersKey(
             _soulboundFoundersKeyAddress
         );
+    }
+
+    function setZkSyncAddress(
+        address _zkSyncAddress
+    ) external onlyOwner {
+        if (_zkSyncAddress == address(0)) {
+            revert AddressIsZero(_zkSyncAddress);
+        }
+        zkSyncAddress = _zkSyncAddress;
+    }
+
+    function setZkSyncNaffleContractAddress(
+        address _zkSyncNaffleContractAddress
+    ) external onlyOwner {
+        if (_zkSyncNaffleContractAddress == address(0)) {
+            revert AddressIsZero(_zkSyncNaffleContractAddress);
+        }
+        zkSyncNaffleContractAddress = _zkSyncNaffleContractAddress;
     }
 
     function pause() external onlyOwner {
