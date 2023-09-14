@@ -10,6 +10,24 @@ task("set-chainlink-settings", "draws a winner")
         const contractFactory = await hre.ethers.getContractFactory("NaffleVRF");
 
         const contractInstance = contractFactory.attach(taskArgs.vrfaddress);
+
+        const gaslane = await contractInstance.chainlinkVRFGasLaneKeyHash();
+        const subscriptionid = await contractInstance.chainlinkVRFSubscriptionId();
+        const callbackgaslimit = await contractInstance.chainlinkVRFCallbackGasLimit();
+        const requestconfirmations = await contractInstance.chainlinkVRFRequestConfirmations();
+        const coordinator = await contractInstance.COORDINATOR();
+
+        console.log(`Current settings:
+            gaslane: ${gaslane}
+            subscriptionid: ${subscriptionid}
+            callbackgaslimit: ${callbackgaslimit}
+            requestconfirmations: ${requestconfirmations}
+            coordinator: ${coordinator}
+        `);
+
+
+        return;
+
         const tx = await contractInstance.setChainlinkVRFSettings(
             taskArgs.subscriptionid,
             taskArgs.keyhash,

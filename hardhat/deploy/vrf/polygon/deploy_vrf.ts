@@ -4,7 +4,7 @@ import {HardhatRuntimeEnvironment} from "hardhat/types";
 export default async function deployVRF(hre: HardhatRuntimeEnvironment) {
   let vrfCoordinator = process.env.vrfCoordinator;
   let subscriptionId = parseInt(process.env.subscriptionId);
-  let gasLaneKeyHash = ethers.utils.formatBytes32String(process.env.gasLaneKeyHashString);
+  let gasLaneKeyHash = process.env.gasLaneKeyHashString;
   let callbackGasLimit = parseInt(process.env.callbackGasLimit);
   let requestConfirmations = parseInt(process.env.requestConfirmations);
 

@@ -9,7 +9,7 @@ import "../../../interfaces/vrf/polygon/INaffleVRF.sol";
 
 contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     error NotAllowed();
-    error naffleAlreadyRolled(uint256 naffleId);
+    error NaffleAlreadyRolled(uint256 naffleId);
     error InvalidChainlinkRequestId(uint256 requestId);
 
     event NaffleWinnerRolled(uint256 indexed naffleId);
@@ -57,9 +57,12 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     /*
      * @inheritdoc INaffleVRF
      */
-    function drawWinner(uint256 _naffleId) external onlyVRFManager {
-        if (chainlinkRequestStatus[naffleIdToChainlinkRequestId[_naffleId]].exists == true) {
-            revert naffleAlreadyRolled(_naffleId);
+    function drawWinner(uint256 _naffleId) external {
+        uint256 prevRequestId = naffleIdToChainlinkRequestId[_naffleId];
+
+
+        if (chainlinkRequestStatus[prevRequestId].exists == true) {
+            revert NaffleAlreadyRolled(_naffleId);
         }
 
         uint256 requestId = COORDINATOR.requestRandomWords(
