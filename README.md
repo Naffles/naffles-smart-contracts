@@ -1,34 +1,48 @@
 # naffles-smart-contracts
+Smart contract for the Naffles marketplace.
 
-curion/naffl-384-add-feature-redeem-used-paid-tickets-for-open-entry-tickets
+## Deployment
+Because zksync only supports hardhat for now a hardhat folder is included where the deployments scripts for the naffle 
+related contracts is located.
 
-TODO: confirm steps, write tests (hardhat would be preferred)
+### Compiling the contracts
+To compile the contracts for zksync run the following command:
+```cd hardat && npx hardhat compile```
 
-1. added redeemOpenEntryTickets to L2NaffleBase
-2. added _redeemOpenEntryTickets to L2NaffleBaseInternal
-3. added redeemOpenEntryTickets to IL2NaffleBase
-4. added InvalidPaidToOpenEntryRatio error to IL2NaffleBaseInternal
-5. added burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets to L2PaidTicketBase
-6. added _burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets to L2PaidTicketInternal
-7. added way to get multiplier from stake duration directly in L2NaffleBaseInternal with constants
-8. added userToStakedFoundersKeyIdsToStakeDuration and userToStakedFoundersKeyAmount to L2NaffleBaseStorage
-9. added setUserToStakedFoundersKeyIdsToStakeDuration in L2NaffleBase/Internal and IL2NaffleBase (only callable by staking contract)
-10. added l1StakingContractAddress to L2NaffleBaseStorage
-11. added _setl1StakingContractAddress to L2NaffleBaseInternal and L2NaffleAdmin, then call in L2NaffleDiamond. this will ensure future calls that set staking info come only from the staking contract.
-12. added getL1StakingContractAddress to L2NaffleBaseInternal, L2Naffle
-13. Included logic in the staking contract to write to L2NaffleBaseStorage on both stake and unstake.
-14. will add related view/admin functions - go back over steps and see what is missing, if this approach is stuck with
-15. added logic in L2OpenEntryTicketBase to call _adminMint in L2OpenEntryTicketBaseInternal to mint new OE tickets when redeeming paid tickets
-16. will add events to top level ticket redemption on L2NaffleBaseInternal
+To compile the contracts for ethereum, you must first comment out line ```import "@matterlabs/hardhat-zksync-solc";```
+in the hardhat.config.js file and then run the following command:
+```cd hardat && npx hardhat compile```
 
-Review steps to make sure there's nothing missing - this was a brainful to map across all contracts
 
-### Concerns
-To redeem tickets on zksync according to a rate determined by the length of time a nft is staked on mainnet,
-there has to be some means to read a L1 value from L2 OR upon staking for the L1 transaction to write data to the L2NaffleBaseStorage contract
+### Deploying the contracts
 
-I think the latter seems more feasible based on the zkSync docs I've read
+*After deployment the contract addresses can be found in the data folder*    
 
---> adding userToStakedFoundersKeyIdsToStakeDuration to L2NaffleBaseStorage, which will be written to when a user stakes their NFT. The sorting of stake times to find the best will be done on zkSync to save on costs
 
-Brainstorm: how to check protocol invariants??
+#### 1. deploy ethereum contract(s)
+To deploy the contracts for ethereum, call the following from the hardhat folder 
+
+```foundersKeyAddress=0x.. foundersKeyPlaceholderAddress=0x npx hardhat run --network networkName deploy/deploy_l1_contracts```
+
+when the foundersKeyAddress or the foundersKeyPlaceholderAddress is not provided, the script will deploy a erc721 mock. 
+
+#### 2. deploy zksync contract
+
+To deploy the contracts for zksync, call the following from the hardhat folder 
+
+```l1NaffleAddress=0x.. deployerPrivateKey=0x.. yarn hardhat deploy-zksync --script deploy/deploy_l2_diamonds.ts --network networkName```
+
+#### 3. update the l1 naffle diamaond contract
+
+To update the l1 naffle diamond contract with the l2 naffle contract address, call the following from the hardhat folder 
+
+```l2NaffleAddress=0x l1NaffleAddress=0x npx hardhat run --network networkname localhost deploy/update_l1_with_l2_contract```
+
+
+#### 4. deploying VRF
+
+to deploy the vrf to a network
+
+Something to note here is that when copying the contracts from brownie to hardhat, the chainlink imports need to be adjusted by removing /vrf from the import path. 
+
+```vrfCoordinator=0x77D373d69Bd7a55E0Bbdf6cD290083Cfe11643C4 subscriptionId=1 gasLaneKeyHashString=test callbackGasLimit=1000000000 requestConfirmation=3 yarn hardhat run deploy/vrf/polygon/deploy_vrf.ts --network networkname```
