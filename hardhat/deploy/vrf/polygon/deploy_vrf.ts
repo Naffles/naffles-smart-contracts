@@ -35,6 +35,10 @@ export default async function deployVRF(hre: HardhatRuntimeEnvironment) {
 
   await naffleVRF.deployTransaction.wait();
 
+  console.log("waiting 30 seconds for etherscan to index the contract..");
+  await new Promise(resolve => setTimeout(resolve, 30000));
+
+
   console.log('Verifying contract on Etherscan...');
   await hre.run('verify:verify', {
     address: naffleVRF.address,

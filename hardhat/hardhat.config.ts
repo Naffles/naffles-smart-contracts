@@ -6,7 +6,7 @@ import "@matterlabs/hardhat-zksync-solc"; // comment out to compile / deploy for
 import "@matterlabs/hardhat-zksync-verify"; // comment out to compile / deploy for ethereum.
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
-// import "@nomiclabs/hardhat-etherscan"; // comment out to compile / deploy for zksync.
+//import "@nomiclabs/hardhat-etherscan"; // comment out to compile / deploy for zksync.
 
 require("./tasks/ethereum/deploy_erc721a_mock")
 require("./tasks/ethereum/mint_mock_nfts")
@@ -18,6 +18,10 @@ require("./tasks/ethereum/naffle/l1_naffle_admin/init_l1_naffle_contract")
 require("./tasks/ethereum/naffle/l1_naffle_admin/set_founders_key_address")
 
 require("./tasks/ethereum/naffle/l1_naffle_view/read_l1_naffle_variables")
+
+require("./tasks/polygon/vrf/set_vrf_manager")
+require("./tasks/polygon/vrf/draw_winner")
+require("./tasks/polygon/vrf/set_chainlink_settings")
 
 require("./tasks/zksync/naffle/l2_naffle_base/create_l2_naffle")
 require("./tasks/zksync/naffle/l2_naffle_base/buy_tickets");
