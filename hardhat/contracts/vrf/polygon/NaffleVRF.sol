@@ -57,7 +57,7 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     /*
      * @inheritdoc INaffleVRF
      */
-    function drawWinner(uint256 _naffleId) external {
+    function drawWinner(uint256 _naffleId) external onlyVRFManager {
         uint256 prevRequestId = naffleIdToChainlinkRequestId[_naffleId];
 
 
@@ -109,5 +109,10 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
 
     function setVRFManager(address _newVRFManager) public onlyOwner {
         VRFManager = _newVRFManager;
+    }
+
+    function getRandomWordForNaffle(uint256 _naffleId) public view returns (uint256) {
+        uint256 requestId = naffleIdToChainlinkRequestId[_naffleId];
+        return chainlinkRequestStatus[requestId].randomNumber;
     }
 }
