@@ -430,7 +430,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         //get best staked founders key, see how long it was staked, assign multiplier accordingly
         uint256 bestStakingDuration;
         uint256 stakingDuration;
-        for(uint256 i = 0; i < layout.userToStakedFoundersKeyAmount[_owner]; i++) {
+        for(uint256 i = 0; i < layout.userToStakedFoundersKeyAmount[_owner]; ++i) {
             stakingDuration = layout.userToStakedFoundersKeyIdsToStakeDuration[_owner][i];
             if (stakingDuration > bestStakingDuration) {
                 bestStakingDuration = stakingDuration;
@@ -439,12 +439,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         uint256 stakedFoundersKeyRedeemMultiplier;
         if(bestStakingDuration == SECONDS_IN_ONE_MONTH) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[0];
-        if(bestStakingDuration == SECONDS_IN_THREE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[1];
-        if(bestStakingDuration == SECONDS_IN_SIX_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[2];
-        if(bestStakingDuration == SECONDS_IN_TWELVE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[3];
+        else if(bestStakingDuration == SECONDS_IN_THREE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[1];
+        else if(bestStakingDuration == SECONDS_IN_SIX_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[2];
+        else (bestStakingDuration == SECONDS_IN_TWELVE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[3];
 
         uint256 thisPaidToOpenEntryRedeemExchangeRate = paidToOpenEntryRedeemExchangeRate 
-            - (paidToOpenEntryRedeemExchangeRate* stakedFoundersKeyRedeemMultiplier);
+            - (paidToOpenEntryRedeemExchangeRate * stakedFoundersKeyRedeemMultiplier);
 
         //ensure number of paid ticket IDs supplied is divisible w no remainder by the paidToOpenEntryRedeemExchangeRate
         if (length % paidToOpenEntryRedeemExchangeRate  != 0) {
@@ -461,9 +461,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _owner
         );
 
-        //mint new open entry tickets to msg.sender
+        //mint new open entry tickets to _owner
         IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).mintUponRedeemingPaidTickets(
-            msg.sender,
+            _owner,
             openEntryTicketQuantityToMint
         );
 
@@ -701,10 +701,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      */
     function _setUserToStakedFoundersKeyIdsToStakeDuration(address _user, uint256 _tokenId, uint256 _stakeDuration) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-        if(_user == address(0) && _tokenId == 0 && _stakeDuration == 0) {
+        if(_stakeDuration == 0) {
             delete layout.userToStakedFoundersKeyIdsToStakeDuration[_user][_tokenId];
             --layout.userToStakedFoundersKeyAmount[_user];
-            
         } else {
             layout.userToStakedFoundersKeyIdsToStakeDuration[_user][_tokenId] = _stakeDuration;
             ++layout.userToStakedFoundersKeyAmount[_user];

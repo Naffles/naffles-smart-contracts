@@ -210,12 +210,12 @@ contract FoundersKeyStaking is
         delete nftIdToIndex[_nftId];
         nftIdToIndex[stakeInfoArray[index].nftId] = index;
 
-        // update staking data storage on zksync - if all are 0, triggers deletion of staking data on L2
+        // update staking data storage on zksync - if _stakeDuration 0, triggers deletion of staking data on L2
         IZkSync zksync = IZkSync(zkSyncAddress);
         bytes memory data = abi.encodeWithSignature(
             "setUserToStakedFoundersKeyIdsToStakeDuration(address, uint256, uint256)",
-            address(0),
-            0,
+            msg.sender,
+            _nftId,
             0
         );
 
