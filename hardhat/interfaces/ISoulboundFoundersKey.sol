@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.21;
+pragma solidity 0.8.19;
 
 interface ISoulboundFoundersKey {
     function safeMint(address _to, uint256 _tokenId) external;

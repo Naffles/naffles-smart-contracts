@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.17;
+pragma solidity 0.8.19;
 
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketView.sol";
 import "./L2OpenEntryTicketBaseInternal.sol";
