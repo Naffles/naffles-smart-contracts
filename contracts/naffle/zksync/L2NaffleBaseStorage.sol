@@ -22,7 +22,9 @@ library L2NaffleBaseStorage {
         uint256 openEntryTicketRatio;
         uint256 platformFee;
         uint256 maxPostponeTime;
+        // must be greater than 100 with current architecture and multipliers such as 1.25x for this number
         uint256 paidToOpenEntryRedeemExchangeRate;
+        // defined in terms of 10000, so 1.25x --> 12500 - in contract, this results in something like (100 * 10000)/12500 = 80
         uint256[] stakingMultipliersForOETicketRedeem;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
         uint256 platformFeesAccumulated;

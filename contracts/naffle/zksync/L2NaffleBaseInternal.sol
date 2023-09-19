@@ -18,6 +18,7 @@ import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
+    uint256 internal constant NUMERATOR = 10_000;
     uint256 internal constant DENOMINATOR = 10_000;
     uint256 internal constant SECONDS_IN_ONE_MONTH = 2_678_400;
     uint256 internal constant SECONDS_IN_THREE_MONTHS = 7_776_000;
@@ -437,14 +438,19 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             }
         }
 
-        uint256 stakedFoundersKeyRedeemMultiplier;
+        /**
+            Example: User staked an omni key for 1 month --> 1.25x multiplier here means that in order
+            to avoid truncation issues, the base exchange rate should be 100 paid tickets to 1 open entry ticket.
+            The staked user in this case would have an exchange rate of 100/1.25 or 80 paid tickets to 1 open entry ticket
+         */
+        uint256 stakedFoundersKeyRedeemMultiplier = 1;
         if(bestStakingDuration == SECONDS_IN_ONE_MONTH) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[0];
         else if(bestStakingDuration == SECONDS_IN_THREE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[1];
         else if(bestStakingDuration == SECONDS_IN_SIX_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[2];
-        else (bestStakingDuration == SECONDS_IN_TWELVE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[3];
+        else if (bestStakingDuration == SECONDS_IN_TWELVE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[3];
 
-        uint256 thisPaidToOpenEntryRedeemExchangeRate = paidToOpenEntryRedeemExchangeRate 
-            - (paidToOpenEntryRedeemExchangeRate * stakedFoundersKeyRedeemMultiplier);
+        // Ex: base == 100, multiplier == 1.25x --> 100 * 10000 / 12500 = 80
+        uint256 thisPaidToOpenEntryRedeemExchangeRate = (paidToOpenEntryRedeemExchangeRate * NUMERATOR) / stakedFoundersKeyRedeemMultiplier;
 
         //ensure number of paid ticket IDs supplied is divisible w no remainder by the paidToOpenEntryRedeemExchangeRate
         if (length % paidToOpenEntryRedeemExchangeRate  != 0) {
