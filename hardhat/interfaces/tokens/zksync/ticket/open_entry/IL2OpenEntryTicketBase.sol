@@ -24,4 +24,5 @@ interface IL2OpenEntryTicketBase {
      * @param _naffleTicketIds ids of the tickets on the naffle.
      */
     function detachFromNaffle(uint256 _naffleId, uint256[] memory _naffleTicketIds) external;
+
 }
