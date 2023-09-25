@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-//this contract uses signatures to allow users from selected communities to claim open entry tickets
+/// @notice this contract uses signatures to allow users from selected communities to claim open entry tickets
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import { SignatureChecker } from "../libraries/SignatureChecker.sol";
@@ -12,8 +12,14 @@ contract CommunityOpenEntryClaim is Ownable {
 
     IL2OpenEntryTicketAdmin public openEntryTicketAdmin;
 
-    error InvalidSignature();
+    mapping(address => uint256) public claimedTickets;
 
+    error InvalidSignature();
+    error TransactionWillExceedClaimMax();
+
+    /**
+     * @notice set the address of the L2OpenEntryTicketAdmin contract which calls adminMint
+     */
     constructor(address _openEntryTicketAdmin) {
         openEntryTicketAdmin = IL2OpenEntryTicketAdmin(_openEntryTicketAdmin);
     }
@@ -25,17 +31,23 @@ contract CommunityOpenEntryClaim is Ownable {
     function claimOpenEntryTicketViaCommunityPromotion(
         address _recipient,
         uint256 _amount,
+        uint256 _maxClaimable,
         bytes _signature
     ) external {
             bool isValidSignature = SignatureChecker.isValidSignatureNow(
                 _recipient,
                 _amount,
+                _maxClaimable,
                 _signature,
                 block.chainid
             );
 
             if(!isValidSignature){
                 revert InvalidSignature();
+            }
+
+            if(claimedTickets[_recipient] + _amount > _maxClaimable){
+                revert TransactionWillExceedClaimMax();
             }
 
             openEntryTicketAdmin.adminMint(_recipient, _amount);
