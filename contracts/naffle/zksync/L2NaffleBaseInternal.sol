@@ -425,7 +425,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
 
         //should be initialized in L2NaffleDiamond/L2NaffleAdmin
-        uint256 paidToOpenEntryRedeemExchangeRate = layout.paidToOpenEntryRedeemExchangeRate;
+        uint256 paidToOpenEntryBurnAmount = layout.paidToOpenEntryBurnAmount;
         uint256 length = _paidTicketIds.length;
 
         //get best staked founders key, see how long it was staked, assign multiplier accordingly
@@ -439,26 +439,33 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
 
         /**
-            Example: User staked an omni key for 1 month --> 1.25x multiplier here means that in order
-            to avoid truncation issues, the base exchange rate should be 100 paid tickets to 1 open entry ticket.
-            The staked user in this case would have an exchange rate of 100/1.25 or 80 paid tickets to 1 open entry ticket
+            Example: User staked an omni key for 1 month --> 1.25x factor here means that in order
+            to avoid truncation issues, the base exchange rate should be 105 paid tickets to 1 open entry ticket.
+            The staked user in this case would have an exchange rate of 105/1.25 or 84 paid tickets to 1 open entry ticket
          */
-        uint256 stakedFoundersKeyRedeemMultiplier = 1;
-        if(bestStakingDuration == SECONDS_IN_ONE_MONTH) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[0];
-        else if(bestStakingDuration == SECONDS_IN_THREE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[1];
-        else if(bestStakingDuration == SECONDS_IN_SIX_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[2];
-        else if (bestStakingDuration == SECONDS_IN_TWELVE_MONTHS) stakedFoundersKeyRedeemMultiplier = layout.stakingMultipliersForOETicketRedeem[3];
+        uint256 stakedFoundersKeyRedeemFactor;
+        if(bestStakingDuration == SECONDS_IN_ONE_MONTH) {
+            stakedFoundersKeyRedeemFactor = layout.stakingMultipliersForOETicketRedeem[0];
+        } else if(bestStakingDuration == SECONDS_IN_THREE_MONTHS) {
+             stakedFoundersKeyRedeemFactor = layout.stakingMultipliersForOETicketRedeem[1];
+        } else if(bestStakingDuration == SECONDS_IN_SIX_MONTHS) {
+            stakedFoundersKeyRedeemFactor = layout.stakingMultipliersForOETicketRedeem[2];
+        } else if (bestStakingDuration == SECONDS_IN_TWELVE_MONTHS) {
+             stakedFoundersKeyRedeemFactor = layout.stakingMultipliersForOETicketRedeem[3];
+        } else {
+            stakedFoundersKeyRedeemFactor = 1;
+        }
 
-        // Ex: base == 100, multiplier == 1.25x --> 100 * 10000 / 12500 = 80
-        uint256 thisPaidToOpenEntryRedeemExchangeRate = (paidToOpenEntryRedeemExchangeRate * NUMERATOR) / stakedFoundersKeyRedeemMultiplier;
+        // Ex: base == 105, multiplier == 1.25x --> 105 * 10000 / 12500 = 84
+        uint256 thisPaidToOpenEntryBurnAmount = (paidToOpenEntryBurnAmount * NUMERATOR) / stakedFoundersKeyRedeemFactor;
 
-        //ensure number of paid ticket IDs supplied is divisible w no remainder by the paidToOpenEntryRedeemExchangeRate
-        if (length % paidToOpenEntryRedeemExchangeRate  != 0) {
-            revert InvalidPaidToOpenEntryRatio(length, paidToOpenEntryRedeemExchangeRate);
+        //ensure number of paid ticket IDs supplied is divisible w no remainder by the paidToOpenEntryBurnAmount
+        if (length % paidToOpenEntryBurnAmount  != 0) {
+            revert InvalidPaidToOpenEntryRatio(length, paidToOpenEntryBurnAmount);
         }
 
         //assign the amount to mint based on base exchange rate and multiplier
-        uint256 openEntryTicketQuantityToMint = length / paidToOpenEntryRedeemExchangeRate;
+        uint256 openEntryTicketQuantityToMint = length / paidToOpenEntryBurnAmount;
 
         //burn used paid tickets - this confirms naffle is finished, and that the tokens are owned by the user and connected to the supplied naffleId
         IL2PaidTicketBase(layout.paidTicketContractAddress).burnUsedPaidTicketsBeforeRedeemingOpenEntryTickets(
@@ -514,7 +521,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         uint256 startingTicketId = naffle.numberOfOpenEntries + 1;
         naffle.numberOfOpenEntries = newOpenEntries;
 
-        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
+        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress)
+            .attachToNaffle(_naffleId, _ticketIds, startingTicketId, msg.sender);
 
         emit OpenEntryTicketsUsed(
             _naffleId,
@@ -565,7 +573,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     // _setL1MessengerContractAddress
     // _setMaxPostponeTime
     // _getMaxPostponeTime
-    // _setPaidToOpenEntryRedeemExchangeRate
+    // _setPaidToOpenEntryBurnAmount
     // _setL1StakingContractAddress
     // _getL1StakingContractAddress
     //=============================================================================
@@ -694,10 +702,18 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     /**
-     * @notice sets the number of paid tickets one needs to burn to redeem an open entry ticket
+     * @notice sets the number of paid tickets one needs to burn to redeem an open entry ticket(s)
      */
-    function _setPaidToOpenEntryRedeemExchangeRate(uint256 _paidToOpenEntryRedeemExchangeRate) internal {
-        L2NaffleBaseStorage.layout().paidToOpenEntryRedeemExchangeRate = _paidToOpenEntryRedeemExchangeRate;
+    function _setPaidToOpenEntryBurnAmount(uint256 _paidToOpenEntryBurnAmount) internal {
+        L2NaffleBaseStorage.layout().paidToOpenEntryBurnAmount = _paidToOpenEntryBurnAmount;
+    }
+
+    /**
+     * @notice sets the number of open entry tickets redeemed when burning the required number of paid tickets
+     * @notice ex) 105:1, 105:2, etc.
+     */
+    function _setPaidToOpenEntryRedeemAmount(uint256 _paidToOpenEntryRedeemAmount) internal {
+        L2NaffleBaseStorage.layout().paidToOpenEntryRedeemAmount = _paidToOpenEntryRedeemAmount;
     }
 
     /**

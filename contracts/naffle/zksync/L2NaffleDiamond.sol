@@ -16,7 +16,8 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         address _paidTicketContractAddress,
         address _openEntryTicketContractAddress,
         address _l1StakingContractAddress,
-        uint256 _paidToOpenEntryRedeemExchangeRate,
+        uint256 _paidToOpenEntryBurnAmount,
+        uint256 _paidToOpenEntryRedeemAmount,
         uint256[] memory _stakingMultipliersForOETicketRedeem
     ) SolidStateDiamond() {
         _grantRole(_getAdminRole(), _admin);
@@ -28,7 +29,8 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         _setOpenEntryTicketContractAddress(_openEntryTicketContractAddress);
         _setL1NaffleContractAddress(_l1NaffleContractAddress);
         _setL1StakingContractAddress(_l1StakingContractAddress);
-        _setPaidToOpenEntryRedeemExchangeRate(_paidToOpenEntryRedeemExchangeRate);
+        _setPaidToOpenEntryBurnAmount(_paidToOpenEntryBurnAmount);
+        _setPaidToOpenEntryRedeemAmount(_paidToOpenEntryRedeemAmount);
         _setStakingMultipliersForOETicketRedeem(_stakingMultipliersForOETicketRedeem);
     }
 }
