@@ -58,9 +58,7 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
      * @inheritdoc INaffleVRF
      */
     function drawWinner(uint256 _naffleId) external onlyVRFManager {
-        return;
         uint256 requestId = naffleIdToChainlinkRequestId[_naffleId];
-
 
         if (chainlinkRequestStatus[requestId].exists == true) {
             revert NaffleAlreadyRolled(_naffleId);
