@@ -60,6 +60,7 @@ library NaffleTypes {
     }
 
     struct PaidTicket {
+        address owner;
         uint256 ticketPriceInWei;
         uint256 naffleId;
         uint256 ticketIdOnNaffle;

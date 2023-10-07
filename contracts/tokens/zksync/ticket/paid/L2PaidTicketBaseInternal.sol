@@ -5,15 +5,15 @@ import "./L2PaidTicketStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBaseInternal.sol";
-import "@solidstate/contracts/interfaces/IERC721.sol";
-import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
-import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.sol";
-import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
+import "@solidstate/contracts/interfaces/IERC1155.sol";
+import "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
+import "@solidstate/contracts/token/ERC1155/enumerable/ERC1155EnumerableInternal.sol";
+import "@solidstate/contracts/token/ERC1155/metadata/ERC1155MetadataStorage.sol";
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "../../../../libraries/NaffleTypes.sol";
 
 
-abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
+abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessControlInternal, ERC1155BaseInternal, ERC1155EnumerableInternal {
 
     /**
      * @notice mints tickets to an address for a specific naffle.
@@ -31,19 +31,23 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
 
         for (uint256 i = 0; i < _amount; i++) {
             uint256 ticketIdOnNaffle = startingTicketId + i;
+            
             NaffleTypes.PaidTicket memory paidTicket = NaffleTypes.PaidTicket({
+                owner: _to,
                 ticketIdOnNaffle: ticketIdOnNaffle,
                 ticketPriceInWei: _ticketPriceInWei,
                 naffleId: _naffleId,
                 winningTicket: false
             });
+
             l.totalMinted++;
             totalTicketId = l.totalMinted;
-            _mint(_to, totalTicketId);
             l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle] = totalTicketId;
             l.paidTickets[totalTicketId] = paidTicket;
             ticketIds[i] = totalTicketId;
         }
+
+        _safeMintBatch(_to, _naffleId, _amount, "");
 
         emit PaidTicketsMinted(_to, ticketIds, _naffleId, _ticketPriceInWei, startingTicketId);
         return ticketIds;
@@ -77,10 +81,9 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
         for (uint i = 0; i < length; ++i) {
             uint256 ticketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
 
-            if (_owner != _ownerOf(ticketId)) {
+            if (_owner != l.paidTickets[ticketId].owner) {
                 revert NotTicketOwner(_owner);
             }
-            _burn(ticketId);
 
             delete l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
             NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[ticketId];
@@ -92,6 +95,8 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
 
             totalTicketIds[i] = ticketId;
         }
+
+        _burnBatch(_owner, _naffleId, _naffleTicketIds.length);
 
         emit PaidTicketsRefundedAndBurned(_owner, _naffleId, totalTicketIds, _naffleTicketIds);
     }
@@ -137,7 +142,7 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
      * @param _baseURI the base URI.
      */
     function _setBaseURI(string memory _baseURI) internal {
-        ERC721MetadataStorage.layout().baseURI = _baseURI;
+        ERC1155MetadataStorage.layout().baseURI = _baseURI;
     }
 
     /**
