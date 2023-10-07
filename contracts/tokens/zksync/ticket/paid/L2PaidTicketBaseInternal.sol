@@ -78,6 +78,12 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             return;
         }
 
+        // for _burnBatch inputs
+        uint256[] memory naffleIds = new uint256[](1);
+        uint256[] memory ticketAmounts = new uint256[](1);
+        naffleIds[0] = _naffleId;
+        ticketAmounts[0] = _naffleTicketIds.length;
+
         for (uint i = 0; i < length; ++i) {
             uint256 ticketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
 
@@ -95,8 +101,8 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
 
             totalTicketIds[i] = ticketId;
         }
-
-        _burnBatch(_owner, _naffleId, _naffleTicketIds.length);
+        
+        _burnBatch(_owner, naffleIds, ticketAmounts);
 
         emit PaidTicketsRefundedAndBurned(_owner, _naffleId, totalTicketIds, _naffleTicketIds);
     }

@@ -4,8 +4,8 @@ pragma solidity ^0.8.17;
 import "./L2PaidTicketBaseInternal.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
-import "@solidstate/contracts/token/ERC721/SolidStateERC721.sol";
-import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
+import "@solidstate/contracts/token/ERC1155/SolidStateERC1155.sol";
+import "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 
 contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidStateERC721, AccessControl {
     modifier onlyL2NaffleContract() {
@@ -30,36 +30,16 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
     }
 
     /**
-     * @inheritdoc SolidStateERC721
-     */
-    function _handleApproveMessageValue(
-        address operator,
-        uint256 tokenId,
-        uint256 value
-    ) internal virtual override(SolidStateERC721, ERC721BaseInternal) {
-        super._handleApproveMessageValue(operator, tokenId, value);
-    }
-
-    /**
-     * @inheritdoc SolidStateERC721
-     */
-    function _handleTransferMessageValue(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint256 value
-    ) internal virtual override(SolidStateERC721, ERC721BaseInternal) {
-        super._handleTransferMessageValue(from, to, tokenId, value);
-    }
-
-    /**
-     * @inheritdoc SolidStateERC721
+     * @inheritdoc SolidStateERC1155
      */
     function _beforeTokenTransfer(
+        address operator,
         address from,
         address to,
-        uint256 tokenId
-    ) internal virtual override(ERC721BaseInternal, SolidStateERC721) {
-        super._beforeTokenTransfer(from, to, tokenId);
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal virtual override(ERC1155BaseInternal, SolidStateERC1155) {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 }
