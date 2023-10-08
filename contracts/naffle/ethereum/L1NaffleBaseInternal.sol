@@ -12,9 +12,10 @@ import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBaseInternal.sol";
 import "@matterlabs/zksync-contracts/l1/contracts/zksync/Storage.sol";
 
-abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlInternal {
+abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
+
 
     /**
      * @notice create a new naffle. When the naffle is created, a message is sent to the L2 naffle contract.
@@ -52,6 +53,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
             revert NotAllowed();
         }
 
+
+
         if (_endTime < block.timestamp + layout.minimumNaffleDuration) {
             revert InvalidEndTime(_endTime);
         }
@@ -67,10 +70,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
         }
 
         NaffleTypes.TokenContractType tokenContractType;
-        if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID)) {
+        if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID) && !(IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID))) {
             tokenContractType = NaffleTypes.TokenContractType.ERC721;
             IERC721(_ethTokenAddress).transferFrom(msg.sender, address(this), _nftId);
-        } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID)) {
+        } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID) && !(IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID))) {
             tokenContractType = NaffleTypes.TokenContractType.ERC1155;
             IERC1155(_ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _nftId, 1, bytes(""));
         } else {
@@ -102,6 +105,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
                 naffleTokenType: tokenContractType
             })
         );
+
+        if(msg.value < layout.minL2ForwardedGasForCreateNaffle) {
+            revert InsufficientL2GasForwardedForCreateNaffle();
+        }
 
         txHash = zksync.requestL2Transaction{value: msg.value}(
             layout.zkSyncNaffleContractAddress,
@@ -338,5 +345,14 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlIn
      */
     function _getNaffleById(uint256 _naffleId) internal view returns (NaffleTypes.L1Naffle memory naffle) {
         naffle = L1NaffleBaseStorage.layout().naffles[_naffleId];
+    }
+
+    /**
+     * @notice sets minimum gas limit to be forwarded for L2 transactions in _createNaffle
+     * @param _minL2ForwardedGasForCreateNaffle the minimum gas limit to be forwarded for L2 transactions in _createNaffle
+     * @dev set the minimum amount of wei this transaction should foward to L2. Should be much higher than the actual cost, since refunds are given
+     */
+    function _setMinL2ForwardedGas(uint256 _minL2ForwardedGasForCreateNaffle) internal {
+        L1NaffleBaseStorage.layout().minL2ForwardedGasForCreateNaffle = _minL2ForwardedGasForCreateNaffle;
     }
 }

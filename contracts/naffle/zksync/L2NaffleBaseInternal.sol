@@ -18,6 +18,7 @@ import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
+    uint256 internal constant DENOMINATOR = 10000;
 
     /**
      * @notice create a new naffle.
@@ -371,7 +372,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         naffle.status = NaffleTypes.NaffleStatus.FINISHED;
         uint256 totalFundsRaised = naffle.ticketPriceInWei * naffle.numberOfPaidTickets;
-        uint256 platformFee = totalFundsRaised * layout.platformFee / 10000;
+        uint256 platformFee = totalFundsRaised * layout.platformFee / DENOMINATOR;
         uint256 amountToTransfer = totalFundsRaised - platformFee;
 
         bytes memory message = abi.encode("setWinner", _naffleId, winner);
