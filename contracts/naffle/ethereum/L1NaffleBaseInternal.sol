@@ -53,8 +53,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             revert NotAllowed();
         }
 
-
-
         if (_endTime < block.timestamp + layout.minimumNaffleDuration) {
             revert InvalidEndTime(_endTime);
         }
