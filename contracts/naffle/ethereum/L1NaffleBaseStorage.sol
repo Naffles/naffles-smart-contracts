@@ -27,6 +27,7 @@ library L1NaffleBaseStorage {
         uint256 minimumPaidTicketSpots;
         uint256 minimumPaidTicketPriceInWei;
         uint256 minL2ForwardedGasForCreateNaffle;
+        uint256 minL2GasLimitForCreateNaffle;
         mapping(uint256 => NaffleTypes.L1Naffle) naffles;
         mapping(uint256 => address) naffleWinner;
         mapping(uint256 => mapping(uint256 => bool)) isL2ToL1MessageProcessed;

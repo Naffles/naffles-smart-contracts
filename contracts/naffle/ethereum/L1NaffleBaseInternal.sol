@@ -346,11 +346,20 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     }
 
     /**
-     * @notice sets minimum gas limit to be forwarded for L2 transactions in _createNaffle
+     * @notice sets minimum gas to be forwarded for L2 transactions in _createNaffle
      * @param _minL2ForwardedGasForCreateNaffle the minimum gas limit to be forwarded for L2 transactions in _createNaffle
      * @dev set the minimum amount of wei this transaction should foward to L2. Should be much higher than the actual cost, since refunds are given
      */
     function _setMinL2ForwardedGas(uint256 _minL2ForwardedGasForCreateNaffle) internal {
         L1NaffleBaseStorage.layout().minL2ForwardedGasForCreateNaffle = _minL2ForwardedGasForCreateNaffle;
+    }
+
+
+    /**
+     * @notice sets minimum gas limit foir the L2 transaction in _createNaffle
+     * @param _minL2GasLimit the minimum gas limit for the L2 transaction in _createNaffle
+     */
+    function _setMinL2GasLimit(uint256 _minL2GasLimit) internal {
+        L1NaffleBaseStorage.layout().minL2GasLimitForCreateNaffle = _minL2GasLimit;
     }
 }
