@@ -7,7 +7,7 @@ import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.so
 import "@solidstate/contracts/token/ERC1155/SolidStateERC1155.sol";
 import "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 
-contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidStateERC721, AccessControl {
+contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidStateERC1155, AccessControl {
     modifier onlyL2NaffleContract() {
         if (msg.sender != _getL2NaffleContractAddress()) {
             revert NotAllowed();
