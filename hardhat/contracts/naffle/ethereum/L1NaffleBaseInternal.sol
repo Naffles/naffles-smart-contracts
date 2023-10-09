@@ -12,7 +12,7 @@ import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBaseInternal.sol";
 import "@matterlabs/zksync-contracts/l1/contracts/zksync/Storage.sol";
 
-abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal, AccessControlInternal {
+abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
 

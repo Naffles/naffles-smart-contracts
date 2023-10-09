@@ -52,4 +52,11 @@ interface IL1NaffleAdmin {
      * @param _admin the new admin address.
      */
     function setAdmin(address _admin) external;
+
+    /**
+     * @notice cancels a naffle, should only be used if l1->l2 messaging fails.
+               and the NFT is stuck as a result
+     * @param _naffleId the naffle id to cancel.
+     */
+    function adminCancelNaffle(uint256 _naffleId) external;
 }

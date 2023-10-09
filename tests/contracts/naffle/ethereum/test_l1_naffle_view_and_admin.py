@@ -321,3 +321,48 @@ def test_set_admin_address_not_admin(
     )
     with brownie.reverts():
         admin_facet.setAdmin(address, from_address)
+
+
+def test_admin_cancel_naffle(
+    address,
+    from_address,
+    from_admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    l2_message_params
+):
+    _, base_facet, admin_facet, _ = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    setup_l1_naffle_contract(
+        admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
+    )
+    deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
+    deployed_erc721a_mock.setApprovalForAll(
+        deployed_l1_naffle_diamond.address, True, from_address
+    )
+    nft_id = 1
+
+    base_facet.createNaffle(
+        deployed_erc721a_mock.address,
+        nft_id,
+        MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE,
+        datetime.datetime.now().timestamp() + 100000,
+        STANDARD_NAFFLE_TYPE,
+        l2_message_params,
+        {'from': address, 'value': 1163284000000000}
+    )
+
+    admin_facet.adminCancelNaffle(1, from_admin)
+    # test if nft is back in the owner's wallet
+    assert deployed_erc721a_mock
+
