@@ -7,6 +7,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBase.sol";
 import "../../../interfaces/vrf/polygon/INaffleVRF.sol";
 
+
+/**
+    @title NaffleVRF
+    @dev contract for drawing winners of Naffles
+ */
 contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
     error NotAllowed();
     error naffleAlreadyRolled(uint256 naffleId);
@@ -81,6 +86,9 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
         emit NaffleWinnerRolled(_naffleId);
     }
 
+    /**
+     * @dev Callback function called by Chainlink VRF Coordinator
+     */
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         ChainlinkRequestStatus storage status = chainlinkRequestStatus[requestId];
         if (!status.exists) {
@@ -92,6 +100,9 @@ contract NaffleVRF is INaffleVRF, VRFConsumerBaseV2, Ownable {
         emit ChainlinkRequestFulfilled(requestId, status.naffleId, randomWords[0]);
     }
 
+    /**
+     * @dev admin function to set chainlink VRF settings
+     */
     function setChainlinkVRFSettings(
         uint64 _subscriptionId,
         bytes32 _gasLaneKeyHash,

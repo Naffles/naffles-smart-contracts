@@ -300,8 +300,49 @@ def test_create_naffle_no_approval(
         )
 
 
+def test_create_naffle_invalid_gas_supplied(
+    from_address,
+    from_admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    l2_message_params
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    setup_l1_naffle_contract(
+        admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
+    )
+    deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
+    deployed_erc721a_mock.setApprovalForAll(
+        deployed_l1_naffle_diamond.address, True, from_address
+    )
+    nft_id = 1
+
+    with brownie.reverts(get_error_message("InsufficientL2GasForwardedForCreateNaffle")):
+        base_facet.createNaffle(
+            deployed_erc721a_mock.address,
+            nft_id,
+            MINIMUM_PAID_TICKET_SPOTS,
+            MINIMUM_TICKET_PRICE,
+            datetime.datetime.now().timestamp() + 1000,
+            STANDARD_NAFFLE_TYPE,
+            l2_message_params,
+            from_address
+        )
+
+
 def test_create_naffle_zksync_called(
     from_address,
+    address,
     from_admin,
     deployed_l1_naffle_diamond,
     deployed_l1_naffle_base_facet,
@@ -335,9 +376,11 @@ def test_create_naffle_zksync_called(
         datetime.datetime.now().timestamp() + 1000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
-        from_address
+        {'from': address, 'value': 1163284000000000}
     )
     assert deployed_eth_zksync_mock.called()
+
+
 
 
 def test_process_message_from_l2_set_winner(
@@ -378,7 +421,7 @@ def test_process_message_from_l2_set_winner(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
-        from_address,
+        {'from': address, 'value': 1163284000000000}
     )
 
     _naffleId = 1
@@ -445,7 +488,7 @@ def test_process_message_from_l2_set_winner_invalid_hash(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
-        from_address,
+        {'from': address, 'value': 1163284000000000}
     )
 
     _naffleId = 1
