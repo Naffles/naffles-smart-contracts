@@ -16,9 +16,8 @@ interface IL2PaidTicketBase is IERC1155 {
      * @param _naffleId the id of the naffle.
      * @param ticketPriceInWei the price of the ticket in wei.
      * @param startingTicketId the starting ticket id on the naffle.
-     * @return ticketIds the ids of the tickets on the naffle (so not the total id).
      */
-    function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 ticketPriceInWei, uint256 startingTicketId) external returns (uint256[] memory ticketIds);
+    function mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 ticketPriceInWei, uint256 startingTicketId) external;
 
     /**
      * @notice refund and burn a tickets.

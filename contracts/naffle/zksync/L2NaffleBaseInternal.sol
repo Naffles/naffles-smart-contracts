@@ -100,7 +100,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         uint256 startingTicketId = naffle.numberOfPaidTickets + 1;
         naffle.numberOfPaidTickets = newPaidTickets;
 
-        ticketIds = IL2PaidTicketBase(layout.paidTicketContractAddress).mintTickets(
+        IL2PaidTicketBase(layout.paidTicketContractAddress).mintTickets(
             msg.sender,
             _amount,
             _naffleId,
@@ -111,7 +111,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         emit TicketsBought(
             _naffleId,
             msg.sender,
-            ticketIds,
+            _amount,
+            startingTicketId,
             naffle.ticketPriceInWei
         );
 

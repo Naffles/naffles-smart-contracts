@@ -22,34 +22,12 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
      * @param _naffleId the id of the naffle.
      * @param _ticketPriceInWei the price of the ticket in wei.
      * @param startingTicketId the starting ticket id on the naffle.
-     * @return ticketIds the ids of the tickets minted.
      */
-    function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei, uint256 startingTicketId) internal returns(uint256[] memory) {
+    function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei, uint256 startingTicketId) internal {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        uint256[] memory ticketIds = new uint256[](_amount);
-        uint256 totalTicketId;
-
-        for (uint256 i = 0; i < _amount; i++) {
-            uint256 ticketIdOnNaffle = startingTicketId + i;
-            
-            NaffleTypes.PaidTicket memory paidTicket = NaffleTypes.PaidTicket({
-                ticketIdOnNaffle: ticketIdOnNaffle,
-                ticketPriceInWei: _ticketPriceInWei,
-                naffleId: _naffleId,
-                winningTicket: false
-            });
-
-            l.totalMinted++;
-            totalTicketId = l.totalMinted;
-            l.naffleIdNaffleTicketIdTicketId[_naffleId][ticketIdOnNaffle] = totalTicketId;
-            l.paidTickets[totalTicketId] = paidTicket;
-            ticketIds[i] = totalTicketId;
-        }
-
         _safeMint(_to, _naffleId, _amount, "");
 
-        emit PaidTicketsMinted(_to, ticketIds, _naffleId, _ticketPriceInWei, startingTicketId);
-        return ticketIds;
+        emit PaidTicketsMinted(_to, _naffleId, _ticketPriceInWei, startingTicketId, _amount);
     }
 
     /**
@@ -79,7 +57,7 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
     }
 
     /**
-     * @notice gets the admin role/
+     * @notice gets the admin role
      * @return adminRole the admin role.
      */
     function _getAdminRole() internal pure returns (bytes32 adminRole) {
