@@ -59,13 +59,6 @@ library NaffleTypes {
         bool winningTicket;
     }
 
-    struct PaidTicket {
-        uint256 ticketPriceInWei;
-        uint256 naffleId;
-        uint256 ticketIdOnNaffle;
-        bool winningTicket;
-    }
-
     struct L2Naffle {
         address ethTokenAddress;
         address owner;
