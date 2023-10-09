@@ -55,13 +55,11 @@ interface IL2PaidTicketBaseInternal {
      * @notice emitted when a paid ticket is refunded and burned.
      * @param owner the owner of the ticket.
      * @param naffleId the id of the naffle.
-     * @param ticketIds the id of the tickets.
-     * @param ticketIdsOnNaffle the id of the tickets on the naffle.
+     * @param numberOfPaidTickets the number of paid tickets refunded.
      */
     event PaidTicketsRefundedAndBurned(
         address indexed owner,
         uint256 indexed naffleId,
-        uint256[] ticketIds,
-        uint256[] ticketIdsOnNaffle
+        uint256 numberOfPaidTickets 
     );
 }

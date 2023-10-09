@@ -33,7 +33,6 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             uint256 ticketIdOnNaffle = startingTicketId + i;
             
             NaffleTypes.PaidTicket memory paidTicket = NaffleTypes.PaidTicket({
-                owner: _to,
                 ticketIdOnNaffle: ticketIdOnNaffle,
                 ticketPriceInWei: _ticketPriceInWei,
                 naffleId: _naffleId,
@@ -47,7 +46,7 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             ticketIds[i] = totalTicketId;
         }
 
-        _safeMintBatch(_to, _naffleId, _amount, "");
+        _safeMint(_to, _naffleId, _amount, "");
 
         emit PaidTicketsMinted(_to, ticketIds, _naffleId, _ticketPriceInWei, startingTicketId);
         return ticketIds;
@@ -60,10 +59,9 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
      * @dev if the msg.sender is not the owner of the ticket a NotTicketOwner error is thrown.
      * @dev if the refund fails a RefundFailed error is thrown.
      * @param _naffleId the id of the naffle.
-     * @param _naffleTicketIds the id of the ticket on the naffle.
      * @param _owner the owner of the tickets.
      */
-    function _refundAndBurnTickets(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) internal {
+    function _refundAndBurnTickets(uint256 _naffleId, uint256 _amount, address _owner) internal {
         L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
 
@@ -71,51 +69,13 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
             revert NaffleNotCancelled(naffle.status);
         }
 
-        uint256 length = _naffleTicketIds.length;
-        uint256[] memory totalTicketIds = new uint256[](length);
-
-        if (length == 0) {
+        if (_amount == 0) {
             return;
         }
+ 
+        _burn(_owner, _naffleId, _amount);
 
-        // for _burnBatch inputs
-        uint256[] memory naffleIds = new uint256[](1);
-        uint256[] memory ticketAmounts = new uint256[](1);
-        naffleIds[0] = _naffleId;
-        ticketAmounts[0] = _naffleTicketIds.length;
-
-        for (uint i = 0; i < length; ++i) {
-            uint256 ticketId = l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
-
-            if (_owner != l.paidTickets[ticketId].owner) {
-                revert NotTicketOwner(_owner);
-            }
-
-            delete l.naffleIdNaffleTicketIdTicketId[_naffleId][_naffleTicketIds[i]];
-            NaffleTypes.PaidTicket storage paidTicket = l.paidTickets[ticketId];
-
-            // We reset the naffle id so we know this is refunded because we can't delete custom structs.
-            paidTicket.ticketPriceInWei = 0;
-            paidTicket.naffleId = 0;
-            paidTicket.ticketIdOnNaffle = 0;
-
-            totalTicketIds[i] = ticketId;
-        }
-        
-        _burnBatch(_owner, naffleIds, ticketAmounts);
-
-        emit PaidTicketsRefundedAndBurned(_owner, _naffleId, totalTicketIds, _naffleTicketIds);
-    }
-
-    /**
-     * @notice gets the owner of a ticket by its id on the naffle.
-     * @param _naffleId the id of the naffle.
-     * @param _ticketIdOnNaffle the id of the ticket on the naffle.
-     * @return owner the owner of the ticket.
-     */
-    function _getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) internal view returns (address owner) {
-        L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        owner = paidTickets[l.naffleIdNaffleTicketIdTicketId[_naffleId][_ticketIdOnNaffle]].owner;
+        emit PaidTicketsRefundedAndBurned(_owner, _naffleId, _amount);
     }
 
     /**
@@ -144,31 +104,16 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
     }
 
     /**
-     * @notice sets the base URI.
-     * @param _baseURI the base URI.
+     * @inheritdoc ERC1155BaseInternal
      */
-    function _setBaseURI(string memory _baseURI) internal {
-        ERC1155MetadataStorage.layout().baseURI = _baseURI;
-    }
-
-    /**
-     * @notice gets the ticket by its id on the naffle.
-     * @param _ticketIdOnNaffle the id of the ticket on the naffle.
-     * @param _naffleId the id of the naffle.
-     * @return ticket the ticket.
-     */
-    function _getTicketByIdOnNaffle(uint256 _ticketIdOnNaffle, uint256 _naffleId) internal view returns (NaffleTypes.PaidTicket memory ticket) {
-        L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        ticket = l.paidTickets[l.naffleIdNaffleTicketIdTicketId[_naffleId][_ticketIdOnNaffle]];
-    }
-
-    /**
-     * @notice gets the ticket by its id.
-     * @param _ticketId the id of the ticket.
-     * @return ticket the ticket.
-     */
-    function _getTicketById(uint256 _ticketId) internal view returns (NaffleTypes.PaidTicket memory ticket) {
-        L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
-        ticket = l.paidTickets[_ticketId];
+    function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal virtual override (ERC1155BaseInternal, ERC1155EnumerableInternal) {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 }

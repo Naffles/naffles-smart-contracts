@@ -40,13 +40,11 @@ interface IL2NaffleBase {
      * @notice refund and burns tickets for a naffle.
      * @param _naffleId id of the naffle.
      * @param _openEntryTicketIds ids of the open entry tickets.
-     * @param _paidTicketIds ids of the paid tickets.
      * @param _owner owner of the tickets.
      */
     function refundTicketsForNaffle(
         uint256 _naffleId,
         uint256[] memory _openEntryTicketIds,
-        uint256[] memory _paidTicketIds,
         address _owner
     ) external;
 
@@ -85,9 +83,12 @@ interface IL2NaffleBase {
      * @notice set the winner of a naffle.
      * @param _naffleId id of the naffle.
      * @param _randomNumber random number of the winner.
+     * @param _winner winner of the naffle.
+     * @return bytes32 hash of the winner.
      */
     function setWinner(
         uint256 _naffleId,
-        uint256 _randomNumber
+        uint256 _randomNumber,
+        address _winner
     ) external returns (bytes32);
 }

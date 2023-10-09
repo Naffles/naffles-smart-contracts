@@ -5,7 +5,6 @@ import "./L2PaidTicketBaseInternal.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
 import "@solidstate/contracts/token/ERC1155/SolidStateERC1155.sol";
-import "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 
 contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidStateERC1155, AccessControl {
     modifier onlyL2NaffleContract() {
@@ -25,12 +24,12 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
     /**
      * @inheritdoc IL2PaidTicketBase
      */
-    function refundAndBurnTickets(uint256 _naffleId, uint256[] memory _naffleTicketIds, address _owner) external onlyL2NaffleContract {
-        _refundAndBurnTickets(_naffleId, _naffleTicketIds, _owner);
+    function refundAndBurnTickets(uint256 _naffleId, uint256 _amount, address _owner) external onlyL2NaffleContract {
+        _refundAndBurnTickets(_naffleId, _amount, _owner);
     }
 
     /**
-     * @inheritdoc SolidStateERC1155
+     * @inheritdoc ERC1155BaseInternal
      */
     function _beforeTokenTransfer(
         address operator,
@@ -39,7 +38,7 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) internal virtual override(ERC1155BaseInternal, SolidStateERC1155) {
+    ) internal virtual override (SolidStateERC1155, L2PaidTicketBaseInternal) {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 }

@@ -10,8 +10,5 @@ import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBaseInt
 contract L2PaidTicketDiamond is SolidStateDiamond, AccessControl, IL2PaidTicketBaseInternal {
     constructor(address _admin) SolidStateDiamond() {
         _grantRole(AccessControlStorage.DEFAULT_ADMIN_ROLE, _admin);
-        ERC1155MetadataStorage.Layout storage metadata = ERC1155MetadataStorage.layout();
-        metadata.name = "TICKET";
-        metadata.symbol = "TICKET";
     }
 }
