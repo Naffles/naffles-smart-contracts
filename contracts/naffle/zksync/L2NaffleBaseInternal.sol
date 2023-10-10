@@ -44,7 +44,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             ticketPriceInWei: _params.ticketPriceInWei,
             endTime: _params.endTime,
             winningTicketId: 0,
-            winningTicketType: NaffleTypes.TicketType.NONE,
             status: NaffleTypes.NaffleStatus.ACTIVE,
             naffleTokenType: _params.naffleTokenType,
             naffleType: _params.naffleType
@@ -358,6 +357,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         uint256 winningTicketId = _randomNumber % (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries) + 1;
 
+        naffle.winningTicketId = winningTicketId;
         naffle.status = NaffleTypes.NaffleStatus.FINISHED;
         uint256 totalFundsRaised = naffle.ticketPriceInWei * naffle.numberOfPaidTickets;
         uint256 platformFee = totalFundsRaised * layout.platformFee / DENOMINATOR;

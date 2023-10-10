@@ -33,7 +33,6 @@ library NaffleTypes {
     }
 
     enum TicketType {
-        NONE,
         OPEN_ENTRY,
         PAID
     }
@@ -70,7 +69,6 @@ library NaffleTypes {
         uint256 ticketPriceInWei;
         uint256 endTime;
         uint256 winningTicketId;
-        TicketType winningTicketType;
         NaffleStatus status;
         TokenContractType naffleTokenType;
         NaffleType naffleType;
