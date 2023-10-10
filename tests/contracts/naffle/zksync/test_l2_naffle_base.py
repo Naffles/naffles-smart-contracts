@@ -371,29 +371,9 @@ def test_buy_tickets_does_mint_tickets_for_address(
     )
 
     assert (
-        interface.IERC721Base(
+        interface.IERC1155Base(
             l2_diamonds.deployed_l2_paid_ticket_diamond.address
-        ).balanceOf(address, from_admin)
-        == 2
-    )
-
-
-def test_buy_tickets_does_mint_tickets_for_address_unlimited(
-    address, from_admin, l2_diamonds, deployed_erc721a_mock
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-        UNLIMITED_NAFFLE_TYPE,
-        0,
-    )
-
-    assert (
-        interface.IERC721Base(
-            l2_diamonds.deployed_l2_paid_ticket_diamond.address
-        ).balanceOf(address, from_admin)
+        ).balanceOf(address, 1, from_admin)
         == 2
     )
 
@@ -777,7 +757,7 @@ def test_set_winner(
         deployed_erc721a_mock,
     )
     old_balance = address.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, from_address)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 
@@ -868,7 +848,7 @@ def test_refund_tickets_success(
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
 
     l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
-        NAFFLE_ID, [1], [1, 2], address.address, from_address
+        NAFFLE_ID, [1], address.address, from_address
     )
 
     assert address.balance() == old_balance + (TICKET_PRICE * 2)
@@ -892,7 +872,7 @@ def test_cancel_refund_and_create_refund(
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
 
     l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
-        NAFFLE_ID, [1,2], [1], address.address, from_address
+        NAFFLE_ID, [1, 2], address.address, from_address
     )
 
     l2_diamonds.naffle_base_facet.createNaffle(
