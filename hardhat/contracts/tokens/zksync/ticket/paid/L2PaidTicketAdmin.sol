@@ -5,8 +5,9 @@ import "./L2PaidTicketBaseInternal.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
 import "@solidstate/contracts/access/ownable/SafeOwnable.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketAdmin.sol";
+import "@solidstate/contracts/token/ERC1155/metadata/ERC1155MetadataInternal.sol";
 
-contract L2PaidTicketAdmin is IL2PaidTicketAdmin, L2PaidTicketBaseInternal, AccessControl, SafeOwnable {
+contract L2PaidTicketAdmin is IL2PaidTicketAdmin, L2PaidTicketBaseInternal, AccessControl, SafeOwnable, ERC1155MetadataInternal {
     /**
      * @inheritdoc IL2PaidTicketAdmin
      */
