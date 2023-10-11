@@ -12,8 +12,6 @@ library L2PaidTicketStorage {
         address l2NaffleContractAddress;
         // naffle id => ticket id on naffle => ticket id
         mapping(uint256 => mapping(uint256 => uint256)) naffleIdNaffleTicketIdTicketId;
-        // ticket id => paid ticket
-        mapping(uint256 => NaffleTypes.PaidTicket) paidTickets;
         uint256 totalMinted;
     }
 

@@ -33,7 +33,6 @@ library NaffleTypes {
     }
 
     enum TicketType {
-        NONE,
         OPEN_ENTRY,
         PAID
     }
@@ -56,14 +55,6 @@ library NaffleTypes {
     struct OpenEntryTicket {
         uint256 naffleId;
         uint256 ticketIdOnNaffle;
-        bool winningTicket;
-    }
-
-    struct PaidTicket {
-        uint256 ticketPriceInWei;
-        uint256 naffleId;
-        uint256 ticketIdOnNaffle;
-        bool winningTicket;
     }
 
     struct L2Naffle {
@@ -78,7 +69,6 @@ library NaffleTypes {
         uint256 ticketPriceInWei;
         uint256 endTime;
         uint256 winningTicketId;
-        TicketType winningTicketType;
         NaffleStatus status;
         TokenContractType naffleTokenType;
         NaffleType naffleType;

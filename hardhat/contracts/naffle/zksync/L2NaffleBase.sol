@@ -45,13 +45,11 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     function refundTicketsForNaffle(
         uint256 _naffleId,
         uint256[] memory _openEntryTicketIds,
-        uint256[] memory _paidTicketIds,
         address _owner
     ) external {
         _refundTicketsForNaffle(
             _naffleId,
             _openEntryTicketIds,
-            _paidTicketIds,
             _owner
         );
     }
@@ -61,11 +59,13 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
      */
     function setWinner(
         uint256 _naffleId,
-        uint256 _randomNumber
+        uint256 _randomNumber,
+        address _winner
     ) external returns (bytes32) {
         return _setWinner(
             _naffleId,
-            _randomNumber
+            _randomNumber,
+            _winner
         );
     }
 

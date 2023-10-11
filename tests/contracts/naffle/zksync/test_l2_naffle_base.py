@@ -140,7 +140,6 @@ def test_create_naffle(
     expected_open_entry_ticket_spots = 10
     expected_number_of_tickets_bought = 0
     expected_naffle_status = 0  # active
-    expected_winning_ticket_type = 0  # none
     expected_winning_ticket_id = 0
 
     assert naffle == (
@@ -155,7 +154,6 @@ def test_create_naffle(
         TICKET_PRICE,
         endtime,
         expected_winning_ticket_id,
-        expected_winning_ticket_type,
         expected_naffle_status,
         ERC721,
         STANDARD_NAFFLE_TYPE,
@@ -371,29 +369,9 @@ def test_buy_tickets_does_mint_tickets_for_address(
     )
 
     assert (
-        interface.IERC721Base(
+        interface.IERC1155Base(
             l2_diamonds.deployed_l2_paid_ticket_diamond.address
-        ).balanceOf(address, from_admin)
-        == 2
-    )
-
-
-def test_buy_tickets_does_mint_tickets_for_address_unlimited(
-    address, from_admin, l2_diamonds, deployed_erc721a_mock
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-        UNLIMITED_NAFFLE_TYPE,
-        0,
-    )
-
-    assert (
-        interface.IERC721Base(
-            l2_diamonds.deployed_l2_paid_ticket_diamond.address
-        ).balanceOf(address, from_admin)
+        ).balanceOf(address, 1, from_admin)
         == 2
     )
 
@@ -644,7 +622,7 @@ def test_postpone_naffle_success(
     l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time , from_address)
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1, from_admin)
     assert naffle[9] == end_time
-    assert naffle[12] == 1  # postponed
+    assert naffle[11] == 1  # postponed
 
 
 def test_owner_cancel_naffle_not_allowed(
@@ -777,16 +755,16 @@ def test_set_winner(
         deployed_erc721a_mock,
     )
     old_balance = address.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, from_address)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 
     # winning ticket id
-    if naffle[11] != 1 and naffle[11] != 2:
+    if naffle[10] != 1 and naffle[10] != 2:
+        print(naffle[11])
         pytest.fail("Naffle winning ticket id is not 1 or 2")
 
-    assert naffle[11] == 2  # paid ticket type
-    assert naffle[12] == 4  # naffle status finished
+    assert naffle[11] == 4  # naffle status finished
 
     assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.99)
 
@@ -868,7 +846,7 @@ def test_refund_tickets_success(
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
 
     l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
-        NAFFLE_ID, [1], [1, 2], address.address, from_address
+        NAFFLE_ID, [1], address.address, from_address
     )
 
     assert address.balance() == old_balance + (TICKET_PRICE * 2)
@@ -892,7 +870,7 @@ def test_cancel_refund_and_create_refund(
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
 
     l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
-        NAFFLE_ID, [1,2], [1], address.address, from_address
+        NAFFLE_ID, [1, 2], address.address, from_address
     )
 
     l2_diamonds.naffle_base_facet.createNaffle(
@@ -917,9 +895,9 @@ def test_cancel_refund_and_create_refund(
     )
 
     l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
-        NAFFLE_ID, [], [2], address.address, from_address
+        NAFFLE_ID, [], address.address, from_address
     )
 
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID + 1, from_admin)
     l2_diamonds.naffle_base_facet.refundTicketsForNaffle(
-        NAFFLE_ID + 1, [1, 2], [1, 2], address.address, from_address)
+        NAFFLE_ID + 1, [1, 2], address.address, from_address)

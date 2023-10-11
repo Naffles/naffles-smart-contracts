@@ -162,7 +162,7 @@ def test_get_open_entry_ticket_by_id(
 
     ticket = view_facet.getOpenEntryTicketById(1, from_admin)
 
-    assert ticket == (naffle_id, ticket_id_on_naffle, False)
+    assert ticket == (naffle_id, ticket_id_on_naffle)
 
 
 def test_get_total_supply(

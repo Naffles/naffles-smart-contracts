@@ -16,6 +16,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
 
+
     /**
      * @notice create a new naffle. When the naffle is created, a message is sent to the L2 naffle contract.
      * @dev function gets called by someone who wants to start a naffle.
@@ -67,10 +68,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         }
 
         NaffleTypes.TokenContractType tokenContractType;
-        if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID)) {
+        if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID) && !(IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID))) {
             tokenContractType = NaffleTypes.TokenContractType.ERC721;
             IERC721(_ethTokenAddress).transferFrom(msg.sender, address(this), _nftId);
-        } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID)) {
+        } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID) && !(IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID))) {
             tokenContractType = NaffleTypes.TokenContractType.ERC1155;
             IERC1155(_ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _nftId, 1, bytes(""));
         } else {
@@ -102,6 +103,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
                 naffleTokenType: tokenContractType
             })
         );
+
+        if(msg.value < layout.minL2ForwardedGasForCreateNaffle) {
+            revert InsufficientL2GasForwardedForCreateNaffle();
+        }
 
         txHash = zksync.requestL2Transaction{value: msg.value}(
             layout.zkSyncNaffleContractAddress,
@@ -338,5 +343,23 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      */
     function _getNaffleById(uint256 _naffleId) internal view returns (NaffleTypes.L1Naffle memory naffle) {
         naffle = L1NaffleBaseStorage.layout().naffles[_naffleId];
+    }
+
+    /**
+     * @notice sets minimum gas to be forwarded for L2 transactions in _createNaffle
+     * @param _minL2ForwardedGasForCreateNaffle the minimum gas limit to be forwarded for L2 transactions in _createNaffle
+     * @dev set the minimum amount of wei this transaction should foward to L2. Should be much higher than the actual cost, since refunds are given
+     */
+    function _setMinL2ForwardedGas(uint256 _minL2ForwardedGasForCreateNaffle) internal {
+        L1NaffleBaseStorage.layout().minL2ForwardedGasForCreateNaffle = _minL2ForwardedGasForCreateNaffle;
+    }
+
+
+    /**
+     * @notice sets minimum gas limit foir the L2 transaction in _createNaffle
+     * @param _minL2GasLimit the minimum gas limit for the L2 transaction in _createNaffle
+     */
+    function _setMinL2GasLimit(uint256 _minL2GasLimit) internal {
+        L1NaffleBaseStorage.layout().minL2GasLimitForCreateNaffle = _minL2GasLimit;
     }
 }
