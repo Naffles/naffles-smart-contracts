@@ -276,7 +276,6 @@ def test_get_naffle_by_id(
     number_of_tickets_bought = 2
     number_of_open_entry_tickets = 0
     winning_ticket_id = 0
-    winning_ticket_type = 0
     status = 0  # active
     token_type = ERC721  # ERC721
 
@@ -292,7 +291,6 @@ def test_get_naffle_by_id(
         TICKET_PRICE,
         end_time,
         winning_ticket_id,
-        winning_ticket_type,
         status,
         token_type,
         STANDARD_NAFFLE_TYPE,
@@ -450,7 +448,7 @@ def test_cancel_naffle(
     )
 
     admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
-    assert view_facet.getNaffleById(NAFFLE_ID)[12] == 2  # cancelled
+    assert view_facet.getNaffleById(NAFFLE_ID)[11] == 2  # cancelled
     assert deployed_l1_messenger_mock.called()
 
 
@@ -602,7 +600,7 @@ def test_withdraw_platform_fee(
         end_time=end_time,
     )
     old_balance = admin.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, from_address)
 
     amount_to_withdraw = (TICKET_PRICE * 2 * 0.01)
 
@@ -625,7 +623,7 @@ def test_withdraw_platform_fee_insufficient_funds(
         deployed_erc721a_mock,
     )
     old_balance = admin.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, from_address)
 
     amount_to_withdraw = (TICKET_PRICE * 2 * 0.01)
 

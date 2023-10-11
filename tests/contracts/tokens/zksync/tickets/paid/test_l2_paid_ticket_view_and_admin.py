@@ -126,54 +126,6 @@ def test_set_admin_address_not_admin(
         admin_facet.setAdmin(address, from_address)
 
 
-def test_get_ticket_by_id(
-    address,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock,
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-    )
-
-    ticket_id = 1
-    ticket = brownie.interface.IL2PaidTicketView(
-        l2_diamonds.deployed_l2_paid_ticket_diamond).getTicketById(ticket_id, from_admin)
-    assert ticket == (
-        TICKET_PRICE,
-        NAFFLE_ID,
-        ticket_id,
-        False
-    )
-
-
-def test_get_ticket_by_id_on_naffle(
-    address,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock,
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-    )
-
-    ticket_id = 1
-    ticket = brownie.interface.IL2PaidTicketView(
-        l2_diamonds.deployed_l2_paid_ticket_diamond).getTicketByIdOnNaffle(ticket_id, 1, from_admin)
-    assert ticket == (
-        TICKET_PRICE,
-        NAFFLE_ID,
-        ticket_id,
-        False
-    )
-
-
 def test_set_base_uri_not_admin(
     admin,
     from_admin,
@@ -217,7 +169,7 @@ def test_set_base_uri(
     )
     admin_facet.setBaseURI("base_uri/", from_admin)
 
-    view_facet = interface.IERC721Metadata(
+    view_facet = interface.IERC1155Metadata(
         l2_diamonds.deployed_l2_paid_ticket_diamond.address
     )
-    assert view_facet.tokenURI(1) == 'base_uri/1'
+    assert view_facet.uri(1) == 'base_uri/1'
