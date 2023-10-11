@@ -47,32 +47,11 @@ def test_mint_tickets_for_address(
         deployed_erc721a_mock,
     )
     assert (
-        brownie.interface.IERC721Base(
+        brownie.interface.IERC1155Base(
             l2_diamonds.deployed_l2_paid_ticket_diamond.address
-        ).balanceOf(address, {"from": address})
+        ).balanceOf(address, 1, {"from": address})
         == 2
     )
-
-
-def test_get_owner_of_naffle_ticket_id(
-    admin,
-    address,
-    from_admin,
-    from_address,
-    l2_diamonds,
-    deployed_erc721a_mock,
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-        number_of_tickets=200
-    )
-    naffle_id = 1
-    ticket_id = 1
-    assert l2_diamonds.paid_view_facet.getOwnerOfNaffleTicketId(
-        naffle_id, ticket_id, from_address) == address.address
 
 
 def test_refund_and_burn_tickets_success(
@@ -89,20 +68,19 @@ def test_refund_and_burn_tickets_success(
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
 
     l2_diamonds.paid_base_facet.refundAndBurnTickets(
-        NAFFLE_ID, [1, 2], address.address,
+        NAFFLE_ID, 2, address.address,
         {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
     )
 
-    ticket = l2_diamonds.paid_view_facet.getTicketById(1)
+    assert (
+        brownie.interface.IERC1155Base(
+            l2_diamonds.deployed_l2_paid_ticket_diamond.address
+        ).balanceOf(address, 1, {"from": address})
+        == 0
+    )
 
-    assert ticket == (0, 0, 0, False)
 
-    ticket = l2_diamonds.paid_view_facet.getTicketById(2)
-
-    assert ticket == (0, 0, 0, False)
-
-
-def test_refund_and_burn_tickets_success_not_owner(
+def test_refund_and_burn_tickets_success_not_enough_tickets(
     address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
 ):
     create_naffle_and_mint_tickets(
@@ -112,11 +90,12 @@ def test_refund_and_burn_tickets_success_not_owner(
         deployed_erc721a_mock,
         number_of_tickets=200,
     )
-    ticket_id_on_naffle = 1
+
     l2_diamonds.naffle_admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
-    with brownie.reverts(get_error_message("NotTicketOwner", ["address"], [admin.address])):
+
+    with brownie.reverts(get_error_message("ERC1155Base__BurnExceedsBalance")):
         l2_diamonds.paid_base_facet.refundAndBurnTickets(
-            NAFFLE_ID, [ticket_id_on_naffle], admin,
+            NAFFLE_ID, 1, admin,
             {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
         )
 
@@ -131,11 +110,10 @@ def test_refund_and_burn_tickets_naffle_not_cancelled(
         deployed_erc721a_mock,
         number_of_tickets=200,
     )
-    ticket_id_on_naffle = 1
 
     with brownie.reverts(get_error_message("NaffleNotCancelled", ["uint8"], [0])):
         l2_diamonds.paid_base_facet.refundAndBurnTickets(
-            NAFFLE_ID, [ticket_id_on_naffle], admin,
+            NAFFLE_ID, 1, admin,
             {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
         )
 
