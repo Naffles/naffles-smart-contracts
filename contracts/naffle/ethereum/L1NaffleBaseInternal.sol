@@ -76,11 +76,9 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         } else if (_naffleTokenInformation.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
             tokenContractType = NaffleTypes.TokenContractType.ERC1155;
             IERC1155(_naffleTokenInformation.tokenAddress).safeTransferFrom(msg.sender,  address(this), _naffleTokenInformation.nftId, _naffleTokenInformation.amount, bytes(""));
-        } else if (_naffleTokenInformation.naffleTokenType == NaffleTypes.TokenContractType.ERC20) {
+        } else {
             tokenContractType = NaffleTypes.TokenContractType.ERC20;
             IERC20(_naffleTokenInformation.tokenAddress).safeTransferFrom(msg.sender, address(this), _naffleTokenInformation.amount);
-        } else {
-            revert InvalidTokenType();
         }
 
         layout.naffles[naffleId] = NaffleTypes.L1Naffle({
@@ -139,11 +137,9 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             IERC721(tokenInfo.tokenAddress).transferFrom(address(this), _winner, tokenInfo.nftId);
         } else if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
             IERC1155(tokenInfo.tokenAddress).safeTransferFrom(address(this), _winner, tokenInfo.nftId, tokenInfo.amount, bytes(""));
-        } else if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC20) {
-            IERC20(tokenInfo.tokenAddress).safeTransferFrom(address(this), _winner, tokenInfo.amount);
         } else {
-            revert InvalidTokenType();
-        }
+            IERC20(tokenInfo.tokenAddress).safeTransferFrom(address(this), _winner, tokenInfo.amount);
+        } 
 
         emit L1NaffleWinnerSet(_naffleId, _winner);
     }
@@ -211,11 +207,9 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             IERC721(tokenInfo.tokenAddress).transferFrom(address(this), naffle.owner, tokenInfo.nftId);
         } else if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
             IERC1155(tokenInfo.tokenAddress).safeTransferFrom(address(this), naffle.owner, tokenInfo.nftId, tokenInfo.amount, bytes(""));
-        } else if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC20) {
-            IERC20(tokenInfo.tokenAddress).safeTransferFrom(address(this), naffle.owner, tokenInfo.amount);
         } else {
-            revert InvalidTokenType();
-        }
+            IERC20(tokenInfo.tokenAddress).safeTransferFrom(address(this), naffle.owner, tokenInfo.amount);
+        } 
 
         emit L1NaffleCancelled(_naffleId);
     }

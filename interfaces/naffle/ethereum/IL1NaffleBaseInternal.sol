@@ -19,11 +19,6 @@ interface IL1NaffleBaseInternal {
     error InvalidEndTime(uint256 endTime);
 
     /**
-     * @notice thrown when the token type is invalid.
-     */
-    error InvalidTokenType();
-
-    /**
      * @notice thrown when there are an invalid number of ticket spots provided.
      * @param spots ticket spots.
      */
