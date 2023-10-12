@@ -5,6 +5,7 @@ import pytest
 from brownie import interface, chain
 
 from scripts.util import get_error_message
+from tests.conftest import default_token_info
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
@@ -48,7 +49,8 @@ def test_create_naffle_not_allowed(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
-    deployed_l1_messenger_mock
+    deployed_l1_messenger_mock,
+    default_token_info
 ):
     (
         access_control,
@@ -74,15 +76,13 @@ def test_create_naffle_not_allowed(
     with brownie.reverts(get_error_message("NotAllowed", [], [])):
         base_facet.createNaffle(
             (
-                deployed_erc721a_mock.address,
+                default_token_info,
                 address,
                 NAFFLE_ID,
-                NFT_ID,
                 PAID_TICKET_SPOTS,
                 TICKET_PRICE,
                 get_end_time(),
                 STANDARD_NAFFLE_TYPE,
-                ERC721,
             ),
             from_address,
         )
@@ -98,6 +98,7 @@ def test_create_naffle(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
     deployed_l1_messenger_mock,
+    default_token_info,
 ):
     (
         access_control,
@@ -123,15 +124,13 @@ def test_create_naffle(
 
     base_facet.createNaffle(
         (
-            deployed_erc721a_mock.address,
+            default_token_info,
             address,
             NAFFLE_ID,
-            NFT_ID,
             1000,
             TICKET_PRICE,
             endtime,
             STANDARD_NAFFLE_TYPE,
-            ERC721,
         ),
         from_admin,
     )
@@ -143,10 +142,14 @@ def test_create_naffle(
     expected_winning_ticket_id = 0
 
     assert naffle == (
-        deployed_erc721a_mock.address,
+        (
+            deployed_erc721a_mock.address,
+            NFT_ID,
+            1,
+            ERC721
+        ),
         address,
         NAFFLE_ID,
-        NFT_ID,
         1000,
         expected_open_entry_ticket_spots,
         expected_number_of_tickets_bought,
@@ -155,7 +158,6 @@ def test_create_naffle(
         endtime,
         expected_winning_ticket_id,
         expected_naffle_status,
-        ERC721,
         STANDARD_NAFFLE_TYPE,
     )
 
@@ -205,6 +207,7 @@ def test_buy_tickets_invalid_naffle_status(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_l1_messenger_mock,
+    default_token_info,
 ):
     (
         access_control,
@@ -231,15 +234,13 @@ def test_buy_tickets_invalid_naffle_status(
     endtime = datetime.datetime.now().timestamp() + 1000
     base_facet.createNaffle(
         (
-            deployed_erc721a_mock.address,
+            default_token_info,
             admin,
             NAFFLE_ID,
-            NFT_ID,
             PAID_TICKET_SPOTS,
             TICKET_PRICE,
             endtime,
             STANDARD_NAFFLE_TYPE,
-            ERC721,
         ),
         from_admin,
     )
@@ -258,6 +259,7 @@ def test_buy_tickets_not_enough_funds(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_l1_messenger_mock,
+    default_token_info,
 ):
     (
         access_control,
@@ -284,15 +286,13 @@ def test_buy_tickets_not_enough_funds(
     endtime = datetime.datetime.now().timestamp() + 1000
     base_facet.createNaffle(
         (
-            deployed_erc721a_mock.address,
+            default_token_info,
             admin,
             NAFFLE_ID,
-            NFT_ID,
             PAID_TICKET_SPOTS,
             TICKET_PRICE,
             endtime,
             STANDARD_NAFFLE_TYPE,
-            ERC721,
         ),
         from_admin,
     )
@@ -310,6 +310,7 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     deployed_l2_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_l1_messenger_mock,
+    default_token_info,
 ):
     (
         access_control,
@@ -336,15 +337,13 @@ def test_buy_tickets_not_enough_paid_ticket_spots(
     endtime = datetime.datetime.now().timestamp() + 1000
     base_facet.createNaffle(
         (
-            deployed_erc721a_mock.address,
+            default_token_info,
             admin,
             NAFFLE_ID,
-            NFT_ID,
             1,
             TICKET_PRICE,
             endtime,
             STANDARD_NAFFLE_TYPE,
-            ERC721,
         ),
         from_admin,
     )
@@ -360,6 +359,7 @@ def test_buy_tickets_does_mint_tickets_for_address(
     from_admin,
     l2_diamonds,
     deployed_erc721a_mock,
+    default_token_info
 ):
     create_naffle_and_mint_tickets(
         address,
@@ -390,25 +390,6 @@ def test_use_open_entry_tickets_invalid_naffle_id(
     )
 
     with brownie.reverts(get_error_message("InvalidNaffleId", ["uint256"], [2])):
-        l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 2, from_admin)
-
-
-def test_use_open_entry_tickets_invalid_naffle_status(
-    address,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock,
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-    )
-
-    # SET NAFFLE STATUS TO COMPLETE
-    return
-    with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [2])):
         l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 2, from_admin)
 
 
@@ -450,8 +431,8 @@ def test_use_open_entry_tickets_success(
     l2_diamonds.naffle_base_facet.useOpenEntryTickets([1], 1, from_address)
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1, from_admin)
 
-    # 7 is number of open entry tickets
-    assert naffle[7] == 1
+    # 6 is number of open entry tickets
+    assert naffle[6] == 1
 
 def test_postpone_naffle_invalid_naffle_id(
     address,
@@ -478,19 +459,18 @@ def test_postpone_naffle_invalid_naffle_type(
     l2_diamonds,
     deployed_erc721a_mock,
     deployed_l1_messenger_mock,
+    default_token_info,
 ):
     end_time = get_end_time()
     l2_diamonds.naffle_base_facet.createNaffle(
         (
-            deployed_erc721a_mock.address,
+            default_token_info,
             address,
-            NAFFLE_ID,
             NFT_ID,
             100,
             TICKET_PRICE,
             end_time,
             1,  # UNLIMITED NAFFLE TYPE
-            ERC721,
         ),
         from_admin,
     )
@@ -621,8 +601,8 @@ def test_postpone_naffle_success(
     end_time = chain.time() + 1000
     l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time , from_address)
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1, from_admin)
-    assert naffle[9] == end_time
-    assert naffle[11] == 1  # postponed
+    assert naffle[8] == end_time
+    assert naffle[10] == 1  # postponed
 
 
 def test_owner_cancel_naffle_not_allowed(
@@ -760,11 +740,10 @@ def test_set_winner(
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 
     # winning ticket id
-    if naffle[10] != 1 and naffle[10] != 2:
-        print(naffle[11])
+    if naffle[9] != 1 and naffle[9] != 2:
         pytest.fail("Naffle winning ticket id is not 1 or 2")
 
-    assert naffle[11] == 4  # naffle status finished
+    assert naffle[10] == 4  # naffle status finished
 
     assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.99)
 
@@ -853,7 +832,7 @@ def test_refund_tickets_success(
 
 
 def test_cancel_refund_and_create_refund(
-    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
+    address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock, default_token_info
 ):
     create_naffle_and_mint_tickets(
         address,
@@ -875,15 +854,13 @@ def test_cancel_refund_and_create_refund(
 
     l2_diamonds.naffle_base_facet.createNaffle(
         (
-            deployed_erc721a_mock.address,
+            default_token_info,
             address,
             NAFFLE_ID + 1,
-            NFT_ID + 1,
             200,
             TICKET_PRICE,
             get_end_time(),
             0,
-            ERC721,
         ),
         from_admin,
     )
