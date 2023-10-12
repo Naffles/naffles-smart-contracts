@@ -6,6 +6,8 @@ import "../../libraries/NaffleTypes.sol";
 import '@solidstate/contracts/interfaces/IERC165.sol';
 import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
+import '@solidstate/contracts/interfaces/IERC20.sol';
+import '@solidstate/contracts/utils/SafeERC20.sol';
 import "@matterlabs/zksync-contracts/l1/contracts/zksync/interfaces/IZkSync.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
@@ -13,6 +15,8 @@ import "../../../interfaces/naffle/ethereum/IL1NaffleBaseInternal.sol";
 import "@matterlabs/zksync-contracts/l1/contracts/zksync/Storage.sol";
 
 abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
+    using SafeERC20 for IERC20;
+    bytes4 internal constant ERC20_INTERFACE_ID = 0x36372b07;
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
 
@@ -26,8 +30,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      * @dev if the naffle type is standard and the paid ticket spots is less than the minimum paid ticket spots, an InvalidPaidTicketSpots error is thrown.
      * @dev if the token type is not supported an InvalidTokenType error is thrown.
      * @dev if the naffle type is standard and the nft id is 0, an InvalidNftId error is thrown.
-     * @param _ethTokenAddress the address of the token contract.
-     * @param _nftId the id of the nft.
+     * @param _naffleTokenInformation the naffle token information.
      * @param _paidTicketSpots the number of paid ticket spots.
      * @param _ticketPriceInWei the price of a ticket in wei.
      * @param _endTime the end time of the naffle.
@@ -36,8 +39,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      * @return txHash the hash of the transaction that is sent to the L2 naffle contract.
      */
     function _createNaffle(
-        address _ethTokenAddress,
-        uint256 _nftId,
+        NaffleTypes.NaffleTokenInformation memory _naffleTokenInformation,
         uint256 _paidTicketSpots,
         uint256 _ticketPriceInWei,
         uint256 _endTime,
@@ -68,40 +70,37 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         }
 
         NaffleTypes.TokenContractType tokenContractType;
-        if (IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID) && !(IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID))) {
+        if (_naffleTokenInformation.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
             tokenContractType = NaffleTypes.TokenContractType.ERC721;
-            IERC721(_ethTokenAddress).transferFrom(msg.sender, address(this), _nftId);
-        } else if (IERC165(_ethTokenAddress).supportsInterface(ERC1155_INTERFACE_ID) && !(IERC165(_ethTokenAddress).supportsInterface(ERC721_INTERFACE_ID))) {
+            IERC721(_naffleTokenInformation.tokenAddress).transferFrom(msg.sender, address(this), _naffleTokenInformation.nftId);
+        } else if (_naffleTokenInformation.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
             tokenContractType = NaffleTypes.TokenContractType.ERC1155;
-            IERC1155(_ethTokenAddress).safeTransferFrom(msg.sender,  address(this), _nftId, 1, bytes(""));
+            IERC1155(_naffleTokenInformation.tokenAddress).safeTransferFrom(msg.sender,  address(this), _naffleTokenInformation.nftId, _naffleTokenInformation.amount, bytes(""));
+        } else if (_naffleTokenInformation.naffleTokenType == NaffleTypes.TokenContractType.ERC20) {
+            tokenContractType = NaffleTypes.TokenContractType.ERC20;
+            IERC20(_naffleTokenInformation.tokenAddress).safeTransferFrom(msg.sender, address(this), _naffleTokenInformation.amount);
         } else {
             revert InvalidTokenType();
         }
 
         layout.naffles[naffleId] = NaffleTypes.L1Naffle({
-            tokenAddress: _ethTokenAddress,
-            nftId: _nftId,
+            naffleTokenInformation: _naffleTokenInformation,
             naffleId: naffleId,
             owner: msg.sender,
             winner: address(0),
-            cancelled: false,
-            naffleTokenType: tokenContractType
+            cancelled: false
         });
 
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
         bytes memory data = abi.encodeWithSignature(
-            "createNaffle((address,address,uint256,uint256,uint256,uint256,uint256,uint8,uint8))",
-            NaffleTypes.CreateZkSyncNaffleParams({
-                ethTokenAddress: _ethTokenAddress,
-                owner: msg.sender,
-                naffleId: naffleId,
-                nftId: _nftId,
-                paidTicketSpots: _paidTicketSpots,
-                ticketPriceInWei: _ticketPriceInWei,
-                endTime: _endTime,
-                naffleType: _naffleType,
-                naffleTokenType: tokenContractType
-            })
+        "createNaffle((address,uint256,uint256,uint8),address,uint256,uint256,uint256,uint256,uint8)",
+            _naffleTokenInformation,
+            msg.sender,
+            naffleId,
+            _paidTicketSpots,
+            _ticketPriceInWei,
+            _endTime,
+            uint8(_naffleType)
         );
 
         if(msg.value < layout.minL2ForwardedGasForCreateNaffle) {
@@ -118,7 +117,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             msg.sender
         );
 
-        emit L1NaffleCreated(naffleId, msg.sender, _ethTokenAddress, _nftId, _paidTicketSpots, _ticketPriceInWei, _endTime, _naffleType, tokenContractType);
+        emit L1NaffleCreated(_naffleTokenInformation, naffleId, msg.sender, _paidTicketSpots, _ticketPriceInWei, _endTime, _naffleType);
     }
 
     /**
@@ -133,11 +132,17 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
 
+        NaffleTypes.NaffleTokenInformation memory tokenInfo = naffle.naffleTokenInformation;
+
         naffle.winner = _winner;
-        if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
-            IERC721(naffle.tokenAddress).transferFrom(address(this), _winner, naffle.nftId);
-        } else if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
-            IERC1155(naffle.tokenAddress).safeTransferFrom(address(this), _winner, naffle.nftId, 1, bytes(""));
+        if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
+            IERC721(tokenInfo.tokenAddress).transferFrom(address(this), _winner, tokenInfo.nftId);
+        } else if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
+            IERC1155(tokenInfo.tokenAddress).safeTransferFrom(address(this), _winner, tokenInfo.nftId, tokenInfo.amount, bytes(""));
+        } else if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC20) {
+            IERC20(tokenInfo.tokenAddress).safeTransferFrom(address(this), _winner, tokenInfo.amount);
+        } else {
+            revert InvalidTokenType();
         }
 
         emit L1NaffleWinnerSet(_naffleId, _winner);
@@ -199,10 +204,17 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
 
         naffle.cancelled = true;
-        if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
-            IERC721(naffle.tokenAddress).transferFrom(address(this), naffle.owner, naffle.nftId);
-        } else if (naffle.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
-            IERC1155(naffle.tokenAddress).safeTransferFrom(address(this), naffle.owner, naffle.nftId, 1, bytes(""));
+
+        NaffleTypes.NaffleTokenInformation memory tokenInfo = naffle.naffleTokenInformation;
+
+        if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC721) {
+            IERC721(tokenInfo.tokenAddress).transferFrom(address(this), naffle.owner, tokenInfo.nftId);
+        } else if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
+            IERC1155(tokenInfo.tokenAddress).safeTransferFrom(address(this), naffle.owner, tokenInfo.nftId, tokenInfo.amount, bytes(""));
+        } else if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC20) {
+            IERC20(tokenInfo.tokenAddress).safeTransferFrom(address(this), naffle.owner, tokenInfo.amount);
+        } else {
+            revert InvalidTokenType();
         }
 
         emit L1NaffleCancelled(_naffleId);

@@ -54,11 +54,13 @@ def test_create_naffle_not_allowed(
     )
 
     nft_id = 1
+    amount = 1
 
     with brownie.reverts(get_error_message("NotAllowed", [], [])):
         base_facet.createNaffle(
             deployed_founders_key_staking.address,
             nft_id,
+            amount,
             MINIMUM_PAID_TICKET_SPOTS,
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
@@ -91,12 +93,14 @@ def test_create_naffle_invalid_end_time(
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
+    amount = 1
     end_time = int(datetime.datetime.now().timestamp()) + 1
 
     with brownie.reverts(get_error_message("InvalidEndTime", ["uint256"], [end_time])):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,
+            amount,
             MINIMUM_PAID_TICKET_SPOTS,
             MINIMUM_TICKET_PRICE,
             end_time,
@@ -129,6 +133,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
+    amount = 1
     minimum_paid_ticket_spots = MINIMUM_PAID_TICKET_SPOTS - 1
 
     with brownie.reverts(
@@ -141,6 +146,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,
+            amount,
             minimum_paid_ticket_spots,
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 10000,
@@ -172,6 +178,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
+    amount = 1
 
     with brownie.reverts(
         get_error_message(
@@ -183,6 +190,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,
+            amount,
             MINIMUM_PAID_TICKET_SPOTS,
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 10000,
@@ -214,11 +222,13 @@ def test_create_naffle_invalid_token_type(
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
+    amount = 1
 
     with brownie.reverts(""):
         base_facet.createNaffle(
             ZERO_ADDRESS,
             nft_id,
+            amount,
             MINIMUM_PAID_TICKET_SPOTS,
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
@@ -250,11 +260,13 @@ def test_create_naffle_invalid_token_type(
     )
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
     nft_id = 1
+    amount = 1
 
     with brownie.reverts(get_error_message("InvalidTokenType")):
         base_facet.createNaffle(
             base_facet.address,
             nft_id,
+            amount,
             MINIMUM_PAID_TICKET_SPOTS,
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
@@ -287,11 +299,13 @@ def test_create_naffle_no_approval(
     deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
 
     nft_id = 1
+    amount = 1
 
     with brownie.reverts(get_error_message("TransferCallerNotOwnerNorApproved")):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,
+            amount,
             MINIMUM_PAID_TICKET_SPOTS,
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
@@ -326,11 +340,13 @@ def test_create_naffle_invalid_gas_supplied(
         deployed_l1_naffle_diamond.address, True, from_address
     )
     nft_id = 1
+    amount = 1
 
     with brownie.reverts(get_error_message("InsufficientL2GasForwardedForCreateNaffle")):
         base_facet.createNaffle(
             deployed_erc721a_mock.address,
             nft_id,
+            amount,
             MINIMUM_PAID_TICKET_SPOTS,
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
@@ -367,10 +383,12 @@ def test_create_naffle_zksync_called(
         deployed_l1_naffle_diamond.address, True, from_address
     )
     nft_id = 1
+    amount = 1
 
     base_facet.createNaffle(
         deployed_erc721a_mock.address,
         nft_id,
+        amount,
         MINIMUM_PAID_TICKET_SPOTS,
         MINIMUM_TICKET_PRICE,
         datetime.datetime.now().timestamp() + 1000,
@@ -412,10 +430,12 @@ def test_process_message_from_l2_set_winner(
         deployed_l1_naffle_diamond.address, True, from_address
     )
     nft_id = 1
+    amount = 1
 
     base_facet.createNaffle(
         deployed_erc721a_mock.address,
         nft_id,
+        amount,
         MINIMUM_PAID_TICKET_SPOTS,
         MINIMUM_TICKET_PRICE,
         datetime.datetime.now().timestamp() + 100000,
@@ -479,10 +499,12 @@ def test_process_message_from_l2_set_winner_invalid_hash(
         deployed_l1_naffle_diamond.address, True, from_address
     )
     nft_id = 1
+    amount = 1
 
     base_facet.createNaffle(
         deployed_erc721a_mock.address,
         nft_id,
+        amount,
         MINIMUM_PAID_TICKET_SPOTS,
         MINIMUM_TICKET_PRICE,
         datetime.datetime.now().timestamp() + 100000,
