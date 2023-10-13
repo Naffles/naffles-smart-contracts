@@ -43,7 +43,7 @@ def test_admin_mint(
     naffle_id = 0
     ticket_id_on_naffle = 0
 
-    assert ticket == (naffle_id, ticket_id_on_naffle, False)
+    assert ticket == (naffle_id, ticket_id_on_naffle)
 
 
 def test_admin_mint_no_admin(
@@ -107,7 +107,7 @@ def test_attach_to_naffle(
 
     ticket = view_facet.getOpenEntryTicketById(1, from_admin)
 
-    assert ticket == (naffle_id, ticket_id_on_naffle, False)
+    assert ticket == (naffle_id, ticket_id_on_naffle)
 
 
 def test_attach_to_naffle_not_owner_of_ticket(
@@ -249,4 +249,4 @@ def test_detach_from_naffle_success(
         {"from": accounts.at(l2_diamonds.deployed_l2_naffle_diamond.address, force=True)}
     )
     ticket = l2_diamonds.open_entry_view_facet.getOpenEntryTicketById(1)
-    assert ticket == (0, 0, False)
+    assert ticket == (0, 0)

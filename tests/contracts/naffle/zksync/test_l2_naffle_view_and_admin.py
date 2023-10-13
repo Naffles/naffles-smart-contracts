@@ -5,6 +5,7 @@ import pytest
 from brownie import L2NaffleAdmin, chain
 
 from scripts.util import add_facet, get_error_message, get_selectors
+from tests.conftest import default_token_info
 from tests.contracts.naffle.zksync.test_l2_naffle_base import (
     ERC721,
     STANDARD_NAFFLE_TYPE,
@@ -261,6 +262,7 @@ def test_get_naffle_by_id(
     from_admin,
     l2_diamonds,
     deployed_erc721a_mock,
+    default_token_info
 ):
     end_time = get_end_time()
     create_naffle_and_mint_tickets(
@@ -277,13 +279,11 @@ def test_get_naffle_by_id(
     number_of_open_entry_tickets = 0
     winning_ticket_id = 0
     status = 0  # active
-    token_type = ERC721  # ERC721
 
     assert naffle == (
-        deployed_erc721a_mock.address,
+        default_token_info,
         address,
         NAFFLE_ID,
-        NFT_ID,
         PAID_TICKET_SPOTS,
         number_of_open_entry_tickets,
         number_of_tickets_bought,
@@ -292,7 +292,6 @@ def test_get_naffle_by_id(
         end_time,
         winning_ticket_id,
         status,
-        token_type,
         STANDARD_NAFFLE_TYPE,
     )
 
@@ -408,7 +407,8 @@ def test_cancel_naffle(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
-    deployed_l1_messenger_mock
+    deployed_l1_messenger_mock,
+    default_token_info,
 ):
     (
         access_control,
@@ -434,21 +434,19 @@ def test_cancel_naffle(
 
     base_facet.createNaffle(
         (
-            deployed_erc721a_mock.address,
+            default_token_info,
             address,
-            NAFFLE_ID,
             NFT_ID,
             PAID_TICKET_SPOTS,
             TICKET_PRICE,
             endtime,
             STANDARD_NAFFLE_TYPE,
-            ERC721,
         ),
         from_admin,
     )
 
     admin_facet.adminCancelNaffle(NAFFLE_ID, from_admin)
-    assert view_facet.getNaffleById(NAFFLE_ID)[11] == 2  # cancelled
+    assert view_facet.getNaffleById(NAFFLE_ID)[10] == 2  # cancelled
     assert deployed_l1_messenger_mock.called()
 
 
@@ -501,7 +499,8 @@ def test_cancel_naffle_invalid_status(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
-    deployed_l1_messenger_mock
+    deployed_l1_messenger_mock,
+    default_token_info,
 ):
     (
         access_control,
@@ -527,15 +526,13 @@ def test_cancel_naffle_invalid_status(
 
     base_facet.createNaffle(
         (
-            deployed_erc721a_mock.address,
+            default_token_info,
             address,
             NAFFLE_ID,
-            NFT_ID,
             PAID_TICKET_SPOTS,
             TICKET_PRICE,
             endtime,
             STANDARD_NAFFLE_TYPE,
-            ERC721,
         ),
         from_admin,
     )

@@ -8,15 +8,13 @@ library NaffleTypes {
     }
 
     struct CreateZkSyncNaffleParams {
-        address ethTokenAddress;
+        NaffleTokenInformation naffleTokenInformation;
         address owner;
         uint256 naffleId;
-        uint256 nftId;
         uint256 paidTicketSpots;
         uint256 ticketPriceInWei;
         uint256 endTime;
         NaffleType naffleType;
-        TokenContractType naffleTokenType;
     }
 
     enum NaffleStatus {
@@ -39,17 +37,23 @@ library NaffleTypes {
 
     enum TokenContractType {
         ERC721,
-        ERC1155
+        ERC1155,
+        ERC20
+    }
+
+    struct NaffleTokenInformation {
+        address tokenAddress;
+        uint256 nftId;
+        uint256 amount;
+        TokenContractType naffleTokenType;
     }
 
     struct L1Naffle {
-        address tokenAddress;
-        uint256 nftId;
+        NaffleTokenInformation naffleTokenInformation;
         uint256 naffleId;
         address owner;
         address winner;
         bool cancelled;
-        TokenContractType naffleTokenType;
     }
 
     struct OpenEntryTicket {
@@ -57,11 +61,11 @@ library NaffleTypes {
         uint256 ticketIdOnNaffle;
     }
 
+
     struct L2Naffle {
-        address ethTokenAddress;
+        NaffleTokenInformation naffleTokenInformation;
         address owner;
         uint256 naffleId;
-        uint256 nftId;
         uint256 paidTicketSpots;
         uint256 openEntryTicketSpots;
         uint256 numberOfPaidTickets;
@@ -70,7 +74,6 @@ library NaffleTypes {
         uint256 endTime;
         uint256 winningTicketId;
         NaffleStatus status;
-        TokenContractType naffleTokenType;
         NaffleType naffleType;
     }
 }

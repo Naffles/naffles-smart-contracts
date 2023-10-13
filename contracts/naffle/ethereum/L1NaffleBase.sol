@@ -14,8 +14,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
      * @inheritdoc IL1NaffleBase
      */
     function createNaffle(
-        address _ethTokenAddress,
-        uint256 _nftId,
+        NaffleTypes.NaffleTokenInformation calldata _naffleTokenInformation,
         uint256 _paidTicketSpots,
         uint256 _ticketPriceInWei,
         uint256 _endTime,
@@ -23,8 +22,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         NaffleTypes.L2MessageParams calldata _l2MessageParams
     ) external payable returns (uint256 naffleId, bytes32 txHash) {
         return _createNaffle(
-            _ethTokenAddress,
-            _nftId,
+            _naffleTokenInformation,
             _paidTicketSpots,
             _ticketPriceInWei,
             _endTime,
@@ -53,7 +51,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _proof
         );
         (string memory action, uint256 naffleId, address winner) = abi.decode(_message, (string, uint256, address));
-        _setWinnerAndTransferNFT(naffleId, winner);
+        _setWinnerAndTransferPrize(naffleId, winner);
     }
 
     /**

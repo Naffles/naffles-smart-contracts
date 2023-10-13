@@ -10,6 +10,7 @@ PAID_TICKET_SPOTS = 2
 TICKET_PRICE = 10000
 ERC721 = 0
 ERC1155 = 1
+ERC20 = 2
 NFT_ID = 1
 
 
@@ -124,17 +125,21 @@ def create_naffle_and_mint_tickets(
     number_of_tickets=PAID_TICKET_SPOTS,
     end_time=get_end_time()
 ):
+    token_info = (
+        deployed_erc721a_mock.address,
+        NFT_ID,
+        1,
+        ERC721,
+    )
     l2_diamonds.naffle_base_facet.createNaffle(
         (
-            deployed_erc721a_mock.address,
+            token_info,
             address,
             NAFFLE_ID,
-            NFT_ID,
             number_of_tickets,
             TICKET_PRICE,
             end_time,
             naffle_type,
-            ERC721,
         ),
         from_admin,
     )

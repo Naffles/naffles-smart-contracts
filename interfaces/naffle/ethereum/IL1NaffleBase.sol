@@ -10,8 +10,7 @@ import "../../../contracts/libraries/NaffleTypes.sol";
 interface IL1NaffleBase {
     /**
      * @notice create a new naffle, approval for the token is required.
-     * @param _ethTokenAddress address of the token the user wants to naffle.
-     * @param _nftId id of the NFT.
+     * @param _naffleTokenInformation naffle token information.
      * @param _paidTicketSpots number of paid ticket spots.
      * @param _ticketPriceInWei price of a ticket in wei.
      * @param _endTime end time of the naffle.
@@ -20,8 +19,7 @@ interface IL1NaffleBase {
      * @return txHash hash of the transaction message to zkSync.
      */
     function createNaffle(
-        address _ethTokenAddress,
-        uint256 _nftId,
+        NaffleTypes.NaffleTokenInformation calldata _naffleTokenInformation,
         uint256 _paidTicketSpots,
         uint256 _ticketPriceInWei,
         uint256 _endTime,

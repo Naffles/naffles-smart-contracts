@@ -2,6 +2,7 @@ import pytest
 from brownie import (
     Contract,
     ERC721AMock,
+    ERC20Mock,
     ETHZkSyncMock,
     FoundersKeyStaking,
     L1MessengerMock,
@@ -34,7 +35,7 @@ from brownie import (
 from brownie.network.account import _PrivateKeyAccount, Account
 
 from scripts.staking.deploy_staking_contract import deploy
-from tests.test_helper import L2Diamonds
+from tests.test_helper import ERC721, L2Diamonds
 
 
 @pytest.fixture
@@ -253,6 +254,11 @@ def deployed_erc721a_mock(from_admin) -> ERC721AMock:
 
 
 @pytest.fixture
+def deployed_erc20_mock(from_admin) -> ERC20Mock:
+    return ERC20Mock.deploy(from_admin)
+
+
+@pytest.fixture
 def deployed_eth_zksync_mock(from_admin) -> ETHZkSyncMock:
     return ETHZkSyncMock.deploy(True, True, True, from_admin)
 
@@ -327,4 +333,16 @@ def naffle_vrf(coordinator_mock, gas_lane_key_hash, from_admin):
         100000,
         3,
         from_admin
+    )
+
+
+@pytest.fixture
+def default_token_info(
+    deployed_erc721a_mock
+):
+    return (
+        deployed_erc721a_mock.address,
+        1,
+        1,
+        ERC721
     )
