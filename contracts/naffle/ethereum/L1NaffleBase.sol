@@ -51,7 +51,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _proof
         );
         (string memory action, uint256 naffleId, address winner) = abi.decode(_message, (string, uint256, address));
-        _setWinnerAndTransferNFT(naffleId, winner);
+        _setWinnerAndTransferPrize(naffleId, winner);
     }
 
     /**

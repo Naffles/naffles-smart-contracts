@@ -2,6 +2,7 @@ import pytest
 from brownie import (
     Contract,
     ERC721AMock,
+    ERC20Mock,
     ETHZkSyncMock,
     FoundersKeyStaking,
     L1MessengerMock,
@@ -250,6 +251,11 @@ def deployed_test_facet_upgraded(from_admin) -> TestValueFacetUpgraded:
 @pytest.fixture
 def deployed_erc721a_mock(from_admin) -> ERC721AMock:
     return ERC721AMock.deploy(from_admin)
+
+
+@pytest.fixture
+def deployed_erc20_mock(from_admin) -> ERC20Mock:
+    return ERC20Mock.deploy(from_admin)
 
 
 @pytest.fixture

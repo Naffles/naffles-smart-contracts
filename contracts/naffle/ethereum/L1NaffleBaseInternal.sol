@@ -119,11 +119,11 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     }
 
     /**
-     * @notice set the winner of a naffle and transfer the NFT to that address.
+     * @notice set the winner of a naffle and transfer the price to that address.
      * @param _naffleId the id of the naffle.
      * @param _winner the address of the winner.
      */
-    function _setWinnerAndTransferNFT(
+    function _setWinnerAndTransferPrize(
         uint256 _naffleId,
         address _winner
     ) internal {
@@ -138,7 +138,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         } else if (tokenInfo.naffleTokenType == NaffleTypes.TokenContractType.ERC1155) {
             IERC1155(tokenInfo.tokenAddress).safeTransferFrom(address(this), _winner, tokenInfo.nftId, tokenInfo.amount, bytes(""));
         } else {
-            IERC20(tokenInfo.tokenAddress).safeTransferFrom(address(this), _winner, tokenInfo.amount);
+            IERC20(tokenInfo.tokenAddress).safeTransfer(_winner, tokenInfo.amount);
         } 
 
         emit L1NaffleWinnerSet(_naffleId, _winner);

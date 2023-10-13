@@ -10,6 +10,7 @@ from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
     setup_l2_naffle_diamond_with_facets,
 )
 from tests.test_helper import (
+    ERC20,
     ERC721,
     OPEN_ENTRY_TICKET_RATIO,
     NAFFLE_ID,
@@ -738,6 +739,7 @@ def test_set_winner(
     l2_diamonds.naffle_base_facet.setWinner(1, 1, address, from_address)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
+
 
     # winning ticket id
     if naffle[9] != 1 and naffle[9] != 2:
