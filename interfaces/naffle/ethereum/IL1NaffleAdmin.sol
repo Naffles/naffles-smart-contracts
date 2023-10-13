@@ -59,4 +59,10 @@ interface IL1NaffleAdmin {
      * @param _naffleId the naffle id to cancel.
      */
     function adminCancelNaffle(uint256 _naffleId) external;
+
+    /**
+     * @notice sets the signature signer address.
+     * @param _signatureSignerAddress the new signature signer address.
+     */
+    function setSignatureSignerAddress(address _signatureSignerAddress) external;
 }

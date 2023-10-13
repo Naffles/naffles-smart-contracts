@@ -19,11 +19,6 @@ interface IL1NaffleBaseInternal {
     error InvalidEndTime(uint256 endTime);
 
     /**
-     * @notice thrown when the token type is invalid.
-     */
-    error InvalidTokenType();
-
-    /**
      * @notice thrown when there are an invalid number of ticket spots provided.
      * @param spots ticket spots.
      */
@@ -48,24 +43,19 @@ interface IL1NaffleBaseInternal {
      * @notice emitted when a naffle is created.
      * @param naffleId id of the naffle.
      * @param owner address of the owner.
-     * @param ethTokenAddress address of the ETH token.
-     * @param nftId id of the NFT.
      * @param paidTicketSpots number of paid ticket spots.
      * @param ticketPriceInWei price of the ticket in wei.
      * @param endTime end time of the naffle.
      * @param naffleType type of the naffle.
-     * @param tokenContractType type of the token contract.
      */
     event L1NaffleCreated(
+        NaffleTypes.NaffleTokenInformation naffleTokenInformation,
         uint256 naffleId,
         address indexed owner,
-        address indexed ethTokenAddress,
-        uint256 nftId,
         uint256 paidTicketSpots,
         uint256 ticketPriceInWei,
         uint256 endTime,
-        NaffleTypes.NaffleType naffleType,
-        NaffleTypes.TokenContractType tokenContractType
+        NaffleTypes.NaffleType naffleType
     );
 
     /**

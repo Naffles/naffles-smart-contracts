@@ -19,6 +19,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC20_INTERFACE_ID = 0x36372b07;
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
+    bytes32 constant EIP712DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
 
 
     /**
@@ -35,6 +36,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      * @param _ticketPriceInWei the price of a ticket in wei.
      * @param _endTime the end time of the naffle.
      * @param _naffleType the type of the naffle.
+     * @param _collectionSignatureParams the collection signature params.
      * @return naffleId the id of the naffle that is created.
      * @return txHash the hash of the transaction that is sent to the L2 naffle contract.
      */
@@ -44,9 +46,16 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         uint256 _ticketPriceInWei,
         uint256 _endTime,
         NaffleTypes.NaffleType _naffleType,
-        NaffleTypes.L2MessageParams memory _l2MessageParams
+        NaffleTypes.L2MessageParams memory _l2MessageParams,
+        NaffleTypes.CollectionSignatureParams memory _collectionSignatureParams
     ) internal returns (uint256 naffleId, bytes32 txHash) {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+
+        _validateCollectionSignature(
+            _naffleTokenInformation,
+            _collectionSignatureParams,
+            layout.signatureSigner
+        );
 
         if (
             IERC721(layout.foundersKeyAddress).balanceOf(msg.sender) == 0 &&
@@ -116,6 +125,43 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         );
 
         emit L1NaffleCreated(_naffleTokenInformation, naffleId, msg.sender, _paidTicketSpots, _ticketPriceInWei, _endTime, _naffleType);
+    }
+
+    function _validateCollectionSignature(
+        NaffleTypes.NaffleTokenInformation memory _naffleTokenInformation,
+        NaffleTypes.CollectionSignatureParams memory _collectionSignatureParams,
+        address _signatureSigner
+    ) internal view {
+        bytes32 domainSeparator = keccak256(
+            abi.encode(
+                EIP712DOMAIN_TYPEHASH,
+                keccak256(bytes(_collectionSignatureParams.collectionSignatureData.name)),
+                keccak256(bytes(_collectionSignatureParams.collectionSignatureData.version)),
+                _getChainId(),
+                address(this)
+            )
+        );
+
+        bytes32 dataHash = keccak256(
+            abi.encodePacked(
+                _naffleTokenInformation.tokenAddress,
+                _collectionSignatureParams.collectionSignatureData.whitelistVersion
+            )
+        );
+        
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                domainSeparator,
+                dataHash
+            )
+        );
+
+        (uint8 v, bytes32 r, bytes32 s) = splitSignature(_collectionSignatureParams.collectionSignature);
+        address signer = ecrecover(digest, v, r, s);
+        if (signer != _signatureSigner) {
+            revert InvalidSignature();
+        }
     }
 
     /**
@@ -343,6 +389,14 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     }
 
     /**
+     * @notice sets the signature signer address.
+     * @param _signatureSignerAddress the signature signer address.
+     */
+    function _setSignatureSignerAddress(address _signatureSignerAddress) internal {
+        L1NaffleBaseStorage.layout().signatureSigner = _signatureSignerAddress;
+    }
+
+    /**
      * @notice gets the naffle by id.
      * @param _naffleId the id of the naffle.
      * @return naffle the naffle.
@@ -360,12 +414,29 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         L1NaffleBaseStorage.layout().minL2ForwardedGasForCreateNaffle = _minL2ForwardedGasForCreateNaffle;
     }
 
-
     /**
      * @notice sets minimum gas limit foir the L2 transaction in _createNaffle
      * @param _minL2GasLimit the minimum gas limit for the L2 transaction in _createNaffle
      */
     function _setMinL2GasLimit(uint256 _minL2GasLimit) internal {
         L1NaffleBaseStorage.layout().minL2GasLimitForCreateNaffle = _minL2GasLimit;
+    }
+
+    function _getChainId() internal view returns (uint256) {
+        uint256 chainId;
+        assembly {
+            chainId := chainid()
+        }
+        return chainId;
+    }
+
+    function splitSignature(bytes memory sig) internal pure returns (uint8 v, bytes32 r, bytes32 s) {
+        require(sig.length == 65, "Invalid signature length");
+
+        assembly {
+            r := mload(add(sig, 32))
+            s := mload(add(sig, 64))
+            v := byte(0, mload(add(sig, 96)))
+        }
     }
 }

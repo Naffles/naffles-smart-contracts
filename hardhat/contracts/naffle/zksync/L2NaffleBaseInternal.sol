@@ -33,10 +33,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
 
         layout.naffles[_params.naffleId] = NaffleTypes.L2Naffle({
-            ethTokenAddress: _params.ethTokenAddress,
+            naffleTokenInformation: _params.naffleTokenInformation,
             owner: _params.owner,
             naffleId: _params.naffleId,
-            nftId: _params.nftId,
             paidTicketSpots: _params.paidTicketSpots,
             openEntryTicketSpots: openEntryTicketSpots,
             numberOfPaidTickets: 0,
@@ -44,23 +43,19 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             ticketPriceInWei: _params.ticketPriceInWei,
             endTime: _params.endTime,
             winningTicketId: 0,
-            winningTicketType: NaffleTypes.TicketType.NONE,
             status: NaffleTypes.NaffleStatus.ACTIVE,
-            naffleTokenType: _params.naffleTokenType,
             naffleType: _params.naffleType
         });
 
         emit L2NaffleCreated(
+            _params.naffleTokenInformation,
             _params.naffleId,
             _params.owner,
-            _params.ethTokenAddress,
-            _params.nftId,
             _params.paidTicketSpots,
             openEntryTicketSpots,
             _params.ticketPriceInWei,
             _params.endTime,
-            _params.naffleType,
-            _params.naffleTokenType
+            _params.naffleType
         );
     }
 
@@ -80,7 +75,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
-        if (naffle.ethTokenAddress == address(0)) {
+        if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
@@ -173,7 +168,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
-        if (naffle.ethTokenAddress == address(0)) {
+        if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
@@ -272,7 +267,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
-        if (naffle.ethTokenAddress == address(0)) {
+        if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
 
@@ -330,7 +325,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
     function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle) private {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-        if (naffle.ethTokenAddress == address(0)) {
+        if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(naffle.naffleId);
         }
 
@@ -358,6 +353,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         uint256 winningTicketId = _randomNumber % (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries) + 1;
 
+        naffle.winningTicketId = winningTicketId;
         naffle.status = NaffleTypes.NaffleStatus.FINISHED;
         uint256 totalFundsRaised = naffle.ticketPriceInWei * naffle.numberOfPaidTickets;
         uint256 platformFee = totalFundsRaised * layout.platformFee / DENOMINATOR;
@@ -410,7 +406,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     ) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
-        if (naffle.ethTokenAddress == address(0)) {
+        if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
         if (naffle.naffleType == NaffleTypes.NaffleType.UNLIMITED) {
