@@ -54,8 +54,9 @@ class CollectionWhitelist(EIP712Struct):
 
 
 @pytest.fixture
-def admin(private_key) -> LocalAccount:
+def admin(private_key, address) -> LocalAccount:
     local = accounts.add(private_key=private_key)
+    address.transfer(local, "0.01 ether")
     return local
 
 

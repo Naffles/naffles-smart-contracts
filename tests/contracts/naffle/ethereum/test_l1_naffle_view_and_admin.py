@@ -5,6 +5,7 @@ from brownie import ZERO_ADDRESS, L1NaffleAdmin
 from eth_abi import encode
 
 from scripts.util import add_facet, get_selectors, get_error_message
+from tests.conftest import default_collection_signature_params
 from tests.contracts.naffle.ethereum.test_l1_naffle_base import setup_l1_naffle_contract, MINIMUM_PAID_TICKET_SPOTS, \
     MINIMUM_TICKET_PRICE
 from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
@@ -335,6 +336,7 @@ def test_admin_cancel_naffle(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
     zksync_l1_message_account,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -368,6 +370,7 @@ def test_admin_cancel_naffle(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
+        default_collection_signature_params,
         {'from': address, 'value': 1163284000000000}
     )
 
@@ -388,6 +391,7 @@ def test_get_naffle_by_id(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
     zksync_l1_message_account,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -421,6 +425,7 @@ def test_get_naffle_by_id(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
+        default_collection_signature_params,
         {'from': address, 'value': 1163284000000000}
     )
 
