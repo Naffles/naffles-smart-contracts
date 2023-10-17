@@ -139,7 +139,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
                 EIP712_DOMAIN_TYPE,
                 keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.name)),
                 keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.version)),
-                _getChainId(),
+                block.chainid,
                 address(this)
             )
         );
@@ -443,10 +443,9 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     }
 
     function _getChainId() internal view returns (uint256) {
-        return 1337;
         uint256 chainId;
         assembly {
-            chainId := 1337
+            chainId := chainid() 
         }
         return chainId;
     }

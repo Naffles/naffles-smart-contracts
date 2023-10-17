@@ -356,7 +356,7 @@ def naffle_vrf(coordinator_mock, gas_lane_key_hash, from_admin):
 def eip712_domain(deployed_l1_naffle_diamond):
     return make_domain(name='name',
                        version='1',
-                       chainId=1337,
+                       chainId=1,
                        verifyingContract=deployed_l1_naffle_diamond.address)
 
 
