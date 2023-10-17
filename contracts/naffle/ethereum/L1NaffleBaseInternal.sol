@@ -133,14 +133,13 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         NaffleTypes.CollectionSignatureParams memory _collectionSignatureParams,
         address _signatureSigner
     ) internal view {
-        address verifyingContract = 0x0000000000000000000000000000000000000000;
         bytes32 domainSeparator = keccak256(
             abi.encode(
                 EIP712_DOMAIN_TYPE,
                 keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.name)),
                 keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.version)),
                 _getChainId(),
-                verifyingContract
+                address(this)
             )
         );
 
