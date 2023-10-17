@@ -38,13 +38,12 @@ from brownie.network.account import _PrivateKeyAccount, Account, LocalAccount
 from scripts.staking.deploy_staking_contract import deploy
 from tests.test_helper import ERC721, L2Diamonds
 
-import os
 import sha3
 
-from eip712_structs import EIP712Struct, Address, String, Uint
+from eip712_structs import EIP712Struct, Address, String 
 from eip712_structs import make_domain
 from eth_utils import big_endian_to_int
-from coincurve import PrivateKey, PublicKey
+from coincurve import PrivateKey 
 
 keccak_hash = lambda x : sha3.keccak_256(x).digest()
 
@@ -406,7 +405,7 @@ def default_collection_whitelist_signature_erc721(
 def default_collection_signature_params(
         default_collection_whitelist_signature_erc721):
     return (
-        ("name", "1", "1"),
+        ("name", "1"),
         default_collection_whitelist_signature_erc721
     )
 
@@ -415,7 +414,7 @@ def default_collection_signature_params(
 def collection_signature_params_erc20(
         default_collection_whitelist_signature_erc20):
     return (
-        ("name", "1", "1"),
+        ("name", "1"),
         default_collection_whitelist_signature_erc20
     )
 

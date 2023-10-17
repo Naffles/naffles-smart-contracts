@@ -65,4 +65,10 @@ interface IL1NaffleAdmin {
      * @param _signatureSignerAddress the new signature signer address.
      */
     function setSignatureSignerAddress(address _signatureSignerAddress) external;
+
+    /**
+     * @notice sets the collection signature
+     * @param _collectionSignature the new collection signature.
+     */
+    function setCollectionWhitelistSignature(bytes32 _collectionSignature) external;
 }

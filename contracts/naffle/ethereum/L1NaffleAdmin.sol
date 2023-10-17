@@ -76,4 +76,11 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
     function setSignatureSignerAddress(address _signatureSignerAddress) external onlyRole(_getAdminRole()) {
         _setSignatureSignerAddress(_signatureSignerAddress);
     }
+
+    /**
+     * @inheritdoc IL1NaffleAdmin
+     */
+    function setCollectionWhitelistSignature(bytes32 _collectionSignature) external onlyRole(_getAdminRole()) {
+        _setCollectionWhitelistSignature(_collectionSignature);
+    }
 }

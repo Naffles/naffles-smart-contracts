@@ -32,6 +32,7 @@ library L1NaffleBaseStorage {
         mapping(uint256 => address) naffleWinner;
         mapping(uint256 => mapping(uint256 => bool)) isL2ToL1MessageProcessed;
         address signatureSigner; 
+        bytes32 collectionWhitelistSignature;
     }
 
     /**

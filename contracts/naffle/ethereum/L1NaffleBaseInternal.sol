@@ -20,7 +20,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
     bytes32 constant EIP712_DOMAIN_TYPE = keccak256(abi.encodePacked("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"));
-    bytes32 constant COLLECTION_SIGNATURE_TYPE = keccak256(abi.encodePacked("CollectionWhitelist(address tokenAddress)"));
 
 
     /**
@@ -55,7 +54,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         _validateCollectionSignature(
             _naffleTokenInformation,
             _collectionSignatureParams,
-            layout.signatureSigner
+            layout.signatureSigner,
+            layout.collectionWhitelistSignature
         );
 
         if (
@@ -131,7 +131,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     function _validateCollectionSignature(
         NaffleTypes.NaffleTokenInformation memory _naffleTokenInformation,
         NaffleTypes.CollectionSignatureParams memory _collectionSignatureParams,
-        address _signatureSigner
+        address _signatureSigner,
+        bytes32 _collectionWhitelistSignature
     ) internal view {
         bytes32 domainSeparator = keccak256(
             abi.encode(
@@ -145,7 +146,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
 
         bytes32 dataHash = keccak256(
             abi.encode(
-                COLLECTION_SIGNATURE_TYPE,
+                _collectionWhitelistSignature,
                 _naffleTokenInformation.tokenAddress
             )
         );
@@ -431,6 +432,14 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      */
     function _setMinL2GasLimit(uint256 _minL2GasLimit) internal {
         L1NaffleBaseStorage.layout().minL2GasLimitForCreateNaffle = _minL2GasLimit;
+    }
+
+    /**
+     * @notice sets the collection signature
+     * @param _collectionSignature the new collection signature.
+     */
+    function _setCollectionWhitelistSignature(bytes32 _collectionSignature) internal {
+        L1NaffleBaseStorage.layout().collectionWhitelistSignature = _collectionSignature;
     }
 
     function _getChainId() internal view returns (uint256) {

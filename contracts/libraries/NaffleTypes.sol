@@ -10,7 +10,6 @@ library NaffleTypes {
     struct CollectionSignatureData {
         string name;
         string version;
-        string whitelistVersion;
     }
 
     struct CollectionSignatureParams {
