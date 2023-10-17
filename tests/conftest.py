@@ -381,11 +381,13 @@ def default_collection_whitelist_signature(
     signable_bytes = msg.signable_bytes(eip712_domain)
     signer = PrivateKey.from_hex(ADMIN_PRIVATE_KEY)
     signature = signer.sign_recoverable(signable_bytes, hasher=keccak_hash)
+    print(signature.hex())
 
     v = signature[64] + 27
     r = big_endian_to_int(signature[0:32])
     s = big_endian_to_int(signature[32:64])
     final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
+    print(final_sig.hex())
     return final_sig
 
 
