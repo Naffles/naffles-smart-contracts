@@ -44,9 +44,6 @@ def test_create_naffle_not_allowed(
     l2_message_params,
     default_collection_signature_params
 ):
-    print("*********")
-    print(deployed_l1_naffle_diamond.address)
-
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
         deployed_l1_naffle_diamond,
@@ -62,7 +59,7 @@ def test_create_naffle_not_allowed(
     amount = 1
 
     token_info = (
-        deployed_founders_key_staking.address,
+        deployed_erc721a_mock.address,
         nft_id,
         amount,
         0
@@ -384,7 +381,7 @@ def test_create_naffle_erc20(
     deployed_l1_naffle_view_facet,
     deployed_erc20_mock,
     deployed_eth_zksync_mock,
-    default_collection_signature_params,
+    collection_signature_params_erc20,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -417,7 +414,7 @@ def test_create_naffle_erc20(
         datetime.datetime.now().timestamp() + 1000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
-        default_collection_signature_params,
+        collection_signature_params_erc20,
         {'from': address, 'value': 1163284000000000}
     )
     assert deployed_eth_zksync_mock.called()
@@ -562,7 +559,7 @@ def test_process_message_from_l2_set_winner_erc20(
     deployed_erc20_mock,
     deployed_eth_zksync_mock,
     zksync_l1_message_account,
-    default_collection_signature_params,
+    collection_signature_params_erc20,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -595,7 +592,7 @@ def test_process_message_from_l2_set_winner_erc20(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
-        default_collection_signature_params,
+        collection_signature_params_erc20,
         {'from': address, 'value': 1163284000000000}
     )
     assert deployed_erc20_mock.balanceOf(deployed_l1_naffle_diamond.address) == 100

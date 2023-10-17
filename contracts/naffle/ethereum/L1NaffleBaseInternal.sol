@@ -19,8 +19,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC20_INTERFACE_ID = 0x36372b07;
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
-    string constant EIP712_DOMAIN_TYPE = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)";
-    string constant COLLECTION_SIGNATURE_TYPE = "CollectionWhitelist(string tokenAddress)";
+    bytes32 constant EIP712_DOMAIN_TYPE = keccak256(abi.encodePacked("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"));
+    bytes32 constant COLLECTION_SIGNATURE_TYPE = keccak256(abi.encodePacked("CollectionWhitelist(address tokenAddress)"));
 
 
     /**
@@ -136,7 +136,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         address verifyingContract = 0x0000000000000000000000000000000000000000;
         bytes32 domainSeparator = keccak256(
             abi.encode(
-                keccak256(abi.encodePacked(EIP712_DOMAIN_TYPE)),
+                EIP712_DOMAIN_TYPE,
                 keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.name)),
                 keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.version)),
                 _getChainId(),
@@ -146,9 +146,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
 
         bytes32 dataHash = keccak256(
             abi.encode(
-                keccak256(abi.encodePacked(COLLECTION_SIGNATURE_TYPE)),
-                verifyingContract
-                //_naffleTokenInformation.tokenAddress
+                COLLECTION_SIGNATURE_TYPE,
+                _naffleTokenInformation.tokenAddress
             )
         );
         
