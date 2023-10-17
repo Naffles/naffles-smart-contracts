@@ -34,5 +34,6 @@ contract L1NaffleDiamond is SolidStateDiamond, AccessControl, L1NaffleBaseIntern
         // pre calculated minimum gas required
         _setMinL2ForwardedGas(1163284000000000);
         _setMinL2GasLimit(2326568);
+        _setSignatureSignerAddress(msg.sender);
     }
 }

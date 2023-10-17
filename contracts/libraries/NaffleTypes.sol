@@ -7,11 +7,6 @@ library NaffleTypes {
         uint256 l2GasPerPubdataByteLimit;
     }
 
-    struct TokenAddress {
-        address tokenAddress;
-        uint256 whitelistVersion;
-    }
-
     struct CollectionSignatureData {
         string name;
         string version;

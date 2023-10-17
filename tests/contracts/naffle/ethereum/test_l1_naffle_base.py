@@ -1,8 +1,9 @@
 import datetime
 
 import brownie
-from brownie import ZERO_ADDRESS
+from brownie import ZERO_ADDRESS, network
 from eth_abi import encode
+from tests.conftest import default_collection_signature_params
 from web3 import Web3
 
 from scripts.util import ZKSYNC_ADDRESS, get_error_message
@@ -40,8 +41,12 @@ def test_create_naffle_not_allowed(
     deployed_founders_key_staking,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
-    l2_message_params
+    l2_message_params,
+    default_collection_signature_params
 ):
+    print("*********")
+    print(deployed_l1_naffle_diamond.address)
+
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
         deployed_l1_naffle_diamond,
@@ -63,6 +68,8 @@ def test_create_naffle_not_allowed(
         0
     )
 
+    print(brownie.network.chain.id)
+
     with brownie.reverts(get_error_message("NotAllowed", [], [])):
         base_facet.createNaffle(
             token_info,
@@ -71,6 +78,7 @@ def test_create_naffle_not_allowed(
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
             l2_message_params,
+            default_collection_signature_params,
             from_address
         )
 
@@ -84,7 +92,8 @@ def test_create_naffle_invalid_end_time(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
-    l2_message_params
+    l2_message_params,
+    default_collection_signature_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -116,6 +125,7 @@ def test_create_naffle_invalid_end_time(
             end_time,
             STANDARD_NAFFLE_TYPE,
             l2_message_params,
+            default_collection_signature_params,
             from_address
         )
 
@@ -129,6 +139,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -165,7 +176,9 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots(
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 10000,
             STANDARD_NAFFLE_TYPE,
-            l2_message_params,  from_address
+            l2_message_params,
+            default_collection_signature_params,
+            from_address
         )
 
 
@@ -178,6 +191,7 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -214,7 +228,9 @@ def test_create_naffle_invalid_minimum_paid_ticket_spots_unlimited_type(
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 10000,
             UNLIMITED_NAFFLE_TYPE,
-            l2_message_params,  from_address
+            l2_message_params,
+            default_collection_signature_params,
+            from_address
         )
 
 
@@ -227,6 +243,7 @@ def test_create_naffle_invalid_token_type(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -255,7 +272,9 @@ def test_create_naffle_invalid_token_type(
             MINIMUM_TICKET_PRICE,
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
-            l2_message_params,  from_address
+            l2_message_params,
+            default_collection_signature_params,
+            from_address
         )
 
 
@@ -268,6 +287,7 @@ def test_create_naffle_no_approval(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -300,6 +320,7 @@ def test_create_naffle_no_approval(
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
             l2_message_params,
+            default_collection_signature_params,
             from_address
         )
 
@@ -313,6 +334,7 @@ def test_create_naffle_invalid_gas_supplied(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -347,6 +369,7 @@ def test_create_naffle_invalid_gas_supplied(
             datetime.datetime.now().timestamp() + 1000,
             STANDARD_NAFFLE_TYPE,
             l2_message_params,
+            default_collection_signature_params,
             from_address
         )
 
@@ -361,6 +384,7 @@ def test_create_naffle_erc20(
     deployed_l1_naffle_view_facet,
     deployed_erc20_mock,
     deployed_eth_zksync_mock,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -393,6 +417,7 @@ def test_create_naffle_erc20(
         datetime.datetime.now().timestamp() + 1000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
+        default_collection_signature_params,
         {'from': address, 'value': 1163284000000000}
     )
     assert deployed_eth_zksync_mock.called()
@@ -409,6 +434,7 @@ def test_create_naffle_zksync_called(
     deployed_l1_naffle_view_facet,
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -442,6 +468,7 @@ def test_create_naffle_zksync_called(
         datetime.datetime.now().timestamp() + 1000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
+        default_collection_signature_params,
         {'from': address, 'value': 1163284000000000}
     )
     assert deployed_eth_zksync_mock.called()
@@ -459,6 +486,7 @@ def test_process_message_from_l2_set_winner(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
     zksync_l1_message_account,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -492,6 +520,7 @@ def test_process_message_from_l2_set_winner(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
+        default_collection_signature_params,
         {'from': address, 'value': 1163284000000000}
     )
 
@@ -533,6 +562,7 @@ def test_process_message_from_l2_set_winner_erc20(
     deployed_erc20_mock,
     deployed_eth_zksync_mock,
     zksync_l1_message_account,
+    default_collection_signature_params,
     l2_message_params
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
@@ -565,6 +595,7 @@ def test_process_message_from_l2_set_winner_erc20(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
+        default_collection_signature_params,
         {'from': address, 'value': 1163284000000000}
     )
     assert deployed_erc20_mock.balanceOf(deployed_l1_naffle_diamond.address) == 100
@@ -606,7 +637,8 @@ def test_process_message_from_l2_set_winner(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
     zksync_l1_message_account,
-    l2_message_params
+    l2_message_params,
+    default_collection_signature_params,
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -639,6 +671,7 @@ def test_process_message_from_l2_set_winner(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
+        default_collection_signature_params,
         {'from': address, 'value': 1163284000000000}
     )
 
@@ -680,7 +713,8 @@ def test_process_message_from_l2_set_winner_invalid_hash(
     deployed_erc721a_mock,
     deployed_eth_zksync_mock,
     zksync_l1_message_account,
-    l2_message_params
+    l2_message_params,
+    default_collection_signature_params,
 ):
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
@@ -713,6 +747,7 @@ def test_process_message_from_l2_set_winner_invalid_hash(
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
+        default_collection_signature_params,
         {'from': address, 'value': 1163284000000000}
     )
 

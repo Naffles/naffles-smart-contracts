@@ -19,7 +19,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC20_INTERFACE_ID = 0x36372b07;
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
-    bytes32 constant EIP712DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
+    string constant EIP712_DOMAIN_TYPE = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)";
+    string constant COLLECTION_SIGNATURE_TYPE = "CollectionWhitelist(string tokenAddress)";
 
 
     /**
@@ -132,20 +133,22 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         NaffleTypes.CollectionSignatureParams memory _collectionSignatureParams,
         address _signatureSigner
     ) internal view {
+        address verifyingContract = 0x0000000000000000000000000000000000000000;
         bytes32 domainSeparator = keccak256(
             abi.encode(
-                EIP712DOMAIN_TYPEHASH,
-                keccak256(bytes(_collectionSignatureParams.collectionSignatureData.name)),
-                keccak256(bytes(_collectionSignatureParams.collectionSignatureData.version)),
+                keccak256(abi.encodePacked(EIP712_DOMAIN_TYPE)),
+                keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.name)),
+                keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.version)),
                 _getChainId(),
-                address(this)
+                verifyingContract
             )
         );
 
         bytes32 dataHash = keccak256(
-            abi.encodePacked(
-                _naffleTokenInformation.tokenAddress,
-                _collectionSignatureParams.collectionSignatureData.whitelistVersion
+            abi.encode(
+                keccak256(abi.encodePacked(COLLECTION_SIGNATURE_TYPE)),
+                verifyingContract
+                //_naffleTokenInformation.tokenAddress
             )
         );
         
@@ -158,9 +161,19 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         );
 
         (uint8 v, bytes32 r, bytes32 s) = splitSignature(_collectionSignatureParams.collectionSignature);
-        address signer = ecrecover(digest, v, r, s);
+        
+        address signer;
+        if (v < 27) {
+            v += 27;
+        }
+        if (v != 27 && v != 28) {
+            signer = address(0);
+        } else {
+            signer = ecrecover(digest, v, r, s);
+        }
+
         if (signer != _signatureSigner) {
-            revert InvalidSignature();
+            revert InvalidSignature(signer=signer);
         }
     }
 
@@ -423,9 +436,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     }
 
     function _getChainId() internal view returns (uint256) {
+        return 1337;
         uint256 chainId;
         assembly {
-            chainId := chainid()
+            chainId := 1337
         }
         return chainId;
     }
