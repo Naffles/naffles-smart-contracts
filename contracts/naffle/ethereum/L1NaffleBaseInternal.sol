@@ -171,7 +171,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         address signer = Signature.getSigner(digest, _collectionSignatureParams.collectionSignature);
 
         if (signer != _signatureSigner) {
-            revert InvalidSignature(signer=signer);
+            revert InvalidSignature();
         }
     }
 

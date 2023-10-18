@@ -20,8 +20,9 @@ library NaffleTypes {
     struct PlatformDiscountData {
         string name;
         string version;
+        // 100 = 1%
         uint256 platformDiscountInPercent;
-        address winner;
+        uint256 expireTimestamp;
     }
 
     struct PlatformDiscountParams {

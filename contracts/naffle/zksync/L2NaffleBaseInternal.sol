@@ -359,8 +359,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
+        if (_platformDiscountParams.platformDiscountData.expireTimestamp < block.timestamp) {
+            revert InvalidSignature();
+        }
+
         _validatePlatformDiscountSignature(
             _platformDiscountParams,
+            _winner,
             layout.platformDiscountSignatureHash,
             layout.signatureSigner
         );
@@ -371,6 +376,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         naffle.status = NaffleTypes.NaffleStatus.FINISHED;
         uint256 totalFundsRaised = naffle.ticketPriceInWei * naffle.numberOfPaidTickets;
         uint256 platformFee = totalFundsRaised * layout.platformFee / DENOMINATOR;
+
+        if (_platformDiscountParams.platformDiscountData.platformDiscountInPercent > 0) {
+            platformFee = platformFee * (DENOMINATOR - _platformDiscountParams.platformDiscountData.platformDiscountInPercent) / DENOMINATOR;
+        }
+
         uint256 amountToTransfer = totalFundsRaised - platformFee;
 
         bytes memory message = abi.encode("setWinner", _naffleId, _winner);
@@ -394,11 +404,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @notice validate the platform discount signature.
      * @dev if the signature is invalid, an InvalidSignature error is thrown.
      * @param _platformDiscountParams the platform discount params.
+     * @param _winner the winner of the naffle.
      * @param _platformDiscountSignatureHash the platform discount signature.
      * @param _signatureSigner the signer of the signature.
      */
     function _validatePlatformDiscountSignature(
         NaffleTypes.PlatformDiscountParams memory _platformDiscountParams,
+        address _winner,
         bytes32 _platformDiscountSignatureHash,
         address _signatureSigner
     ) internal view {
@@ -416,7 +428,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             abi.encode(
                 _platformDiscountSignatureHash,
                 _platformDiscountParams.platformDiscountData.platformDiscountInPercent,
-                _platformDiscountParams.platformDiscountData.winner
+                _winner,
+                _platformDiscountParams.platformDiscountData.expireTimestamp
             )
         );
         
@@ -431,9 +444,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         address signer = Signature.getSigner(digest, _platformDiscountParams.platformDiscountSignature);
 
         if (signer != _signatureSigner) {
-            revert InvalidSignature(signer=signer);
+            revert InvalidSignature();
         }
-
     }
 
     /**

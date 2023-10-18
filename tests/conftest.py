@@ -55,6 +55,7 @@ class CollectionWhitelist(EIP712Struct):
 class PlatformDiscount(EIP712Struct):
     platformDiscountInPercent = Uint(256)
     winner = Address()
+    expireTimestamp = Uint(256)
 
 
 @pytest.fixture
@@ -409,10 +410,18 @@ def default_collection_whitelist_signature_erc721(
 
 
 @pytest.fixture
-def platform_discount_signature(private_key, l2_eip712_domain, address):
+def expire_timestamp():
+    # return timestamp in 1 hour
+    import time
+    return int(time.time()) + 3600
+
+
+@pytest.fixture
+def platform_discount_signature(private_key, l2_eip712_domain, address, expire_timestamp):
     msg = PlatformDiscount()
     msg['platformDiscountInPercent'] = 50
     msg['winner'] = address.address
+    msg['expireTimestamp'] = expire_timestamp
 
     signable_bytes = msg.signable_bytes(l2_eip712_domain)
     signer = PrivateKey.from_hex(private_key)
@@ -424,12 +433,14 @@ def platform_discount_signature(private_key, l2_eip712_domain, address):
     final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
     return final_sig
 
+
 @pytest.fixture
 def platform_discount_params(
-    platform_discount_signature, address
+    platform_discount_signature, expire_timestamp
 ):
+    print(expire_timestamp)
     return (
-        ("name", "1", 50, address.address),
+        ("name", "1", 5000, expire_timestamp),
         platform_discount_signature
     )
     

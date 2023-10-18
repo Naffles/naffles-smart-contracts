@@ -14,9 +14,8 @@ interface IL2NaffleBaseInternal {
 
     /**
      * @notice thrown when invalid signature is provided
-     * @param signer address of the signer.
      */
-    error InvalidSignature(address signer);
+    error InvalidSignature();
 
 
     /**
