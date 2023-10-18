@@ -419,7 +419,7 @@ def expire_timestamp():
 @pytest.fixture
 def platform_discount_signature(private_key, l2_eip712_domain, address, expire_timestamp):
     msg = PlatformDiscount()
-    msg['platformDiscountInPercent'] = 50
+    msg['platformDiscountInPercent'] = 5000
     msg['winner'] = address.address
     msg['expireTimestamp'] = expire_timestamp
 
@@ -436,9 +436,8 @@ def platform_discount_signature(private_key, l2_eip712_domain, address, expire_t
 
 @pytest.fixture
 def platform_discount_params(
-    platform_discount_signature, expire_timestamp
+    platform_discount_signature, expire_timestamp 
 ):
-    print(expire_timestamp)
     return (
         ("name", "1", 5000, expire_timestamp),
         platform_discount_signature

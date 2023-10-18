@@ -747,7 +747,7 @@ def test_set_winner(
 
     assert naffle[10] == 4  # naffle status finished
 
-    assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.99)
+    assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.995)
 
 
 def test_owner_cancel_naffle_invalid_status(
