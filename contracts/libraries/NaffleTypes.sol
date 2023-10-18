@@ -17,6 +17,18 @@ library NaffleTypes {
         bytes collectionSignature;
     }
 
+    struct PlatformDiscountData {
+        string name;
+        string version;
+        uint256 platformDiscountInPercent;
+        uint256 expireTimestamp;
+    }
+
+    struct PlatformDiscountParams {
+        PlatformDiscountData platformDiscountData;
+        bytes platformDiscountSignature;
+    }
+
     struct CreateZkSyncNaffleParams {
         NaffleTokenInformation naffleTokenInformation;
         address owner;

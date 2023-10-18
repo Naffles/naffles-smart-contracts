@@ -26,6 +26,8 @@ library L2NaffleBaseStorage {
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
         uint256 platformFeesAccumulated;
         mapping(uint256 => bool) naffleRandomNumberRequested;
+        bytes32 platformDiscountSignatureHash;
+        address signatureSigner;
     }
 
     /**

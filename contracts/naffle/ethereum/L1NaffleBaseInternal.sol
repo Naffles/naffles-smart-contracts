@@ -129,6 +129,14 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         emit L1NaffleCreated(_naffleTokenInformation, naffleId, msg.sender, _paidTicketSpots, _ticketPriceInWei, _endTime, _naffleType);
     }
 
+    /**
+     * @notice Validates the collection signature.
+     * @dev if the collection signature is invalid, an InvalidSignature error is thrown.
+     * @param _naffleTokenInformation the naffle token information.
+     * @param _collectionSignatureParams the collection signature params.
+     * @param _signatureSigner the signer of the collection signature.
+     * @param _collectionWhitelistSignature the collection whitelist signature.
+     */
     function _validateCollectionSignature(
         NaffleTypes.NaffleTokenInformation memory _naffleTokenInformation,
         NaffleTypes.CollectionSignatureParams memory _collectionSignatureParams,
@@ -431,13 +439,5 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      */
     function _setCollectionWhitelistSignature(bytes32 _collectionSignature) internal {
         L1NaffleBaseStorage.layout().collectionWhitelistSignature = _collectionSignature;
-    }
-
-    function _getChainId() internal view returns (uint256) {
-        uint256 chainId;
-        assembly {
-            chainId := chainid() 
-        }
-        return chainId;
     }
 }

@@ -71,4 +71,16 @@ interface IL2NaffleAdmin {
      * @param _vrfManager the new VRF manager address
      */
     function setVRFManager(address _vrfManager) external;
+
+    /**
+     * @notice sets the platformDiscountSignatureHash
+     * @param _platformDiscountSignatureHash the new platformDiscountSignatureHash
+     */
+    function setPlatformDiscountSignatureHash(bytes32 _platformDiscountSignatureHash) external;
+
+    /**
+     * @notice sets the signature signer address.
+     * @param _signatureSignerAddress the new signature signer address.
+     */
+    function setSignatureSignerAddress(address _signatureSignerAddress) external;
 }
