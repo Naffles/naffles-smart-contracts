@@ -21,6 +21,7 @@ library NaffleTypes {
         string name;
         string version;
         uint256 platformDiscountInPercent;
+        address winner;
     }
 
     struct PlatformDiscountParams {

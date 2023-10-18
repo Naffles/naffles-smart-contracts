@@ -415,7 +415,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         bytes32 dataHash = keccak256(
             abi.encode(
                 _platformDiscountSignatureHash,
-                _platformDiscountParams.platformDiscountData.platformDiscountInPercent
+                _platformDiscountParams.platformDiscountData.platformDiscountInPercent,
+                _platformDiscountParams.platformDiscountData.winner
             )
         );
         

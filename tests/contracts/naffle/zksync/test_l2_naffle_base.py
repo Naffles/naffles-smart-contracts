@@ -741,7 +741,6 @@ def test_set_winner(
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 
-
     # winning ticket id
     if naffle[9] != 1 and naffle[9] != 2:
         pytest.fail("Naffle winning ticket id is not 1 or 2")

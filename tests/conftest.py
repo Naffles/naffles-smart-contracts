@@ -54,6 +54,7 @@ class CollectionWhitelist(EIP712Struct):
 
 class PlatformDiscount(EIP712Struct):
     platformDiscountInPercent = Uint(256)
+    winner = Address()
 
 
 @pytest.fixture
@@ -408,9 +409,10 @@ def default_collection_whitelist_signature_erc721(
 
 
 @pytest.fixture
-def platform_discount_signature(private_key, l2_eip712_domain):
+def platform_discount_signature(private_key, l2_eip712_domain, address):
     msg = PlatformDiscount()
     msg['platformDiscountInPercent'] = 50
+    msg['winner'] = address.address
 
     signable_bytes = msg.signable_bytes(l2_eip712_domain)
     signer = PrivateKey.from_hex(private_key)
@@ -424,10 +426,10 @@ def platform_discount_signature(private_key, l2_eip712_domain):
 
 @pytest.fixture
 def platform_discount_params(
-    platform_discount_signature
+    platform_discount_signature, address
 ):
     return (
-        ("name", "1", 50),
+        ("name", "1", 50, address.address),
         platform_discount_signature
     )
     
