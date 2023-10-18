@@ -66,7 +66,8 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         return _setWinner(
             _naffleId,
             _randomNumber,
-            _winner
+            _winner,
+            _platformDiscountParams
         );
     }
 

@@ -410,7 +410,7 @@ def default_collection_whitelist_signature_erc721(
 @pytest.fixture
 def platform_discount_signature(private_key, l2_eip712_domain):
     msg = PlatformDiscount()
-    msg['discount'] = 50
+    msg['platformDiscountInPercent'] = 50
 
     signable_bytes = msg.signable_bytes(l2_eip712_domain)
     signer = PrivateKey.from_hex(private_key)
