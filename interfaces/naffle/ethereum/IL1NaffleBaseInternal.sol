@@ -13,6 +13,12 @@ interface IL1NaffleBaseInternal {
     error NotAllowed();
 
     /**
+     * @notice thrown when invalid signature is provided
+     * @param signer address of the signer.
+     */
+    error InvalidSignature(address signer);
+
+    /**
      * @notice thrown when the end time provided to the naffle is not valid.
      * @param endTime provided end time.
      */

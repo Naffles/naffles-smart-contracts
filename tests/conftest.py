@@ -32,15 +32,31 @@ from brownie import (
     accounts,
     ZERO_ADDRESS
 )
-from brownie.network.account import _PrivateKeyAccount, Account
+from brownie import network
+from brownie.network.account import _PrivateKeyAccount, Account, LocalAccount
 
 from scripts.staking.deploy_staking_contract import deploy
 from tests.test_helper import ERC721, L2Diamonds
 
+import sha3
+
+from eip712_structs import EIP712Struct, Address, String 
+from eip712_structs import make_domain
+from eth_utils import big_endian_to_int
+from coincurve import PrivateKey 
+
+keccak_hash = lambda x : sha3.keccak_256(x).digest()
+
+
+class CollectionWhitelist(EIP712Struct):
+    tokenAddress = Address()
+
 
 @pytest.fixture
-def admin() -> _PrivateKeyAccount:
-    return accounts[0]
+def admin(private_key, address) -> LocalAccount:
+    local = accounts.add(private_key=private_key)
+    address.transfer(local, "0.01 ether")
+    return local
 
 
 @pytest.fixture
@@ -333,6 +349,73 @@ def naffle_vrf(coordinator_mock, gas_lane_key_hash, from_admin):
         100000,
         3,
         from_admin
+    )
+
+
+@pytest.fixture
+def eip712_domain(deployed_l1_naffle_diamond):
+    return make_domain(name='name',
+                       version='1',
+                       chainId=1,
+                       verifyingContract=deployed_l1_naffle_diamond.address)
+
+
+def get_collection_whitelist_signature(
+    private_key,
+    eip712_domain,
+    address
+):
+    msg = CollectionWhitelist()
+    msg['tokenAddress'] = address
+
+    struct_message_dict = msg.to_message(eip712_domain)
+    assert isinstance(struct_message_dict, dict)
+
+    struct_message_json = msg.to_message_json(eip712_domain)
+    assert isinstance(struct_message_json, str)
+
+    signable_bytes = msg.signable_bytes(eip712_domain)
+    signer = PrivateKey.from_hex(private_key)
+    signature = signer.sign_recoverable(signable_bytes, hasher=keccak_hash)
+
+    v = signature[64] + 27
+    r = big_endian_to_int(signature[0:32])
+    s = big_endian_to_int(signature[32:64])
+    final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
+    return final_sig
+
+
+@pytest.fixture()
+def default_collection_whitelist_signature_erc20(
+    eip712_domain, deployed_erc20_mock, private_key
+):
+    return get_collection_whitelist_signature(
+        private_key, eip712_domain, deployed_erc20_mock.address)
+
+
+@pytest.fixture
+def default_collection_whitelist_signature_erc721(
+    eip712_domain, deployed_erc721a_mock, private_key
+):
+    return get_collection_whitelist_signature(
+        private_key, eip712_domain, deployed_erc721a_mock.address)
+
+
+@pytest.fixture
+def default_collection_signature_params(
+        default_collection_whitelist_signature_erc721):
+    return (
+        ("name", "1"),
+        default_collection_whitelist_signature_erc721
+    )
+
+
+@pytest.fixture
+def collection_signature_params_erc20(
+        default_collection_whitelist_signature_erc20):
+    return (
+        ("name", "1"),
+        default_collection_whitelist_signature_erc20
     )
 
 

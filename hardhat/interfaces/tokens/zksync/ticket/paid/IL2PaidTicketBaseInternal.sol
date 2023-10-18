@@ -19,21 +19,9 @@ interface IL2PaidTicketBaseInternal {
     error NaffleNotCancelled(NaffleTypes.NaffleStatus status);
 
     /**
-     * @notice thrown when an invalid ticket id is passed.
-     * @param ticketId the ticket id passed.
-     */
-    error InvalidTicketId(uint256 ticketId);
-
-    /**
      * @notice thrown when the refund transaction failed.
      */
     error RefundFailed();
-
-    /**
-     * @notice thrown when the sender is not the owner of the ticket.
-     * @param sender the called of the method.
-     */
-    error NotTicketOwner(address sender);
 
     /**
      * @notice emitted when paid tickets are minted.

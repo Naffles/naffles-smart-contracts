@@ -7,6 +7,16 @@ library NaffleTypes {
         uint256 l2GasPerPubdataByteLimit;
     }
 
+    struct CollectionSignatureData {
+        string name;
+        string version;
+    }
+
+    struct CollectionSignatureParams {
+        CollectionSignatureData collectionSignatureData;
+        bytes collectionSignature;
+    }
+
     struct CreateZkSyncNaffleParams {
         NaffleTokenInformation naffleTokenInformation;
         address owner;

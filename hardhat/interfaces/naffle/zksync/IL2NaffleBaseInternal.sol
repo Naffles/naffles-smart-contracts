@@ -110,28 +110,24 @@ interface IL2NaffleBaseInternal {
 
     /**
      * @notice emitted when a naffle is created.
+     * @param naffleTokenInformation token information of the naffle.
      * @param naffleId id of the naffle.
      * @param owner address of the owner.
-     * @param ethTokenAddress address of the ETH token.
-     * @param nftId id of the NFT.
      * @param paidTicketSpots number of paid ticket spots.
      * @param openEntryTicketSpots number of free ticket spots.
      * @param ticketPriceInWei price of the ticket in wei.
      * @param endTime end time of the naffle.
      * @param naffleType type of the naffle.
-     * @param tokenContractType type of the token contract.
      */
     event L2NaffleCreated(
+        NaffleTypes.NaffleTokenInformation naffleTokenInformation,
         uint256 naffleId,
         address indexed owner,
-        address indexed ethTokenAddress,
-        uint256 nftId,
         uint256 paidTicketSpots,
         uint256 openEntryTicketSpots,
         uint256 ticketPriceInWei,
         uint256 endTime,
-        NaffleTypes.NaffleType indexed naffleType,
-        NaffleTypes.TokenContractType tokenContractType
+        NaffleTypes.NaffleType indexed naffleType
     );
 
     /**

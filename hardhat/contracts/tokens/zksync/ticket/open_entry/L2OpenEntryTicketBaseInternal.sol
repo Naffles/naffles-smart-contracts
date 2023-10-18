@@ -154,7 +154,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         for (uint256 i = 0; i < _amount; i++) {
             l.totalMinted++;
             _mint(_to, l.totalMinted);
-            NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0, false);
+            NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0);
             L2OpenEntryTicketStorage.layout().openEntryTickets[l.totalMinted] = ticket;
         }
     }
