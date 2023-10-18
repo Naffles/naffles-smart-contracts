@@ -728,6 +728,7 @@ def test_set_winner(
     from_admin,
     l2_diamonds,
     deployed_erc721a_mock,
+    platform_discount_params
 ):
     create_naffle_and_mint_tickets(
         address,
@@ -736,7 +737,7 @@ def test_set_winner(
         deployed_erc721a_mock,
     )
     old_balance = address.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, platform_discount_params, from_address)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 

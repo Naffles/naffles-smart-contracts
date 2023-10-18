@@ -40,7 +40,7 @@ from tests.test_helper import ERC721, L2Diamonds
 
 import sha3
 
-from eip712_structs import EIP712Struct, Address, String 
+from eip712_structs import EIP712Struct, Address, String, Uint
 from eip712_structs import make_domain
 from eth_utils import big_endian_to_int
 from coincurve import PrivateKey 
@@ -50,6 +50,10 @@ keccak_hash = lambda x : sha3.keccak_256(x).digest()
 
 class CollectionWhitelist(EIP712Struct):
     tokenAddress = Address()
+
+
+class PlatformDiscount(EIP712Struct):
+    platformDiscountInPercent = Uint(256)
 
 
 @pytest.fixture
@@ -360,6 +364,14 @@ def eip712_domain(deployed_l1_naffle_diamond):
                        verifyingContract=deployed_l1_naffle_diamond.address)
 
 
+@pytest.fixture
+def l2_eip712_domain(deployed_l2_naffle_diamond):
+    return make_domain(name='name',
+                       version='1',
+                       chainId=1,
+                       verifyingContract=deployed_l2_naffle_diamond.address)
+
+
 def get_collection_whitelist_signature(
     private_key,
     eip712_domain,
@@ -367,12 +379,6 @@ def get_collection_whitelist_signature(
 ):
     msg = CollectionWhitelist()
     msg['tokenAddress'] = address
-
-    struct_message_dict = msg.to_message(eip712_domain)
-    assert isinstance(struct_message_dict, dict)
-
-    struct_message_json = msg.to_message_json(eip712_domain)
-    assert isinstance(struct_message_json, str)
 
     signable_bytes = msg.signable_bytes(eip712_domain)
     signer = PrivateKey.from_hex(private_key)
@@ -400,6 +406,31 @@ def default_collection_whitelist_signature_erc721(
     return get_collection_whitelist_signature(
         private_key, eip712_domain, deployed_erc721a_mock.address)
 
+
+@pytest.fixture
+def platform_discount_signature(private_key, l2_eip712_domain):
+    msg = PlatformDiscount()
+    msg['discount'] = 50
+
+    signable_bytes = msg.signable_bytes(l2_eip712_domain)
+    signer = PrivateKey.from_hex(private_key)
+    signature = signer.sign_recoverable(signable_bytes, hasher=keccak_hash)
+
+    v = signature[64] + 27
+    r = big_endian_to_int(signature[0:32])
+    s = big_endian_to_int(signature[32:64])
+    final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
+    return final_sig
+
+@pytest.fixture
+def platform_discount_params(
+    platform_discount_signature
+):
+    return (
+        ("name", "1", 50),
+        platform_discount_signature
+    )
+    
 
 @pytest.fixture
 def default_collection_signature_params(
