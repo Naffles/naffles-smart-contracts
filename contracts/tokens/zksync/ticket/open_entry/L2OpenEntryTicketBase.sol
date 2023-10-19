@@ -62,4 +62,11 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
     function attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, uint256 startingTicketId, address owner) external onlyL2NaffleContract() {
         _attachToNaffle(_naffleId, _ticketIds, startingTicketId, owner);
     }
+
+    /**
+     * @inheritdoc IL2OpenEntryTicketBase
+     */
+    function mintOpenEntryTicketsForUser(address _to, uint256 _amount) external override onlyL2NaffleContract() {
+        _adminMint(_user, _amount);
+    }
 }

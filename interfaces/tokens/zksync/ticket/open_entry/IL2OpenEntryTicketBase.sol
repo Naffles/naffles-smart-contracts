@@ -24,4 +24,15 @@ interface IL2OpenEntryTicketBase {
      * @param _naffleTicketIds ids of the tickets on the naffle.
      */
     function detachFromNaffle(uint256 _naffleId, uint256[] memory _naffleTicketIds) external;
+
+    /**
+     * @notice mint open entry tickets for user.
+     * @dev method is called from the naffle contract.
+     * @param _to address of the user.
+     * @param _amount amount of tickets to mint.
+     */
+    function mintOpenEntryTicketsForUser(
+        address _to,
+        uint256 _amount
+    ) external;
 }

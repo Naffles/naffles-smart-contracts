@@ -29,6 +29,9 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         _setPlatformDiscountSignatureHash(
             keccak256(abi.encodePacked("PlatformDiscount(uint256 platformDiscountInPercent,address winner,uint256 expireTimestamp)"))
         );
+        _setExchangeRateSignatureHash(
+            keccak256(abi.encodePacked("RedeemedPaidTicketExchangeRate(uint128 exchangeRate,address targetAddress,uint256 expiresAt)"))
+        );
         _setDomainSignature(keccak256(abi.encodePacked("EIP712Domain(string name)")));
         _setDomainName(_domainName);
     }

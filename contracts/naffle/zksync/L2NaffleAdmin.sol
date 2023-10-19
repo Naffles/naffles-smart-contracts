@@ -112,4 +112,11 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
     function setDomainName(string memory _domainName) external onlyRole(_getAdminRole()) {
         _setDomainName(_domainName);
     }
+
+    /**
+     * @inheritdoc IL2NaffleAdmin
+     */
+    function setExchangeRateSignatureHash(bytes32 _exchangeRateSignatureHash) external onlyRole(_getAdminRole()) {
+        _setExchangeRateSignatureHash(_exchangeRateSignatureHash);
+    }
 }

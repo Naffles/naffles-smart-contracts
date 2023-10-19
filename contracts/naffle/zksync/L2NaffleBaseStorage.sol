@@ -30,6 +30,7 @@ library L2NaffleBaseStorage {
         address signatureSigner;
         bytes32 domainSignature;
         string domainName;
+        bytes32 exchangeRateSignatureHash;
     }
 
     /**

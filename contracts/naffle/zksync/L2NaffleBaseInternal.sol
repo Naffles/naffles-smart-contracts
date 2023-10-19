@@ -353,7 +353,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         uint256 _naffleId,
         uint256 _randomNumber,
         address _winner,
-        NaffleTypes.PlatformDiscountParams memory _platformDiscountParams
+        NaffleTypes.PlatformDiscountParams memory platformDiscountParams
     ) internal returns (bytes32 messageHash) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
@@ -450,8 +450,20 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
     }
 
-    function _exchangePaidTicketsForOpenEntryTickets(uint256[] memory naffleIds, uint256[] memory amounts) internal {
+    function _exchangePaidTicketsForOpenEntryTickets(
+        uint256[] memory naffleIds, 
+        uint256[] memory amounts,
+        NaffleTypes.ExchangeRateParams memory exchangeRateParams 
+    ) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+
+        _validatePlatformDiscountSignature(
+            exchangeRateParams,
+            layout.exchangeRateSignatureHash,
+            layout.signatureSigner,
+            layout.domainName,
+            layout.domainSignature
+        );
 
         uint256 totalTicketValue = 0;
 
@@ -463,6 +475,63 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             }
 
             totalTicketValue = totalTicketValue + amounts[i] * naffle.ticketPriceInWei;
+        }
+
+        uint256 totalOpenEntryTickets = totalTicketValue / exchangeRateParams.exchangeRate;
+
+        IL2PaidTicketBase(layout.paidTicketBaseContractAddress).burnTickets(
+            naffleIds, amounts, msg.sender
+        );
+
+        // mint the open entry tickets
+        IL2OpenEntryTicketBase(layout.openEntryTicketBaseContractAddress).mintOpenEntryTicketsForUser(
+            msg.sender, totalOpenEntryTickets);
+    }
+
+    /**
+     * @notice validate the exchange rate signature.
+     * @dev if the signature is invalid, an InvalidSignature error is thrown.
+     * @param _exchangeRateParams the exchange rate params.
+     * @param _exchangeRateSignatureHash the exchange rate signature.
+     * @param _signatureSigner the signer of the signature.
+     * @param _domainName the domain name of the signature.
+     * @param _domainSignature the domain signature.
+     */
+    function _validatePlatformDiscountSignature(
+        NaffleTypes.ExchangeRateParams memory _exchangeRateParams,
+        bytes32 _exchangeRateSignatureHash,
+        address _signatureSigner,
+        string memory _domainName,
+        bytes32 _domainSignature 
+    ) internal view {
+        bytes32 domainSeparator = keccak256(
+            abi.encode(
+                _domainSignature,
+                keccak256(abi.encodePacked(_domainName))
+            )
+        );
+
+        bytes32 dataHash = keccak256(
+            abi.encode(
+                _exchangeRateSignatureHash,
+                _exchangeRateParams.exchangeRateData.exchangeRate,
+                msg.sender,
+                _exchangeRateParams.exchangeRateData.expireTimestamp
+            )
+        );
+        
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                domainSeparator,
+                dataHash
+            )
+        );
+
+        address signer = Signature.getSigner(digest, _exchangeRateParams.exchangeRateSignature);
+
+        if (signer != _signatureSigner) {
+            revert InvalidSignature();
         }
     }
 
@@ -679,4 +748,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _setDomainName(string memory _domainName) internal {
         L2NaffleBaseStorage.layout().domainName = _domainName;
     }
+
+    function _setExchangeRateSignatureHash(bytes32 _exchangeRateSignatureHash) internal {
+        L2NaffleBaseStorage.layout().exchangeRateSignatureHash = _exchangeRateSignatureHash;
+    } 
 }
