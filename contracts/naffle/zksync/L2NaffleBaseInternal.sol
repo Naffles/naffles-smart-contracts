@@ -18,7 +18,6 @@ import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
     uint256 internal constant DENOMINATOR = 10000;
-    bytes32 constant EIP712_DOMAIN_TYPE = keccak256(abi.encodePacked("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"));
 
     /**
      * @notice create a new naffle.
@@ -367,7 +366,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _platformDiscountParams,
             _winner,
             layout.platformDiscountSignatureHash,
-            layout.signatureSigner
+            layout.signatureSigner,
+            layout.domainName,
+            layout.domainSignature
         );
 
         uint256 winningTicketId = _randomNumber % (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries) + 1;
@@ -407,20 +408,21 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @param _winner the winner of the naffle.
      * @param _platformDiscountSignatureHash the platform discount signature.
      * @param _signatureSigner the signer of the signature.
+     * @param _domainName the domain name of the signature.
+     * @param _domainSignature the domain signature.
      */
     function _validatePlatformDiscountSignature(
         NaffleTypes.PlatformDiscountParams memory _platformDiscountParams,
         address _winner,
         bytes32 _platformDiscountSignatureHash,
-        address _signatureSigner
+        address _signatureSigner,
+        string memory _domainName,
+        bytes32 _domainSignature 
     ) internal view {
         bytes32 domainSeparator = keccak256(
             abi.encode(
-                EIP712_DOMAIN_TYPE,
-                keccak256(abi.encodePacked(_platformDiscountParams.platformDiscountData.name)),
-                keccak256(abi.encodePacked(_platformDiscountParams.platformDiscountData.version)),
-                block.chainid,
-                address(this)
+                _domainSignature,
+                keccak256(abi.encodePacked(_domainName))
             )
         );
 
@@ -659,5 +661,22 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      */
     function _setSignatureSignerAddress(address _signatureSignerAddress) internal {
         L2NaffleBaseStorage.layout().signatureSigner = _signatureSignerAddress;
+    }
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainSignature the domain signature.
+     */
+    function _setDomainSignature(bytes32 _domainSignature) internal {
+        L2NaffleBaseStorage.layout().domainSignature = _domainSignature;
+    }
+
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainName the domain signature.
+     */
+    function _setDomainName(string memory _domainName) internal {
+        L2NaffleBaseStorage.layout().domainName = _domainName;
     }
 }
