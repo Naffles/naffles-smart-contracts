@@ -483,8 +483,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffleIds, amounts, msg.sender
         );
 
-        // mint the open entry tickets
-        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).mintOpenEntryTicketsForUser(
+        IL2OpenEntryTicketBase(layout.openEntryTicketBaseContractAddress).mintOpenEntryTicketsForUser(
             msg.sender, totalOpenEntryTickets);
     }
 
