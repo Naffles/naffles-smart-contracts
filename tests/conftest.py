@@ -443,18 +443,14 @@ def platform_discount_params(
 @pytest.fixture
 def default_collection_signature_params(
         default_collection_whitelist_signature_erc721):
-    return (
-        default_collection_whitelist_signature_erc721
-    )
+    return default_collection_whitelist_signature_erc721
 
 
 @pytest.fixture
 def collection_signature_params_erc20(
         default_collection_whitelist_signature_erc20):
-    return (
-        default_collection_whitelist_signature_erc20
-    )
-
+    return default_collection_whitelist_signature_erc20
+    
 
 @pytest.fixture
 def default_token_info(

@@ -422,9 +422,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         bytes32 domainSeparator = keccak256(
             abi.encode(
                 _domainSignature,
-                keccak256(abi.encodePacked(_domainName)),
-                block.chainid,
-                address(this)
+                keccak256(abi.encodePacked(_domainName))
             )
         );
 

@@ -7,10 +7,6 @@ library NaffleTypes {
         uint256 l2GasPerPubdataByteLimit;
     }
 
-    struct CollectionSignatureParams {
-        bytes collectionSignature;
-    }
-
     struct PlatformDiscountData {
         // 100 = 1%
         uint256 platformDiscountInPercent;
