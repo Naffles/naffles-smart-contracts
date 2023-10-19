@@ -353,7 +353,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         uint256 _naffleId,
         uint256 _randomNumber,
         address _winner,
-        NaffleTypes.PlatformDiscountParams memory platformDiscountParams
+        NaffleTypes.PlatformDiscountParams memory _platformDiscountParams
     ) internal returns (bytes32 messageHash) {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
@@ -477,14 +477,14 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             totalTicketValue = totalTicketValue + amounts[i] * naffle.ticketPriceInWei;
         }
 
-        uint256 totalOpenEntryTickets = totalTicketValue / exchangeRateParams.exchangeRate;
+        uint256 totalOpenEntryTickets = totalTicketValue / exchangeRateParams.exchangeRateData.exchangeRate;
 
-        IL2PaidTicketBase(layout.paidTicketBaseContractAddress).burnTickets(
+        IL2PaidTicketBase(layout.paidTicketContractAddress).burnTickets(
             naffleIds, amounts, msg.sender
         );
 
         // mint the open entry tickets
-        IL2OpenEntryTicketBase(layout.openEntryTicketBaseContractAddress).mintOpenEntryTicketsForUser(
+        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).mintOpenEntryTicketsForUser(
             msg.sender, totalOpenEntryTickets);
     }
 

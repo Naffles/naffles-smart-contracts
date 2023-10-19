@@ -67,6 +67,6 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
      * @inheritdoc IL2OpenEntryTicketBase
      */
     function mintOpenEntryTicketsForUser(address _to, uint256 _amount) external override onlyL2NaffleContract() {
-        _adminMint(_user, _amount);
+        _adminMint(_to, _amount);
     }
 }

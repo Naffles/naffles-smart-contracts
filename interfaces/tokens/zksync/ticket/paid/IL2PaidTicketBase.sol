@@ -31,7 +31,7 @@ interface IL2PaidTicketBase is IERC1155 {
     /**
      * @notice burn tickets.
      * @dev method is called from the naffle contract.
-     * @param _naffleIdis the ids of the naffles.
+     * @param _naffleIds the ids of the naffles.
      * @param _amounts the amounts of tickets to burn.
      * @param _owner the owner of the tickets.
      */

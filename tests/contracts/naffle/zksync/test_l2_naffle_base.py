@@ -721,6 +721,35 @@ def test_owner_cancel_naffle_not_ended_yet(
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(NAFFLE_ID, from_admin)
 
 
+def test_exchange_tickets(
+    admin,
+    from_address,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+    platform_discount_params,
+    default_exchange_rate_params
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
+    # buying 7 more tickets so i reach the exchange rate x2
+    l2_diamonds.naffle_base_facet.buyTickets(7, 1, {"from": address, "value": TICKET_PRICE * 7})
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, platform_discount_params, from_address)
+
+    l2_diamonds.naffle_base_facet.exchangeTickets([1], [10], default_exchange_rate_params, from_address)
+
+    # check if we are the owner of open entry ticket id 2 and 3
+    assert l2_diamonds.naffle_view_facet.ownerOf(2) == address
+    assert l2_diamonds.naffle_view_facet.ownerOf(3) == address
+
+
+
+
 def test_set_winner(
     admin,
     from_address,

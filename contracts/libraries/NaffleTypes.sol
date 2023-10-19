@@ -19,8 +19,6 @@ library NaffleTypes {
     }
 
     struct ExchangeRateData {
-        string name;
-        string version;
         uint256 exchangeRate;
         uint256 expireTimestamp;
     }
