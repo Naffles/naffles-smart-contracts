@@ -736,24 +736,59 @@ def test_exchange_tickets(
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
-        number_of_tickets=10
+        number_of_tickets=11
     )
     # buying 7 more tickets so i reach the exchange rate x2
-    l2_diamonds.naffle_base_facet.buyTickets(7, 1, {"from": address, "value": TICKET_PRICE * 7})
+    l2_diamonds.naffle_base_facet.buyTickets(9, 1, {"from": address, "value": TICKET_PRICE * 9})
     l2_diamonds.naffle_base_facet.setWinner(1, 1, address, platform_discount_params, from_address)
 
+    paid_ticket_balance = interface.IERC1155Base(
+        l2_diamonds.deployed_l2_paid_ticket_diamond.address
+    ).balanceOf(address, 1, from_admin)
+    assert paid_ticket_balance == 11
+
     l2_diamonds.naffle_base_facet.exchangePaidTicketsForOpenEntryTickets([1], [10], default_exchange_rate_params, from_address)
+    
+    
 
     # check if we are the owner of open entry ticket id 2 and 3
     owner = interface.IERC721Base(
         l2_diamonds.deployed_l2_open_entry_ticket_diamond.address
-    ).ownerOf(1, from_admin)
+    ).ownerOf(2, from_admin)
     assert owner == address
     owner = interface.IERC721Base(
         l2_diamonds.deployed_l2_open_entry_ticket_diamond.address
-    ).ownerOf(2, from_admin)
+    ).ownerOf(3, from_admin)
     assert owner == address
 
+    with brownie.reverts():
+        owner = interface.IERC721Base(
+            l2_diamonds.deployed_l2_open_entry_ticket_diamond.address
+        ).ownerOf(4, from_admin)
+
+    assert interface.IERC1155Base(
+        l2_diamonds.deployed_l2_paid_ticket_diamond.address
+    ).balanceOf(address, 1, from_admin) == 1
+
+
+def test_exchange_tickets_naffle_not_ended_yet(
+    from_address,
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+    default_exchange_rate_params
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=11
+    )
+
+    with brownie.reverts(get_error_message("InvalidNaffleStatus", ['uint8'], [0])):
+        l2_diamonds.naffle_base_facet.exchangePaidTicketsForOpenEntryTickets([1], [10], default_exchange_rate_params, from_address)
 
 def test_set_winner(
     admin,

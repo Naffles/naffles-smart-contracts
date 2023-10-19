@@ -47,6 +47,6 @@ contract L2PaidTicketBase is IL2PaidTicketBase, L2PaidTicketBaseInternal, SolidS
      * @inheritdoc IL2PaidTicketBase
      */
     function burnTickets(uint256[] calldata _naffleIds, uint256[] calldata _amounts, address _owner) external onlyL2NaffleContract {
-        return;
+        _burnBatch(_owner, _naffleIds, _amounts);
     }
 }
