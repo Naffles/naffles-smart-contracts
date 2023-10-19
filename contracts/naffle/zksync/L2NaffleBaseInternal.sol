@@ -739,7 +739,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.layout().domainSignature = _domainSignature;
     }
 
-
     /**
      * @notice gets the domain signature.
      * @param _domainName the domain signature.
