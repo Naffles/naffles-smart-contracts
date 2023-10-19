@@ -26,9 +26,6 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         _setOpenEntryTicketContractAddress(_openEntryTicketContractAddress);
         _setL1NaffleContractAddress(_l1NaffleContractAddress);
         _setSignatureSignerAddress(msg.sender);
-        _setPlatformDiscountSignatureHash(
-            keccak256(abi.encodePacked("PlatformDiscount(uint256 platformDiscountInPercent,address winner,uint256 expireTimestamp)"))
-        );
         _setDomainSignature(keccak256(abi.encodePacked("EIP712Domain(string name)")));
         _setDomainName(_domainName);
     }

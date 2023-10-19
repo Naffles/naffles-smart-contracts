@@ -52,12 +52,6 @@ class CollectionWhitelist(EIP712Struct):
     tokenAddress = Address()
 
 
-class PlatformDiscount(EIP712Struct):
-    platformDiscountInPercent = Uint(256)
-    winner = Address()
-    expireTimestamp = Uint(256)
-
-
 @pytest.fixture
 def admin(private_key, address) -> LocalAccount:
     local = accounts.add(private_key=private_key)
@@ -411,34 +405,6 @@ def expire_timestamp():
     import time
     return int(time.time()) + 3600
 
-
-@pytest.fixture
-def platform_discount_signature(private_key, l2_eip712_domain, address, expire_timestamp):
-    msg = PlatformDiscount()
-    msg['platformDiscountInPercent'] = 5000
-    msg['winner'] = address.address
-    msg['expireTimestamp'] = expire_timestamp
-
-    signable_bytes = msg.signable_bytes(l2_eip712_domain)
-    signer = PrivateKey.from_hex(private_key)
-    signature = signer.sign_recoverable(signable_bytes, hasher=keccak_hash)
-
-    v = signature[64] + 27
-    r = big_endian_to_int(signature[0:32])
-    s = big_endian_to_int(signature[32:64])
-    final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
-    return final_sig
-
-
-@pytest.fixture
-def platform_discount_params(
-    platform_discount_signature, expire_timestamp 
-):
-    return (
-        (5000, expire_timestamp),
-        platform_discount_signature
-    )
-    
 
 @pytest.fixture
 def default_collection_signature_params(
