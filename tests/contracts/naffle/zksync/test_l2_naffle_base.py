@@ -2,8 +2,8 @@ import datetime
 
 import brownie
 import pytest
-from brownie import interface, chain
-
+from brownie import interface, chain 
+                    
 from scripts.util import get_error_message
 from tests.conftest import default_token_info
 from tests.contracts.naffle.zksync.test_l2_naffle_diamond import (
@@ -736,18 +736,23 @@ def test_exchange_tickets(
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
+        number_of_tickets=10
     )
     # buying 7 more tickets so i reach the exchange rate x2
     l2_diamonds.naffle_base_facet.buyTickets(7, 1, {"from": address, "value": TICKET_PRICE * 7})
     l2_diamonds.naffle_base_facet.setWinner(1, 1, address, platform_discount_params, from_address)
 
-    l2_diamonds.naffle_base_facet.exchangeTickets([1], [10], default_exchange_rate_params, from_address)
+    l2_diamonds.naffle_base_facet.exchangePaidTicketsForOpenEntryTickets([1], [10], default_exchange_rate_params, from_address)
 
     # check if we are the owner of open entry ticket id 2 and 3
-    assert l2_diamonds.naffle_view_facet.ownerOf(2) == address
-    assert l2_diamonds.naffle_view_facet.ownerOf(3) == address
-
-
+    owner = interface.IERC721Base(
+        l2_diamonds.deployed_l2_open_entry_ticket_diamond.address
+    ).ownerOf(1, from_admin)
+    assert owner == address
+    owner = interface.IERC721Base(
+        l2_diamonds.deployed_l2_open_entry_ticket_diamond.address
+    ).ownerOf(2, from_admin)
+    assert owner == address
 
 
 def test_set_winner(

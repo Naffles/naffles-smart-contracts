@@ -93,4 +93,16 @@ interface IL2NaffleBase {
         address _winner,
         NaffleTypes.PlatformDiscountParams memory _platformDiscountParams
     ) external returns (bytes32);
+
+    /**
+     * @notice exchange paid tickets for open entry tickets agains a certain exchange rate.
+     * @param naffleIds ids of the naffles.
+     * @param amounts amounts of tickets to exchange.
+     * @param exchangeRateParams the exchange rate params.
+     */
+    function exchangePaidTicketsForOpenEntryTickets(
+        uint256[] memory naffleIds, 
+        uint256[] memory amounts,
+        NaffleTypes.ExchangeRateParams memory exchangeRateParams 
+    ) external;
 }
