@@ -448,6 +448,22 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
     }
 
+    function _exchangePaidTicketsForOpenEntryTickets(uint256[] memory naffleIds, uint256[] memory amounts) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+
+        uint256 totalTicketValue = 0;
+
+        for (uint256 i = 0; i < naffleIds.length; i++) {
+            NaffleTypes.L2Naffle storage naffle = layout.naffles[naffleIds[i]];
+
+            if (naffle.status != NaffleTypes.NaffleStatus.FINISHED) {
+                revert InvalidNaffleStatus(naffle.status);
+            }
+
+            totalTicketValue = totalTicketValue + amounts[i] * naffle.ticketPriceInWei;
+        }
+    }
+
     /**
      * @notice withdraw the platform fees to the specified address.
      * @param _amount the amount to withdraw.

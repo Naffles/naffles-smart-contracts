@@ -30,6 +30,18 @@ library NaffleTypes {
         bytes platformDiscountSignature;
     }
 
+    struct ExchangeRateData {
+        string name;
+        string version;
+        uint256 exchangeRate;
+        uint256 expireTimestamp;
+    }
+
+    struct ExchangeRateParams {
+        ExchangeRateData exchangeRateData;
+        bytes exchangeRateSignature;
+    }
+
     struct CreateZkSyncNaffleParams {
         NaffleTokenInformation naffleTokenInformation;
         address owner;
