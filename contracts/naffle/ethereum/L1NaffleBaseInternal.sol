@@ -20,8 +20,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC20_INTERFACE_ID = 0x36372b07;
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
-    bytes32 constant EIP712_DOMAIN_TYPE = keccak256(abi.encodePacked("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"));
-
 
     /**
      * @notice create a new naffle. When the naffle is created, a message is sent to the L2 naffle contract.
@@ -56,7 +54,9 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             _naffleTokenInformation,
             _collectionSignatureParams,
             layout.signatureSigner,
-            layout.collectionWhitelistSignature
+            layout.collectionWhitelistSignature,
+            layout.domainName,
+            layout.domainSignature
         );
 
         if (
@@ -136,18 +136,21 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      * @param _collectionSignatureParams the collection signature params.
      * @param _signatureSigner the signer of the collection signature.
      * @param _collectionWhitelistSignature the collection whitelist signature.
+     * @param _domainName the domain name. 
+     * @param _domainSignature the domain signature.
      */
     function _validateCollectionSignature(
         NaffleTypes.NaffleTokenInformation memory _naffleTokenInformation,
         NaffleTypes.CollectionSignatureParams memory _collectionSignatureParams,
         address _signatureSigner,
-        bytes32 _collectionWhitelistSignature
+        bytes32 _collectionWhitelistSignature,
+        string memory _domainName,
+        bytes32 _domainSignature
     ) internal view {
         bytes32 domainSeparator = keccak256(
             abi.encode(
-                EIP712_DOMAIN_TYPE,
-                keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.name)),
-                keccak256(abi.encodePacked(_collectionSignatureParams.collectionSignatureData.version)),
+                _domainSignature,
+                keccak256(abi.encodePacked(_domainName)),
                 block.chainid,
                 address(this)
             )
@@ -439,5 +442,21 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      */
     function _setCollectionWhitelistSignature(bytes32 _collectionSignature) internal {
         L1NaffleBaseStorage.layout().collectionWhitelistSignature = _collectionSignature;
+    }
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainSignature the domain signature.
+     */
+    function _setDomainSignature(bytes32 _domainSignature) internal {
+        L1NaffleBaseStorage.layout().domainSignature = _domainSignature;
+    }
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainName the domain signature.
+     */
+    function _setDomainName(string memory _domainName) internal {
+        L1NaffleBaseStorage.layout().domainName = _domainName;
     }
 }

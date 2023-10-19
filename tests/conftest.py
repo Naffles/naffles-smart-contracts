@@ -109,6 +109,7 @@ def deployed_l1_naffle_diamond(
         ZERO_ADDRESS,
         deployed_erc721a_mock.address,
         deployed_erc721a_mock.address,
+        "Naffles",
         from_admin
     )
     return diamond
@@ -150,6 +151,7 @@ def deployed_l2_naffle_diamond(
         deployed_l2_paid_ticket_diamond.address,
         deployed_l2_open_entry_ticket_diamond.address,
         deployed_l1_naffle_diamond,
+        "Naffles",
         from_admin
     )
     return diamond
@@ -359,19 +361,13 @@ def naffle_vrf(coordinator_mock, gas_lane_key_hash, from_admin):
 
 
 @pytest.fixture
-def eip712_domain(deployed_l1_naffle_diamond):
-    return make_domain(name='name',
-                       version='1',
-                       chainId=1,
-                       verifyingContract=deployed_l1_naffle_diamond.address)
+def eip712_domain():
+    return make_domain(name='Naffles')
 
 
 @pytest.fixture
-def l2_eip712_domain(deployed_l2_naffle_diamond):
-    return make_domain(name='name',
-                       version='1',
-                       chainId=1,
-                       verifyingContract=deployed_l2_naffle_diamond.address)
+def l2_eip712_domain():
+    return make_domain(name='Naffles')
 
 
 def get_collection_whitelist_signature(
@@ -439,7 +435,7 @@ def platform_discount_params(
     platform_discount_signature, expire_timestamp 
 ):
     return (
-        ("name", "1", 5000, expire_timestamp),
+        (5000, expire_timestamp),
         platform_discount_signature
     )
     
@@ -448,7 +444,6 @@ def platform_discount_params(
 def default_collection_signature_params(
         default_collection_whitelist_signature_erc721):
     return (
-        ("name", "1"),
         default_collection_whitelist_signature_erc721
     )
 
@@ -457,7 +452,6 @@ def default_collection_signature_params(
 def collection_signature_params_erc20(
         default_collection_whitelist_signature_erc20):
     return (
-        ("name", "1"),
         default_collection_whitelist_signature_erc20
     )
 
