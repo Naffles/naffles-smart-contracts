@@ -89,4 +89,10 @@ interface IL2NaffleAdmin {
      * @param _domainName the new domain name.
      */
     function setDomainName(string memory _domainName) external;
+
+    /**
+     * @notice sets the exchangeRateSignatureHash
+     * @param _exchangeRateSignatureHash the new exchangeRateSignatureHash.
+     */
+    function setExchangeRateSignatureHash(bytes32 _exchangeRateSignatureHash) external;
 }

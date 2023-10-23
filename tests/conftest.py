@@ -32,15 +32,14 @@ from brownie import (
     accounts,
     ZERO_ADDRESS
 )
-from brownie import network
 from brownie.network.account import _PrivateKeyAccount, Account, LocalAccount
 
 from scripts.staking.deploy_staking_contract import deploy
-from tests.test_helper import ERC721, L2Diamonds
+from tests.test_helper import ERC721, TICKET_PRICE, L2Diamonds
 
 import sha3
 
-from eip712_structs import EIP712Struct, Address, String, Uint
+from eip712_structs import EIP712Struct, Address, Uint
 from eip712_structs import make_domain
 from eth_utils import big_endian_to_int
 from coincurve import PrivateKey 
@@ -50,6 +49,12 @@ keccak_hash = lambda x : sha3.keccak_256(x).digest()
 
 class CollectionWhitelist(EIP712Struct):
     tokenAddress = Address()
+
+
+class RedeemedPaidTicketExchangeRate(EIP712Struct):
+    exchangeRate = Uint(128)
+    targetAddress = Address()
+    expiresAt = Uint(256)
 
 
 @pytest.fixture
@@ -359,11 +364,6 @@ def eip712_domain():
     return make_domain(name='Naffles')
 
 
-@pytest.fixture
-def l2_eip712_domain():
-    return make_domain(name='Naffles')
-
-
 def get_collection_whitelist_signature(
     private_key,
     eip712_domain,
@@ -404,6 +404,29 @@ def expire_timestamp():
     # return timestamp in 1 hour
     import time
     return int(time.time()) + 3600
+
+
+@pytest.fixture
+def exchange_rate_signature(private_key, eip712_domain, address, expire_timestamp):
+    msg = RedeemedPaidTicketExchangeRate()
+    msg['exchangeRate'] = TICKET_PRICE * 5
+    msg['expiresAt'] = expire_timestamp
+    msg['targetAddress'] = address.address
+
+    signable_bytes = msg.signable_bytes(eip712_domain)
+    signer = PrivateKey.from_hex(private_key)
+    signature = signer.sign_recoverable(signable_bytes, hasher=keccak_hash)
+
+    v = signature[64] + 27
+    r = big_endian_to_int(signature[0:32])
+    s = big_endian_to_int(signature[32:64])
+    final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
+    return final_sig
+
+
+@pytest.fixture
+def default_exchange_rate_params(exchange_rate_signature, expire_timestamp):
+    return ((TICKET_PRICE * 5, expire_timestamp), exchange_rate_signature)
 
 
 @pytest.fixture

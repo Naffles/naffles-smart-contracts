@@ -125,4 +125,19 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
             _newEndTime
         );
     }
+
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
+    function exchangePaidTicketsForOpenEntryTickets(
+        uint256[] memory naffleIds, 
+        uint256[] memory amounts,
+        NaffleTypes.ExchangeRateParams memory exchangeRateParams 
+    ) external {
+        _exchangePaidTicketsForOpenEntryTickets(
+            naffleIds,
+            amounts,
+            exchangeRateParams
+        );
+    }
 }

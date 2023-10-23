@@ -388,6 +388,90 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         );
     }
 
+    function _exchangePaidTicketsForOpenEntryTickets(
+        uint256[] memory naffleIds, 
+        uint256[] memory amounts,
+        NaffleTypes.ExchangeRateParams memory exchangeRateParams 
+    ) internal {
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
+
+        _validatePlatformDiscountSignature(
+            exchangeRateParams,
+            layout.exchangeRateSignatureHash,
+            layout.signatureSigner,
+            layout.domainName,
+            layout.domainSignature
+        );
+
+        uint256 totalTicketValue = 0;
+
+        for (uint256 i = 0; i < naffleIds.length; i++) {
+            NaffleTypes.L2Naffle storage naffle = layout.naffles[naffleIds[i]];
+
+            if (naffle.status != NaffleTypes.NaffleStatus.FINISHED) {
+                revert InvalidNaffleStatus(naffle.status);
+            }
+
+            totalTicketValue = totalTicketValue + amounts[i] * naffle.ticketPriceInWei;
+        }
+
+        uint256 totalOpenEntryTickets = totalTicketValue / exchangeRateParams.exchangeRateData.exchangeRate;
+
+        IL2PaidTicketBase(layout.paidTicketContractAddress).burnTickets(
+            naffleIds, amounts, msg.sender
+        );
+
+        IL2OpenEntryTicketBase(layout.openEntryTicketContractAddress).mintOpenEntryTicketsForUser(
+            msg.sender, totalOpenEntryTickets);
+    }
+
+    /**
+     * @notice validate the exchange rate signature.
+     * @dev if the signature is invalid, an InvalidSignature error is thrown.
+     * @param _exchangeRateParams the exchange rate params.
+     * @param _exchangeRateSignatureHash the exchange rate signature.
+     * @param _signatureSigner the signer of the signature.
+     * @param _domainName the domain name of the signature.
+     * @param _domainSignature the domain signature.
+     */
+    function _validatePlatformDiscountSignature(
+        NaffleTypes.ExchangeRateParams memory _exchangeRateParams,
+        bytes32 _exchangeRateSignatureHash,
+        address _signatureSigner,
+        string memory _domainName,
+        bytes32 _domainSignature 
+    ) internal view {
+        bytes32 domainSeparator = keccak256(
+            abi.encode(
+                _domainSignature,
+                keccak256(abi.encodePacked(_domainName))
+            )
+        );
+
+        bytes32 dataHash = keccak256(
+            abi.encode(
+                _exchangeRateSignatureHash,
+                _exchangeRateParams.exchangeRateData.exchangeRate,
+                msg.sender,
+                _exchangeRateParams.exchangeRateData.expireTimestamp
+            )
+        );
+        
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                domainSeparator,
+                dataHash
+            )
+        );
+
+        address signer = Signature.getSigner(digest, _exchangeRateParams.exchangeRateSignature);
+
+        if (signer != _signatureSigner) {
+            revert InvalidSignature();
+        }
+    }
+
     /**
      * @notice withdraw the platform fees to the specified address.
      * @param _amount the amount to withdraw.
@@ -585,7 +669,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.layout().domainSignature = _domainSignature;
     }
 
-
     /**
      * @notice gets the domain signature.
      * @param _domainName the domain signature.
@@ -593,4 +676,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _setDomainName(string memory _domainName) internal {
         L2NaffleBaseStorage.layout().domainName = _domainName;
     }
+
+    function _setExchangeRateSignatureHash(bytes32 _exchangeRateSignatureHash) internal {
+        L2NaffleBaseStorage.layout().exchangeRateSignatureHash = _exchangeRateSignatureHash;
+    } 
 }

@@ -7,10 +7,14 @@ library NaffleTypes {
         uint256 l2GasPerPubdataByteLimit;
     }
 
-    struct PlatformDiscountData {
-        // 100 = 1%
-        uint256 platformDiscountInPercent;
+    struct ExchangeRateData {
+        uint256 exchangeRate;
         uint256 expireTimestamp;
+    }
+
+    struct ExchangeRateParams {
+        ExchangeRateData exchangeRateData;
+        bytes exchangeRateSignature;
     }
 
     struct CreateZkSyncNaffleParams {

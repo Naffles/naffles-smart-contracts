@@ -35,6 +35,7 @@ export default async function (
       l1NaffleDiamondContract,
       paidTicketAddress,
       openEntryTicketAddress,
+      "Naffles",
     ])
     console.log(`Successfully deployed L2NaffleDiamond at ${l2NaffleDiamondImpl.address}`);
 
