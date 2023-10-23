@@ -728,7 +728,6 @@ def test_exchange_tickets(
     from_admin,
     l2_diamonds,
     deployed_erc721a_mock,
-    platform_discount_params,
     default_exchange_rate_params
 ):
     create_naffle_and_mint_tickets(
@@ -740,7 +739,7 @@ def test_exchange_tickets(
     )
     # buying 7 more tickets so i reach the exchange rate x2
     l2_diamonds.naffle_base_facet.buyTickets(9, 1, {"from": address, "value": TICKET_PRICE * 9})
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, platform_discount_params, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 0, from_address)
 
     paid_ticket_balance = interface.IERC1155Base(
         l2_diamonds.deployed_l2_paid_ticket_diamond.address
@@ -748,8 +747,6 @@ def test_exchange_tickets(
     assert paid_ticket_balance == 11
 
     l2_diamonds.naffle_base_facet.exchangePaidTicketsForOpenEntryTickets([1], [10], default_exchange_rate_params, from_address)
-    
-    
 
     # check if we are the owner of open entry ticket id 2 and 3
     owner = interface.IERC721Base(
