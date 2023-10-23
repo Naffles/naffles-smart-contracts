@@ -797,7 +797,6 @@ def test_set_winner(
     from_admin,
     l2_diamonds,
     deployed_erc721a_mock,
-    platform_discount_params
 ):
     create_naffle_and_mint_tickets(
         address,
@@ -806,7 +805,7 @@ def test_set_winner(
         deployed_erc721a_mock,
     )
     old_balance = address.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, platform_discount_params, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 5000, from_address)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 
@@ -817,26 +816,6 @@ def test_set_winner(
     assert naffle[10] == 4  # naffle status finished
 
     assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.995)
-
-
-def test_set_winner_expired_signature(
-    admin,
-    from_address,
-    address,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock,
-    platform_discount_params
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-    )
-    chain.sleep(100001)
-    with brownie.reverts(get_error_message("InvalidSignature")):
-        l2_diamonds.naffle_base_facet.setWinner(1, 1, address, platform_discount_params, from_address)
 
 
 def test_owner_cancel_naffle_invalid_status(

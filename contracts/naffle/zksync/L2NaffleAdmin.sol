@@ -88,13 +88,6 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
     /**
      * @inheritdoc IL2NaffleAdmin
      */
-    function setPlatformDiscountSignatureHash(bytes32 _platformDiscountSignatureHash) external onlyRole(_getAdminRole()) {
-        _setPlatformDiscountSignatureHash(_platformDiscountSignatureHash);
-    }
-
-    /**
-     * @inheritdoc IL2NaffleAdmin
-     */
     function setSignatureSignerAddress(address _signatureSignerAddress) external onlyRole(_getAdminRole()) {
         _setSignatureSignerAddress(_signatureSignerAddress);
     }

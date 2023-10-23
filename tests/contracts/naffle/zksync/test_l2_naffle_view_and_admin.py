@@ -597,7 +597,7 @@ def test_withdraw_platform_fee(
         end_time=end_time,
     )
     old_balance = admin.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 0, from_address)
 
     amount_to_withdraw = (TICKET_PRICE * 2 * 0.01)
 
@@ -620,7 +620,7 @@ def test_withdraw_platform_fee_insufficient_funds(
         deployed_erc721a_mock,
     )
     old_balance = admin.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 0, from_address)
 
     amount_to_withdraw = (TICKET_PRICE * 2 * 0.01)
 

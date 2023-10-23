@@ -84,14 +84,14 @@ interface IL2NaffleBase {
      * @param _naffleId id of the naffle.
      * @param _randomNumber random number of the winner.
      * @param _winner winner of the naffle.
-     * @param _platformDiscountParams the platform discount params.
+     * @param _platformDiscountInPercent platform discount in percent.
      * @return bytes32 hash of the winner.
      */
     function setWinner(
         uint256 _naffleId,
         uint256 _randomNumber,
         address _winner,
-        NaffleTypes.PlatformDiscountParams memory _platformDiscountParams
+        uint256 _platformDiscountInPercent
     ) external returns (bytes32);
 
     /**

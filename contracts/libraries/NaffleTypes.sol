@@ -7,17 +7,6 @@ library NaffleTypes {
         uint256 l2GasPerPubdataByteLimit;
     }
 
-    struct PlatformDiscountData {
-        // 100 = 1%
-        uint256 platformDiscountInPercent;
-        uint256 expireTimestamp;
-    }
-
-    struct PlatformDiscountParams {
-        PlatformDiscountData platformDiscountData;
-        bytes platformDiscountSignature;
-    }
-
     struct ExchangeRateData {
         uint256 exchangeRate;
         uint256 expireTimestamp;
