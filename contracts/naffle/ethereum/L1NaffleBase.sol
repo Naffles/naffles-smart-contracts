@@ -20,7 +20,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         uint256 _endTime,
         NaffleTypes.NaffleType _naffleType,
         NaffleTypes.L2MessageParams calldata _l2MessageParams,
-        NaffleTypes.CollectionSignatureParams calldata _collectionSignatureParams
+        bytes calldata _collectionSignature
     ) external payable returns (uint256 naffleId, bytes32 txHash) {
         return _createNaffle(
             _naffleTokenInformation,
@@ -29,7 +29,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _endTime,
             _naffleType,
             _l2MessageParams,
-            _collectionSignatureParams
+            _collectionSignature
         );
     }
 

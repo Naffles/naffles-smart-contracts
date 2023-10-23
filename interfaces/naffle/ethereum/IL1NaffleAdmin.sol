@@ -71,4 +71,16 @@ interface IL1NaffleAdmin {
      * @param _collectionSignature the new collection signature.
      */
     function setCollectionWhitelistSignature(bytes32 _collectionSignature) external;
+
+    /**
+     * @notice sets the domain signature
+     * @param _domainSignature the new domain signature.
+     */
+    function setDomainSignature(bytes32 _domainSignature) external;
+
+    /**
+     * @notice sets the domain name
+     * @param _domainName the new domain name.
+     */
+    function setDomainName(string memory _domainName) external;
 }

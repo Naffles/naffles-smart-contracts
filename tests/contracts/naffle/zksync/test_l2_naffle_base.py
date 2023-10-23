@@ -736,10 +736,9 @@ def test_set_winner(
         deployed_erc721a_mock,
     )
     old_balance = address.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 5000, from_address)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
-
 
     # winning ticket id
     if naffle[9] != 1 and naffle[9] != 2:
@@ -747,7 +746,7 @@ def test_set_winner(
 
     assert naffle[10] == 4  # naffle status finished
 
-    assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.99)
+    assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.995)
 
 
 def test_owner_cancel_naffle_invalid_status(

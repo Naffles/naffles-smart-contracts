@@ -84,4 +84,25 @@ contract L2NaffleAdmin is IL2NaffleAdmin, L2NaffleBaseInternal, AccessControl, S
     function setVRFManager(address _vrfManager) external onlyRole(_getAdminRole()) {
         _grantRole(VRF_ROLE, _vrfManager);
     }
+
+    /**
+     * @inheritdoc IL2NaffleAdmin
+     */
+    function setSignatureSignerAddress(address _signatureSignerAddress) external onlyRole(_getAdminRole()) {
+        _setSignatureSignerAddress(_signatureSignerAddress);
+    }
+
+    /**
+     * @inheritdoc IL2NaffleAdmin
+     */
+    function setDomainSignature(bytes32 _domainSignature) external onlyRole(_getAdminRole()) {
+        _setDomainSignature(_domainSignature);
+    }
+
+    /**
+     * @inheritdoc IL2NaffleAdmin
+     */
+    function setDomainName(string memory _domainName) external onlyRole(_getAdminRole()) {
+        _setDomainName(_domainName);
+    }
 }

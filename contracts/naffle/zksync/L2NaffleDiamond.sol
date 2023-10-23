@@ -14,7 +14,8 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         address _l1MessengerContractAddress,
         address _l1NaffleContractAddress,
         address _paidTicketContractAddress,
-        address _openEntryTicketContractAddress
+        address _openEntryTicketContractAddress,
+        string memory _domainName
     ) SolidStateDiamond() {
         _grantRole(_getAdminRole(), _admin);
         _grantRole(VRF_ROLE, _admin);
@@ -24,5 +25,8 @@ contract L2NaffleDiamond is SolidStateDiamond, AccessControl, L2NaffleBaseIntern
         _setPaidTicketContractAddress(_paidTicketContractAddress);
         _setOpenEntryTicketContractAddress(_openEntryTicketContractAddress);
         _setL1NaffleContractAddress(_l1NaffleContractAddress);
+        _setSignatureSignerAddress(msg.sender);
+        _setDomainSignature(keccak256(abi.encodePacked("EIP712Domain(string name)")));
+        _setDomainName(_domainName);
     }
 }

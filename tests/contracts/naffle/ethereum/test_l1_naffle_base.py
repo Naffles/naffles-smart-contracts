@@ -3,7 +3,6 @@ import datetime
 import brownie
 from brownie import ZERO_ADDRESS, network
 from eth_abi import encode
-from tests.conftest import default_collection_signature_params
 from web3 import Web3
 
 from scripts.util import ZKSYNC_ADDRESS, get_error_message
@@ -64,8 +63,6 @@ def test_create_naffle_not_allowed(
         amount,
         0
     )
-
-    print(brownie.network.chain.id)
 
     with brownie.reverts(get_error_message("NotAllowed", [], [])):
         base_facet.createNaffle(

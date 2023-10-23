@@ -33,6 +33,8 @@ library L1NaffleBaseStorage {
         mapping(uint256 => mapping(uint256 => bool)) isL2ToL1MessageProcessed;
         address signatureSigner; 
         bytes32 collectionWhitelistSignature;
+        bytes32 domainSignature;
+        string domainName;
     }
 
     /**

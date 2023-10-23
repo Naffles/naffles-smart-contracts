@@ -7,14 +7,10 @@ library NaffleTypes {
         uint256 l2GasPerPubdataByteLimit;
     }
 
-    struct CollectionSignatureData {
-        string name;
-        string version;
-    }
-
-    struct CollectionSignatureParams {
-        CollectionSignatureData collectionSignatureData;
-        bytes collectionSignature;
+    struct PlatformDiscountData {
+        // 100 = 1%
+        uint256 platformDiscountInPercent;
+        uint256 expireTimestamp;
     }
 
     struct CreateZkSyncNaffleParams {

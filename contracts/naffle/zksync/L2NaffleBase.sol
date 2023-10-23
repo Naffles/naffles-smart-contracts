@@ -60,12 +60,14 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     function setWinner(
         uint256 _naffleId,
         uint256 _randomNumber,
-        address _winner
+        address _winner,
+        uint256 _platformDiscountInPercent
     ) external returns (bytes32) {
         return _setWinner(
             _naffleId,
             _randomNumber,
-            _winner
+            _winner,
+            _platformDiscountInPercent
         );
     }
 

@@ -40,7 +40,7 @@ from tests.test_helper import ERC721, L2Diamonds
 
 import sha3
 
-from eip712_structs import EIP712Struct, Address, String 
+from eip712_structs import EIP712Struct, Address, String, Uint
 from eip712_structs import make_domain
 from eth_utils import big_endian_to_int
 from coincurve import PrivateKey 
@@ -103,6 +103,7 @@ def deployed_l1_naffle_diamond(
         ZERO_ADDRESS,
         deployed_erc721a_mock.address,
         deployed_erc721a_mock.address,
+        "Naffles",
         from_admin
     )
     return diamond
@@ -144,6 +145,7 @@ def deployed_l2_naffle_diamond(
         deployed_l2_paid_ticket_diamond.address,
         deployed_l2_open_entry_ticket_diamond.address,
         deployed_l1_naffle_diamond,
+        "Naffles",
         from_admin
     )
     return diamond
@@ -353,11 +355,13 @@ def naffle_vrf(coordinator_mock, gas_lane_key_hash, from_admin):
 
 
 @pytest.fixture
-def eip712_domain(deployed_l1_naffle_diamond):
-    return make_domain(name='name',
-                       version='1',
-                       chainId=1,
-                       verifyingContract=deployed_l1_naffle_diamond.address)
+def eip712_domain():
+    return make_domain(name='Naffles')
+
+
+@pytest.fixture
+def l2_eip712_domain():
+    return make_domain(name='Naffles')
 
 
 def get_collection_whitelist_signature(
@@ -367,12 +371,6 @@ def get_collection_whitelist_signature(
 ):
     msg = CollectionWhitelist()
     msg['tokenAddress'] = address
-
-    struct_message_dict = msg.to_message(eip712_domain)
-    assert isinstance(struct_message_dict, dict)
-
-    struct_message_json = msg.to_message_json(eip712_domain)
-    assert isinstance(struct_message_json, str)
 
     signable_bytes = msg.signable_bytes(eip712_domain)
     signer = PrivateKey.from_hex(private_key)
@@ -402,22 +400,23 @@ def default_collection_whitelist_signature_erc721(
 
 
 @pytest.fixture
+def expire_timestamp():
+    # return timestamp in 1 hour
+    import time
+    return int(time.time()) + 3600
+
+
+@pytest.fixture
 def default_collection_signature_params(
         default_collection_whitelist_signature_erc721):
-    return (
-        ("name", "1"),
-        default_collection_whitelist_signature_erc721
-    )
+    return default_collection_whitelist_signature_erc721
 
 
 @pytest.fixture
 def collection_signature_params_erc20(
         default_collection_whitelist_signature_erc20):
-    return (
-        ("name", "1"),
-        default_collection_whitelist_signature_erc20
-    )
-
+    return default_collection_whitelist_signature_erc20
+    
 
 @pytest.fixture
 def default_token_info(
