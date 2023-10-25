@@ -19,12 +19,11 @@ interface IL2NaffleBase {
     /**
      * @notice buy tickets for a specific naffle.
      * @param _naffleId id of the naffle.
-     * @return ticketIds ids of the tickets bought.
      */
     function buyTickets(
         uint256 _amount,
         uint256 _naffleId
-    ) external payable returns (uint256[] memory ticketIds);
+    ) external payable;
 
     /**
      * @notice use open entry tickets. Assigns the tickets to the naffle.

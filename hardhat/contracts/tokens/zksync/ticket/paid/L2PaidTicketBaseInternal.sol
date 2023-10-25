@@ -24,7 +24,6 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
      * @param startingTicketId the starting ticket id on the naffle.
      */
     function _mintTickets(address _to, uint256 _amount, uint256 _naffleId, uint256 _ticketPriceInWei, uint256 startingTicketId) internal {
-        L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         _safeMint(_to, _naffleId, _amount, "");
 
         emit PaidTicketsMinted(_to, _naffleId, _ticketPriceInWei, startingTicketId, _amount);
@@ -40,7 +39,6 @@ abstract contract L2PaidTicketBaseInternal is IL2PaidTicketBaseInternal, AccessC
      * @param _owner the owner of the tickets.
      */
     function _refundAndBurnTickets(uint256 _naffleId, uint256 _amount, address _owner) internal {
-        L2PaidTicketStorage.Layout storage l = L2PaidTicketStorage.layout();
         NaffleTypes.L2Naffle memory naffle = IL2NaffleView(_getL2NaffleContractAddress()).getNaffleById(_naffleId);
 
         if (naffle.status != NaffleTypes.NaffleStatus.CANCELLED) {

@@ -7,6 +7,16 @@ library NaffleTypes {
         uint256 l2GasPerPubdataByteLimit;
     }
 
+    struct ExchangeRateData {
+        uint256 exchangeRate;
+        uint256 expireTimestamp;
+    }
+
+    struct ExchangeRateParams {
+        ExchangeRateData exchangeRateData;
+        bytes exchangeRateSignature;
+    }
+
     struct CreateZkSyncNaffleParams {
         NaffleTokenInformation naffleTokenInformation;
         address owner;

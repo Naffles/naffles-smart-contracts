@@ -71,4 +71,28 @@ interface IL2NaffleAdmin {
      * @param _vrfManager the new VRF manager address
      */
     function setVRFManager(address _vrfManager) external;
+
+    /**
+     * @notice sets the signature signer address.
+     * @param _signatureSignerAddress the new signature signer address.
+     */
+    function setSignatureSignerAddress(address _signatureSignerAddress) external;
+    
+    /**
+     * @notice sets the domain signature
+     * @param _domainSignature the new domain signature.
+     */
+    function setDomainSignature(bytes32 _domainSignature) external;
+
+    /**
+     * @notice sets the domain name
+     * @param _domainName the new domain name.
+     */
+    function setDomainName(string memory _domainName) external;
+
+    /**
+     * @notice sets the exchangeRateSignatureHash
+     * @param _exchangeRateSignatureHash the new exchangeRateSignatureHash.
+     */
+    function setExchangeRateSignatureHash(bytes32 _exchangeRateSignatureHash) external;
 }
