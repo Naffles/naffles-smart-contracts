@@ -26,9 +26,8 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _createNaffle(
         NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) internal {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-
         uint256 openEntryTicketSpots = 0;
+        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         if (_params.naffleType == NaffleTypes.NaffleType.STANDARD) {
             openEntryTicketSpots = _params.paidTicketSpots / layout.openEntryTicketRatio;
         }
@@ -72,7 +71,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _buyTickets(
         uint256 _amount,
         uint256 _naffleId
-    ) internal returns (uint256[] memory ticketIds) {
+    ) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
@@ -325,7 +324,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
     function _drawWinnerInternal(NaffleTypes.L2Naffle storage naffle) private {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(naffle.naffleId);
         }

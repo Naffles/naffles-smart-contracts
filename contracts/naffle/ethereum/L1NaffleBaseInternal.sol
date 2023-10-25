@@ -146,7 +146,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         bytes32 _collectionWhitelistSignature,
         string memory _domainName,
         bytes32 _domainSignature
-    ) internal view {
+    ) internal pure {
         bytes32 domainSeparator = keccak256(
             abi.encode(
                 _domainSignature,

@@ -19,12 +19,11 @@ interface IL2NaffleBase {
     /**
      * @notice buy tickets for a specific naffle.
      * @param _naffleId id of the naffle.
-     * @return ticketIds ids of the tickets bought.
      */
     function buyTickets(
         uint256 _amount,
         uint256 _naffleId
-    ) external payable returns (uint256[] memory ticketIds);
+    ) external payable;
 
     /**
      * @notice use open entry tickets. Assigns the tickets to the naffle.
@@ -84,11 +83,25 @@ interface IL2NaffleBase {
      * @param _naffleId id of the naffle.
      * @param _randomNumber random number of the winner.
      * @param _winner winner of the naffle.
+     * @param _platformDiscountInPercent platform discount in percent.
      * @return bytes32 hash of the winner.
      */
     function setWinner(
         uint256 _naffleId,
         uint256 _randomNumber,
-        address _winner
+        address _winner,
+        uint256 _platformDiscountInPercent
     ) external returns (bytes32);
+
+    /**
+     * @notice exchange paid tickets for open entry tickets agains a certain exchange rate.
+     * @param naffleIds ids of the naffles.
+     * @param amounts amounts of tickets to exchange.
+     * @param exchangeRateParams the exchange rate params.
+     */
+    function exchangePaidTicketsForOpenEntryTickets(
+        uint256[] memory naffleIds, 
+        uint256[] memory amounts,
+        NaffleTypes.ExchangeRateParams memory exchangeRateParams 
+    ) external;
 }

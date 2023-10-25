@@ -6,8 +6,6 @@ import "@solidstate/contracts/proxy/diamond/SolidStateDiamond.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
 import "./L1NaffleBaseInternal.sol";
 
-
-
 /**
     @title L1 Naffle Diamond
     @dev diamond implementation contract for L1 Naffle
@@ -21,7 +19,8 @@ contract L1NaffleDiamond is SolidStateDiamond, AccessControl, L1NaffleBaseIntern
         uint256 _minimumTicketPriceInWei,
         address _zksyncContractAddress,
         address _foundersKeyContractAddress,
-        address _foundersKeyPlaceholderAddress
+        address _foundersKeyPlaceholderAddress,
+        string memory _domainName
     ) SolidStateDiamond() {
         _grantRole(AccessControlStorage.DEFAULT_ADMIN_ROLE, _admin);
         _setMinimumNaffleDuration(_minimumNaffleDuration);
@@ -34,5 +33,9 @@ contract L1NaffleDiamond is SolidStateDiamond, AccessControl, L1NaffleBaseIntern
         // pre calculated minimum gas required
         _setMinL2ForwardedGas(1163284000000000);
         _setMinL2GasLimit(2326568);
+        _setSignatureSignerAddress(msg.sender);
+        _setCollectionWhitelistSignature(keccak256(abi.encodePacked("CollectionWhitelist(address tokenAddress)")));
+        _setDomainSignature(keccak256(abi.encodePacked("EIP712Domain(string name)")));
+        _setDomainName(_domainName);
     }
 }

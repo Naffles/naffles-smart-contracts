@@ -3,6 +3,7 @@ pragma solidity ^0.8.17;
 
 import "./L1NaffleBaseStorage.sol";
 import "../../libraries/NaffleTypes.sol";
+import "../../libraries/Signature.sol";
 import '@solidstate/contracts/interfaces/IERC165.sol';
 import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
@@ -20,7 +21,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     bytes4 internal constant ERC721_INTERFACE_ID = 0x80ac58cd;
     bytes4 internal constant ERC1155_INTERFACE_ID = 0xd9b67a26;
 
-
     /**
      * @notice create a new naffle. When the naffle is created, a message is sent to the L2 naffle contract.
      * @dev function gets called by someone who wants to start a naffle.
@@ -35,6 +35,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      * @param _ticketPriceInWei the price of a ticket in wei.
      * @param _endTime the end time of the naffle.
      * @param _naffleType the type of the naffle.
+     * @param _collectionSignature the signature of the collection.
      * @return naffleId the id of the naffle that is created.
      * @return txHash the hash of the transaction that is sent to the L2 naffle contract.
      */
@@ -44,9 +45,19 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         uint256 _ticketPriceInWei,
         uint256 _endTime,
         NaffleTypes.NaffleType _naffleType,
-        NaffleTypes.L2MessageParams memory _l2MessageParams
+        NaffleTypes.L2MessageParams memory _l2MessageParams,
+        bytes memory _collectionSignature
     ) internal returns (uint256 naffleId, bytes32 txHash) {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+
+        _validateCollectionSignature(
+            _naffleTokenInformation,
+            _collectionSignature,
+            layout.signatureSigner,
+            layout.collectionWhitelistSignature,
+            layout.domainName,
+            layout.domainSignature
+        );
 
         if (
             IERC721(layout.foundersKeyAddress).balanceOf(msg.sender) == 0 &&
@@ -116,6 +127,53 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         );
 
         emit L1NaffleCreated(_naffleTokenInformation, naffleId, msg.sender, _paidTicketSpots, _ticketPriceInWei, _endTime, _naffleType);
+    }
+
+    /**
+     * @notice Validates the collection signature.
+     * @dev if the collection signature is invalid, an InvalidSignature error is thrown.
+     * @param _naffleTokenInformation the naffle token information.
+     * @param _collectionSignature the collection signature.
+     * @param _signatureSigner the signer of the collection signature.
+     * @param _collectionWhitelistSignature the collection whitelist signature.
+     * @param _domainName the domain name. 
+     * @param _domainSignature the domain signature.
+     */
+    function _validateCollectionSignature(
+        NaffleTypes.NaffleTokenInformation memory _naffleTokenInformation,
+        bytes memory _collectionSignature,
+        address _signatureSigner,
+        bytes32 _collectionWhitelistSignature,
+        string memory _domainName,
+        bytes32 _domainSignature
+    ) internal pure {
+        bytes32 domainSeparator = keccak256(
+            abi.encode(
+                _domainSignature,
+                keccak256(abi.encodePacked(_domainName))
+            )
+        );
+
+        bytes32 dataHash = keccak256(
+            abi.encode(
+                _collectionWhitelistSignature,
+                _naffleTokenInformation.tokenAddress
+            )
+        );
+        
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                domainSeparator,
+                dataHash
+            )
+        );
+
+        address signer = Signature.getSigner(digest, _collectionSignature);
+
+        if (signer != _signatureSigner) {
+            revert InvalidSignature();
+        }
     }
 
     /**
@@ -343,6 +401,14 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     }
 
     /**
+     * @notice sets the signature signer address.
+     * @param _signatureSignerAddress the signature signer address.
+     */
+    function _setSignatureSignerAddress(address _signatureSignerAddress) internal {
+        L1NaffleBaseStorage.layout().signatureSigner = _signatureSignerAddress;
+    }
+
+    /**
      * @notice gets the naffle by id.
      * @param _naffleId the id of the naffle.
      * @return naffle the naffle.
@@ -360,12 +426,35 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         L1NaffleBaseStorage.layout().minL2ForwardedGasForCreateNaffle = _minL2ForwardedGasForCreateNaffle;
     }
 
-
     /**
      * @notice sets minimum gas limit foir the L2 transaction in _createNaffle
      * @param _minL2GasLimit the minimum gas limit for the L2 transaction in _createNaffle
      */
     function _setMinL2GasLimit(uint256 _minL2GasLimit) internal {
         L1NaffleBaseStorage.layout().minL2GasLimitForCreateNaffle = _minL2GasLimit;
+    }
+
+    /**
+     * @notice sets the collection signature
+     * @param _collectionSignature the new collection signature.
+     */
+    function _setCollectionWhitelistSignature(bytes32 _collectionSignature) internal {
+        L1NaffleBaseStorage.layout().collectionWhitelistSignature = _collectionSignature;
+    }
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainSignature the domain signature.
+     */
+    function _setDomainSignature(bytes32 _domainSignature) internal {
+        L1NaffleBaseStorage.layout().domainSignature = _domainSignature;
+    }
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainName the domain signature.
+     */
+    function _setDomainName(string memory _domainName) internal {
+        L1NaffleBaseStorage.layout().domainName = _domainName;
     }
 }

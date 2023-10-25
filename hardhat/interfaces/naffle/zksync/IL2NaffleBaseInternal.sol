@@ -13,6 +13,12 @@ interface IL2NaffleBaseInternal {
     error NotAllowed();
 
     /**
+     * @notice thrown when invalid signature is provided
+     */
+    error InvalidSignature();
+
+
+    /**
      * @notice thrown when the naffle id is invalid.
      * @param naffleId the naffle id.
      */

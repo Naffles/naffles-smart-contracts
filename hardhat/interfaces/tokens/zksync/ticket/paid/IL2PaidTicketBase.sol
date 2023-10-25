@@ -27,4 +27,13 @@ interface IL2PaidTicketBase is IERC1155 {
      * @param _owner the owner of the tickets.
      */
     function refundAndBurnTickets(uint256 _naffleId, uint256 _amount, address _owner) external;
+
+    /**
+     * @notice burn tickets.
+     * @dev method is called from the naffle contract.
+     * @param _naffleIds the ids of the naffles.
+     * @param _amounts the amounts of tickets to burn.
+     * @param _owner the owner of the tickets.
+     */
+    function burnTickets(uint256[] calldata _naffleIds, uint256[] calldata _amounts, address _owner) external;
 }

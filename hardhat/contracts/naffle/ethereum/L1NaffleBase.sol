@@ -19,7 +19,8 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         uint256 _ticketPriceInWei,
         uint256 _endTime,
         NaffleTypes.NaffleType _naffleType,
-        NaffleTypes.L2MessageParams calldata _l2MessageParams
+        NaffleTypes.L2MessageParams calldata _l2MessageParams,
+        bytes calldata _collectionSignature
     ) external payable returns (uint256 naffleId, bytes32 txHash) {
         return _createNaffle(
             _naffleTokenInformation,
@@ -27,7 +28,8 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _ticketPriceInWei,
             _endTime,
             _naffleType,
-            _l2MessageParams
+            _l2MessageParams,
+            _collectionSignature
         );
     }
 
@@ -50,7 +52,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _message,
             _proof
         );
-        (string memory action, uint256 naffleId, address winner) = abi.decode(_message, (string, uint256, address));
+        (, uint256 naffleId, address winner) = abi.decode(_message, (string, uint256, address));
         _setWinnerAndTransferPrize(naffleId, winner);
     }
 
@@ -73,7 +75,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _message,
             _proof
         );
-        (string memory action, uint256 naffleId) = abi.decode(_message, (string, uint256));
+        (, uint256 naffleId) = abi.decode(_message, (string, uint256));
         _cancelNaffle(naffleId);
     }
 

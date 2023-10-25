@@ -32,7 +32,7 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     function buyTickets(
         uint256 _amount,
         uint256 _naffleId
-    ) external payable returns (uint256[] memory) {
+    ) external payable {
         return _buyTickets(
             _amount,
             _naffleId
@@ -60,12 +60,14 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     function setWinner(
         uint256 _naffleId,
         uint256 _randomNumber,
-        address _winner
+        address _winner,
+        uint256 _platformDiscountInPercent
     ) external returns (bytes32) {
         return _setWinner(
             _naffleId,
             _randomNumber,
-            _winner
+            _winner,
+            _platformDiscountInPercent
         );
     }
 
@@ -121,6 +123,21 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         _postponeNaffle(
             _naffleId,
             _newEndTime
+        );
+    }
+
+    /**
+     * @inheritdoc IL2NaffleBase
+     */
+    function exchangePaidTicketsForOpenEntryTickets(
+        uint256[] memory naffleIds, 
+        uint256[] memory amounts,
+        NaffleTypes.ExchangeRateParams memory exchangeRateParams 
+    ) external {
+        _exchangePaidTicketsForOpenEntryTickets(
+            naffleIds,
+            amounts,
+            exchangeRateParams
         );
     }
 }
