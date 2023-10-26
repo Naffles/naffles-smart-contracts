@@ -20,19 +20,23 @@ export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKe
     console.log('Deploying L2OpenEntryTicketDiamond..');
     const l2OpenEntryTicketDiamondArtifact = await deployer.loadArtifact("L2OpenEntryTicketDiamond");
     const l2OpenEntryTicketDiamondImpl = await deployer.deploy(l2OpenEntryTicketDiamondArtifact, [wallet.address])
+    await l2OpenEntryTicketDiamondImpl.deployed();
     console.log(`Successfully deployed L2OpenEntryTicketDiamond at ${l2OpenEntryTicketDiamondImpl.address}`);
 
     console.log('Deploying L2OpenEntryTicketDiamond facets..')
     const l2OpenEntryTicketBaseArtifact = await deployer.loadArtifact("L2OpenEntryTicketBase");
     const l2OpenEntryTicketBaseImpl = await deployer.deploy(l2OpenEntryTicketBaseArtifact, [])
+    await l2OpenEntryTicketBaseImpl.deployed();
     console.log(`Successfully deployed L2OpenEntryTicketBase at ${l2OpenEntryTicketBaseImpl.address}`);
 
     const l2OpenEntryTicketAdminArtifact = await deployer.loadArtifact("L2OpenEntryTicketAdmin");
     const l2OpenEntryTicketAdminImpl = await deployer.deploy(l2OpenEntryTicketAdminArtifact, [])
+    await l2OpenEntryTicketAdminImpl.deployed();
     console.log(`Successfully deployed L2OpenEntryTicketAdmin at ${l2OpenEntryTicketAdminImpl.address}`);
 
     const l2OpenEntryTicketViewArtifact = await deployer.loadArtifact("L2OpenEntryTicketView");
     const l2OpenEntryTicketViewImpl = await deployer.deploy(l2OpenEntryTicketViewArtifact, [])
+    await l2OpenEntryTicketViewImpl.deployed();
     console.log(`Successfully deployed L2OpenEntryTicketView at ${l2OpenEntryTicketViewImpl.address}`);
 
     const diamondSelectors= [

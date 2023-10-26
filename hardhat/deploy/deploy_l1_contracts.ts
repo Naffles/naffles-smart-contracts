@@ -8,9 +8,11 @@ import { ethers } from 'hardhat';
 export default async function main() {
     let foundersKeyAddress = process.env.foundersKeyAddress;
     let foundersKeyPlaceholderAddress = process.env.foundersKeyPlaceholderAddress;
+    let domainName = process.env.domainName || "Naffles";
 
     console.log("Founders key address: ", foundersKeyAddress);
     console.log("Founders key placeholder address: ", foundersKeyPlaceholderAddress);
+    console.log("Domain name: ", domainName)
 
     if (!foundersKeyAddress || !foundersKeyPlaceholderAddress) {
         const [deployer] = await ethers.getSigners();
@@ -21,7 +23,7 @@ export default async function main() {
         console.log("Founders key placeholder address: ", foundersKeyPlaceholderAddress);
     }
 
-    await deployL1NaffleDiamond(foundersKeyAddress, foundersKeyPlaceholderAddress);
+    await deployL1NaffleDiamond(foundersKeyAddress, foundersKeyPlaceholderAddress, domainName);
 }
 
 main()

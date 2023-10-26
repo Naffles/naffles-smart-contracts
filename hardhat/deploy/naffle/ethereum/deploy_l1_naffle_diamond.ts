@@ -13,10 +13,12 @@ const MINIMUM_PAID_TICKET_SPOTS = 10;
 const MINIMUM_TICKET_PRICE_IN_WEI = ethers.utils.parseEther('0.001');
 
 async function deployFacet(Factory, deployer, gasprice) {
-  return await new Factory(deployer).deploy({}, {gasPrice: gasprice});
+  const contract = await new Factory(deployer).deploy({}, {gasPrice: gasprice});
+  await contract.deployed();  // Wait for the deployment to be completed
+  return contract;
 }
 
-export default async function main(foundersKeyAddress: string, foundersKeyPlaceholderAddress: string) {
+export default async function main(foundersKeyAddress: string, foundersKeyPlaceholderAddress: string, domainName: string) {
   const [deployer] = await ethers.getSigners();
 
   const dirPath = `data`;
@@ -33,17 +35,6 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
   const currentGasPrice = await hre.ethers.provider.getGasPrice();
   const increasedGasPrice = currentGasPrice.mul(2);
 
-  const deployAndLog = async (artifactName, args = []) => {
-    const artifact = await deployer.loadArtifact(artifactName);
-    const tx = await deployer.deploy(artifact, args, {
-      gasPrice: increasedGasPrice
-    });
-    console.log(`Transaction for ${artifactName} broadcasted with hash: ${tx.hash}`);
-    const receipt = await tx.wait();
-    console.log(`Successfully deployed ${artifactName} at ${receipt.contractAddress}`);
-    return hre.ethers.getContractAt(artifactName, receipt.contractAddress);
-  }
-
   console.log('Deploying contracts with the account:', deployer.address);
 
   console.log('Deploying L1NaffleDiamond..');
@@ -55,6 +46,7 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
     zkSyncContract,
     foundersKeyAddress,
     foundersKeyPlaceholderAddress,
+    domainName,
     {
       gasPrice: increasedGasPrice
     }
@@ -138,6 +130,7 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
         zkSyncContract,
         foundersKeyAddress,
         foundersKeyPlaceholderAddress,
+        domainName,
       ],
     });
   } catch (error) {
