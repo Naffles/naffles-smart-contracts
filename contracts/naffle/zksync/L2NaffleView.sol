@@ -37,7 +37,7 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
     /**
      * @inheritdoc IL2NaffleView
      */
-    function getAdminRole() external view returns (bytes32) {
+    function getAdminRole() external pure returns (bytes32) {
         return _getAdminRole();
     }
 

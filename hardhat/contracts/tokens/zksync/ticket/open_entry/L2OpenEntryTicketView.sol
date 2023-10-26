@@ -16,7 +16,7 @@ contract L2OpenEntryTicketView is IL2OpenEntryTicketView, L2OpenEntryTicketBaseI
     /**
      * @inheritdoc IL2OpenEntryTicketView
      */
-    function getAdminRole() external view returns (bytes32) {
+    function getAdminRole() external pure returns (bytes32) {
         return _getAdminRole();
     }
 

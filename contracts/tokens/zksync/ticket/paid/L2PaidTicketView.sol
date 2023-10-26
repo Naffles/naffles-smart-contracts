@@ -15,7 +15,7 @@ contract L2PaidTicketView is IL2PaidTicketView, L2PaidTicketBaseInternal {
     /**
      * @inheritdoc IL2PaidTicketView
      */
-    function getAdminRole() external view returns (bytes32) {
+    function getAdminRole() external pure returns (bytes32) {
         return _getAdminRole();
     }
 }
