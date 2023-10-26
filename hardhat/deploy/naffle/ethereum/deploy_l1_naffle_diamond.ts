@@ -18,7 +18,7 @@ async function deployFacet(Factory, deployer, gasprice) {
   return contract;
 }
 
-export default async function main(foundersKeyAddress: string, foundersKeyPlaceholderAddress: string) {
+export default async function main(foundersKeyAddress: string, foundersKeyPlaceholderAddress: string, domainName: string) {
   const [deployer] = await ethers.getSigners();
 
   const dirPath = `data`;
@@ -46,6 +46,7 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
     zkSyncContract,
     foundersKeyAddress,
     foundersKeyPlaceholderAddress,
+    domainName,
     {
       gasPrice: increasedGasPrice
     }
@@ -129,6 +130,7 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
         zkSyncContract,
         foundersKeyAddress,
         foundersKeyPlaceholderAddress,
+        domainName,
       ],
     });
   } catch (error) {

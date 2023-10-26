@@ -12,6 +12,7 @@ export default async function (
 ) {
     const l1_naffle_contract_address= process.env.l1NaffleAddress;
     const deployerPrivateKey = process.env.deployerPrivateKey;
+    const domainName = process.env.domainName || "Naffles";
     const l2PaidTicketDiamondAddresses = await deployL2PaidTicketDiamond(hre, deployerPrivateKey);
     const l2OpenEntryTicketDiamondAddresses = await deployL2OpenEntryTicketDiamond(hre, deployerPrivateKey);
     const l2NaffleDiamondAddresses = await deployL2NaffleDiamond(
@@ -19,7 +20,8 @@ export default async function (
         deployerPrivateKey,
         l2PaidTicketDiamondAddresses["l2PaidTicketDiamond"],
         l2OpenEntryTicketDiamondAddresses["l2OpenEntryTicketDiamond"],
-        l1_naffle_contract_address
+        l1_naffle_contract_address,
+        domainName
     );
 
     const wallet = new Wallet(deployerPrivateKey);

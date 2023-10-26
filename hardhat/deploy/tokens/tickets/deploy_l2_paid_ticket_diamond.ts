@@ -1,9 +1,8 @@
 import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
-import { Wallet, Provider} from "zksync-web3";
+import { Wallet } from "zksync-web3";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ethers } from "ethers";
 import {createDir, createFile} from "../../utils/util";
-import hre from "hardhat";
 
 export default async function main(hre: HardhatRuntimeEnvironment, deployerPrivateKey: string) {
   try {
@@ -26,6 +25,7 @@ export default async function main(hre: HardhatRuntimeEnvironment, deployerPriva
     const l2PaidTicketDiamondImpl = await deployer.deploy(l2PaidTicketDiamondArtifact, [wallet.address], {
       gasPrice: increasedGasPrice
     })
+    await l2PaidTicketDiamondImpl.deployed();
     console.log(`Successfully deployed L2PaidTicketDiamond at ${l2PaidTicketDiamondImpl.address}`);
 
     console.log('Deploying L2PaidTicketDiamond facets..')
@@ -33,18 +33,21 @@ export default async function main(hre: HardhatRuntimeEnvironment, deployerPriva
     const l2PaidTicketBaseImpl = await deployer.deploy(l2PaidTicketBaseArtifact, [], {
       gasPrice: increasedGasPrice
     })
+    await l2PaidTicketBaseImpl.deployed();
     console.log(`Successfully deployed L2PaidTicketBase at ${l2PaidTicketBaseImpl.address}`);
 
     const l2PaidTicketAdminArtifact = await deployer.loadArtifact("L2PaidTicketAdmin");
     const l2PaidTicketAdminImpl = await deployer.deploy(l2PaidTicketAdminArtifact, [], {
       gasPrice: increasedGasPrice
     })
+    await l2PaidTicketAdminImpl.deployed();
     console.log(`Successfully deployed L2PaidTicketAdmin at ${l2PaidTicketAdminImpl.address}`);
 
     const l2PaidTicketViewArtifact = await deployer.loadArtifact("L2PaidTicketView");
     const l2PaidTicketViewImpl = await deployer.deploy(l2PaidTicketViewArtifact, [], {
       gasPrice: increasedGasPrice
     })
+    await l2PaidTicketViewImpl.deployed();
     console.log(`Successfully deployed L2PaidTicketView at ${l2PaidTicketViewImpl.address}`);
 
     const diamondSelectors= [

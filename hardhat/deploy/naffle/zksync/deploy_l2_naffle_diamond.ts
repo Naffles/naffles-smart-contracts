@@ -14,6 +14,7 @@ export default async function (
     paidTicketAddress: string,
     openEntryTicketAddress: string,
     l1NaffleDiamondContract: string,
+    domainName: string
 ) {
   try {
     const dirPath = `data`;
@@ -35,21 +36,25 @@ export default async function (
       l1NaffleDiamondContract,
       paidTicketAddress,
       openEntryTicketAddress,
-      "Naffles",
+      domainName
     ])
+    await l2NaffleDiamondImpl.deployed()
     console.log(`Successfully deployed L2NaffleDiamond at ${l2NaffleDiamondImpl.address}`);
 
     console.log('Deploying L2NaffleDiamond facets..')
     const l2NaffleBaseArtifact = await deployer.loadArtifact("L2NaffleBase");
     const l2NaffleBaseImpl = await deployer.deploy(l2NaffleBaseArtifact, [])
+    await l2NaffleBaseImpl.deployed()
     console.log(`Successfully deployed L2NaffleBase at ${l2NaffleBaseImpl.address}`);
 
     const l2NaffleAdminArtifact = await deployer.loadArtifact("L2NaffleAdmin");
     const l2NaffleAdminImpl = await deployer.deploy(l2NaffleAdminArtifact, [])
+    await l2NaffleAdminImpl.deployed()
     console.log(`Successfully deployed L2NaffleAdmin at ${l2NaffleAdminImpl.address}`);
 
     const l2NaffleViewArtifact = await deployer.loadArtifact("L2NaffleView");
     const l2NaffleViewImpl = await deployer.deploy(l2NaffleViewArtifact, [])
+    await l2NaffleViewImpl.deployed()
     console.log(`Successfully deployed L2NaffleView at ${l2NaffleViewImpl.address}`);
 
     const diamondSelectors= [
@@ -114,6 +119,7 @@ export default async function (
         l1NaffleDiamondContract,
         paidTicketAddress,
         openEntryTicketAddress,
+        domainName
       ],
     });
 
