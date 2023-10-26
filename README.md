@@ -36,7 +36,8 @@ To deploy the contracts for zksync, call the following from the hardhat folder
 
 To update the l1 naffle diamond contract with the l2 naffle contract address, call the following from the hardhat folder 
 
-```l2NaffleAddress=0x l1NaffleAddress=0x npx hardhat run --network networkname localhost deploy/update_l1_with_l2_contract```
+
+```npx hardhat init-l1-naffle-contract ...``
 
 
 #### 4. deploying VRF
