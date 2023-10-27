@@ -49,6 +49,7 @@ keccak_hash = lambda x : sha3.keccak_256(x).digest()
 
 class CollectionWhitelist(EIP712Struct):
     tokenAddress = Address()
+    expiresAt = Uint(256)
 
 
 class RedeemedPaidTicketExchangeRate(EIP712Struct):
@@ -367,10 +368,12 @@ def eip712_domain():
 def get_collection_whitelist_signature(
     private_key,
     eip712_domain,
-    address
+    address,
+    expires_at
 ):
     msg = CollectionWhitelist()
     msg['tokenAddress'] = address
+    msg['expiresAt'] = expires_at
 
     signable_bytes = msg.signable_bytes(eip712_domain)
     signer = PrivateKey.from_hex(private_key)
@@ -385,18 +388,18 @@ def get_collection_whitelist_signature(
 
 @pytest.fixture()
 def default_collection_whitelist_signature_erc20(
-    eip712_domain, deployed_erc20_mock, private_key
+    eip712_domain, deployed_erc20_mock, private_key, expire_timestamp
 ):
     return get_collection_whitelist_signature(
-        private_key, eip712_domain, deployed_erc20_mock.address)
+        private_key, eip712_domain, deployed_erc20_mock.address, expire_timestamp)
 
 
 @pytest.fixture
 def default_collection_whitelist_signature_erc721(
-    eip712_domain, deployed_erc721a_mock, private_key
+    eip712_domain, deployed_erc721a_mock, private_key, expire_timestamp
 ):
     return get_collection_whitelist_signature(
-        private_key, eip712_domain, deployed_erc721a_mock.address)
+        private_key, eip712_domain, deployed_erc721a_mock.address, expire_timestamp)
 
 
 @pytest.fixture
@@ -431,14 +434,14 @@ def default_exchange_rate_params(exchange_rate_signature, expire_timestamp):
 
 @pytest.fixture
 def default_collection_signature_params(
-        default_collection_whitelist_signature_erc721):
-    return default_collection_whitelist_signature_erc721
+        default_collection_whitelist_signature_erc721, expire_timestamp):
+    return (expire_timestamp, default_collection_whitelist_signature_erc721)
 
 
 @pytest.fixture
 def collection_signature_params_erc20(
-        default_collection_whitelist_signature_erc20):
-    return default_collection_whitelist_signature_erc20
+        default_collection_whitelist_signature_erc20, expire_timestamp):
+    return (expire_timestamp, default_collection_whitelist_signature_erc20)
     
 
 @pytest.fixture
