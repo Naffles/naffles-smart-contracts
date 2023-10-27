@@ -39,16 +39,21 @@ task("create-naffle", "Creates a naffle on the L1 contract")
     const endTime = taskArgs.endtimestamp
     const naffleType = parseInt(taskArgs.naffletype)
 
+    const naffleTokenInformation = {
+        tokenAddress: taskArgs.nftcontractaddress,
+        nftId: nftId,
+        amount: 1,
+        naffleTokenType: 0
+    }
+
     const l2Params = {
-      ethTokenAddress: taskArgs.nftcontractaddress,
+      naffleTokenInformation: naffleTokenInformation,
       owner: signers[0].address,
       naffleId: 1,
-      nftId: nftId,
       paidTicketSpots: paidTicketSpots,
       ticketPriceInWei: ticketPriceInWei,
       endTime: endTime,
       naffleType: naffleType,
-      naffleTokenType: 0
     }
 
     console.log("preparing transaction..")
@@ -78,8 +83,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
 
     console.log("creating naffle..")
     const tx = await l1NaffleContractInstance.createNaffle(
-      taskArgs.nftcontractaddress,
-      nftId,
+      naffleTokenInformation,
       paidTicketSpots,
       ticketPriceInWei,
       endTime,
@@ -88,6 +92,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
         l2GasLimit: gasLimit,
         l2GasPerPubdataByteLimit: utils.REQUIRED_L1_TO_L2_GAS_PER_PUBDATA_LIMIT
       },
+      taskArgs.collectionSignature,
       {
         value: baseCost,
         gasPrice: gasPrice,
