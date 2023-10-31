@@ -35,7 +35,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      * @param _ticketPriceInWei the price of a ticket in wei.
      * @param _endTime the end time of the naffle.
      * @param _naffleType the type of the naffle.
-     * @param _collectionSignature the signature of the collection.
+     * @param _collectionWhitelistParams the collection whitelist params.
      * @return naffleId the id of the naffle that is created.
      * @return txHash the hash of the transaction that is sent to the L2 naffle contract.
      */
@@ -46,13 +46,17 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         uint256 _endTime,
         NaffleTypes.NaffleType _naffleType,
         NaffleTypes.L2MessageParams memory _l2MessageParams,
-        bytes memory _collectionSignature
+        NaffleTypes.CollectionWhitelistParams memory _collectionWhitelistParams
     ) internal returns (uint256 naffleId, bytes32 txHash) {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
 
+        if (block.timestamp > _collectionWhitelistParams.expiresAt) {
+            revert InvalidSignature();
+        }
+
         _validateCollectionSignature(
             _naffleTokenInformation,
-            _collectionSignature,
+            _collectionWhitelistParams,
             layout.signatureSigner,
             layout.collectionWhitelistSignature,
             layout.domainName,
@@ -133,7 +137,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      * @notice Validates the collection signature.
      * @dev if the collection signature is invalid, an InvalidSignature error is thrown.
      * @param _naffleTokenInformation the naffle token information.
-     * @param _collectionSignature the collection signature.
+     * @param _collectionWhitelistParams the collection whitelist params.
      * @param _signatureSigner the signer of the collection signature.
      * @param _collectionWhitelistSignature the collection whitelist signature.
      * @param _domainName the domain name. 
@@ -141,7 +145,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      */
     function _validateCollectionSignature(
         NaffleTypes.NaffleTokenInformation memory _naffleTokenInformation,
-        bytes memory _collectionSignature,
+        NaffleTypes.CollectionWhitelistParams memory _collectionWhitelistParams,
         address _signatureSigner,
         bytes32 _collectionWhitelistSignature,
         string memory _domainName,
@@ -157,7 +161,8 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         bytes32 dataHash = keccak256(
             abi.encode(
                 _collectionWhitelistSignature,
-                _naffleTokenInformation.tokenAddress
+                _naffleTokenInformation.tokenAddress,
+                _collectionWhitelistParams.expiresAt
             )
         );
         
@@ -169,7 +174,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             )
         );
 
-        address signer = Signature.getSigner(digest, _collectionSignature);
+        address signer = Signature.getSigner(digest, _collectionWhitelistParams.signature);
 
         if (signer != _signatureSigner) {
             revert InvalidSignature();
