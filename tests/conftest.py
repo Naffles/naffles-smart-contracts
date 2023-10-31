@@ -439,6 +439,14 @@ def default_collection_signature_params(
 
 
 @pytest.fixture
+def expired_collection_signature_params(
+    default_collection_whitelist_signature_erc721  
+):
+    import time
+    return (int(time.time()) - 3600, default_collection_whitelist_signature_erc721)
+
+
+@pytest.fixture
 def collection_signature_params_erc20(
         default_collection_whitelist_signature_erc20, expire_timestamp):
     return (expire_timestamp, default_collection_whitelist_signature_erc20)

@@ -1,7 +1,7 @@
 import datetime
 
 import brownie
-from brownie import ZERO_ADDRESS, network
+from brownie import ZERO_ADDRESS, network, chain
 from eth_abi import encode
 from web3 import Web3
 
@@ -417,6 +417,54 @@ def test_create_naffle_erc20(
     assert deployed_eth_zksync_mock.called()
 
 
+def test_create_naffle_signature_expired(
+    from_address,
+    address,
+    from_admin,
+    deployed_l1_naffle_diamond,
+    deployed_l1_naffle_base_facet,
+    deployed_l1_naffle_admin_facet,
+    deployed_l1_naffle_view_facet,
+    deployed_erc721a_mock,
+    deployed_eth_zksync_mock,
+    expired_collection_signature_params,
+    l2_message_params
+):
+    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
+        from_admin,
+        deployed_l1_naffle_diamond,
+        deployed_l1_naffle_base_facet,
+        deployed_l1_naffle_admin_facet,
+        deployed_l1_naffle_view_facet,
+    )
+    setup_l1_naffle_contract(
+        admin_facet, deployed_erc721a_mock, deployed_eth_zksync_mock, from_admin
+    )
+    deployed_erc721a_mock.mint(from_address["from"], 1, from_admin)
+    deployed_erc721a_mock.setApprovalForAll(
+        deployed_l1_naffle_diamond.address, True, from_address
+    )
+    nft_id = 1
+    amount = 1
+
+    token_info = (
+        deployed_erc721a_mock.address,
+        nft_id,
+        amount,
+        0
+    )
+
+    with brownie.reverts(get_error_message("InvalidSignature")):
+        base_facet.createNaffle(
+            token_info,
+            MINIMUM_PAID_TICKET_SPOTS,
+            MINIMUM_TICKET_PRICE,
+            datetime.datetime.now().timestamp() + 1000,
+            STANDARD_NAFFLE_TYPE,
+            l2_message_params,
+            expired_collection_signature_params,
+            {'from': address, 'value': 1163284000000000}
+        )
 
 def test_create_naffle_zksync_called(
     from_address,

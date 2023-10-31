@@ -50,6 +50,10 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     ) internal returns (uint256 naffleId, bytes32 txHash) {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
 
+        if (block.timestamp > _collectionWhitelistParams.expiresAt) {
+            revert InvalidSignature();
+        }
+
         _validateCollectionSignature(
             _naffleTokenInformation,
             _collectionWhitelistParams,
@@ -173,7 +177,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         address signer = Signature.getSigner(digest, _collectionWhitelistParams.signature);
 
         if (signer != _signatureSigner) {
-            //revert InvalidSignature();
+            revert InvalidSignature();
         }
     }
 
