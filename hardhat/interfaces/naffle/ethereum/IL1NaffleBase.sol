@@ -15,7 +15,7 @@ interface IL1NaffleBase {
      * @param _ticketPriceInWei price of a ticket in wei.
      * @param _endTime end time of the naffle.
      * @param _naffleType type of the naffle.
-     * @param _collctionSignature signature of the collection.
+     * @param _collectionWhitelistParams collection whitelist params.
      * @return naffleId id of the naffle.
      * @return txHash hash of the transaction message to zkSync.
      */
@@ -26,7 +26,7 @@ interface IL1NaffleBase {
         uint256 _endTime,
         NaffleTypes.NaffleType _naffleType,
         NaffleTypes.L2MessageParams calldata _l2MessageParams,
-        bytes calldata _collctionSignature
+        NaffleTypes.CollectionWhitelistParams memory _collectionWhitelistParams
     ) external payable returns (uint256 naffleId, bytes32 txHash);
 
     /**

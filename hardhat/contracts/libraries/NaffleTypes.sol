@@ -17,6 +17,11 @@ library NaffleTypes {
         bytes exchangeRateSignature;
     }
 
+    struct CollectionWhitelistParams {
+        uint256 expiresAt;
+        bytes signature;
+    }
+
     struct CreateZkSyncNaffleParams {
         NaffleTokenInformation naffleTokenInformation;
         address owner;
