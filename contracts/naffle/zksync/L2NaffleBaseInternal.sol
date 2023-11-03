@@ -401,6 +401,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             layout.domainSignature
         );
 
+        if (block.timestamp > exchangeRateParams.exchangeRateData.expireTimestamp) {
+            revert InvalidSignature();
+        }
+
         uint256 totalTicketValue = 0;
 
         for (uint256 i = 0; i < naffleIds.length; i++) {
