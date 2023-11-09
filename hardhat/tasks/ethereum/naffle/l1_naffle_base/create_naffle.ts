@@ -12,6 +12,8 @@ task("create-naffle", "Creates a naffle on the L1 contract")
   .addParam("endtimestamp", "The timestamp indicating the end time of the Naffle event.")
   .addParam("ticketpriceinwei", "The price for a single ticket in the Naffle event, specified in Wei (1 Ether = 10^18 Wei).")
   .addParam("naffletype", "The type of the Naffle event. '0' denotes a standard Naffle, and '1' denotes an unlimited Naffle.")
+  .addParam('signature', "Collection whitelist signature.")
+  .addParam('expiresat', "Timestamp when the signature expires.")
   .setAction(async (taskArgs, hre) => {
     const signers = await hre.ethers.getSigners()
 
@@ -39,7 +41,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
     const endTime = taskArgs.endtimestamp
     const naffleType = parseInt(taskArgs.naffletype)
 
-    const naffleTokenInformation = {
+    const naffleTokenInformation = { 
         tokenAddress: taskArgs.nftcontractaddress,
         nftId: nftId,
         amount: 1,
@@ -69,6 +71,8 @@ task("create-naffle", "Creates a naffle on the L1 contract")
       caller: utils.applyL1ToL2Alias(taskArgs.l1nafflecontractaddress)
     });
 
+    console.log("ESTIMATION SUCCESSFUL")
+
     const baseCost = await walletL2.getBaseCost({
       gasLimit: gasLimit,
       gasPrice: gasPrice,
@@ -82,23 +86,37 @@ task("create-naffle", "Creates a naffle on the L1 contract")
     const l1NaffleContractInstance = l1NaffleBaseFactory.attach(taskArgs.l1nafflecontractaddress);
 
     console.log("creating naffle..")
-    const tx = await l1NaffleContractInstance.createNaffle(
-      naffleTokenInformation,
-      paidTicketSpots,
-      ticketPriceInWei,
-      endTime,
-      naffleType,
-      {
-        l2GasLimit: gasLimit,
-        l2GasPerPubdataByteLimit: utils.REQUIRED_L1_TO_L2_GAS_PER_PUBDATA_LIMIT
-      },
-      taskArgs.collectionSignature,
-      {
-        value: baseCost,
-        gasPrice: gasPrice,
-      }
-    );
-    console.log(tx)
-    const receipt = await tx.wait();
-    console.log(`Transaction successful with hash: ${receipt.transactionHash}`);
+    
+    const buffer = Buffer.from(taskArgs.signature, 'base64');
+
+    try {
+        const tx = await l1NaffleContractInstance.createNaffle(
+          naffleTokenInformation,
+          paidTicketSpots,
+          ticketPriceInWei,
+          endTime,
+          naffleType,
+          {
+            l2GasLimit: gasLimit,
+            l2GasPerPubdataByteLimit: utils.REQUIRED_L1_TO_L2_GAS_PER_PUBDATA_LIMIT
+          },
+          {
+            expiresAt: taskArgs.expiresat, 
+            signature: buffer 
+          },
+          {
+            value: baseCost,
+            gasPrice: gasPrice,
+          }
+        );
+        console.log(tx)
+        const receipt = await tx.wait();
+        console.log(`Transaction successful with hash: ${receipt.transactionHash}`);
+    } catch (e) {
+        console.log(e)
+    }
   });
+
+
+
+

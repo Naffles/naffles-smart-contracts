@@ -479,6 +479,7 @@ def test_create_naffle_zksync_called(
     default_collection_signature_params,
     l2_message_params
 ):
+    print(default_collection_signature_params)
     access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
         from_admin,
         deployed_l1_naffle_diamond,
@@ -514,6 +515,7 @@ def test_create_naffle_zksync_called(
         {'from': address, 'value': 1163284000000000}
     )
     assert deployed_eth_zksync_mock.called()
+    assert 1 == 0
 
 
 def test_process_message_from_l2_set_winner(

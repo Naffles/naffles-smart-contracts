@@ -77,6 +77,8 @@ def from_address(address) -> dict:
 
 @pytest.fixture
 def private_key() -> str:
+    return "5d77e0585efd1a1b3c71e604e1e8e6663545ec3e100c35b16d7ff47b09bc80aa"
+    return "7f7cf182f8c22142bda8f203fde4ce5bea202bbd8114ea2e2563b603c9e5d74d"
     return "0b1ce493b94b0ebb664d355548c097f4bab74b5cb55fc5feb4c5fcddb67484e8"
 
 
@@ -109,7 +111,7 @@ def deployed_l1_naffle_diamond(
         ZERO_ADDRESS,
         deployed_erc721a_mock.address,
         deployed_erc721a_mock.address,
-        "Naffles",
+        "Naffles staging",
         from_admin
     )
     return diamond
@@ -151,7 +153,7 @@ def deployed_l2_naffle_diamond(
         deployed_l2_paid_ticket_diamond.address,
         deployed_l2_open_entry_ticket_diamond.address,
         deployed_l1_naffle_diamond,
-        "Naffles",
+        "Naffles staging",
         from_admin
     )
     return diamond
@@ -362,7 +364,7 @@ def naffle_vrf(coordinator_mock, gas_lane_key_hash, from_admin):
 
 @pytest.fixture
 def eip712_domain():
-    return make_domain(name='Naffles')
+    return make_domain(name='Naffles staging')
 
 
 def get_collection_whitelist_signature(
@@ -372,7 +374,7 @@ def get_collection_whitelist_signature(
     expires_at
 ):
     msg = CollectionWhitelist()
-    msg['tokenAddress'] = address
+    msg['tokenAddress'] = "0x932ca55b9ef0b3094e8fa82435b3b4c50d713043"
     msg['expiresAt'] = expires_at
 
     signable_bytes = msg.signable_bytes(eip712_domain)
@@ -383,6 +385,14 @@ def get_collection_whitelist_signature(
     r = big_endian_to_int(signature[0:32])
     s = big_endian_to_int(signature[32:64])
     final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
+
+    print(final_sig)
+    import binascii
+    final_sig_hex = final_sig.hex()
+
+    print(expires_at)
+    print(final_sig_hex)
+
     return final_sig
 
 
@@ -406,6 +416,7 @@ def default_collection_whitelist_signature_erc721(
 def expire_timestamp():
     # return timestamp in 1 hour
     import time
+    return 1699526124
     return int(time.time()) + 3600
 
 
@@ -414,7 +425,7 @@ def exchange_rate_signature(private_key, eip712_domain, address, expire_timestam
     msg = RedeemedPaidTicketExchangeRate()
     msg['exchangeRate'] = TICKET_PRICE * 5
     msg['expiresAt'] = expire_timestamp
-    msg['targetAddress'] = address.address
+    msg['targetAddress'] = "0x932ca55b9ef0b3094e8fa82435b3b4c50d713043"
 
     signable_bytes = msg.signable_bytes(eip712_domain)
     signer = PrivateKey.from_hex(private_key)
@@ -424,6 +435,8 @@ def exchange_rate_signature(private_key, eip712_domain, address, expire_timestam
     r = big_endian_to_int(signature[0:32])
     s = big_endian_to_int(signature[32:64])
     final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
+
+    
     return final_sig
 
 
