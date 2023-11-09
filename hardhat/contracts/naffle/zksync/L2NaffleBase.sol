@@ -10,7 +10,7 @@ import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger
 contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     modifier onlyL1NaffleContract() {
         if (msg.sender != _getL1NaffleContractAddress()) {
-            //revert NotAllowed();
+            revert NotAllowed();
         }
         _;
     }
@@ -21,10 +21,9 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     function createNaffle(
         NaffleTypes.CreateZkSyncNaffleParams memory _params
     ) external onlyL1NaffleContract {
-        return;
-        //_createNaffle(
-        //    _params
-        //);
+        _createNaffle(
+            _params
+        );
     }
 
     /**
