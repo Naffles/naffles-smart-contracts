@@ -20,6 +20,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
     const l1provider = new Provider(getInfuraURL(hre.network.name));
     const l2provider = new Provider(getRPCEndpoint(hre.network.name));
 
+    console.log(getPrivateKey())
     const walletL2 = new Wallet(getPrivateKey(), l2provider, l1provider);
 
     const contractFactory = await hre.ethers.getContractFactory("ERC721AMock");
@@ -79,6 +80,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
       gasPerPubdataByte: utils.REQUIRED_L1_TO_L2_GAS_PER_PUBDATA_BYTE
     });
 
+
     console.log("BASE COST: ", baseCost)
     console.log("GAS LIMIT: ", gasLimit)
 
@@ -87,7 +89,18 @@ task("create-naffle", "Creates a naffle on the L1 contract")
 
     console.log("creating naffle..")
     
-    const buffer = Buffer.from(taskArgs.signature, 'base64');
+    const sig = 'e76a0d2028513c7acb6252244d02e68a4df2a43197df9b2be649e615c191135840612e158cc973f21be91528409039236c989c00482dc23c6da715abdbf0ea681b'
+    const final_sig_bytes = Buffer.from(sig, 'hex');
+    //const signatureBytes = hre.ethers.utils.base64.decode(sig);
+    //const signatureBytes = hre.ethers.utils.base64.decode(taskArgs.signature);
+    //const signatureHex = hre.ethers.utils.hexlify(signatureBytes);
+
+
+    //console.log("SIGNATURE BYTES: ", signatureBytes)
+    //console.log("SIGNATURE: ", signatureHex)
+    
+    console.log("SIGNATURE BYTES: ", final_sig_bytes)
+
 
     try {
         const tx = await l1NaffleContractInstance.createNaffle(
@@ -97,15 +110,16 @@ task("create-naffle", "Creates a naffle on the L1 contract")
           endTime,
           naffleType,
           {
-            l2GasLimit: gasLimit,
+            l2GasLimit: 2326568,
+            //l2GasLimit: gasLimit,
             l2GasPerPubdataByteLimit: utils.REQUIRED_L1_TO_L2_GAS_PER_PUBDATA_LIMIT
           },
           {
             expiresAt: taskArgs.expiresat, 
-            signature: buffer 
+            signature: final_sig_bytes
           },
           {
-            value: baseCost,
+            value: 1163284000000000,
             gasPrice: gasPrice,
           }
         );
