@@ -114,7 +114,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
                 paidTicketSpots: _paidTicketSpots,
                 ticketPriceInWei: _ticketPriceInWei,
                 endTime: _endTime,
-                naffleType: uint8(_naffleType)
+                naffleType: _naffleType
             })
         );
 
