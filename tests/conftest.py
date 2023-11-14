@@ -416,7 +416,7 @@ def exchange_rate_signature(private_key, eip712_domain, address, expire_timestam
     msg = RedeemedPaidTicketExchangeRate()
     msg['exchangeRate'] = TICKET_PRICE * 5
     msg['expiresAt'] = expire_timestamp
-    msg['targetAddress'] = address
+    msg['targetAddress'] = address.address
 
     signable_bytes = msg.signable_bytes(eip712_domain)
     signer = PrivateKey.from_hex(private_key)
