@@ -81,25 +81,12 @@ task("create-naffle", "Creates a naffle on the L1 contract")
     });
 
 
-    console.log("BASE COST: ", baseCost)
-    console.log("GAS LIMIT: ", gasLimit)
-
     const l1NaffleBaseFactory = await hre.ethers.getContractFactory("L1NaffleBase");
     const l1NaffleContractInstance = l1NaffleBaseFactory.attach(taskArgs.l1nafflecontractaddress);
 
     console.log("creating naffle..")
     
-    const sig = '437511cf1eb1274b82e2f4c286295b716c7d9f891ca2007ab36ba4491fca14ee6aa9f6683939d6635becde4c4c5c19a1d2993ad18d0c7e10207bd8699d71fd3d1c'
-    const final_sig_bytes = Buffer.from(sig, 'hex');
-    //const signatureBytes = hre.ethers.utils.base64.decode(sig);
-    //const signatureBytes = hre.ethers.utils.base64.decode(taskArgs.signature);
-    //const signatureHex = hre.ethers.utils.hexlify(signatureBytes);
-
-
-    //console.log("SIGNATURE BYTES: ", signatureBytes)
-    //console.log("SIGNATURE: ", signatureHex)
-    
-    console.log("SIGNATURE BYTES: ", final_sig_bytes)
+    const signatureBytes = hre.ethers.utils.base64.decode(sig);
 
 
     try {
@@ -110,16 +97,15 @@ task("create-naffle", "Creates a naffle on the L1 contract")
           endTime,
           naffleType,
           {
-            l2GasLimit: 2326568,
-            //l2GasLimit: gasLimit,
+            l2GasLimit: gasLimit,
             l2GasPerPubdataByteLimit: utils.REQUIRED_L1_TO_L2_GAS_PER_PUBDATA_LIMIT
           },
           {
             expiresAt: taskArgs.expiresat, 
-            signature: final_sig_bytes
+            signature: signatureBytes
           },
           {
-            value: 1163284000000000,
+            value: baseCost,
             gasPrice: gasPrice,
           }
         );
