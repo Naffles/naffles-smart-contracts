@@ -89,7 +89,7 @@ task("create-naffle", "Creates a naffle on the L1 contract")
 
     console.log("creating naffle..")
     
-    const sig = 'e76a0d2028513c7acb6252244d02e68a4df2a43197df9b2be649e615c191135840612e158cc973f21be91528409039236c989c00482dc23c6da715abdbf0ea681b'
+    const sig = '437511cf1eb1274b82e2f4c286295b716c7d9f891ca2007ab36ba4491fca14ee6aa9f6683939d6635becde4c4c5c19a1d2993ad18d0c7e10207bd8699d71fd3d1c'
     const final_sig_bytes = Buffer.from(sig, 'hex');
     //const signatureBytes = hre.ethers.utils.base64.decode(sig);
     //const signatureBytes = hre.ethers.utils.base64.decode(taskArgs.signature);

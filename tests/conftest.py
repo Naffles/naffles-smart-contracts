@@ -416,7 +416,7 @@ def default_collection_whitelist_signature_erc721(
 def expire_timestamp():
     # return timestamp in 1 hour
     import time
-    return 1699612960
+    return 1702220793
     return int(time.time()) + 3600
 
 
