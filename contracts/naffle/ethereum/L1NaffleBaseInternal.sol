@@ -106,14 +106,16 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
 
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
         bytes memory data = abi.encodeWithSignature(
-        "createNaffle((address,uint256,uint256,uint8),address,uint256,uint256,uint256,uint256,uint8)",
-            _naffleTokenInformation,
-            msg.sender,
-            naffleId,
-            _paidTicketSpots,
-            _ticketPriceInWei,
-            _endTime,
-            uint8(_naffleType)
+            "createNaffle(((address,uint256,uint256,uint8),address,uint256,uint256,uint256,uint256,uint8))",
+            NaffleTypes.CreateZkSyncNaffleParams({
+                naffleTokenInformation: _naffleTokenInformation,
+                owner: msg.sender,
+                naffleId: naffleId,
+                paidTicketSpots: _paidTicketSpots,
+                ticketPriceInWei: _ticketPriceInWei,
+                endTime: _endTime,
+                naffleType: _naffleType
+            })
         );
 
         if(msg.value < layout.minL2ForwardedGasForCreateNaffle) {
