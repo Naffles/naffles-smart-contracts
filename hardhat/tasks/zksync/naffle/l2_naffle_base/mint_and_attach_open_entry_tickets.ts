@@ -23,6 +23,7 @@ task("mint-and-attach-open-entry-tickets", "Creates naffle on l2 as test")
       walletL2.address,
       parseInt(taskArgs.amount)
     )
+    return;
     const result = await mintTicketsTranscation.wait()
     const ticketIds = []
 

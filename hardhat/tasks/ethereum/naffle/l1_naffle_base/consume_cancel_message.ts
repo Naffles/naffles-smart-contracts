@@ -2,7 +2,7 @@ import { task } from "hardhat/config"
 import { Wallet, Provider, utils } from "zksync-web3";
 import {getInfuraURL, getPrivateKey, getRPCEndpoint} from "../../../util";
 
-task("consume-set-winner-message", "Creates a naffle on the L1 contract")
+task("consume-cancel-message", "Creates a naffle on the L1 contract")
   .addParam("l1nafflecontractaddress", "The Ethereum Layer 1 (L1) address of the deployed Naffle Diamond contract.")
   .addParam("l2nafflecontractaddress", "The zkSync Layer 2 (L2) address of the deployed Naffle Diamond contract.")
   .addParam("l2transactionhash", "The hash of the l2 transaction where the message was sent.")
@@ -12,12 +12,10 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
     const l1provider = new Provider(getInfuraURL(hre.network.name));
     const l2provider = new Provider(getRPCEndpoint(hre.network.name));
 
-    const walletL2 = new Wallet(getPrivateKey(), l2provider, l1provider);
-
     const l1ContractFactory = await hre.ethers.getContractFactory("L1NaffleBase");
     const l1ContractInstance = l1ContractFactory.attach(taskArgs.l1nafflecontractaddress);
 
-    let providedHash = "0x" + taskArgs.l2messagehash
+    let providedHash = taskArgs.l2messagehash
     console.log("providedHash: ", providedHash)
 
     let message = hre.ethers.utils.defaultAbiCoder.encode(
@@ -25,9 +23,9 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
       ["cancel", taskArgs.naffleid]
     );
 
-    const result=  await l2provider.getTransactionReceipt(taskArgs.l2transactionhash);
 
-    console.log("transaction receipt: ", result)
+    console.log("PROVIDED MESSAGE: ", message)
+    console.log("MESSGE", message)
 
     const { l1BatchNumber, l1BatchTxIndex , blockNumber } = await l2provider.getTransactionReceipt(taskArgs.l2transactionhash);
     console.log("blockNumber: ", blockNumber)
@@ -44,13 +42,14 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
     const messageInfo = {
       txNumberInBlock: l1BatchTxIndex,
       sender: taskArgs.l2nafflecontractaddress,
-      data: message,
+      data: taskArgs.l2messagehash,
     };
 
     console.log("messageInfo: ", messageInfo)
 
     console.log(`Retrieving proof for batch ${l1BatchNumber}, transaction index ${l1BatchTxIndex} and proof id ${proof.id}`);
 
+        
     const res = await mailboxL1Contract.proveL2MessageInclusion(
       l1BatchNumber,
       proof.id,
@@ -58,12 +57,15 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
       proof.proof
     );
 
+    console.log("*************")
+
     console.log("res: ", res);
-    return
 
     const singers = await hre.ethers.getSigners();
     const signer = singers[0];
     // setting proof on l1
+    
+    return
 
     const consumeWinnerTranscation = await l1ContractInstance.connect(signer).consumeCancelMessage(
       l1BatchNumber,
