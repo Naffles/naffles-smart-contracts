@@ -104,6 +104,7 @@ def test_create_naffle_invalid_end_time(
     amount = 1
     end_time = int(datetime.datetime.now().timestamp()) + 1
 
+
     token_info = (
         deployed_erc721a_mock.address,
         nft_id,
@@ -801,7 +802,6 @@ def test_process_message_from_l2_set_winner_invalid_hash(
     _proof = ["0x01"]
 
     action = "setWinner"
-
     encoded_data = encode(["string", "uint256", "address"], [action, _naffleId, address.address])
     keccak_encoded_data = Web3.keccak(encode(["string", "uint256", "address"], [action, 2, address.address]))
     with brownie.reverts(get_error_message("FailedMessageInclusion")):

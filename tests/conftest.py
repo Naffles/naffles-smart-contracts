@@ -1,4 +1,5 @@
 import pytest
+import time
 from brownie import (
     Contract,
     ERC721AMock,
@@ -109,7 +110,7 @@ def deployed_l1_naffle_diamond(
         ZERO_ADDRESS,
         deployed_erc721a_mock.address,
         deployed_erc721a_mock.address,
-        "Naffles",
+        "Naffles staging",
         from_admin
     )
     return diamond
@@ -151,7 +152,7 @@ def deployed_l2_naffle_diamond(
         deployed_l2_paid_ticket_diamond.address,
         deployed_l2_open_entry_ticket_diamond.address,
         deployed_l1_naffle_diamond,
-        "Naffles",
+        "Naffles staging",
         from_admin
     )
     return diamond
@@ -362,7 +363,7 @@ def naffle_vrf(coordinator_mock, gas_lane_key_hash, from_admin):
 
 @pytest.fixture
 def eip712_domain():
-    return make_domain(name='Naffles')
+    return make_domain(name='Naffles staging')
 
 
 def get_collection_whitelist_signature(
@@ -383,6 +384,7 @@ def get_collection_whitelist_signature(
     r = big_endian_to_int(signature[0:32])
     s = big_endian_to_int(signature[32:64])
     final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
+
     return final_sig
 
 
@@ -424,6 +426,7 @@ def exchange_rate_signature(private_key, eip712_domain, address, expire_timestam
     r = big_endian_to_int(signature[0:32])
     s = big_endian_to_int(signature[32:64])
     final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
+
     return final_sig
 
 
@@ -442,7 +445,6 @@ def default_collection_signature_params(
 def expired_collection_signature_params(
     default_collection_whitelist_signature_erc721  
 ):
-    import time
     return (int(time.time()) - 3600, default_collection_whitelist_signature_erc721)
 
 

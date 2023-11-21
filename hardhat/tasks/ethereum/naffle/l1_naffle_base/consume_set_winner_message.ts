@@ -18,7 +18,7 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
     const l1ContractFactory = await hre.ethers.getContractFactory("L1NaffleBase");
     const l1ContractInstance = l1ContractFactory.attach(taskArgs.l1nafflecontractaddress);
 
-    let providedHash = "0x" + taskArgs.l2messagehash
+    let providedHash = taskArgs.l2messagehash
     console.log("providedHash: ", providedHash)
 
     let message = hre.ethers.utils.defaultAbiCoder.encode(
@@ -30,6 +30,9 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
     console.log("blockNumber: ", blockNumber)
 
     console.log("getting proof..")
+    console.log("l2nafflecontractaddress: ", taskArgs.l2nafflecontractaddress)
+    console.log(blockNumber)
+    console.log(taskArgs.l2messagehash)
     const proof = await l2provider.getMessageProof(blockNumber, taskArgs.l2nafflecontractaddress, providedHash)
     console.log("proof: ", proof)
 
@@ -41,7 +44,7 @@ task("consume-set-winner-message", "Creates a naffle on the L1 contract")
     const messageInfo = {
       txNumberInBlock: l1BatchTxIndex,
       sender: taskArgs.l2nafflecontractaddress,
-      data: message,
+      data: providedHash,
     };
 
     console.log("messageInfo: ", messageInfo)
