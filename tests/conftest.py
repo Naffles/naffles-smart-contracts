@@ -404,9 +404,8 @@ def default_collection_whitelist_signature_erc721(
 
 @pytest.fixture
 def expire_timestamp():
-    # return timestamp in 1 hour
     import time
-    return int(time.time()) + 3600
+    return int(time.time()) + 864000000000
 
 
 @pytest.fixture
