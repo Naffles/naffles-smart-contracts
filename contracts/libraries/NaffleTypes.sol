@@ -45,7 +45,7 @@ library NaffleTypes {
         UNLIMITED
     }
 
-    enum L2L1MessageType {
+    enum ActionType {
         SET_WINNER,
         CANCEL
     }

@@ -237,6 +237,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
+        if (naffle.status == NaffleTypes.NaffleStatus.CANCELLED || naffle.status == NaffleTypes.NaffleStatus.SELECTING_WINNER) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+
         if (naffle.owner != msg.sender) {
             revert NotAllowed();
         }
@@ -283,7 +287,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         _naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
 
-        bytes memory message = abi.encode(NaffleTypes.L2L1MessageType.CANCEL, _naffle.naffleId);
+        bytes memory message = abi.encode(NaffleTypes.ActionType.CANCEL, _naffle.naffleId);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
 
         emit L2NaffleCancelled(
@@ -370,7 +374,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         uint256 amountToTransfer = totalFundsRaised - platformFee;
 
-        bytes memory message = abi.encode(NaffleTypes.L2L1MessageType.SET_WINNER, _naffleId, _winner);
+        bytes memory message = abi.encode(NaffleTypes.ActionType.SET_WINNER, _naffleId, _winner);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
 
         layout.platformFeesAccumulated = layout.platformFeesAccumulated + platformFee;
