@@ -254,10 +254,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NotAllowed();
         }
 
-        if (naffle.endTime > block.timestamp) {
-            revert NaffleNotEndedYet(naffle.endTime);
-        }
-
         if (naffle.naffleType == NaffleTypes.NaffleType.UNLIMITED) {
             revert InvalidNaffleType(naffle.naffleType);
         }
@@ -530,9 +526,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE) {
             revert InvalidNaffleStatus(naffle.status);
-        }
-        if (naffle.endTime > block.timestamp) {
-            revert NaffleNotFinished(naffle.endTime);
         }
         if (naffle.owner != msg.sender) {
             revert NotNaffleOwner(naffle.owner);

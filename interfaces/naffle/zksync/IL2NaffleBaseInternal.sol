@@ -102,12 +102,6 @@ interface IL2NaffleBaseInternal {
     error InvalidEndTime(uint256 endTime);
 
     /**
-     * @notice thrown when the naffle is not finished.
-     * @param endTime end time of the naffle.
-     */
-    error NaffleNotFinished(uint256 endTime);
-
-    /**
      * @notice thrown when a random number gets requested for a naffle which already has a random number requested.
      */
     error RandomNumberAlreadyRequested();
