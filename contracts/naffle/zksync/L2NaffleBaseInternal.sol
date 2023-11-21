@@ -202,6 +202,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         NaffleTypes.L2Naffle storage _naffle
     ) internal {
         if (_naffle.numberOfOpenEntries == _naffle.openEntryTicketSpots && _naffle.numberOfPaidTickets == _naffle.paidTicketSpots) {
+            _naffle.status = NaffleTypes.NaffleStatus.SELECTING_WINNER;
             _requestRandomNumber(_naffle.naffleId);
         }
     }
