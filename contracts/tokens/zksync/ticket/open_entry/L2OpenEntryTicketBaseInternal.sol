@@ -67,6 +67,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
 
         for (uint i = 0; i < length; ++i) {
             uint256 ticketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketIdsOnNaffle[i]];
+            l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketIdsOnNaffle[i]] = 0;
             NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[ticketId];
 
             if (ticketId == 0) {
