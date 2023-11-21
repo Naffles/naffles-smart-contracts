@@ -45,6 +45,11 @@ library NaffleTypes {
         UNLIMITED
     }
 
+    enum L2L1MessageType {
+        SET_WINNER,
+        CANCEL
+    }
+
     enum TicketType {
         OPEN_ENTRY,
         PAID

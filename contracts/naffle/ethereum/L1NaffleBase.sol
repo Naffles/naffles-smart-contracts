@@ -52,8 +52,11 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _message,
             _proof
         );
-        (, uint256 naffleId, address winner) = abi.decode(_message, (string, uint256, address));
-        _setWinnerAndTransferPrize(naffleId, winner);
+        try abi.decode(_message, (uint8, uint256, address)) returns (uint8, uint256, address winner) {
+            _setWinnerAndTransferPrize(naffleId, winner);
+        } catch {
+            revert InvalidMessage();
+        }
     }
 
     /**
@@ -75,8 +78,11 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _message,
             _proof
         );
-        (, uint256 naffleId) = abi.decode(_message, (string, uint256));
-        _cancelNaffle(naffleId);
+        try abi.decode(_message, (uint8, uint256)) returns (uint8, uint256 naffleId) {
+            _cancelNaffle(naffleId);
+        } catch {
+            revert InvalidMessage();
+        }
     }
     /**
      * @inheritdoc IERC721Receiver
