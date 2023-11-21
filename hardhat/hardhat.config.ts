@@ -13,6 +13,7 @@ require("./tasks/ethereum/mint_mock_nfts")
 
 require("./tasks/ethereum/naffle/l1_naffle_base/create_naffle")
 require("./tasks/ethereum/naffle/l1_naffle_base/consume_set_winner_message")
+require("./tasks/ethereum/naffle/l1_naffle_base/consume_cancel_message")
 
 require("./tasks/ethereum/naffle/l1_naffle_admin/init_l1_naffle_contract")
 require("./tasks/ethereum/naffle/l1_naffle_admin/set_founders_key_address")
@@ -44,6 +45,8 @@ require("./tasks/zksync/tokens/open_entry/open_entry_ticket_view/read_open_entry
 require("./tasks/zksync/tokens/open_entry/open_entry_ticket_admin/set_l2_naffle_contract");
 
 require("./tasks/zksync/tokens/open_entry/open_entry_ticket_base/detach_tickets");
+
+require("./tasks/polygon/vrf/draw_random_number")
 
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY
