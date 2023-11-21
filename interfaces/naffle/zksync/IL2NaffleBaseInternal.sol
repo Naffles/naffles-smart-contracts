@@ -17,6 +17,10 @@ interface IL2NaffleBaseInternal {
      */
     error InvalidSignature();
 
+    /**
+     * @notice thrown when invalid amouint of tickets is provided
+     */
+    error InvalidAmount(uint256 amount);
 
     /**
      * @notice thrown when the naffle id is invalid.

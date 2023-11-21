@@ -78,6 +78,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
+
+        if (_amount == 0) {
+            revert InvalidAmount(_amount);
+        }
+
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
@@ -167,6 +172,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     ) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
+
+        if (_ticketIds.length == 0) {
+            revert InvalidAmount(_amount);
+        }
 
         if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
