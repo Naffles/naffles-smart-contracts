@@ -78,7 +78,6 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         (, uint256 naffleId) = abi.decode(_message, (string, uint256));
         _cancelNaffle(naffleId);
     }
-
     /**
      * @inheritdoc IERC721Receiver
      */

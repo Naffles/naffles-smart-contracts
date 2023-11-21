@@ -787,8 +787,8 @@ def test_exchange_tickets_naffle_not_ended_yet(
     with brownie.reverts(get_error_message("InvalidNaffleStatus", ['uint8'], [0])):
         l2_diamonds.naffle_base_facet.exchangePaidTicketsForOpenEntryTickets([1], [10], default_exchange_rate_params, from_address)
 
-def test_set_winner(
-    admin,
+
+def test_set_winner_invalid_role(
     from_address,
     address,
     from_admin,
@@ -801,8 +801,24 @@ def test_set_winner(
         l2_diamonds,
         deployed_erc721a_mock,
     )
+    with brownie.reverts(get_error_message("NotAllowed")):
+        l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 5000, from_address)
+
+
+def test_set_winner(
+    from_admin,
+    address,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+    )
     old_balance = address.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 5000, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 5000, from_admin)
 
     naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
 
@@ -813,7 +829,6 @@ def test_set_winner(
     assert naffle[10] == 4  # naffle status finished
 
     assert address.balance() == old_balance + (TICKET_PRICE * 2 * 0.995)
-
 
 def test_owner_cancel_naffle_invalid_status(
     address,
