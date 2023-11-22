@@ -690,7 +690,52 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.layout().domainName = _domainName;
     }
 
+    /**
+     * @notice sets the exchange rate signature hash.
+     * @param _exchangeRateSignatureHash the exchange rate signature hash.
+     */
     function _setExchangeRateSignatureHash(bytes32 _exchangeRateSignatureHash) internal {
         L2NaffleBaseStorage.layout().exchangeRateSignatureHash = _exchangeRateSignatureHash;
-    } 
+    }
+
+    /**
+     * @notice gets the platform fees accumulated.
+     * @return platformFeesAccumulated the platform fees accumulated.
+     */
+    function getPlatformFeesAccumulated() external view returns (uint256 platformFeesAccumulated) {
+        platformFeesAccumulated =  L2NaffleBaseStorage.layout().platformFeesAccumulated;
+    }
+
+    /**
+     * @notice gets L1 Messenger contract address.
+     * @return l1MessengerContractAddress the L1 Messenger contract address.
+     */
+    function getL1MessengerContractAddress() external view returns (address l1MessengerContractAddress) {
+        l1MessengerContractAddress = L2NaffleBaseStorage.layout().l1MessengerContractAddress;
+    }
+
+
+    /**
+     * @notice gets the paid to open entry redeem ratio.
+     * @return paidToOpenEntryRedeemRatio the paid to open entry redeem ratio.
+     */
+    function getPaidToOpenEntryRedeemRatio() external view returns (uint256 paidToOpenEntryRedeemRatio) {
+        paidToOpenEntryRedeemRatio = L2NaffleBaseStorage.layout().paidToOpenEntryRedeemRatio;
+    }
+
+    /**
+     * @notice gets the signature signer.
+     * @return signatureSigner the signature signer.
+     */
+    function getSignatureSigner() external view returns (address signatureSigner) {
+        signatureSigner = L2NaffleBaseStorage.layout().signatureSigner;
+    }
+
+    /**
+     * @notice gets the domain name.
+     * @return domainName the domain name.
+     */
+    function getDomainName() external view returns (string memory domainName) {
+        domainName = L2NaffleBaseStorage.layout().domainName;
+    }
 }
