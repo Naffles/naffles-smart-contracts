@@ -80,7 +80,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
 
         if (_amount == 0) {
-            revert InvalidAmount(_amount);
+            revert InvalidAmount();
         }
 
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
@@ -174,7 +174,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
         if (_ticketIds.length == 0) {
-            revert InvalidAmount(_amount);
+            revert InvalidAmount();
         }
 
         if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
@@ -702,7 +702,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @notice gets the platform fees accumulated.
      * @return platformFeesAccumulated the platform fees accumulated.
      */
-    function getPlatformFeesAccumulated() external view returns (uint256 platformFeesAccumulated) {
+    function _getPlatformFeesAccumulated() internal view returns (uint256 platformFeesAccumulated) {
         platformFeesAccumulated =  L2NaffleBaseStorage.layout().platformFeesAccumulated;
     }
 
@@ -710,7 +710,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @notice gets L1 Messenger contract address.
      * @return l1MessengerContractAddress the L1 Messenger contract address.
      */
-    function getL1MessengerContractAddress() external view returns (address l1MessengerContractAddress) {
+    function _getL1MessengerContractAddress() internal view returns (address l1MessengerContractAddress) {
         l1MessengerContractAddress = L2NaffleBaseStorage.layout().l1MessengerContractAddress;
     }
 
@@ -719,7 +719,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @notice gets the paid to open entry redeem ratio.
      * @return paidToOpenEntryRedeemRatio the paid to open entry redeem ratio.
      */
-    function getPaidToOpenEntryRedeemRatio() external view returns (uint256 paidToOpenEntryRedeemRatio) {
+    function _getPaidToOpenEntryRedeemRatio() internal view returns (uint256 paidToOpenEntryRedeemRatio) {
         paidToOpenEntryRedeemRatio = L2NaffleBaseStorage.layout().paidToOpenEntryRedeemRatio;
     }
 
@@ -727,7 +727,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @notice gets the signature signer.
      * @return signatureSigner the signature signer.
      */
-    function getSignatureSigner() external view returns (address signatureSigner) {
+    function _getSignatureSigner() internal view returns (address signatureSigner) {
         signatureSigner = L2NaffleBaseStorage.layout().signatureSigner;
     }
 
@@ -735,7 +735,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @notice gets the domain name.
      * @return domainName the domain name.
      */
-    function getDomainName() external view returns (string memory domainName) {
+    function _getDomainName() internal view returns (string memory domainName) {
         domainName = L2NaffleBaseStorage.layout().domainName;
     }
 }

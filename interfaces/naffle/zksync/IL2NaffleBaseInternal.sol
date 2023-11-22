@@ -20,7 +20,7 @@ interface IL2NaffleBaseInternal {
     /**
      * @notice thrown when invalid amouint of tickets is provided
      */
-    error InvalidAmount(uint256 amount);
+    error InvalidAmount();
 
     /**
      * @notice thrown when the naffle id is invalid.
