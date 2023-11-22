@@ -95,4 +95,10 @@ interface IL2NaffleAdmin {
      * @param _exchangeRateSignatureHash the new exchangeRateSignatureHash.
      */
     function setExchangeRateSignatureHash(bytes32 _exchangeRateSignatureHash) external;
+
+    /**
+     * @notice sets the exchangeRateSignature
+     * @param _exchangeRateSignature the new exchangeRateSignature.
+     */
+    function removeAdmin(address _admin) external;
 }

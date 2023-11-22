@@ -25,4 +25,11 @@ contract L2PaidTicketAdmin is IL2PaidTicketAdmin, L2PaidTicketBaseInternal, Acce
     function setBaseURI(string memory _baseURI) external onlyRole(_getAdminRole()) {
         _setBaseURI(_baseURI);
     }
+
+    /**
+     * @inheritdoc IL2PaidTicketAdmin
+     */
+    function removeAdmin(address _admin) external onlyOwner {
+        _revokeRole(_getAdminRole(), _admin);
+    }
 }

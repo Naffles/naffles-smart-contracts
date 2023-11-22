@@ -97,4 +97,11 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
     function setDomainName(string memory _domainName) external onlyRole(_getAdminRole()) {
         _setDomainName(_domainName);
     }
+
+    /**
+     * @inheritdoc IL1NaffleAdmin
+     */
+    function removeAdmin(address _admin) external onlyOwner {
+        _revokeRole(_getAdminRole(), _admin);
+    }
 }

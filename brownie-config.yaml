@@ -15,7 +15,7 @@ compiler:
         remappings:
             - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.8.0'
             - '@openzeppelin/contracts-upgradeable=OpenZeppelin/openzeppelin-contracts-upgradeable@4.8.1/contracts'
-            - '@solidstate=solidstate-network/solidstate-solidity@0.0.51'
+            - '@solidstate=solidstate-network/solidstate-solidity@0.0.54'
             - '@matterlabs/zksync-contracts=c0dejax/v2-testnet-contracts@.0.2.0'
             - '@chainlink=smartcontractkit/chainlink@2.3.0'
 dependencies:

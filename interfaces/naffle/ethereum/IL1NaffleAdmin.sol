@@ -83,4 +83,10 @@ interface IL1NaffleAdmin {
      * @param _domainName the new domain name.
      */
     function setDomainName(string memory _domainName) external;
+
+    /**
+     * @notice removes admin role from the _admin address.
+     * @param _admin the admin address to remove.
+     */
+    function removeAdmin(address _admin) external;
 }
