@@ -118,10 +118,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             })
         );
 
-        if(msg.value < layout.minL2ForwardedGasForCreateNaffle) {
-            revert InsufficientL2GasForwardedForCreateNaffle();
-        }
-
         txHash = zksync.requestL2Transaction{value: msg.value}(
             layout.zkSyncNaffleContractAddress,
             0,
