@@ -20,12 +20,6 @@ interface IL1NaffleView {
     function getMinimumPaidTicketSpots() external view returns (uint256 minimumPaidTicketSpots);
 
     /**
-     * @notice get the minimum price of a paid ticket in wei.
-     * @return minimumPaidTicketPriceInWei the minimum price of a paid ticket in wei.
-     */
-    function getMinimumPaidTicketPriceInWei() external view returns (uint256 minimumPaidTicketPriceInWei);
-
-    /**
      * @notice get the address of the L2 zkSync Naffle contract.
      * @return zkSyncNaffleContractAddress the address of the zkSync Naffle contract.
      */

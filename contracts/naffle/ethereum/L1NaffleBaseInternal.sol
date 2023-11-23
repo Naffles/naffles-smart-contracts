@@ -320,22 +320,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     }
 
     /**
-     * @notice sets the minimum paid ticket price in wei.
-     * @param _minimumPaidTicketPriceInWei the minimum paid ticket price in wei.
-     */
-    function _setMinimumPaidTicketPriceInWei(uint256 _minimumPaidTicketPriceInWei) internal {
-        L1NaffleBaseStorage.layout().minimumPaidTicketPriceInWei = _minimumPaidTicketPriceInWei;
-    }
-
-    /**
-     * @notice gets the minimum paid ticket price in wei.
-     * @return minimumPaidTicketPriceInWei the minimum paid ticket price in wei.
-     */
-    function _getMinimumPaidTicketPriceInWei() internal view returns (uint256 minimumPaidTicketPriceInWei) {
-        minimumPaidTicketPriceInWei = L1NaffleBaseStorage.layout().minimumPaidTicketPriceInWei;
-    }
-
-    /**
      * @notice sets the zkSync naffle contract address.
      * @param _zkSyncNaffleContractAddress the zkSync naffle contract address.
      */
@@ -400,14 +384,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     }
 
     /**
-     * @notice gets the L1 messenger address.
-     * @return l1MessengerAddress the L1 messenger address.
-     */
-    function _getL1MessengerAddress() internal pure returns (address l1MessengerAddress) {
-        l1MessengerAddress = L1NaffleBaseStorage.L1_MESSENGER_ADDRESS;
-    }
-
-    /**
      * @notice sets the signature signer address.
      * @param _signatureSignerAddress the signature signer address.
      */
@@ -422,23 +398,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      */
     function _getNaffleById(uint256 _naffleId) internal view returns (NaffleTypes.L1Naffle memory naffle) {
         naffle = L1NaffleBaseStorage.layout().naffles[_naffleId];
-    }
-
-    /**
-     * @notice sets minimum gas to be forwarded for L2 transactions in _createNaffle
-     * @param _minL2ForwardedGasForCreateNaffle the minimum gas limit to be forwarded for L2 transactions in _createNaffle
-     * @dev set the minimum amount of wei this transaction should foward to L2. Should be much higher than the actual cost, since refunds are given
-     */
-    function _setMinL2ForwardedGas(uint256 _minL2ForwardedGasForCreateNaffle) internal {
-        L1NaffleBaseStorage.layout().minL2ForwardedGasForCreateNaffle = _minL2ForwardedGasForCreateNaffle;
-    }
-
-    /**
-     * @notice sets minimum gas limit foir the L2 transaction in _createNaffle
-     * @param _minL2GasLimit the minimum gas limit for the L2 transaction in _createNaffle
-     */
-    function _setMinL2GasLimit(uint256 _minL2GasLimit) internal {
-        L1NaffleBaseStorage.layout().minL2GasLimitForCreateNaffle = _minL2GasLimit;
     }
 
     /**

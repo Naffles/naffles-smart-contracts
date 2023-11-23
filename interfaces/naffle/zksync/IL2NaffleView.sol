@@ -69,12 +69,6 @@ interface IL2NaffleView {
     function getL1MessengerContractAddress() external view returns (address);
 
     /**
-     * @notice gets the paid to open entry redeem ratio.
-     * @return paidToOpenEntryRedeemRatio the paid to open entry redeem ratio.
-     */
-    function getPaidToOpenEntryRedeemRatio() external view returns (uint256);
-
-    /**
      * @notice gets the signature signer.
      * @return signatureSigner the signature signer.
      */

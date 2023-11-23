@@ -23,13 +23,6 @@ contract L2OpenEntryTicketView is IL2OpenEntryTicketView, L2OpenEntryTicketBaseI
     /**
      * @inheritdoc IL2OpenEntryTicketView
      */
-    function getTotalSupply() external view returns (uint256) {
-        return _getTotalSupply();
-    }
-
-    /**
-     * @inheritdoc IL2OpenEntryTicketView
-     */
     function getOpenEntryTicketById(uint256 _ticketId) external view returns (NaffleTypes.OpenEntryTicket memory) {
         return _getOpenEntryTicketById(_ticketId);
     }

@@ -79,13 +79,6 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
     /**
      * @inheritdoc IL2NaffleView
      */
-    function getPaidToOpenEntryRedeemRatio() external view returns (uint256) {
-        return _getPaidToOpenEntryRedeemRatio();
-    }
-
-    /**
-     * @inheritdoc IL2NaffleView
-     */
     function getSignatureSigner() external view returns (address) {
         return _getSignatureSigner();
     }

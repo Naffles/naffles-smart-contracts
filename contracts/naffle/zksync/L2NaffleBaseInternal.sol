@@ -720,15 +720,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         l1MessengerContractAddress = L2NaffleBaseStorage.layout().l1MessengerContractAddress;
     }
 
-
-    /**
-     * @notice gets the paid to open entry redeem ratio.
-     * @return paidToOpenEntryRedeemRatio the paid to open entry redeem ratio.
-     */
-    function _getPaidToOpenEntryRedeemRatio() internal view returns (uint256 paidToOpenEntryRedeemRatio) {
-        paidToOpenEntryRedeemRatio = L2NaffleBaseStorage.layout().paidToOpenEntryRedeemRatio;
-    }
-
     /**
      * @notice gets the signature signer.
      * @return signatureSigner the signature signer.

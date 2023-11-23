@@ -120,14 +120,6 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
     }
 
     /**
-     * @notice gets the total supply.
-     * @return totalSupply the total supply.
-     */
-    function _getTotalSupply() internal view returns (uint256 totalSupply) {
-        totalSupply = _totalSupply();
-    }
-
-    /**
      * @notice sets the base URI
      * @param _baseURI the base URI.
      */

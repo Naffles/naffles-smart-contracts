@@ -18,12 +18,6 @@ interface IL1NaffleAdmin {
     function setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) external;
 
     /**
-     * @notice sets the minimum paid ticket price in wei. naffle can't have paid tickets with a price lower than this.
-     * @param _minimumPaidTicketPriceInWei the new minimum paid ticket price in wei.
-     */
-    function setMinimumPaidTicketPriceInWei(uint256 _minimumPaidTicketPriceInWei) external;
-
-    /**
      * @notice sets the L2 zksync naffle contract address.
      * @param _zkSyncNaffleContractAddress the new L2 zksync naffle contract address.
      */
