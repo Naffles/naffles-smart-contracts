@@ -270,13 +270,14 @@ def test_get_naffle_by_id(
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
-        end_time=end_time
+        end_time=end_time,
+        number_of_tickets=100,
     )
 
     naffle = brownie.interface.IL2NaffleView(l2_diamonds.deployed_l2_naffle_diamond).getNaffleById(1)
 
     number_of_tickets_bought = 2
-    number_of_open_entry_tickets = 0
+    number_of_open_entry_tickets = 1
     winning_ticket_id = 0
     status = 0  # active
 
@@ -284,10 +285,10 @@ def test_get_naffle_by_id(
         default_token_info,
         address,
         NAFFLE_ID,
-        PAID_TICKET_SPOTS,
+        100,
         number_of_open_entry_tickets,
         number_of_tickets_bought,
-        number_of_open_entry_tickets,
+        0,
         TICKET_PRICE,
         end_time,
         winning_ticket_id,

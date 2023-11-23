@@ -81,7 +81,6 @@ library NaffleTypes {
         uint256 ticketIdOnNaffle;
     }
 
-
     struct L2Naffle {
         NaffleTokenInformation naffleTokenInformation;
         address owner;
