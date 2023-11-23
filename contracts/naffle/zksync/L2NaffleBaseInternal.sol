@@ -116,7 +116,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffle.ticketPriceInWei
         );
 
-        _checkIfNaffleIsFinished(naffle);
+        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD) {
+            _checkIfNaffleIsFinished(naffle);
+        }
     }
 
     /**
@@ -180,11 +182,13 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
+
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
 
         uint256 newOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
+
         if (newOpenEntries > naffle.openEntryTicketSpots) {
             revert NotEnoughOpenEntryTicketSpots(naffle.openEntryTicketSpots);
         }
@@ -200,7 +204,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _ticketIds
         );
 
-        _checkIfNaffleIsFinished(naffle);
+        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD) {
+            _checkIfNaffleIsFinished(naffle);
+        }
     }
 
     /**
@@ -366,7 +372,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
-        if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+        if (naffle.status != NaffleTypes.NaffleStatus.SELECTING_WINNER) {
             revert InvalidNaffleStatus(naffle.status);
         }
 

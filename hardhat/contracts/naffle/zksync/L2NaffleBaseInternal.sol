@@ -171,6 +171,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
+
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }

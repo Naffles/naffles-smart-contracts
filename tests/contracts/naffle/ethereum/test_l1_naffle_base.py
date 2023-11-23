@@ -574,9 +574,9 @@ def test_process_message_from_l2_set_winner(
     _l2TxNumberInBlock = 1
     _proof = ["0x01"]
 
-    action = "setWinner"
+    action = 0
 
-    encoded_data = encode(["string", "uint256", "address"], [action, _naffleId, address.address])
+    encoded_data = encode(["uint8", "uint256", "address"], [action, _naffleId, address.address])
     keccak_encoded_data = Web3.keccak(encoded_data)
     base_facet.consumeSetWinnerMessage(
         _l2BlockNumber,
@@ -649,9 +649,9 @@ def test_process_message_from_l2_set_winner_erc20(
     _l2TxNumberInBlock = 1
     _proof = ["0x01"]
 
-    action = "setWinner"
+    action = 0
 
-    encoded_data = encode(["string", "uint256", "address"], [action, _naffleId, address.address])
+    encoded_data = encode(["uint8", "uint256", "address"], [action, _naffleId, address.address])
     keccak_encoded_data = Web3.keccak(encoded_data)
     base_facet.consumeSetWinnerMessage(
         _l2BlockNumber,
@@ -725,9 +725,9 @@ def test_process_message_from_l2_set_winner(
     _l2TxNumberInBlock = 1
     _proof = ["0x01"]
 
-    action = "setWinner"
+    action = 0
 
-    encoded_data = encode(["string", "uint256", "address"], [action, _naffleId, address.address])
+    encoded_data = encode(["uint8", "uint256", "address"], [action, _naffleId, address.address])
     keccak_encoded_data = Web3.keccak(encoded_data)
     base_facet.consumeSetWinnerMessage(
         _l2BlockNumber,
@@ -801,9 +801,9 @@ def test_process_message_from_l2_set_winner_invalid_hash(
     _l2TxNumberInBlock = 1
     _proof = ["0x01"]
 
-    action = "setWinner"
-    encoded_data = encode(["string", "uint256", "address"], [action, _naffleId, address.address])
-    keccak_encoded_data = Web3.keccak(encode(["string", "uint256", "address"], [action, 2, address.address]))
+    action = 0
+    encoded_data = encode(["uint8", "uint256", "address"], [action, _naffleId, address.address])
+    keccak_encoded_data = Web3.keccak(encode(["uint8", "uint256", "address"], [action, 2, address.address]))
     with brownie.reverts(get_error_message("FailedMessageInclusion")):
         base_facet.consumeSetWinnerMessage(
             _l2BlockNumber,
@@ -845,9 +845,9 @@ def test_process_message_from_l2_set_winner_failed_message_inclusion(
     _l2TxNumberInBlock = 1
     _proof = ["0x01"]
 
-    action = "setWinner"
+    action = 0
 
-    encoded_data = encode(["string", "uint256", "address"], [action, 1, address.address])
+    encoded_data = encode(["uint8", "uint256", "address"], [action, 1, address.address])
     keccak_encoded_data = Web3.keccak(encoded_data)
     with brownie.reverts(get_error_message("FailedMessageInclusion")):
         base_facet.consumeSetWinnerMessage(
