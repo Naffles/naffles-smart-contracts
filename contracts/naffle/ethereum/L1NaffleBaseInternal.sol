@@ -14,6 +14,7 @@ import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBaseInternal.sol";
 import "@matterlabs/zksync-contracts/l1/contracts/zksync/Storage.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     using SafeERC20 for IERC20;
@@ -201,7 +202,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             )
         );
 
-        address signer = Signature.getSigner(digest, _collectionWhitelistParams.signature);
+        address signer = ECDSA.recover(digest, _collectionWhitelistParams.signature);
 
         if (signer != _signatureSigner) {
             revert InvalidSignature();

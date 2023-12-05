@@ -14,6 +14,7 @@ import "@matterlabs/zksync-contracts/l1/contracts/zksync/interfaces/IZkSync.sol"
 import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
 import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
 import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
@@ -487,7 +488,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             )
         );
 
-        address signer = Signature.getSigner(digest, _exchangeRateParams.exchangeRateSignature);
+        address signer = ECDSA.recover(digest, _exchangeRateParams.exchangeRateSignature);
 
         if (signer != _signatureSigner) {
             revert InvalidSignature();
