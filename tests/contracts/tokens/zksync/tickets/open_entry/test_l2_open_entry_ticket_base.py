@@ -1,5 +1,5 @@
 import brownie
-from brownie import accounts, Contract
+from brownie import accounts, Contract, ERC721AMock
 
 from scripts.util import get_error_message
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
@@ -38,7 +38,7 @@ def test_admin_mint(
     )
 
     admin_facet.adminMint(admin, 1, from_admin)
-    erc721_contract = Contract.from_abi("ERC721AMock", deployed_l2_open_entry_ticket_diamond.address, ERC721.abi)
+    erc721_contract = Contract.from_abi("ERC721AMock", deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
     assert erc721_contract.totalSupply() == 1
     ticket = view_facet.getOpenEntryTicketById(1, from_admin)
     naffle_id = 0
@@ -72,7 +72,7 @@ def test_admin_mint_no_admin(
     with brownie.reverts():
         admin_facet.adminMint(admin, 1, from_address)
 
-    erc721_contract = Contract.from_abi("ERC721AMock", deployed_l2_open_entry_ticket_diamond.address, ERC721.abi)
+    erc721_contract = Contract.from_abi("ERC721AMock", deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
     assert erc721_contract.totalSupply() == 0
 
 

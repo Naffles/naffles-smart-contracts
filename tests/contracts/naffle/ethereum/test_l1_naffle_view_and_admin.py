@@ -4,11 +4,12 @@ import brownie
 from brownie import ZERO_ADDRESS, L1NaffleAdmin
 
 from scripts.util import add_facet, get_selectors
-from tests.contracts.naffle.ethereum.test_l1_naffle_base import setup_l1_naffle_contract, MINIMUM_PAID_TICKET_SPOTS
+from tests.contracts.naffle.ethereum.test_l1_naffle_base import setup_l1_naffle_contract, MINIMUM_PAID_TICKET_SPOTS, \
+    MINIMUM_TICKET_PRICE
 from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
     setup_diamond_with_facets,
 )
-from tests.test_helper import STANDARD_NAFFLE_TYPE, ERC721
+from tests.test_helper import STANDARD_NAFFLE_TYPE
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 
@@ -325,6 +326,7 @@ def test_admin_cancel_naffle(
     base_facet.createNaffle(
         token_info,
         MINIMUM_PAID_TICKET_SPOTS,
+        MINIMUM_TICKET_PRICE,
         datetime.datetime.now().timestamp() + 100000,
         STANDARD_NAFFLE_TYPE,
         l2_message_params,
