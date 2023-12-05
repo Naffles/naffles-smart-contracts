@@ -100,13 +100,11 @@ def deployed_l1_naffle_diamond(
 ) -> L1NaffleDiamond:
     from tests.contracts.naffle.ethereum.test_l1_naffle_base import (
         MINIMUM_NAFFLE_DURATION, MINIMUM_PAID_TICKET_SPOTS,
-        MINIMUM_TICKET_PRICE
     )
     diamond = L1NaffleDiamond.deploy(
         admin,
         MINIMUM_NAFFLE_DURATION,
         MINIMUM_PAID_TICKET_SPOTS,
-        MINIMUM_TICKET_PRICE,
         ZERO_ADDRESS,
         deployed_erc721a_mock.address,
         deployed_erc721a_mock.address,

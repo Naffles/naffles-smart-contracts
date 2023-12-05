@@ -10,7 +10,6 @@ import {createDir, createFile} from '../../utils/util';
 
 const MINIMUM_NAFFLE_DURATION = 60 * 60 * 24; // 1 day
 const MINIMUM_PAID_TICKET_SPOTS = 10;
-const MINIMUM_TICKET_PRICE_IN_WEI = ethers.utils.parseEther('0.001');
 
 async function deployFacet(Factory, deployer, gasprice) {
   const contract = await new Factory(deployer).deploy({}, {gasPrice: gasprice});
@@ -42,7 +41,6 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
     deployer.address,
     MINIMUM_NAFFLE_DURATION,
     MINIMUM_PAID_TICKET_SPOTS,
-    MINIMUM_TICKET_PRICE_IN_WEI,
     zkSyncContract,
     foundersKeyAddress,
     foundersKeyPlaceholderAddress,
@@ -126,7 +124,6 @@ export default async function main(foundersKeyAddress: string, foundersKeyPlaceh
         deployer.address,
         MINIMUM_NAFFLE_DURATION,
         MINIMUM_PAID_TICKET_SPOTS,
-        MINIMUM_TICKET_PRICE_IN_WEI,
         zkSyncContract,
         foundersKeyAddress,
         foundersKeyPlaceholderAddress,

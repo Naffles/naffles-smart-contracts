@@ -61,6 +61,11 @@ library NaffleTypes {
         ERC20
     }
 
+    enum TxStatus {
+        Failure,
+        Success
+    }
+
     struct NaffleTokenInformation {
         address tokenAddress;
         uint256 nftId;
@@ -74,6 +79,7 @@ library NaffleTypes {
         address owner;
         address winner;
         bool cancelled;
+        bytes32 txHash;
     }
 
     struct OpenEntryTicket {

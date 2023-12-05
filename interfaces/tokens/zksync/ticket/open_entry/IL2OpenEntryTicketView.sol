@@ -20,12 +20,6 @@ interface IL2OpenEntryTicketView {
     function getL2NaffleContractAddress() external view returns (address l2NaffleContractAddress);
 
     /**
-     * @notice get the total supply of open entry tickets.
-     * @return totalSupply the total supply of open entry tickets.
-     */
-    function getTotalSupply() external view returns (uint256 totalSupply);
-
-    /**
      * @notice get open entry ticket by id
      * @param _ticketId the id of the ticket.
      * @return ticket the open entry ticket.

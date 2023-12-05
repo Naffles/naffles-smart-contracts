@@ -33,6 +33,22 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         );
     }
 
+    function cancelFailedNaffle(
+        uint256 _naffleId,
+        uint256 _l2BlockNumber,
+        uint256 _l2MessageIndex,
+        uint16 _l2TxNumberInBlock,
+        bytes32[] calldata _merkleProof
+    ) external {
+        _cancelFailedNaffle(
+            _naffleId,
+            _l2BlockNumber,
+            _l2MessageIndex,
+            _l2TxNumberInBlock,
+            _merkleProof
+        );
+    }
+
     /**
      * @inheritdoc IL1NaffleBase
      */

@@ -96,14 +96,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             IERC20(_naffleTokenInformation.tokenAddress).safeTransferFrom(msg.sender, address(this), _naffleTokenInformation.amount);
         }
 
-        layout.naffles[naffleId] = NaffleTypes.L1Naffle({
-            naffleTokenInformation: _naffleTokenInformation,
-            naffleId: naffleId,
-            owner: msg.sender,
-            winner: address(0),
-            cancelled: false
-        });
-
+        
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
         bytes memory data = abi.encodeWithSignature(
             "createNaffle(((address,uint256,uint256,uint8),address,uint256,uint256,uint256,uint256,uint8))",
@@ -128,7 +121,43 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             msg.sender
         );
 
+        layout.naffles[naffleId] = NaffleTypes.L1Naffle({
+            naffleTokenInformation: _naffleTokenInformation,
+            naffleId: naffleId,
+            owner: msg.sender,
+            winner: address(0),
+            cancelled: false,
+            txHash: txHash
+        });
+
         emit L1NaffleCreated(_naffleTokenInformation, naffleId, msg.sender, _paidTicketSpots, _ticketPriceInWei, _endTime, _naffleType);
+    }
+
+    function _cancelFailedNaffle(
+        uint256 _naffleId,
+        uint256 _l2BlockNumber,
+        uint256 _l2MessageIndex,
+        uint16 _l2TxNumberInBlock,
+        bytes32[] calldata _merkleProof
+    ) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
+
+        require(msg.sender == naffle.owner);
+
+        IZkSync zksync = IZkSync(layout.zkSyncAddress);
+        bool success = zksync.proveL1ToL2TransactionStatus(
+            naffle.txHash,
+            _l2BlockNumber,
+            _l2MessageIndex,
+            _l2TxNumberInBlock,
+            _merkleProof,
+            TxStatus.Failure
+        );
+
+        require(success);
+
+        _cancelNaffle(_naffleId);
     }
 
     /**
@@ -260,6 +289,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
 
+        require(naffle.cancelled == false);
         naffle.cancelled = true;
 
         NaffleTypes.NaffleTokenInformation memory tokenInfo = naffle.naffleTokenInformation;
