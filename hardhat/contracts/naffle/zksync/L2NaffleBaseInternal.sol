@@ -3,7 +3,6 @@ pragma solidity ^0.8.17;
 
 import "./L2NaffleBaseStorage.sol";
 import "../../libraries/NaffleTypes.sol";
-import "../../libraries/Signature.sol";
 import '@solidstate/contracts/interfaces/IERC165.sol';
 import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
@@ -14,6 +13,7 @@ import "@matterlabs/zksync-contracts/l1/contracts/zksync/interfaces/IZkSync.sol"
 import "../../../interfaces/tokens/zksync/ticket/paid/IL2PaidTicketBase.sol";
 import "../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
 import "@matterlabs/zksync-contracts/l2/system-contracts/interfaces/IL1Messenger.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlInternal {
     bytes32 internal constant VRF_ROLE = keccak256("VRF_MANAGER");
@@ -78,6 +78,11 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
+
+        if (_amount == 0) {
+            revert InvalidAmount();
+        }
+
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE && naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
             revert InvalidNaffleStatus(naffle.status);
         }
@@ -111,7 +116,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffle.ticketPriceInWei
         );
 
-        _checkIfNaffleIsFinished(naffle);
+        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD) {
+            _checkIfNaffleIsFinished(naffle);
+        }
     }
 
     /**
@@ -168,6 +175,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
+        if (_ticketIds.length == 0) {
+            revert InvalidAmount();
+        }
+
         if (naffle.naffleTokenInformation.tokenAddress == address(0)) {
             revert InvalidNaffleId(_naffleId);
         }
@@ -177,6 +188,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
 
         uint256 newOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
+
         if (newOpenEntries > naffle.openEntryTicketSpots) {
             revert NotEnoughOpenEntryTicketSpots(naffle.openEntryTicketSpots);
         }
@@ -192,7 +204,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             _ticketIds
         );
 
-        _checkIfNaffleIsFinished(naffle);
+        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD) {
+            _checkIfNaffleIsFinished(naffle);
+        }
     }
 
     /**
@@ -203,6 +217,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         NaffleTypes.L2Naffle storage _naffle
     ) internal {
         if (_naffle.numberOfOpenEntries == _naffle.openEntryTicketSpots && _naffle.numberOfPaidTickets == _naffle.paidTicketSpots) {
+            _naffle.status = NaffleTypes.NaffleStatus.SELECTING_WINNER;
             _requestRandomNumber(_naffle.naffleId);
         }
     }
@@ -237,12 +252,12 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
-        if (naffle.owner != msg.sender) {
-            revert NotAllowed();
+        if (naffle.status == NaffleTypes.NaffleStatus.CANCELLED || naffle.status == NaffleTypes.NaffleStatus.SELECTING_WINNER) {
+            revert InvalidNaffleStatus(naffle.status);
         }
 
-        if (naffle.endTime > block.timestamp) {
-            revert NaffleNotEndedYet(naffle.endTime);
+        if (naffle.owner != msg.sender) {
+            revert NotAllowed();
         }
 
         if (naffle.naffleType == NaffleTypes.NaffleType.UNLIMITED) {
@@ -283,7 +298,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         _naffle.status = NaffleTypes.NaffleStatus.CANCELLED;
 
-        bytes memory message = abi.encode("cancel", _naffle.naffleId);
+        bytes memory message = abi.encode(NaffleTypes.ActionType.CANCEL, _naffle.naffleId);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
 
         emit L2NaffleCancelled(
@@ -357,6 +372,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
+        if (naffle.status != NaffleTypes.NaffleStatus.SELECTING_WINNER) {
+            revert InvalidNaffleStatus(naffle.status);
+        }
+
         uint256 winningTicketId = _randomNumber % (naffle.numberOfPaidTickets + naffle.numberOfOpenEntries) + 1;
 
         naffle.winningTicketId = winningTicketId;
@@ -370,7 +389,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         uint256 amountToTransfer = totalFundsRaised - platformFee;
 
-        bytes memory message = abi.encode("setWinner", _naffleId, _winner);
+        bytes memory message = abi.encode(NaffleTypes.ActionType.SET_WINNER, _naffleId, _winner);
         messageHash = IL1Messenger(layout.l1MessengerContractAddress).sendToL1(message);
 
         layout.platformFeesAccumulated = layout.platformFeesAccumulated + platformFee;
@@ -468,7 +487,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             )
         );
 
-        address signer = Signature.getSigner(digest, _exchangeRateParams.exchangeRateSignature);
+        address signer = ECDSA.recover(digest, _exchangeRateParams.exchangeRateSignature);
 
         if (signer != _signatureSigner) {
             revert InvalidSignature();
@@ -513,9 +532,6 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE) {
             revert InvalidNaffleStatus(naffle.status);
-        }
-        if (naffle.endTime > block.timestamp) {
-            revert NaffleNotFinished(naffle.endTime);
         }
         if (naffle.owner != msg.sender) {
             revert NotNaffleOwner(naffle.owner);
@@ -680,7 +696,43 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         L2NaffleBaseStorage.layout().domainName = _domainName;
     }
 
+    /**
+     * @notice sets the exchange rate signature hash.
+     * @param _exchangeRateSignatureHash the exchange rate signature hash.
+     */
     function _setExchangeRateSignatureHash(bytes32 _exchangeRateSignatureHash) internal {
         L2NaffleBaseStorage.layout().exchangeRateSignatureHash = _exchangeRateSignatureHash;
-    } 
+    }
+
+    /**
+     * @notice gets the platform fees accumulated.
+     * @return platformFeesAccumulated the platform fees accumulated.
+     */
+    function _getPlatformFeesAccumulated() internal view returns (uint256 platformFeesAccumulated) {
+        platformFeesAccumulated =  L2NaffleBaseStorage.layout().platformFeesAccumulated;
+    }
+
+    /**
+     * @notice gets L1 Messenger contract address.
+     * @return l1MessengerContractAddress the L1 Messenger contract address.
+     */
+    function _getL1MessengerContractAddress() internal view returns (address l1MessengerContractAddress) {
+        l1MessengerContractAddress = L2NaffleBaseStorage.layout().l1MessengerContractAddress;
+    }
+
+    /**
+     * @notice gets the signature signer.
+     * @return signatureSigner the signature signer.
+     */
+    function _getSignatureSigner() internal view returns (address signatureSigner) {
+        signatureSigner = L2NaffleBaseStorage.layout().signatureSigner;
+    }
+
+    /**
+     * @notice gets the domain name.
+     * @return domainName the domain name.
+     */
+    function _getDomainName() internal view returns (string memory domainName) {
+        domainName = L2NaffleBaseStorage.layout().domainName;
+    }
 }

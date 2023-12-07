@@ -23,4 +23,10 @@ interface IL2PaidTicketAdmin {
      * @param _baseURI the base URI.
      */
     function setBaseURI(string memory _baseURI) external;
+
+    /**
+     * @notice remove the admin role.
+     * @param _admin the address of the admin.
+     */
+    function removeAdmin(address _admin) external;
 }

@@ -10,9 +10,6 @@ library L2PaidTicketStorage {
 
     struct Layout {
         address l2NaffleContractAddress;
-        // naffle id => ticket id on naffle => ticket id
-        mapping(uint256 => mapping(uint256 => uint256)) naffleIdNaffleTicketIdTicketId;
-        uint256 totalMinted;
     }
 
     function layout() internal pure returns (Layout storage s) {

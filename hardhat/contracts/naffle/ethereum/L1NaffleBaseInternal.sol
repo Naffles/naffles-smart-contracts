@@ -3,7 +3,6 @@ pragma solidity ^0.8.17;
 
 import "./L1NaffleBaseStorage.sol";
 import "../../libraries/NaffleTypes.sol";
-import "../../libraries/Signature.sol";
 import '@solidstate/contracts/interfaces/IERC165.sol';
 import '@solidstate/contracts/interfaces/IERC721.sol';
 import '@solidstate/contracts/interfaces/IERC1155.sol';
@@ -14,6 +13,7 @@ import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../interfaces/naffle/ethereum/IL1NaffleBaseInternal.sol";
 import "@matterlabs/zksync-contracts/l1/contracts/zksync/Storage.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     using SafeERC20 for IERC20;
@@ -96,14 +96,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             IERC20(_naffleTokenInformation.tokenAddress).safeTransferFrom(msg.sender, address(this), _naffleTokenInformation.amount);
         }
 
-        layout.naffles[naffleId] = NaffleTypes.L1Naffle({
-            naffleTokenInformation: _naffleTokenInformation,
-            naffleId: naffleId,
-            owner: msg.sender,
-            winner: address(0),
-            cancelled: false
-        });
-
+        
         IZkSync zksync = IZkSync(layout.zkSyncAddress);
         bytes memory data = abi.encodeWithSignature(
             "createNaffle(((address,uint256,uint256,uint8),address,uint256,uint256,uint256,uint256,uint8))",
@@ -118,10 +111,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             })
         );
 
-        if(msg.value < layout.minL2ForwardedGasForCreateNaffle) {
-            revert InsufficientL2GasForwardedForCreateNaffle();
-        }
-
         txHash = zksync.requestL2Transaction{value: msg.value}(
             layout.zkSyncNaffleContractAddress,
             0,
@@ -132,7 +121,43 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             msg.sender
         );
 
+        layout.naffles[naffleId] = NaffleTypes.L1Naffle({
+            naffleTokenInformation: _naffleTokenInformation,
+            naffleId: naffleId,
+            owner: msg.sender,
+            winner: address(0),
+            cancelled: false,
+            txHash: txHash
+        });
+
         emit L1NaffleCreated(_naffleTokenInformation, naffleId, msg.sender, _paidTicketSpots, _ticketPriceInWei, _endTime, _naffleType);
+    }
+
+    function _cancelFailedNaffle(
+        uint256 _naffleId,
+        uint256 _l2BlockNumber,
+        uint256 _l2MessageIndex,
+        uint16 _l2TxNumberInBlock,
+        bytes32[] calldata _merkleProof
+    ) internal {
+        L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
+        NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
+
+        require(msg.sender == naffle.owner);
+
+        IZkSync zksync = IZkSync(layout.zkSyncAddress);
+        bool success = zksync.proveL1ToL2TransactionStatus(
+            naffle.txHash,
+            _l2BlockNumber,
+            _l2MessageIndex,
+            _l2TxNumberInBlock,
+            _merkleProof,
+            TxStatus.Failure
+        );
+
+        require(success);
+
+        _cancelNaffle(_naffleId);
     }
 
     /**
@@ -176,7 +201,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
             )
         );
 
-        address signer = Signature.getSigner(digest, _collectionWhitelistParams.signature);
+        address signer = ECDSA.recover(digest, _collectionWhitelistParams.signature);
 
         if (signer != _signatureSigner) {
             revert InvalidSignature();
@@ -264,6 +289,7 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
         L1NaffleBaseStorage.Layout storage layout = L1NaffleBaseStorage.layout();
         NaffleTypes.L1Naffle storage naffle = layout.naffles[_naffleId];
 
+        require(naffle.cancelled == false);
         naffle.cancelled = true;
 
         NaffleTypes.NaffleTokenInformation memory tokenInfo = naffle.naffleTokenInformation;
@@ -317,22 +343,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      */
     function _setMinimumPaidTicketSpots(uint256 _minimumPaidTicketSpots) internal {
         L1NaffleBaseStorage.layout().minimumPaidTicketSpots = _minimumPaidTicketSpots;
-    }
-
-    /**
-     * @notice sets the minimum paid ticket price in wei.
-     * @param _minimumPaidTicketPriceInWei the minimum paid ticket price in wei.
-     */
-    function _setMinimumPaidTicketPriceInWei(uint256 _minimumPaidTicketPriceInWei) internal {
-        L1NaffleBaseStorage.layout().minimumPaidTicketPriceInWei = _minimumPaidTicketPriceInWei;
-    }
-
-    /**
-     * @notice gets the minimum paid ticket price in wei.
-     * @return minimumPaidTicketPriceInWei the minimum paid ticket price in wei.
-     */
-    function _getMinimumPaidTicketPriceInWei() internal view returns (uint256 minimumPaidTicketPriceInWei) {
-        minimumPaidTicketPriceInWei = L1NaffleBaseStorage.layout().minimumPaidTicketPriceInWei;
     }
 
     /**
@@ -400,14 +410,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
     }
 
     /**
-     * @notice gets the L1 messenger address.
-     * @return l1MessengerAddress the L1 messenger address.
-     */
-    function _getL1MessengerAddress() internal pure returns (address l1MessengerAddress) {
-        l1MessengerAddress = L1NaffleBaseStorage.L1_MESSENGER_ADDRESS;
-    }
-
-    /**
      * @notice sets the signature signer address.
      * @param _signatureSignerAddress the signature signer address.
      */
@@ -422,23 +424,6 @@ abstract contract L1NaffleBaseInternal is IL1NaffleBaseInternal {
      */
     function _getNaffleById(uint256 _naffleId) internal view returns (NaffleTypes.L1Naffle memory naffle) {
         naffle = L1NaffleBaseStorage.layout().naffles[_naffleId];
-    }
-
-    /**
-     * @notice sets minimum gas to be forwarded for L2 transactions in _createNaffle
-     * @param _minL2ForwardedGasForCreateNaffle the minimum gas limit to be forwarded for L2 transactions in _createNaffle
-     * @dev set the minimum amount of wei this transaction should foward to L2. Should be much higher than the actual cost, since refunds are given
-     */
-    function _setMinL2ForwardedGas(uint256 _minL2ForwardedGasForCreateNaffle) internal {
-        L1NaffleBaseStorage.layout().minL2ForwardedGasForCreateNaffle = _minL2ForwardedGasForCreateNaffle;
-    }
-
-    /**
-     * @notice sets minimum gas limit foir the L2 transaction in _createNaffle
-     * @param _minL2GasLimit the minimum gas limit for the L2 transaction in _createNaffle
-     */
-    function _setMinL2GasLimit(uint256 _minL2GasLimit) internal {
-        L1NaffleBaseStorage.layout().minL2GasLimitForCreateNaffle = _minL2GasLimit;
     }
 
     /**

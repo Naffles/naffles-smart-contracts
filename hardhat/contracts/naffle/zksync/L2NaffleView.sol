@@ -55,7 +55,38 @@ contract L2NaffleView is IL2NaffleView, L2NaffleBaseInternal {
         return _getOpenEntryTicketContractAddress();
     }
 
+    /**
+     * @inheritdoc IL2NaffleView
+     */
     function getMaxPostponeTime() external view returns (uint256) {
         return _getMaxPostponeTime();
+    }
+
+    /**
+     * @inheritdoc IL2NaffleView
+     */
+    function getPlatformFeesAccumulated() external view returns (uint256) {
+        return _getPlatformFeesAccumulated();
+    }
+
+    /**
+     * @inheritdoc IL2NaffleView
+     */
+    function getL1MessengerContractAddress() external view returns (address) {
+        return _getL1MessengerContractAddress();
+    }
+
+    /**
+     * @inheritdoc IL2NaffleView
+     */
+    function getSignatureSigner() external view returns (address) {
+        return _getSignatureSigner();
+    }
+
+    /**
+     * @inheritdoc IL2NaffleView
+     */
+    function getDomainName() external view returns (string memory) {
+        return _getDomainName();
     }
 }

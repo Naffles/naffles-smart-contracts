@@ -67,6 +67,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
 
         for (uint i = 0; i < length; ++i) {
             uint256 ticketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketIdsOnNaffle[i]];
+            l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketIdsOnNaffle[i]] = 0;
             NaffleTypes.OpenEntryTicket storage ticket = l.openEntryTickets[ticketId];
 
             if (ticketId == 0) {
@@ -116,14 +117,6 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      */
     function _setL2NaffleContractAddress(address _l2NaffleContractAddress) internal {
         L2OpenEntryTicketStorage.layout().l2NaffleContractAddress = _l2NaffleContractAddress;
-    }
-
-    /**
-     * @notice gets the total supply.
-     * @return totalSupply the total supply.
-     */
-    function _getTotalSupply() internal view returns (uint256 totalSupply) {
-        totalSupply = _totalSupply();
     }
 
     /**

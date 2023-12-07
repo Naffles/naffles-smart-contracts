@@ -45,6 +45,11 @@ library NaffleTypes {
         UNLIMITED
     }
 
+    enum ActionType {
+        SET_WINNER,
+        CANCEL
+    }
+
     enum TicketType {
         OPEN_ENTRY,
         PAID
@@ -54,6 +59,11 @@ library NaffleTypes {
         ERC721,
         ERC1155,
         ERC20
+    }
+
+    enum TxStatus {
+        Failure,
+        Success
     }
 
     struct NaffleTokenInformation {
@@ -69,13 +79,13 @@ library NaffleTypes {
         address owner;
         address winner;
         bool cancelled;
+        bytes32 txHash;
     }
 
     struct OpenEntryTicket {
         uint256 naffleId;
         uint256 ticketIdOnNaffle;
     }
-
 
     struct L2Naffle {
         NaffleTokenInformation naffleTokenInformation;

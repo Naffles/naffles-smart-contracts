@@ -55,4 +55,28 @@ interface IL2NaffleView {
      * @return maxPostponeTime the max postpone time.
      */
     function getMaxPostponeTime() external view returns (uint256 maxPostponeTime);
+
+    /**
+     * @notice gets the platform fees accumulated.
+     * @return platformFeesAccumulated the platform fees accumulated.
+     */
+    function getPlatformFeesAccumulated() external view returns (uint256);
+
+    /**
+     * @notice gets the L1 messenger contract address.
+     * @return l1MessengerContractAddress the L1 messenger contract address.
+     */
+    function getL1MessengerContractAddress() external view returns (address);
+
+    /**
+     * @notice gets the signature signer.
+     * @return signatureSigner the signature signer.
+     */
+    function getSignatureSigner() external view returns (address);
+
+    /**
+     * @notice gets the domain name.
+     * @return domainName the domain name.
+     */
+    function getDomainName() external view returns (string memory);
 }

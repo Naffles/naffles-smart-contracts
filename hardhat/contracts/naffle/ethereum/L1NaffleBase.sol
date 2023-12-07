@@ -33,6 +33,22 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
         );
     }
 
+    function cancelFailedNaffle(
+        uint256 _naffleId,
+        uint256 _l2BlockNumber,
+        uint256 _l2MessageIndex,
+        uint16 _l2TxNumberInBlock,
+        bytes32[] calldata _merkleProof
+    ) external {
+        _cancelFailedNaffle(
+            _naffleId,
+            _l2BlockNumber,
+            _l2MessageIndex,
+            _l2TxNumberInBlock,
+            _merkleProof
+        );
+    }
+
     /**
      * @inheritdoc IL1NaffleBase
      */
@@ -52,7 +68,8 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _message,
             _proof
         );
-        (, uint256 naffleId, address winner) = abi.decode(_message, (string, uint256, address));
+        (NaffleTypes.ActionType action, uint256 naffleId, address winner) = abi.decode(_message, (NaffleTypes.ActionType, uint256, address));
+        require(keccak256(abi.encodePacked(action)) == keccak256(abi.encodePacked(NaffleTypes.ActionType.SET_WINNER)));
         _setWinnerAndTransferPrize(naffleId, winner);
     }
 
@@ -75,10 +92,10 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _message,
             _proof
         );
-        (, uint256 naffleId) = abi.decode(_message, (string, uint256));
+        (NaffleTypes.ActionType action, uint256 naffleId) = abi.decode(_message, (NaffleTypes.ActionType , uint256));
+        require(keccak256(abi.encodePacked(action)) == keccak256(abi.encodePacked(NaffleTypes.ActionType.CANCEL)));
         _cancelNaffle(naffleId);
     }
-
     /**
      * @inheritdoc IERC721Receiver
      */
