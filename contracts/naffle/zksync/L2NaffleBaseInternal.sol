@@ -217,24 +217,21 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         NaffleTypes.L2Naffle storage _naffle
     ) internal {
         if (_naffle.numberOfOpenEntries == _naffle.openEntryTicketSpots && _naffle.numberOfPaidTickets == _naffle.paidTicketSpots) {
-            _naffle.status = NaffleTypes.NaffleStatus.SELECTING_WINNER;
-            _requestRandomNumber(_naffle.naffleId);
+            _requestRandomNumber(_naffle);
         }
     }
 
     /**
      * @notice emits event to request a random number for a naffle.
      * @dev if the naffle has already had a random number requested an error is thrown.
-     * @param _naffleId the naffleId to request a random number for.
+     * @param _naffle the naffle to request a random number for.
      */
-    function _requestRandomNumber(uint256 _naffleId) private {
-        L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
-        bool randomNumberRequested = layout.naffleRandomNumberRequested[_naffleId];
-        if (randomNumberRequested == true) {
+    function _requestRandomNumber(NaffleTypes.L2Naffle storage _naffle) private {
+        if (_naffle.status == NaffleTypes.NaffleStatus.SELECTING_WINNER) {
             revert RandomNumberAlreadyRequested();
         }
-        layout.naffleRandomNumberRequested[_naffleId] = true;
-        emit RandomNumberRequested(_naffleId);
+        _naffle.status = NaffleTypes.NaffleStatus.SELECTING_WINNER;
+        emit RandomNumberRequested(_naffle.naffleId);
     }
 
 
@@ -352,7 +349,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NoTicketsBought();
         }
 
-         _requestRandomNumber(naffle.naffleId);
+        _requestRandomNumber(naffle);
     }
 
     /**
