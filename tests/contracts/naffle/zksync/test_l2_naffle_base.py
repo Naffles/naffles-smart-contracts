@@ -828,7 +828,7 @@ def test_set_winner(
         l2_diamonds,
         deployed_erc721a_mock,
     )
-    
+
     old_balance = address.balance()
     l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 5000, from_admin)
 
