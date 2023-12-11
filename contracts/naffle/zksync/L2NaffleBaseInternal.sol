@@ -290,7 +290,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     function _cancelNaffleInternal(
        NaffleTypes.L2Naffle storage _naffle, L2NaffleBaseStorage.Layout storage layout
     ) internal returns (bytes32 messageHash) {
-        if (_naffle.status != NaffleTypes.NaffleStatus.ACTIVE && _naffle.status != NaffleTypes.NaffleStatus.POSTPONED) {
+        if (_naffle.status != NaffleTypes.NaffleStatus.ACTIVE && _naffle.status != NaffleTypes.NaffleStatus.POSTPONED && _naffle.status != NaffleTypes.NaffleStatus.SELECTING_WINNER) {
             revert InvalidNaffleStatus(_naffle.status);
         }
         _naffle.status = NaffleTypes.NaffleStatus.CANCELLED;

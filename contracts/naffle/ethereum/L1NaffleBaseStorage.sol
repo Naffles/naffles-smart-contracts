@@ -23,7 +23,6 @@ library L1NaffleBaseStorage {
         uint256 numberOfNaffles;
         uint256 minimumNaffleDuration;
         uint256 minimumPaidTicketSpots;
-        uint256 minimumPaidTicketPriceInWei;
         mapping(uint256 => NaffleTypes.L1Naffle) naffles;
         mapping(uint256 => mapping(uint256 => bool)) isL2ToL1MessageProcessed;
         address signatureSigner; 

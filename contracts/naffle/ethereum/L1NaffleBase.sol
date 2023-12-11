@@ -69,7 +69,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _proof
         );
         (NaffleTypes.ActionType action, uint256 naffleId, address winner) = abi.decode(_message, (NaffleTypes.ActionType, uint256, address));
-        require(keccak256(abi.encodePacked(action)) == keccak256(abi.encodePacked(NaffleTypes.ActionType.SET_WINNER)));
+        require(action == NaffleTypes.ActionType.SET_WINNER);
         _setWinnerAndTransferPrize(naffleId, winner);
     }
 
@@ -93,7 +93,7 @@ contract L1NaffleBase is IL1NaffleBase, L1NaffleBaseInternal, AccessControl, IER
             _proof
         );
         (NaffleTypes.ActionType action, uint256 naffleId) = abi.decode(_message, (NaffleTypes.ActionType , uint256));
-        require(keccak256(abi.encodePacked(action)) == keccak256(abi.encodePacked(NaffleTypes.ActionType.CANCEL)));
+        require(action == NaffleTypes.ActionType.CANCEL);
         _cancelNaffle(naffleId);
     }
     /**

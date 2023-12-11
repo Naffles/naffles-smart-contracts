@@ -24,7 +24,6 @@ library L2NaffleBaseStorage {
         uint256 maxPostponeTime;
         mapping(uint256 => NaffleTypes.L2Naffle) naffles;
         uint256 platformFeesAccumulated;
-        mapping(uint256 => bool) naffleRandomNumberRequested;
         address signatureSigner;
         bytes32 domainSignature;
         string domainName;
