@@ -116,9 +116,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             naffle.ticketPriceInWei
         );
 
-        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD) {
-            _checkIfNaffleIsFinished(naffle);
-        }
+        _checkIfNaffleIsFinished(naffle);
     }
 
     /**
