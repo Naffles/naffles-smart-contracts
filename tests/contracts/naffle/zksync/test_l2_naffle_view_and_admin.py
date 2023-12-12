@@ -270,13 +270,14 @@ def test_get_naffle_by_id(
         from_admin,
         l2_diamonds,
         deployed_erc721a_mock,
-        end_time=end_time
+        end_time=end_time,
+        number_of_tickets=100,
     )
 
     naffle = brownie.interface.IL2NaffleView(l2_diamonds.deployed_l2_naffle_diamond).getNaffleById(1)
 
     number_of_tickets_bought = 2
-    number_of_open_entry_tickets = 0
+    number_of_open_entry_tickets = 1
     winning_ticket_id = 0
     status = 0  # active
 
@@ -284,10 +285,10 @@ def test_get_naffle_by_id(
         default_token_info,
         address,
         NAFFLE_ID,
-        PAID_TICKET_SPOTS,
+        100,
         number_of_open_entry_tickets,
         number_of_tickets_bought,
-        number_of_open_entry_tickets,
+        0,
         TICKET_PRICE,
         end_time,
         winning_ticket_id,
@@ -582,7 +583,6 @@ def test_cancel_naffle_not_allowed(
 
 def test_withdraw_platform_fee(
     admin,
-    from_address,
     address,
     from_admin,
     l2_diamonds,
@@ -597,7 +597,7 @@ def test_withdraw_platform_fee(
         end_time=end_time,
     )
     old_balance = admin.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 0, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 0, from_admin)
 
     amount_to_withdraw = (TICKET_PRICE * 2 * 0.01)
 
@@ -607,7 +607,6 @@ def test_withdraw_platform_fee(
 
 def test_withdraw_platform_fee_insufficient_funds(
     admin,
-    from_address,
     address,
     from_admin,
     l2_diamonds,
@@ -620,7 +619,7 @@ def test_withdraw_platform_fee_insufficient_funds(
         deployed_erc721a_mock,
     )
     old_balance = admin.balance()
-    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 0, from_address)
+    l2_diamonds.naffle_base_facet.setWinner(1, 1, address, 0, from_admin)
 
     amount_to_withdraw = (TICKET_PRICE * 2 * 0.01)
 

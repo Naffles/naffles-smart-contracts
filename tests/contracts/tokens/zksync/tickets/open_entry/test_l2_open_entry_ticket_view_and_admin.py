@@ -1,5 +1,5 @@
 import brownie
-from brownie import L2OpenEntryTicketAdmin, interface
+from brownie import L2OpenEntryTicketAdmin, interface, Contract, ERC721AMock
 
 from scripts.util import add_facet, get_selectors, get_error_message
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_base import (
@@ -190,7 +190,9 @@ def test_get_total_supply(
     amount = 2
     admin_facet.adminMint(admin, amount, from_admin)
 
-    assert view_facet.getTotalSupply() == 2
+    erc721_contract = Contract.from_abi("ERC721AMock", deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
+
+    assert erc721_contract.totalSupply() == 2
 
 
 def test_get_owner_of_naffle_ticket_id(

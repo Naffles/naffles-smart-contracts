@@ -62,7 +62,7 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         uint256 _randomNumber,
         address _winner,
         uint256 _platformDiscountInPercent
-    ) external returns (bytes32) {
+    ) external onlyRole(VRF_ROLE) returns (bytes32) {
         return _setWinner(
             _naffleId,
             _randomNumber,

@@ -45,6 +45,11 @@ interface IL1NaffleBaseInternal {
     error InsufficientL2GasForwardedForCreateNaffle();
 
     /**
+     * @notice thrown when the decoding of the message fails
+    */
+    error InvalidMessage();
+
+    /**
      * @notice emitted when a naffle is created.
      * @param naffleId id of the naffle.
      * @param owner address of the owner.

@@ -12,8 +12,6 @@ library L1NaffleBaseStorage {
     bytes32 internal constant STORAGE_SLOT =
         keccak256("naffles.contracts.naffle.ethereum.L1NaffleBaseStorage");
 
-    address constant L1_MESSENGER_ADDRESS = address(0x79B2f0CbED2a565C925A8b35f2B402710564F8a2);
-
     /**
      * @dev all storage variables for L1 Naffle contracts
      */
@@ -25,11 +23,7 @@ library L1NaffleBaseStorage {
         uint256 numberOfNaffles;
         uint256 minimumNaffleDuration;
         uint256 minimumPaidTicketSpots;
-        uint256 minimumPaidTicketPriceInWei;
-        uint256 minL2ForwardedGasForCreateNaffle;
-        uint256 minL2GasLimitForCreateNaffle;
         mapping(uint256 => NaffleTypes.L1Naffle) naffles;
-        mapping(uint256 => address) naffleWinner;
         mapping(uint256 => mapping(uint256 => bool)) isL2ToL1MessageProcessed;
         address signatureSigner; 
         bytes32 collectionWhitelistSignature;

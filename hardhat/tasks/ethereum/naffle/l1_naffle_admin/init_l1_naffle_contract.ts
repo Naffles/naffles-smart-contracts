@@ -8,7 +8,6 @@ task("init-l1-naffle-contract", "Sets the founders key on the naffle contract")
   .addParam("founderskeyplaceholderaddress", "A placeholder address used for testing or as a default in case the founder's key address is not specified.")
   .addParam("minimumnaffleduration", "The minimum duration of a Naffle event, specified in seconds.")
   .addParam("minimumpaidticketspots", "The minimum number of paid ticket spots that should be available in a Naffle event.")
-  .addParam("minimumticketpriceinwei", "The minimum price for a ticket in a Naffle event, specified in Wei (1 Ether = 10^18 Wei).")
   .addParam("domainname", "The domain name of the Naffle system.")
   .setAction(async (taskArgs, hre) => {
     const contractFactory = await hre.ethers.getContractFactory("L1NaffleAdmin");
@@ -18,8 +17,6 @@ task("init-l1-naffle-contract", "Sets the founders key on the naffle contract")
     await (await contractInstance.setMinimumNaffleDuration(taskArgs.minimumnaffleduration)).wait();
     console.log("setting spots")
     await (await contractInstance.setMinimumPaidTicketSpots(taskArgs.minimumpaidticketspots)).wait();
-    console.log("setting price")
-    await (await contractInstance.setMinimumPaidTicketPriceInWei(taskArgs.minimumticketpriceinwei)).wait();
     console.log("setting naffle addresses")
     await (await contractInstance.setZkSyncNaffleContractAddress(taskArgs.zksyncnafflecontractaddress)).wait();
     console.log("setting founders addresses")

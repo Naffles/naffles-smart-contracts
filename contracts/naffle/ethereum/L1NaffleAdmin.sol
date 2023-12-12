@@ -24,13 +24,6 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
     /**
      * @inheritdoc IL1NaffleAdmin
      */
-    function setMinimumPaidTicketPriceInWei(uint256 _minimumPaidTicketPriceInWei) external onlyRole(_getAdminRole()) {
-        _setMinimumPaidTicketPriceInWei(_minimumPaidTicketPriceInWei);
-    }
-
-    /**
-     * @inheritdoc IL1NaffleAdmin
-     */
     function setZkSyncNaffleContractAddress(address _zksyncNaffleContractAddress) external onlyRole(_getAdminRole()) {
         _setZkSyncNaffleContractAddress(_zksyncNaffleContractAddress);
     }
@@ -96,5 +89,12 @@ contract L1NaffleAdmin is IL1NaffleAdmin, L1NaffleBaseInternal, AccessControl, S
      */
     function setDomainName(string memory _domainName) external onlyRole(_getAdminRole()) {
         _setDomainName(_domainName);
+    }
+
+    /**
+     * @inheritdoc IL1NaffleAdmin
+     */
+    function removeAdmin(address _admin) external onlyOwner {
+        _revokeRole(_getAdminRole(), _admin);
     }
 }

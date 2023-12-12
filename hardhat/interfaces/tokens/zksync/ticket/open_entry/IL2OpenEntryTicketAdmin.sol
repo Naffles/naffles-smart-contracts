@@ -24,4 +24,10 @@ interface IL2OpenEntryTicketAdmin {
      */
     function adminMint(address _to, uint256 _amount) external;
     function setBaseURI(string memory _baseURI) external;
+
+    /**
+     * @notice remove the admin role.
+     * @param _admin the address of the admin.
+     */
+    function removeAdmin(address _admin) external;
 }

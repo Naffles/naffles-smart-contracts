@@ -16,7 +16,6 @@ contract L1NaffleDiamond is SolidStateDiamond, AccessControl, L1NaffleBaseIntern
         address _admin,
         uint256 _minimumNaffleDuration,
         uint256 _minimumPaidTicketSpots,
-        uint256 _minimumTicketPriceInWei,
         address _zksyncContractAddress,
         address _foundersKeyContractAddress,
         address _foundersKeyPlaceholderAddress,
@@ -25,14 +24,10 @@ contract L1NaffleDiamond is SolidStateDiamond, AccessControl, L1NaffleBaseIntern
         _grantRole(AccessControlStorage.DEFAULT_ADMIN_ROLE, _admin);
         _setMinimumNaffleDuration(_minimumNaffleDuration);
         _setMinimumPaidTicketSpots(_minimumPaidTicketSpots);
-        _setMinimumPaidTicketPriceInWei(_minimumTicketPriceInWei);
         _setFoundersKeyAddress(_foundersKeyContractAddress);
         _setFoundersKeyPlaceholderAddress(_foundersKeyPlaceholderAddress);
         _setZkSyncAddress(_zksyncContractAddress);
 
-        // pre calculated minimum gas required
-        _setMinL2ForwardedGas(1163284000000000);
-        _setMinL2GasLimit(2326568);
         _setSignatureSignerAddress(msg.sender);
         _setCollectionWhitelistSignature(keccak256(abi.encodePacked("CollectionWhitelist(address tokenAddress,uint256 expiresAt)")));
         _setDomainSignature(keccak256(abi.encodePacked("EIP712Domain(string name)")));

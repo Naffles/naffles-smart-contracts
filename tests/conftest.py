@@ -100,13 +100,11 @@ def deployed_l1_naffle_diamond(
 ) -> L1NaffleDiamond:
     from tests.contracts.naffle.ethereum.test_l1_naffle_base import (
         MINIMUM_NAFFLE_DURATION, MINIMUM_PAID_TICKET_SPOTS,
-        MINIMUM_TICKET_PRICE
     )
     diamond = L1NaffleDiamond.deploy(
         admin,
         MINIMUM_NAFFLE_DURATION,
         MINIMUM_PAID_TICKET_SPOTS,
-        MINIMUM_TICKET_PRICE,
         ZERO_ADDRESS,
         deployed_erc721a_mock.address,
         deployed_erc721a_mock.address,
@@ -406,9 +404,8 @@ def default_collection_whitelist_signature_erc721(
 
 @pytest.fixture
 def expire_timestamp():
-    # return timestamp in 1 hour
     import time
-    return int(time.time()) + 3600
+    return int(time.time()) + 864000000000
 
 
 @pytest.fixture

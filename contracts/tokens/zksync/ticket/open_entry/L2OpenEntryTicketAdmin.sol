@@ -31,4 +31,11 @@ contract L2OpenEntryTicketAdmin is IL2OpenEntryTicketAdmin, L2OpenEntryTicketBas
     function setBaseURI(string memory _baseURI) external onlyRole(_getAdminRole()) {
         _setBaseURI(_baseURI);
     }
+
+    /**
+     * @inheritdoc IL2OpenEntryTicketAdmin
+     */
+    function removeAdmin(address _admin) external onlyOwner {
+        _revokeRole(_getAdminRole(), _admin);
+    }
 }

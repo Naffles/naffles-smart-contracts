@@ -2,16 +2,14 @@ import datetime
 
 import brownie
 from brownie import ZERO_ADDRESS, L1NaffleAdmin
-from eth_abi import encode
 
-from scripts.util import add_facet, get_selectors, get_error_message
-from tests.conftest import default_collection_signature_params
+from scripts.util import add_facet, get_selectors
 from tests.contracts.naffle.ethereum.test_l1_naffle_base import setup_l1_naffle_contract, MINIMUM_PAID_TICKET_SPOTS, \
     MINIMUM_TICKET_PRICE
 from tests.contracts.naffle.ethereum.test_l1_naffle_diamond import (
     setup_diamond_with_facets,
 )
-from tests.test_helper import STANDARD_NAFFLE_TYPE, ERC721
+from tests.test_helper import STANDARD_NAFFLE_TYPE
 
 TEST_ADDRESS = "0xb3D0248016434793037ED3abF8865d701f40AA82"
 
@@ -107,44 +105,6 @@ def test_get_and_set_minimum_paid_ticket_spots_not_admin(
     )
     with brownie.reverts():
         admin_facet.setMinimumPaidTicketSpots(1, from_address)
-
-
-def test_get_and_set_minimum_ticket_price(
-    from_admin,
-    deployed_l1_naffle_diamond,
-    deployed_l1_naffle_base_facet,
-    deployed_l1_naffle_admin_facet,
-    deployed_l1_naffle_view_facet,
-):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
-        from_admin,
-        deployed_l1_naffle_diamond,
-        deployed_l1_naffle_base_facet,
-        deployed_l1_naffle_admin_facet,
-        deployed_l1_naffle_view_facet,
-    )
-    admin_facet.setMinimumPaidTicketPriceInWei(1, from_admin)
-
-    assert view_facet.getMinimumPaidTicketPriceInWei() == 1
-
-
-def test_set_minimum_ticket_price_not_admin(
-    from_admin,
-    from_address,
-    deployed_l1_naffle_diamond,
-    deployed_l1_naffle_base_facet,
-    deployed_l1_naffle_admin_facet,
-    deployed_l1_naffle_view_facet,
-):
-    access_control, base_facet, admin_facet, view_facet = setup_diamond_with_facets(
-        from_admin,
-        deployed_l1_naffle_diamond,
-        deployed_l1_naffle_base_facet,
-        deployed_l1_naffle_admin_facet,
-        deployed_l1_naffle_view_facet,
-    )
-    with brownie.reverts():
-        admin_facet.setMinimumPaidTicketPriceInWei(1, from_address)
 
 
 def test_get_and_set_zksync_naffle_contract_address(
