@@ -11,8 +11,19 @@ import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@chiru-labs/contracts/ERC721AUpgradeable.sol";
+//import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+//import "@openzeppelin/contracts/utils/introspection/IERC165.sol as OpenZeppelinIERC165";
+//import "@solidstate/contracts/introspection/IERC165.sol as SolidStateIERC165";
 
-abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
+abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721AUpgradeable {
+    function _initializeERC721A(string memory name, string memory symbol) internal {
+        __ERC721A_init(name, symbol);
+    }
+
+    function _startTokenId() internal view virtual override returns (uint256) {
+        return 1;
+    }
 
     /**
      * @notice attaches tickets to a naffle.
@@ -33,7 +44,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
             if (ticket.naffleId != 0) {
                 revert TicketAlreadyUsed(ticketId);
             }
-            if (_ownerOf(ticketId) != owner) {
+            if (ownerOf(ticketId) != owner) {
                 revert NotOwnerOfTicket(ticketId);
             }
 
@@ -180,7 +191,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
 
         uint256 totalTicketId = l.naffleIdTicketIdOnNaffleTicketId[_naffleId][_ticketIdOnNaffle];
-        return _ownerOf(totalTicketId);
+        return ownerOf(totalTicketId);
     }
 
     /**
