@@ -13,7 +13,13 @@ library L2OpenEntryTicketStorage {
         mapping(uint256 => mapping(uint256 => uint256)) naffleIdTicketIdOnNaffleTicketId;
         // ticket id => open entry ticket
         mapping(uint256 => NaffleTypes.OpenEntryTicket) openEntryTickets;
+        // amount of open entry tickets minted for address for staking rewards
+        mapping(address => uint256) amountOfStakingRewardsClaimed;
         uint256 totalMinted;
+        address signatureSigner;
+        bytes32 domainSignature;
+        string domainName;
+        bytes32 stakingRewardSignatureHash;
     }
 
     function layout() internal pure returns (Layout storage s) {

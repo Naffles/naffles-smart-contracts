@@ -14,6 +14,12 @@ interface IL2OpenEntryTicketBaseInternal {
     error NotAllowed();
 
     /**
+     * @notice thrown when invalid signature is provided
+     */
+    error InvalidSignature();
+
+
+    /**
      * @notice thrown when the ticket is already used.
      * @param ticketId the id of the ticket.
      */
@@ -59,4 +65,12 @@ interface IL2OpenEntryTicketBaseInternal {
      * @param ticketIdsOnNaffle the id of the ticket on the naffle.
      */
     event TicketsDetachedFromNaffle(uint256 indexed naffleId, uint256[] ticketIds, uint256[] ticketIdsOnNaffle);
+
+
+    /**
+     * @notice emitted when open entry tickets are minted for a user for staking rewards.
+     * @param to address of the user.
+     * @param amount amount of tickets minted.
+     */
+    event StakingRewardsClaimed(address indexed to, uint256 amount);
 }

@@ -266,6 +266,7 @@ def test_claim_staking_rewards_success(
     erc721_contract = Contract.from_abi("ERC721AMock", l2_diamonds.deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
     assert erc721_contract.totalSupply() == 10
 
+
 def test_claim_staking_rewards_invalid_signature(
     from_address, staking_rewards_signature, l2_diamonds
 ):
