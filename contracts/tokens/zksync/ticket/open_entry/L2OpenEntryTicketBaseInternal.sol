@@ -147,7 +147,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         );
         
         bytes32 dataHash = keccak256(
-            abi.encodePacked(
+            abi.encode(
                 _stakingRewardSignatureHash,
                 _amount,
                 _totalClaimed,
@@ -166,7 +166,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         address signer = ECDSA.recover(digest, _signature);
 
         if (signer != _signatureSigner) {
-            //revert InvalidSignature();
+            revert InvalidSignature();
         }
     }
 

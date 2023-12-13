@@ -257,7 +257,7 @@ def test_detach_from_naffle_success(
 
 
 def test_claim_staking_rewards_success(
-    address, from_address, staking_rewards_signature, l2_diamonds
+    from_address, staking_rewards_signature, l2_diamonds
 ):
     l2_diamonds.open_entry_base_facet.claimStakingRewards(
         10, staking_rewards_signature, from_address
@@ -266,3 +266,17 @@ def test_claim_staking_rewards_success(
     erc721_contract = Contract.from_abi("ERC721AMock", l2_diamonds.deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
     assert erc721_contract.totalSupply() == 10
 
+def test_claim_staking_rewards_invalid_signature(
+    from_address, staking_rewards_signature, l2_diamonds
+):
+    l2_diamonds.open_entry_base_facet.claimStakingRewards(
+        10, staking_rewards_signature, from_address
+    )
+
+    erc721_contract = Contract.from_abi("ERC721AMock", l2_diamonds.deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
+    assert erc721_contract.totalSupply() == 10
+
+    with brownie.reverts(get_error_message("InvalidSignature")):
+        l2_diamonds.open_entry_base_facet.claimStakingRewards(
+            10, staking_rewards_signature, from_address
+        )

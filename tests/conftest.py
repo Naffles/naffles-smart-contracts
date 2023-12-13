@@ -436,9 +436,9 @@ def exchange_rate_signature(private_key, eip712_domain, address, expire_timestam
 @pytest.fixture
 def staking_rewards_signature(private_key, eip712_domain, address):
     msg = ClaimStakingRewards()
-    msg['targetAddress'] = address.address
-    msg['totalClaimed'] = 0
     msg['amount'] = 10
+    msg['totalClaimed'] = 0
+    msg['targetAddress'] = address.address
 
     signable_bytes = msg.signable_bytes(eip712_domain)
     signer = PrivateKey.from_hex(private_key)

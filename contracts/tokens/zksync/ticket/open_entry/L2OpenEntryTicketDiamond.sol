@@ -18,10 +18,9 @@ contract L2OpenEntryTicketDiamond is SolidStateDiamond, AccessControl, L2OpenEnt
         _setSignatureSignerAddress(msg.sender);
         metadata.name = "OPENTICKET";
         metadata.symbol = "OPENTICKET";
-
         _setSignatureSignerAddress(msg.sender);
         _setStakingRewardSignatureHash(
-            keccak256(abi.encodePacked("claimStakingRewards(uint256 amount,uint256 totalClaimed,address targetAddress)"))
+            keccak256(abi.encodePacked("ClaimStakingRewards(uint256 amount,uint256 totalClaimed,address targetAddress)"))
         );
         _setDomainSignature(keccak256(abi.encodePacked("EIP712Domain(string name)")));
         _setDomainName(_domainName);
