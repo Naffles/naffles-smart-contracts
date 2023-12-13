@@ -88,15 +88,14 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      * @dev method is called by the user with a signature validating the rewards
      * @param _amount amount of open entry tickets to validate
      * @param _totalClaimed total tickets claimed to fair, is used so signature is only valid 1 time
-     * @params _signature the signature to validate the claim
+     * @param _signature the signature to validate the claim
      */
     function _claimStakingRewards(
         uint256 _amount,
         uint256 _totalClaimed,
-        bytes _signature,
-    ) external {
-        
-        address signer = ECDSA.recover(digest, _collectionWhitelistParams.signature);
+        bytes memory _signature
+    ) internal {
+        //address signer = ECDSA.recover(digest, _collectionWhitelistParams.signature);
     }
 
     /**
@@ -191,7 +190,7 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      * @param _stakingRewardSignatureHash the exchange rate signature hash.
      */
     function _setStakingRewardSignatureHash(bytes32 _stakingRewardSignatureHash ) internal {
-        L2NaffleBaseStorage.layout().stakingRewardSignatureHash  = _stakingRewardSignatureHash ;
+        L2OpenEntryTicketStorage.layout().stakingRewardSignatureHash  = _stakingRewardSignatureHash;
     }
 
     /**

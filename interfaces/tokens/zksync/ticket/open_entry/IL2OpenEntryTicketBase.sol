@@ -41,10 +41,11 @@ interface IL2OpenEntryTicketBase {
      * @dev method is called by the user with a signature validating the rewards
      * @param _amount amount of open entry tickets to validate
      * @param _totalClaimed total tickets claimed to fair, is used so signature is only valid 1 time
-     * @params _signature the signature to validate the claim
+     * @param _signature the signature to validate the claim
      */
-     function claimStakingReward(
+     function claimStakingRewards(
         uint256 _amount,
-        uint256 _totalClaimed
+        uint256 _totalClaimed,
+        bytes memory _signature
      ) external;
 }
