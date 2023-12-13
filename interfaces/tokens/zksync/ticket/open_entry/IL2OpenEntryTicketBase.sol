@@ -35,4 +35,16 @@ interface IL2OpenEntryTicketBase {
         address _to,
         uint256 _amount
     ) external;
+
+    /**
+     * @notice mint open entry staking rewards
+     * @dev method is called by the user with a signature validating the rewards
+     * @param _amount amount of open entry tickets to validate
+     * @param _totalClaimed total tickets claimed to fair, is used so signature is only valid 1 time
+     * @params _signature the signature to validate the claim
+     */
+     function claimStakingReward(
+        uint256 _amount,
+        uint256 _totalClaimed
+     ) external;
 }

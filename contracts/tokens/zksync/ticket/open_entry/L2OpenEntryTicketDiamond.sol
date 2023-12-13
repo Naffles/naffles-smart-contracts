@@ -12,6 +12,7 @@ contract L2OpenEntryTicketDiamond is SolidStateDiamond, AccessControl, L2OpenEnt
     constructor(address _admin) SolidStateDiamond() {
         _grantRole(AccessControlStorage.DEFAULT_ADMIN_ROLE, _admin);
         ERC721MetadataStorage.Layout storage metadata = ERC721MetadataStorage.layout();
+        _setSignatureSignerAddress(msg.sender);
         metadata.name = "OPENTICKET";
         metadata.symbol = "OPENTICKET";
 
