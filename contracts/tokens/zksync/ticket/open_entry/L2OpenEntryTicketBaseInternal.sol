@@ -10,6 +10,7 @@ import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.s
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
 
@@ -80,6 +81,22 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
         }
 
         emit TicketsDetachedFromNaffle(_naffleId, totalTicketIds, _ticketIdsOnNaffle);
+    }
+
+    /**
+     * @notice mint open entry staking rewards
+     * @dev method is called by the user with a signature validating the rewards
+     * @param _amount amount of open entry tickets to validate
+     * @param _totalClaimed total tickets claimed to fair, is used so signature is only valid 1 time
+     * @params _signature the signature to validate the claim
+     */
+    function _claimStakingRewards(
+        uint256 _amount,
+        uint256 _totalClaimed,
+        bytes _signature,
+    ) external {
+        
+        address signer = ECDSA.recover(digest, _collectionWhitelistParams.signature);
     }
 
     /**

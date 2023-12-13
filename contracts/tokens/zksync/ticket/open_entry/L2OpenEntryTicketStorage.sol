@@ -13,6 +13,7 @@ library L2OpenEntryTicketStorage {
         mapping(uint256 => mapping(uint256 => uint256)) naffleIdTicketIdOnNaffleTicketId;
         // ticket id => open entry ticket
         mapping(uint256 => NaffleTypes.OpenEntryTicket) openEntryTickets;
+        address signatureSigner;
         uint256 totalMinted;
     }
 
