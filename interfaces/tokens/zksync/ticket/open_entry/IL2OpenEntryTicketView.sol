@@ -33,4 +33,16 @@ interface IL2OpenEntryTicketView {
      * @return owner the owner of the ticket.
      */
     function getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) external view returns (address owner);
+
+    /**
+     * @notice gets the signature signer.
+     * @return signatureSigner the signature signer.
+     */
+    function getSignatureSigner() external view returns (address);
+
+    /**
+     * @notice gets the domain name.
+     * @return domainName the domain name.
+     */
+    function getDomainName() external view returns (string memory);
 }

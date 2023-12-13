@@ -37,5 +37,27 @@ contract L2OpenEntryTicketAdmin is IL2OpenEntryTicketAdmin, L2OpenEntryTicketBas
      */
     function removeAdmin(address _admin) external onlyOwner {
         _revokeRole(_getAdminRole(), _admin);
+
+    }
+
+    /**
+     * @inheritdoc IL2OpenEntryTicketAdmin
+     */
+    function setDomainSignature(bytes32 _domainSignature) external onlyRole(_getAdminRole()) {
+        _setDomainSignature(_domainSignature);
+    }
+
+    /**
+     * @inheritdoc IL2OpenEntryTicketAdmin
+     */
+    function setDomainName(string memory _domainName) external onlyRole(_getAdminRole()) {
+        _setDomainName(_domainName);
+    }
+
+    /**
+     * @inheritdoc IL2OpenEntryTicketAdmin
+     */
+    function setSignatureSignerAddress(address _signatureSignerAddress) external onlyRole(_getAdminRole()) {
+        _setSignatureSignerAddress(_signatureSignerAddress);
     }
 }

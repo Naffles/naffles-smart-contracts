@@ -138,6 +138,54 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
     }
 
     /**
+     * @notice sets the signature signer address.
+     * @param _signatureSignerAddress the signature signer address.
+     */
+    function _setSignatureSignerAddress(address _signatureSignerAddress) internal {
+        L2OpenEntryTicketStorage.layout().signatureSigner = _signatureSignerAddress;
+    }
+
+    /**
+     * @notice gets the signature signer.
+     * @return signatureSigner the signature signer.
+     */
+    function _getSignatureSigner() internal view returns (address signatureSigner) {
+        signatureSigner = L2OpenEntryTicketStorage.layout().signatureSigner;
+    }
+
+    /**
+     * @notice gets the domain name.
+     * @return domainName the domain name.
+     */
+    function _getDomainName() internal view returns (string memory domainName) {
+        domainName = L2OpenEntryTicketStorage.layout().domainName;
+    }
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainSignature the domain signature.
+     */
+    function _setDomainSignature(bytes32 _domainSignature) internal {
+        L2OpenEntryTicketStorage.layout().domainSignature = _domainSignature;
+    }
+
+    /**
+     * @notice sets the exchange rate signature hash.
+     * @param _stakingRewardSignatureHash the exchange rate signature hash.
+     */
+    function _setStakingRewardSignatureHash(bytes32 _stakingRewardSignatureHash ) internal {
+        L2NaffleBaseStorage.layout().stakingRewardSignatureHash  = _stakingRewardSignatureHash ;
+    }
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainName the domain signature.
+     */
+    function _setDomainName(string memory _domainName) internal {
+        L2OpenEntryTicketStorage.layout().domainName = _domainName;
+    }
+
+    /**
      * @notice mints tickets.
      * @param _to the address to mint the tickets to.
      * @param _amount the amount of tickets to mint.
