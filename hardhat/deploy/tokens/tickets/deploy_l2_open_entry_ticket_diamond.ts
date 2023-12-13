@@ -4,7 +4,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { ethers } from "ethers";
 import {createDir, createFile} from "../../utils/util";
 
-export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKey: string) {
+export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKey: string, domainName: string) {
   try {
     const dirPath = `data`;
     const network = hre.network.name;
@@ -19,7 +19,10 @@ export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKe
 
     console.log('Deploying L2OpenEntryTicketDiamond..');
     const l2OpenEntryTicketDiamondArtifact = await deployer.loadArtifact("L2OpenEntryTicketDiamond");
-    const l2OpenEntryTicketDiamondImpl = await deployer.deploy(l2OpenEntryTicketDiamondArtifact, [wallet.address])
+    const l2OpenEntryTicketDiamondImpl = await deployer.deploy(l2OpenEntryTicketDiamondArtifact, [
+            wallet.address,
+            domainName,
+    ])
     await l2OpenEntryTicketDiamondImpl.deployed();
     console.log(`Successfully deployed L2OpenEntryTicketDiamond at ${l2OpenEntryTicketDiamondImpl.address}`);
 
@@ -95,7 +98,7 @@ export default async function (hre: HardhatRuntimeEnvironment, deployerPrivateKe
     console.log("verifying L2OpenEntryTicketDiamond on etherscan");
     await hre.run("verify:verify", {
       address: l2OpenEntryTicketDiamondImpl.address,
-      constructorArguments: [wallet.address],
+      constructorArguments: [wallet.address, domainName],
     });
 
     console.log("verifying L2OpenEntryTicketBase on etherscan");

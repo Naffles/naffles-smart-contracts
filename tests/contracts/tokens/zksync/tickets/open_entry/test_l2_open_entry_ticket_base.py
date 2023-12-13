@@ -2,6 +2,7 @@ import brownie
 from brownie import accounts, Contract, ERC721AMock
 
 from scripts.util import get_error_message
+from tests.conftest import l2_diamonds
 from tests.contracts.tokens.zksync.tickets.open_entry.test_l2_open_entry_ticket_diamond import (
     setup_open_entry_ticket_diamond_with_facets,
 )
@@ -253,3 +254,15 @@ def test_detach_from_naffle_success(
     )
     ticket = l2_diamonds.open_entry_view_facet.getOpenEntryTicketById(1)
     assert ticket == (0, 0)
+
+
+def test_claim_staking_rewards_success(
+    address, from_address, staking_rewards_signature, l2_diamonds
+):
+    l2_diamonds.open_entry_base_facet.claimStakingRewards(
+        10, staking_rewards_signature, from_address
+    )
+
+    erc721_contract = Contract.from_abi("ERC721AMock", l2_diamonds.deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
+    assert erc721_contract.totalSupply() == 10
+

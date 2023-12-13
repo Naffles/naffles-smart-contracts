@@ -59,6 +59,12 @@ class RedeemedPaidTicketExchangeRate(EIP712Struct):
     expiresAt = Uint(256)
 
 
+class ClaimStakingRewards(EIP712Struct):
+    amount = Uint(256)
+    totalClaimed = Uint(256)
+    targetAddress = Address()
+
+
 @pytest.fixture
 def admin(private_key, address) -> LocalAccount:
     local = accounts.add(private_key=private_key)
@@ -202,7 +208,7 @@ def deployed_l2_paid_ticket_view_facet(from_admin) -> L2PaidTicketView:
 def deployed_l2_open_entry_ticket_diamond(
     admin, from_admin
 ) -> L2OpenEntryTicketDiamond:
-    diamond = L2OpenEntryTicketDiamond.deploy(admin, from_admin)
+    diamond = L2OpenEntryTicketDiamond.deploy(admin, "Naffles staging", from_admin)
     return diamond
 
 
@@ -414,6 +420,25 @@ def exchange_rate_signature(private_key, eip712_domain, address, expire_timestam
     msg['exchangeRate'] = TICKET_PRICE * 5
     msg['expiresAt'] = expire_timestamp
     msg['targetAddress'] = address.address
+
+    signable_bytes = msg.signable_bytes(eip712_domain)
+    signer = PrivateKey.from_hex(private_key)
+    signature = signer.sign_recoverable(signable_bytes, hasher=keccak_hash)
+
+    v = signature[64] + 27
+    r = big_endian_to_int(signature[0:32])
+    s = big_endian_to_int(signature[32:64])
+    final_sig = r.to_bytes(32, 'big') + s.to_bytes(32, 'big') + v.to_bytes(1, 'big')
+
+    return final_sig
+
+
+@pytest.fixture
+def staking_rewards_signature(private_key, eip712_domain, address):
+    msg = ClaimStakingRewards()
+    msg['targetAddress'] = address.address
+    msg['totalClaimed'] = 0
+    msg['amount'] = 10
 
     signable_bytes = msg.signable_bytes(eip712_domain)
     signer = PrivateKey.from_hex(private_key)
