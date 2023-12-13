@@ -75,12 +75,10 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
      */
     function claimStakingRewards(
         uint256 _amount,
-        uint256 _totalClaimed,
         bytes memory _signature
      ) external {
         _claimStakingRewards(
             _amount,
-            _totalClaimed,
             _signature
         );
      }

@@ -87,15 +87,81 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
      * @notice mint open entry staking rewards
      * @dev method is called by the user with a signature validating the rewards
      * @param _amount amount of open entry tickets to validate
-     * @param _totalClaimed total tickets claimed to fair, is used so signature is only valid 1 time
      * @param _signature the signature to validate the claim
      */
     function _claimStakingRewards(
         uint256 _amount,
-        uint256 _totalClaimed,
         bytes memory _signature
     ) internal {
-        //address signer = ECDSA.recover(digest, _collectionWhitelistParams.signature);
+        L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
+        uint256 totalClaimed = l.amountOfStakingRewardsClaimed[msg.sender];
+
+        _validateClaimStakingRewardsSignature(
+            _amount,
+            totalClaimed,
+            _signature,
+            l.stakingRewardSignatureHash,
+            l.signatureSigner,
+            l.domainName,
+            l.domainSignature
+        );
+
+        l.amountOfStakingRewardsClaimed[msg.sender] = totalClaimed + _amount;
+        _mint(msg.sender, _amount);
+
+        emit StakingRewardsClaimed(msg.sender, _amount);
+    }
+
+
+    /**
+     * @notice validate the staking reward signature
+     * @dev if the signature is invalid, an InvalidSignature error is thrown.
+     * @param _amount the amount of tickets to claim.
+     * @param _totalClaimed the total amount of tickets claimed so far.
+     * @param _stakingRewardSignatureHash the hash of the signature.
+     * @param _signatureSigner the signer of the signature.
+     * @param _signature the signature to validate.
+     * @param _domainName the domain name of the signature.
+     * @param _domainSignature the domain signature.
+     */
+    function _validateClaimStakingRewardsSignature(
+        uint256 _amount,
+        uint256 _totalClaimed,
+        bytes memory _signature,
+        bytes32 _stakingRewardSignatureHash,
+        address _signatureSigner,
+        string memory _domainName,
+        bytes32 _domainSignature
+    ) internal view {
+        bytes32 domainSeparator = keccak256(
+            abi.encode(
+                _domainSignature,
+                keccak256(abi.encodePacked(_domainName))
+            )
+        );
+        
+        bytes32 dataHash = keccak256(
+            abi.encodePacked(
+                _stakingRewardSignatureHash,
+                _amount,
+                _totalClaimed,
+                msg.sender
+            )
+        );
+
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                domainSeparator,
+                dataHash
+            )
+        );
+
+        address signer = ECDSA.recover(digest, _signature);
+
+        if (signer != _signatureSigner) {
+            revert InvalidSignature();
+        }
     }
 
     /**
