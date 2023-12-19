@@ -4,8 +4,13 @@ pragma solidity ^0.8.17;
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/proxy/diamond/SolidStateDiamond.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
+//import '@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol';
+//import '@solidstate/contracts/token/ERC721/ISolidStateERC721.sol';
 import "./L2OpenEntryTicketBaseInternal.sol";
-import "@chiru-labs/contracts/ERC721AUpgradeable.sol";
+
+//import '@openzeppelin/contracts/utils/introspection/IERC165.sol';
+import '@solidstate/contracts/introspection/ERC165/base/ERC165Base.sol';
+import "erc721a-upgradeable/contracts/ERC721AUpgradeable.sol";
 
 contract L2OpenEntryTicketDiamond is SolidStateDiamond, AccessControl, L2OpenEntryTicketBaseInternal {
     constructor(

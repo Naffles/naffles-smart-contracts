@@ -14,8 +14,6 @@ contract L2OpenEntryTicketAdmin is IL2OpenEntryTicketAdmin, L2OpenEntryTicketBas
         _grantRole(_getAdminRole(), _admin);
     }
 
-
-
     /**
      * @inheritdoc IL2OpenEntryTicketAdmin
      */

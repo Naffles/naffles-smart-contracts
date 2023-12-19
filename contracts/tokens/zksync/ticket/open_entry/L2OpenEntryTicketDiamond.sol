@@ -10,7 +10,7 @@ import "./L2OpenEntryTicketBaseInternal.sol";
 
 //import '@openzeppelin/contracts/utils/introspection/IERC165.sol';
 import '@solidstate/contracts/introspection/ERC165/base/ERC165Base.sol';
-import "@chiru-labs/contracts/ERC721AUpgradeable.sol";
+import "erc721a-upgradeable/contracts/ERC721AUpgradeable.sol";
 
 contract L2OpenEntryTicketDiamond is SolidStateDiamond, AccessControl, L2OpenEntryTicketBaseInternal {
     constructor(

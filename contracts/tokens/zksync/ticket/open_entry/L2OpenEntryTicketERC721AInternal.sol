@@ -4,8 +4,8 @@ pragma solidity ^0.8.17;
 import "./L2OpenEntryTicketStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
-import "@chiru-labs/contracts/ERC721AStorage.sol";
-import "@chiru-labs/contracts/ERC721AUpgradeable.sol";
+import "erc721a-upgradeable/contracts/ERC721AStorage.sol";
+import "erc721a-upgradeable/contracts/ERC721AUpgradeable.sol";
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 

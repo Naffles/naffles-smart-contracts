@@ -7,8 +7,8 @@ import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "@chiru-labs/contracts/ERC721A__Initializable.sol";
-import "@chiru-labs/contracts/ERC721AStorage.sol";
+import "erc721a-upgradeable/contracts/ERC721A__Initializable.sol";
+import "erc721a-upgradeable/contracts/ERC721AStorage.sol";
 
 abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721A__Initializable {
     function _initializeERC721A(string memory _name, string memory _symbol) initializerERC721A internal {

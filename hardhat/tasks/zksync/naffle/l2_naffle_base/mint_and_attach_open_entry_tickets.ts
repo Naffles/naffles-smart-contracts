@@ -15,7 +15,7 @@ task("mint-and-attach-open-entry-tickets", "Creates naffle on l2 as test")
     const contractBaseFactory = await hre.ethers.getContractFactory("L2NaffleBase");
     const l2ContractInstance = contractBaseFactory.attach(taskArgs.l2nafflecontractaddress);
 
-    const contractViewFactory = await hre.ethers.getContractFactory("L2OpenEntryTicketbase");
+    const contractViewFactory = await hre.ethers.getContractFactory("L2OpenEntryTicketBase");
     const ticketAdminInstance= contractViewFactory.attach(taskArgs.openentryticketcontractaddress);
 
     console.log("minting tickets..")
