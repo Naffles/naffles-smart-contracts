@@ -2,7 +2,6 @@
 pragma solidity ^0.8.17;
 
 import "./L2OpenEntryTicketStorage.sol";
-
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "@solidstate/contracts/access/access_control/AccessControlInternal.sol";
 import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
@@ -13,9 +12,6 @@ import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@chiru-labs/contracts/ERC721A__Initializable.sol";
 import "@chiru-labs/contracts/ERC721AStorage.sol";
-//import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
-//import "@openzeppelin/contracts/utils/introspection/IERC165.sol as OpenZeppelinIERC165";
-//import "@solidstate/contracts/introspection/IERC165.sol as SolidStateIERC165";
 
 abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721A__Initializable {
     function _initializeERC721A(string memory _name, string memory _symbol) initializerERC721A internal {

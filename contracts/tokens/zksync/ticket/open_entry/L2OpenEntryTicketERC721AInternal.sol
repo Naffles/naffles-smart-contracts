@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.17;
+
 import "./L2OpenEntryTicketStorage.sol";
-
-
 import "@solidstate/contracts/access/access_control/AccessControlStorage.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
 import "@chiru-labs/contracts/ERC721AStorage.sol";
@@ -19,6 +20,10 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
 
     function _baseURI() internal view virtual override returns (string memory) {
         return L2OpenEntryTicketStorage.layout().baseURI;
+    }
+
+    function _startTokenId() internal view virtual override returns (uint256) {
+        return 1;
     }
 
     /**
@@ -205,12 +210,13 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
         uint256 batch = 30;
         uint256 remainder = _amount % batch;
         uint256 batches = _amount / batch;
+
         for(uint16 i = 0; i < batches; i++) {
-            _mint(msg.sender, batch);
+            _mint(_to, batch);
         }
 
         if (remainder > 0) {
-            _mint(msg.sender, remainder);
+            _mint(_to, remainder);
         }
 
         for (uint256 i = 0; i < _amount; i++) {

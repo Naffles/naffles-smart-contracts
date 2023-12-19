@@ -38,7 +38,7 @@ def test_admin_mint(
         deployed_l2_open_entry_ticket_view_facet,
     )
 
-    admin_facet.adminMint(admin, 1, from_admin)
+    base_facet.adminMint(admin, 1, from_admin)
     erc721_contract = Contract.from_abi("ERC721AMock", deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
     assert erc721_contract.totalSupply() == 1
     ticket = view_facet.getOpenEntryTicketById(1, from_admin)
@@ -71,7 +71,7 @@ def test_admin_mint_no_admin(
     )
 
     with brownie.reverts():
-        admin_facet.adminMint(admin, 1, from_address)
+        base_facet.adminMint(admin, 1, from_address)
 
     erc721_contract = Contract.from_abi("ERC721AMock", deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
     assert erc721_contract.totalSupply() == 0
@@ -101,7 +101,7 @@ def test_attach_to_naffle(
 
     setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
     amount = 1
-    admin_facet.adminMint(admin, amount, from_admin)
+    base_facet.adminMint(admin, amount, from_admin)
     naffle_id = 1
     ticket_id_on_naffle = 1
 
@@ -138,7 +138,7 @@ def test_attach_to_naffle_not_owner_of_ticket(
 
     setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
     amount = 1
-    admin_facet.adminMint(admin, amount, from_admin)
+    base_facet.adminMint(admin, amount, from_admin)
     naffle_id = 1
     ticket_id_on_naffle = 1
 
@@ -171,7 +171,7 @@ def test_attach_to_naffle_ticket_already_used(
 
     setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
     amount = 1
-    admin_facet.adminMint(admin, amount, from_admin)
+    base_facet.adminMint(admin, amount, from_admin)
     naffle_id = 1
     ticket_id_on_naffle = 1
 

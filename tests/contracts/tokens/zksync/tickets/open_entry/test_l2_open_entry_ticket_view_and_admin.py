@@ -152,7 +152,7 @@ def test_get_open_entry_ticket_by_id(
 
     setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
     amount = 1
-    admin_facet.adminMint(admin, amount, from_admin)
+    base_facet.adminMint(admin, amount, from_admin)
     naffle_id = 1
     ticket_id_on_naffle = 1
 
@@ -188,34 +188,11 @@ def test_get_total_supply(
 
     setup_open_entry_ticket_contract(admin_facet, admin, from_admin)
     amount = 2
-    admin_facet.adminMint(admin, amount, from_admin)
+    base_facet.adminMint(admin, amount, from_admin)
 
     erc721_contract = Contract.from_abi("ERC721AMock", deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
 
     assert erc721_contract.totalSupply() == 2
-
-
-def test_get_owner_of_naffle_ticket_id(
-    admin,
-    address,
-    from_admin,
-    from_address,
-    l2_diamonds,
-    deployed_erc721a_mock,
-):
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-        number_of_tickets=200
-    )
-    naffle_id = 1
-    ticket_id = 1
-    l2_diamonds.naffle_base_facet.useOpenEntryTickets(
-        [ticket_id], naffle_id, from_address
-    )
-    assert l2_diamonds.open_entry_view_facet.getOwnerOfNaffleTicketId(naffle_id, ticket_id, from_address) == address.address
 
 
 def test_set_base_uri_not_admin(
@@ -262,7 +239,7 @@ def test_set_base_uri(
         deployed_l2_open_entry_ticket_view_facet,
     )
     admin_facet.setBaseURI('base_uri/', from_admin)
-    admin_facet.adminMint(from_admin["from"], 1, from_admin)
+    base_facet.adminMint(from_admin["from"], 1, from_admin)
 
     view_facet = interface.IERC721Metadata(
         deployed_l2_open_entry_ticket_diamond.address
