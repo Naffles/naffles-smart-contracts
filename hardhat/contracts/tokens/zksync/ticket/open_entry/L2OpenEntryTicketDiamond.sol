@@ -9,10 +9,20 @@ import '@solidstate/contracts/token/ERC721/ISolidStateERC721.sol';
 import "./L2OpenEntryTicketBaseInternal.sol";
 
 contract L2OpenEntryTicketDiamond is SolidStateDiamond, AccessControl, L2OpenEntryTicketBaseInternal {
-    constructor(address _admin) SolidStateDiamond() {
+    constructor(
+        address _admin,
+        string memory _domainName
+    ) SolidStateDiamond() {
         _grantRole(AccessControlStorage.DEFAULT_ADMIN_ROLE, _admin);
         ERC721MetadataStorage.Layout storage metadata = ERC721MetadataStorage.layout();
+        _setSignatureSignerAddress(msg.sender);
         metadata.name = "OPENTICKET";
         metadata.symbol = "OPENTICKET";
+        _setSignatureSignerAddress(msg.sender);
+        _setStakingRewardSignatureHash(
+            keccak256(abi.encodePacked("ClaimStakingRewards(uint256 amount,uint256 totalClaimed,address targetAddress)"))
+        );
+        _setDomainSignature(keccak256(abi.encodePacked("EIP712Domain(string name)")));
+        _setDomainName(_domainName);
     }
 }

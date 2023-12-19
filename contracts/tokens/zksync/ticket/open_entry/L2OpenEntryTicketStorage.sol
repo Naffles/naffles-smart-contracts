@@ -20,6 +20,7 @@ library L2OpenEntryTicketStorage {
         bytes32 domainSignature;
         string domainName;
         bytes32 stakingRewardSignatureHash;
+        string baseURI;
     }
 
     function layout() internal pure returns (Layout storage s) {

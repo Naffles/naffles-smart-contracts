@@ -49,7 +49,7 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
         emit TicketsAttachedToNaffle(_naffleId, _ticketIds, startingTicketId, owner);
     }
 
-     /**
+    /**
      * @notice detaches tickets from a naffle.
      * @dev if the naffle status is not cancelled a NaffleNotCancelled error is thrown.
      * @dev if the ticket is not found a InvalidTicketId error is thrown.
@@ -148,9 +148,9 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
                 keccak256(abi.encodePacked(_domainName))
             )
         );
-        
+
         bytes32 dataHash = keccak256(
-            abi.encodePacked(
+            abi.encode(
                 _stakingRewardSignatureHash,
                 _amount,
                 _totalClaimed,
@@ -179,14 +179,6 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
      */
     function _getL2NaffleContractAddress() internal view returns (address l2NaffleContractAddress) {
         l2NaffleContractAddress = L2OpenEntryTicketStorage.layout().l2NaffleContractAddress;
-    }
-
-    /**
-     * @notice sets the base URI
-     * @param _baseURI the base URI.
-     */
-    function _setBaseURI(string memory _baseURI) internal {
-        L2OpenEntryTicketStorage.layout().baseURI = _baseURI;
     }
 
     /**

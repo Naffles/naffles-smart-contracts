@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-import "./L2OpenEntryTicketBaseInternal.sol";
+import "./L2OpenEntryTicketERC721AInternal.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
 //import "@solidstate/contracts/token/ERC721/SolidStateERC721.sol";
 //import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
 
-contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseInternal, AccessControl {
+contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketERC721AInternal, AccessControl {
      modifier onlyL2NaffleContract() {
         if (msg.sender != _getL2NaffleContractAddress()) {
             revert NotAllowed();
@@ -47,5 +47,12 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
             _amount,
             _signature
         );
-     }
+    }
+
+    /**
+     * @inheritdoc IL2OpenEntryTicketBase
+     */
+    function adminMint(address _to, uint256 _amount) external onlyRole(_getAdminRole()){
+        _adminMint(_to, _amount);
+    }
 }

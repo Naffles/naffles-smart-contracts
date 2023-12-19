@@ -18,22 +18,13 @@ contract L2OpenEntryTicketDiamond is SolidStateDiamond, AccessControl, L2OpenEnt
         string memory _domainName
     ) SolidStateDiamond() {
         _grantRole(AccessControlStorage.DEFAULT_ADMIN_ROLE, _admin);
-        //ERC721MetadataStorage.Layout storage metadata = ERC721MetadataStorage.layout();
         _setSignatureSignerAddress(msg.sender);
-
         _initializeERC721A('Open entry', 'OPENENTRY');
-        //metadata.name = "OPENTICKET";
-        //metadata.symbol = "OPENTICKET";
-
         _setSignatureSignerAddress(msg.sender);
         _setStakingRewardSignatureHash(
-            keccak256(abi.encodePacked("claimStakingRewards(uint256 amount,uint256 totalClaimed,address targetAddress)"))
+            keccak256(abi.encodePacked("ClaimStakingRewards(uint256 amount,uint256 totalClaimed,address targetAddress)"))
         );
         _setDomainSignature(keccak256(abi.encodePacked("EIP712Domain(string name)")));
         _setDomainName(_domainName);
-    }
-
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165Base, ERC721AUpgradeable) returns (bool) {
-        return super.supportsInterface(interfaceId);
     }
 }
