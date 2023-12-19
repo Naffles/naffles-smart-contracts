@@ -14,7 +14,7 @@ export default async function (
     const deployerPrivateKey = process.env.deployerPrivateKey;
     const domainName = process.env.domainName || "Naffles";
     const l2PaidTicketDiamondAddresses = await deployL2PaidTicketDiamond(hre, deployerPrivateKey);
-    const l2OpenEntryTicketDiamondAddresses = await deployL2OpenEntryTicketDiamond(hre, deployerPrivateKey);
+    const l2OpenEntryTicketDiamondAddresses = await deployL2OpenEntryTicketDiamond(hre, deployerPrivateKey, domainName);
     const l2NaffleDiamondAddresses = await deployL2NaffleDiamond(
         hre,
         deployerPrivateKey,

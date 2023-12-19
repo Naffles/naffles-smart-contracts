@@ -10,6 +10,7 @@ import "@solidstate/contracts/token/ERC721/enumerable/ERC721EnumerableInternal.s
 import "../../../../../interfaces/naffle/zksync/IL2NaffleView.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBaseInternal.sol";
 import "@solidstate/contracts/token/ERC721/metadata/ERC721MetadataStorage.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInternal, AccessControlInternal, ERC721BaseInternal, ERC721EnumerableInternal {
 
@@ -83,6 +84,93 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
     }
 
     /**
+     * @notice mint open entry staking rewards
+     * @dev method is called by the user with a signature validating the rewards
+     * @param _amount amount of open entry tickets to validate
+     * @param _signature the signature to validate the claim
+     */
+    function _claimStakingRewards(
+        uint256 _amount,
+        bytes memory _signature
+    ) internal {
+        L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
+        uint256 totalClaimed = l.amountOfStakingRewardsClaimed[msg.sender];
+
+        _validateClaimStakingRewardsSignature(
+            _amount,
+            totalClaimed,
+            _signature,
+            l.stakingRewardSignatureHash,
+            l.signatureSigner,
+            l.domainName,
+            l.domainSignature
+        );
+
+        l.amountOfStakingRewardsClaimed[msg.sender] = totalClaimed + _amount;
+
+        for (uint256 i = 0; i < _amount; i++) {
+            l.totalMinted++;
+            _mint(msg.sender, l.totalMinted);
+            NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0);
+            L2OpenEntryTicketStorage.layout().openEntryTickets[l.totalMinted] = ticket;
+        }
+
+        emit StakingRewardsClaimed(msg.sender, _amount);
+    }
+
+
+    /**
+     * @notice validate the staking reward signature
+     * @dev if the signature is invalid, an InvalidSignature error is thrown.
+     * @param _amount the amount of tickets to claim.
+     * @param _totalClaimed the total amount of tickets claimed so far.
+     * @param _stakingRewardSignatureHash the hash of the signature.
+     * @param _signatureSigner the signer of the signature.
+     * @param _signature the signature to validate.
+     * @param _domainName the domain name of the signature.
+     * @param _domainSignature the domain signature.
+     */
+    function _validateClaimStakingRewardsSignature(
+        uint256 _amount,
+        uint256 _totalClaimed,
+        bytes memory _signature,
+        bytes32 _stakingRewardSignatureHash,
+        address _signatureSigner,
+        string memory _domainName,
+        bytes32 _domainSignature
+    ) internal view {
+        bytes32 domainSeparator = keccak256(
+            abi.encode(
+                _domainSignature,
+                keccak256(abi.encodePacked(_domainName))
+            )
+        );
+        
+        bytes32 dataHash = keccak256(
+            abi.encode(
+                _stakingRewardSignatureHash,
+                _amount,
+                _totalClaimed,
+                msg.sender
+            )
+        );
+
+        bytes32 digest = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                domainSeparator,
+                dataHash
+            )
+        );
+
+        address signer = ECDSA.recover(digest, _signature);
+
+        if (signer != _signatureSigner) {
+            revert InvalidSignature();
+        }
+    }
+
+    /**
      * @notice returns the owner of a ticket on a naffle.
      * @param _naffleId the id of the naffle.
      * @param _ticketIdOnNaffle the id of the ticket on the naffle.
@@ -135,6 +223,54 @@ abstract contract L2OpenEntryTicketBaseInternal is IL2OpenEntryTicketBaseInterna
     function _getOpenEntryTicketById(uint256 _ticketId) internal view returns (NaffleTypes.OpenEntryTicket memory ticket) {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
         ticket = l.openEntryTickets[_ticketId];
+    }
+
+    /**
+     * @notice sets the signature signer address.
+     * @param _signatureSignerAddress the signature signer address.
+     */
+    function _setSignatureSignerAddress(address _signatureSignerAddress) internal {
+        L2OpenEntryTicketStorage.layout().signatureSigner = _signatureSignerAddress;
+    }
+
+    /**
+     * @notice gets the signature signer.
+     * @return signatureSigner the signature signer.
+     */
+    function _getSignatureSigner() internal view returns (address signatureSigner) {
+        signatureSigner = L2OpenEntryTicketStorage.layout().signatureSigner;
+    }
+
+    /**
+     * @notice gets the domain name.
+     * @return domainName the domain name.
+     */
+    function _getDomainName() internal view returns (string memory domainName) {
+        domainName = L2OpenEntryTicketStorage.layout().domainName;
+    }
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainSignature the domain signature.
+     */
+    function _setDomainSignature(bytes32 _domainSignature) internal {
+        L2OpenEntryTicketStorage.layout().domainSignature = _domainSignature;
+    }
+
+    /**
+     * @notice sets the exchange rate signature hash.
+     * @param _stakingRewardSignatureHash the exchange rate signature hash.
+     */
+    function _setStakingRewardSignatureHash(bytes32 _stakingRewardSignatureHash ) internal {
+        L2OpenEntryTicketStorage.layout().stakingRewardSignatureHash  = _stakingRewardSignatureHash;
+    }
+
+    /**
+     * @notice gets the domain signature.
+     * @param _domainName the domain signature.
+     */
+    function _setDomainName(string memory _domainName) internal {
+        L2OpenEntryTicketStorage.layout().domainName = _domainName;
     }
 
     /**
