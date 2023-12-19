@@ -187,7 +187,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
 
         uint256 newOpenEntries = naffle.numberOfOpenEntries + _ticketIds.length;
 
-        if (newOpenEntries > naffle.openEntryTicketSpots) {
+        if (naffle.naffleType == NaffleTypes.NaffleType.STANDARD && newOpenEntries > naffle.openEntryTicketSpots) {
             revert NotEnoughOpenEntryTicketSpots(naffle.openEntryTicketSpots);
         }
 
