@@ -48,6 +48,36 @@ def test_admin_mint(
     assert ticket == (naffle_id, ticket_id_on_naffle)
 
 
+def test_admin_mint_batches(
+    admin,
+    from_admin,
+    deployed_l2_open_entry_ticket_diamond,
+    deployed_l2_open_entry_ticket_base_facet,
+    deployed_l2_open_entry_ticket_admin_facet,
+    deployed_l2_open_entry_ticket_view_facet,
+):
+    (
+        access_control,
+        base_facet,
+        admin_facet,
+        view_facet,
+    ) = setup_open_entry_ticket_diamond_with_facets(
+        from_admin,
+        deployed_l2_open_entry_ticket_diamond,
+        deployed_l2_open_entry_ticket_base_facet,
+        deployed_l2_open_entry_ticket_admin_facet,
+        deployed_l2_open_entry_ticket_view_facet,
+    )
+
+    base_facet.adminMint(admin, 2000, from_admin)
+    erc721_contract = Contract.from_abi("ERC721AMock", deployed_l2_open_entry_ticket_diamond.address, ERC721AMock.abi)
+    assert erc721_contract.totalSupply() == 2000
+    ticket = view_facet.getOpenEntryTicketById(2000, from_admin)
+    naffle_id = 0
+    ticket_id_on_naffle = 0
+
+    assert ticket == (naffle_id, ticket_id_on_naffle)
+
 def test_admin_mint_no_admin(
     admin,
     from_address,
