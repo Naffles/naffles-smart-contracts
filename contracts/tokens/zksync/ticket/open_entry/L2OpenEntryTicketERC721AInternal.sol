@@ -17,6 +17,10 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
         adminRole = AccessControlStorage.DEFAULT_ADMIN_ROLE;
     }
 
+    function _baseURI() internal view virtual override returns (string memory) {
+        return L2OpenEntryTicketStorage.layout().baseURI;
+    }
+
     /**
      * @notice attaches tickets to a naffle.
      * @dev if the naffle id on the ticket is not 0 a TicketAlreadyUsed error is thrown.
@@ -111,9 +115,19 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
 
         l.amountOfStakingRewardsClaimed[msg.sender] = totalClaimed + _amount;
 
+        uint256 batch = 30;
+        uint256 remainder = _amount % batch;
+        uint256 batches = _amount / batch;
+        for(uint16 i = 0; i < batches; i++) {
+            _mint(msg.sender, batch);
+        }
+
+        if (remainder > 0) {
+            _mint(msg.sender, remainder);
+        }
+
         for (uint256 i = 0; i < _amount; i++) {
             l.totalMinted++;
-            _mint(msg.sender, l.totalMinted);
             NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0);
             L2OpenEntryTicketStorage.layout().openEntryTickets[l.totalMinted] = ticket;
         }
@@ -188,9 +202,20 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
      */
     function _adminMint(address _to, uint256 _amount) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
+
+        uint256 batch = 30;
+        uint256 remainder = _amount % batch;
+        uint256 batches = _amount / batch;
+        for(uint16 i = 0; i < batches; i++) {
+            _mint(msg.sender, batch);
+        }
+
+        if (remainder > 0) {
+            _mint(msg.sender, remainder);
+        }
+
         for (uint256 i = 0; i < _amount; i++) {
             l.totalMinted++;
-            _mint(_to, l.totalMinted);
             NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0);
             L2OpenEntryTicketStorage.layout().openEntryTickets[l.totalMinted] = ticket;
         }
