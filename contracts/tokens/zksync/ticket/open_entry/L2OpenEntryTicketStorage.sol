@@ -15,7 +15,6 @@ library L2OpenEntryTicketStorage {
         mapping(uint256 => NaffleTypes.OpenEntryTicket) openEntryTickets;
         // amount of open entry tickets minted for address for staking rewards
         mapping(address => uint256) amountOfStakingRewardsClaimed;
-        uint256 totalMinted;
         address signatureSigner;
         bytes32 domainSignature;
         string domainName;

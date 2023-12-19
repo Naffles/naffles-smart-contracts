@@ -127,9 +127,8 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
         }
 
         for (uint256 i = 0; i < _amount; i++) {
-            l.totalMinted++;
             NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0);
-            L2OpenEntryTicketStorage.layout().openEntryTickets[l.totalMinted] = ticket;
+            L2OpenEntryTicketStorage.layout().openEntryTickets[_totalMinted()] = ticket;
         }
 
         emit StakingRewardsClaimed(msg.sender, _amount);
@@ -215,9 +214,8 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
         }
 
         for (uint256 i = 0; i < _amount; i++) {
-            l.totalMinted++;
             NaffleTypes.OpenEntryTicket memory ticket = NaffleTypes.OpenEntryTicket(0, 0);
-            L2OpenEntryTicketStorage.layout().openEntryTickets[l.totalMinted] = ticket;
+            L2OpenEntryTicketStorage.layout().openEntryTickets[_totalMinted()] = ticket;
         }
     }
 }
