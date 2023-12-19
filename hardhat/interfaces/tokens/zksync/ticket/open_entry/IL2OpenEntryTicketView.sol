@@ -27,14 +27,6 @@ interface IL2OpenEntryTicketView {
     function getOpenEntryTicketById(uint256 _ticketId) external view returns (NaffleTypes.OpenEntryTicket memory ticket);
 
     /**
-     * @notice get the owner of a ticket on a naffle.
-     * @param _naffleId the id of the naffle.
-     * @param _ticketIdOnNaffle the id of the ticket on the naffle (so not the ticket id).
-     * @return owner the owner of the ticket.
-     */
-    function getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) external view returns (address owner);
-
-    /**
      * @notice gets the signature signer.
      * @return signatureSigner the signature signer.
      */

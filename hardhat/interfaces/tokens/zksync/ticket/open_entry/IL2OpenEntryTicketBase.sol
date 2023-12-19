@@ -46,4 +46,11 @@ interface IL2OpenEntryTicketBase {
         uint256 _amount,
         bytes memory _signature
      ) external;
+
+    /**
+     * @notice admin mint of open entry tickets.
+     * @param _to the address to mint to.
+     * @param _amount the amount to mint.
+     */
+    function adminMint(address _to, uint256 _amount) external;
 }
