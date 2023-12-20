@@ -37,6 +37,7 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
      */
     function _attachToNaffle(uint256 _naffleId, uint256[] memory _ticketIds, uint256 startingTicketId, address owner) internal {
         L2OpenEntryTicketStorage.Layout storage l = L2OpenEntryTicketStorage.layout();
+        uint256 initialStartingTicketId = startingTicketId;
 
         for (uint256 i = 0; i < _ticketIds.length; i++) {
             uint256 ticketId = _ticketIds[i];
@@ -55,7 +56,7 @@ abstract contract L2OpenEntryTicketERC721AInternal is IL2OpenEntryTicketBaseInte
             ++startingTicketId;
         }
 
-        emit TicketsAttachedToNaffle(_naffleId, _ticketIds, startingTicketId, owner);
+        emit TicketsAttachedToNaffle(_naffleId, _ticketIds, initialStartingTicketId, owner);
     }
 
     /**
