@@ -18,6 +18,7 @@ compiler:
             - '@solidstate=solidstate-network/solidstate-solidity@0.0.51'
             - '@matterlabs/zksync-contracts=c0dejax/v2-testnet-contracts@.0.2.0'
             - '@chainlink=smartcontractkit/chainlink@2.3.0'
+            - 'erc721a-upgradeable=chiru-labs/ERC721A-Upgradeable@4.2.3'
 dependencies:
     - chiru-labs/ERC721A@4.2.3
     - OpenZeppelin/openzeppelin-contracts@4.8.0
@@ -25,3 +26,4 @@ dependencies:
     - solidstate-network/solidstate-solidity@0.0.51
     - c0dejax/v2-testnet-contracts@.0.2.0
     - smartcontractkit/chainlink@2.3.0
+    - chiru-labs/ERC721A-Upgradeable@4.2.3

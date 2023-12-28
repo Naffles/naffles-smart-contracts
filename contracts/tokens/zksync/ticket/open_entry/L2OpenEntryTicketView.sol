@@ -30,13 +30,6 @@ contract L2OpenEntryTicketView is IL2OpenEntryTicketView, L2OpenEntryTicketBaseI
     /**
      * @inheritdoc IL2OpenEntryTicketView
      */
-    function getOwnerOfNaffleTicketId(uint256 _naffleId, uint256 _ticketIdOnNaffle) external view override returns (address) {
-        return _getOwnerOfNaffleTicketId(_naffleId, _ticketIdOnNaffle);
-    }
-
-    /**
-     * @inheritdoc IL2OpenEntryTicketView
-     */
     function getSignatureSigner() external view returns (address) {
         return _getSignatureSigner();
     }

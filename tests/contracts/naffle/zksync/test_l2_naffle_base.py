@@ -760,17 +760,17 @@ def test_exchange_tickets(
     l2_diamonds.naffle_base_facet.exchangePaidTicketsForOpenEntryTickets([1], [10], default_exchange_rate_params, from_address)
 
     # check if we are the owner of open entry ticket id 2 and 3
-    owner = interface.IERC721Base(
+    owner = interface.IERC721AUpgradeable(
         l2_diamonds.deployed_l2_open_entry_ticket_diamond.address
     ).ownerOf(2, from_admin)
     assert owner == address
-    owner = interface.IERC721Base(
+    owner = interface.IERC721AUpgradeable(
         l2_diamonds.deployed_l2_open_entry_ticket_diamond.address
     ).ownerOf(3, from_admin)
     assert owner == address
 
     with brownie.reverts():
-        owner = interface.IERC721Base(
+        owner = interface.IERC721AUpgradeable(
             l2_diamonds.deployed_l2_open_entry_ticket_diamond.address
         ).ownerOf(4, from_admin)
 
@@ -936,7 +936,7 @@ def test_cancel_refund_and_create_refund(
         deployed_erc721a_mock,
         number_of_tickets=200,
     )
-    l2_diamonds.open_entry_admin_facet.adminMint(address, 3, from_admin)
+    l2_diamonds.open_entry_base_facet.adminMint(address, 3, from_admin)
 
     l2_diamonds.naffle_base_facet.useOpenEntryTickets(
         [1, 2], 1, from_address

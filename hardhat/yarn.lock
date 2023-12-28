@@ -842,10 +842,10 @@
     "@sentry/types" "5.30.0"
     tslib "^1.9.3"
 
-"@solidstate/contracts@^0.0.54":
-  version "0.0.54"
-  resolved "https://registry.yarnpkg.com/@solidstate/contracts/-/contracts-0.0.54.tgz#6f6a7b5e707e0e6f511a482cba5476f2d0c2d37c"
-  integrity sha512-vm49jVopBPuoLmjTiJxdT1L1eJzWJE3JMODtd5+wpo8Fa6XIrEqcqNt2BnCv2SvnQp6I4R+TzhJPh1riWWQsiQ==
+"@solidstate/contracts@^0.0.51":
+  version "0.0.51"
+  resolved "https://registry.npmjs.org/@solidstate/contracts/-/contracts-0.0.51.tgz#2aa6d4cfc63ef9166a5dc7be8836c93bdb93bf28"
+  integrity sha512-CyHLjGq3b71MIOpxvZ5fxzZDuO9HEzVDtAqWno7OcltyOtg89SvmTE77qavJt7UcBaH1K4WEA5Kb2zVaR0QBCQ==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
@@ -1723,6 +1723,16 @@ env-paths@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-2.2.1.tgz#420399d416ce1fbe9bc0a07c62fa68d67fd0f8f2"
   integrity sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==
+
+erc721a-upgradeable@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.npmjs.org/erc721a-upgradeable/-/erc721a-upgradeable-4.2.3.tgz#9e67a9d628f8648a0cd64d17a7a13eeba61deba1"
+  integrity sha512-EaHbOVDau9drDNpi/gWUHHaopCh35NMATa+3+9ZmdHokw9kfPiDD5RhGRlXA1aZA0ZfYvqPEbaKuSH3PaCY2Ug==
+
+erc721a@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.npmjs.org/erc721a/-/erc721a-4.2.3.tgz#ca6469b0e54afb0f614272c2147dc4cb49ff223f"
+  integrity sha512-0deF0hOOK1XI1Vxv3NKDh2E9sgzRlENuOoexjXRJIRfYCsLlqi9ejl2RF6Wcd9HfH0ldqC03wleQ2WDjxoOUvA==
 
 escalade@^3.1.1:
   version "3.1.1"

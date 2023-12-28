@@ -17,12 +17,6 @@ interface IL2OpenEntryTicketAdmin {
      */
     function setL2NaffleContractAddress(address _l2NaffleContractAddress) external;
 
-    /**
-     * @notice admin mint of open entry tickets.
-     * @param _to the address to mint to.
-     * @param _amount the amount to mint.
-     */
-    function adminMint(address _to, uint256 _amount) external;
     function setBaseURI(string memory _baseURI) external;
 
     /**

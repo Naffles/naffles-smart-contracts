@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
-import "./L2OpenEntryTicketBaseInternal.sol";
+import "./L2OpenEntryTicketERC721AInternal.sol";
 import "@solidstate/contracts/access/access_control/AccessControl.sol";
-import "@solidstate/contracts/token/ERC721/SolidStateERC721.sol";
-import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
+//import "@solidstate/contracts/token/ERC721/SolidStateERC721.sol";
+//import "@solidstate/contracts/token/ERC721/base/ERC721BaseInternal.sol";
 import "../../../../../interfaces/tokens/zksync/ticket/open_entry/IL2OpenEntryTicketBase.sol";
 
-contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseInternal, SolidStateERC721, AccessControl {
+contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketERC721AInternal, AccessControl {
      modifier onlyL2NaffleContract() {
         if (msg.sender != _getL2NaffleContractAddress()) {
             revert NotAllowed();
@@ -20,40 +20,6 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
      */
     function detachFromNaffle(uint256 _naffleId, uint256[] memory _naffleTicketIds) external onlyL2NaffleContract {
         _detachFromNaffle(_naffleId, _naffleTicketIds);
-    }
-
-    /**
-     * @inheritdoc SolidStateERC721
-     */
-    function _handleApproveMessageValue(
-        address operator,
-        uint256 tokenId,
-        uint256 value
-    ) internal virtual override(SolidStateERC721, ERC721BaseInternal) {
-        super._handleApproveMessageValue(operator, tokenId, value);
-    }
-
-    /**
-     * @inheritdoc SolidStateERC721
-     */
-    function _handleTransferMessageValue(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint256 value
-    ) internal virtual override(SolidStateERC721, ERC721BaseInternal) {
-        super._handleTransferMessageValue(from, to, tokenId, value);
-    }
-
-    /**
-     * @inheritdoc SolidStateERC721
-     */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual override(ERC721BaseInternal, SolidStateERC721) {
-        super._beforeTokenTransfer(from, to, tokenId);
     }
 
     /**
@@ -81,5 +47,12 @@ contract L2OpenEntryTicketBase is IL2OpenEntryTicketBase, L2OpenEntryTicketBaseI
             _amount,
             _signature
         );
-     }
+    }
+
+    /**
+     * @inheritdoc IL2OpenEntryTicketBase
+     */
+    function adminMint(address _to, uint256 _amount) external onlyRole(_getAdminRole()){
+        _adminMint(_to, _amount);
+    }
 }
