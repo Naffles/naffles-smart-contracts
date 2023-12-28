@@ -107,7 +107,7 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
     /**
      * @inheritdoc IL2NaffleBase
      */
-    function adminDrawWinner(uint256 _naffleId) external onlyRole(_getAdminRole()) {
+    function drawWinner(uint256 _naffleId) external {
         _drawWinner(
             _naffleId
         );

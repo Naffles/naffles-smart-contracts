@@ -60,7 +60,7 @@ interface IL2NaffleBase {
      * @notice get the winner of a naffle.
      * @param _naffleId id of the naffle.
      */
-    function adminDrawWinner(uint256 _naffleId) external;
+    function drawWinner(uint256 _naffleId) external;
 
     /**
      * @notice get the winner of a naffle. can be called before the naffle is sold out or ended.
