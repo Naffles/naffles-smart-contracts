@@ -5,7 +5,7 @@ import { ethers } from "ethers";
 import {createDir, createFile} from "../../utils/util";
 
 const PLATFORM_FEE = 500 // 5%
-const OPEN_ENTRY_RATIO = 500 // 5%
+const OPEN_ENTRY_RATIO = 20 // 5, for every 20 tickets 1 ticket
 const L1_MESSENGER_CONTRACT = "0x0000000000000000000000000000000000008008"
 
 export default async function (
