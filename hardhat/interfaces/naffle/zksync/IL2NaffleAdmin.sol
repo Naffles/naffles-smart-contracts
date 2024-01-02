@@ -101,4 +101,11 @@ interface IL2NaffleAdmin {
      * @param _admin the admin to remove
      */
     function removeAdmin(address _admin) external;
+
+
+    /**
+     * @notice admin draw winner
+     * @param _naffleId the naffle id
+     */
+    function adminDrawWinner(uint256 _naffleId) external;
 }

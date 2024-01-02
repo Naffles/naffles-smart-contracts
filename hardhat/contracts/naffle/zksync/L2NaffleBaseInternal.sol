@@ -315,7 +315,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @dev if the funds can't get send to the owner a UnableToSendFunds error is thrown.
      * @param _naffleId the id of the naffle.
      */
-    function _drawWinner(uint256 _naffleId) internal {
+    function _adminDrawWinner(uint256 _naffleId) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
 
