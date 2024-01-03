@@ -16,6 +16,8 @@ require("./tasks/ethereum/naffle/l1_naffle_base/consume_set_winner_message")
 require("./tasks/ethereum/naffle/l1_naffle_base/consume_cancel_message")
 
 require("./tasks/ethereum/naffle/l1_naffle_admin/init_l1_naffle_contract")
+require("./tasks/ethereum/naffle/l1_naffle_admin/init_l1_naffle_contract_mainnet")
+
 require("./tasks/ethereum/naffle/l1_naffle_admin/set_founders_key_address")
 
 require("./tasks/ethereum/naffle/l1_naffle_view/read_l1_naffle_variables")
