@@ -16,6 +16,8 @@ require("./tasks/ethereum/naffle/l1_naffle_base/consume_set_winner_message")
 require("./tasks/ethereum/naffle/l1_naffle_base/consume_cancel_message")
 
 require("./tasks/ethereum/naffle/l1_naffle_admin/init_l1_naffle_contract")
+require("./tasks/ethereum/naffle/l1_naffle_admin/init_l1_naffle_contract_mainnet")
+
 require("./tasks/ethereum/naffle/l1_naffle_admin/set_founders_key_address")
 
 require("./tasks/ethereum/naffle/l1_naffle_view/read_l1_naffle_variables")
@@ -52,6 +54,7 @@ require("./tasks/polygon/vrf/draw_random_number")
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
+const POLYGON_ETHERSCAN_API_KEY = process.env.POLYGON_ETHERSCAN_API_KEY
 
 module.exports = {
   zksolc: {
@@ -63,6 +66,16 @@ module.exports = {
   networks: {
     hardhat: {
       zksync: true,
+    },
+    mainnet: {
+        url: "https://mainnet.infura.io/v3/" + INFURA_API_KEY,
+        accounts: [PRIVATE_KEY]
+    },
+    zkSyncMainnet: {
+        url: "https://mainnet.era.zksync.io",
+        ethNetwork: "mainnet",
+        zksync: true,
+        verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
     },
     zksynclocalhost: {
         url: "http://localhost:3050",
@@ -89,7 +102,13 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
+    apiKey: {
+      mainnet: ETHERSCAN_API_KEY,
+      goerli: ETHERSCAN_API_KEY,
+      polygon: POLYGON_ETHERSCAN_API_KEY,
+      mumbai: POLYGON_ETHERSCAN_API_KEY,
+      polygonMumbai: POLYGON_ETHERSCAN_API_KEY,
+    },
     customChains: [
       {
         network: "polygonMumbai",
