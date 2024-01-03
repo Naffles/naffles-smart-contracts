@@ -259,7 +259,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NaffleNotEndedYet(naffle.endTime);
         }
 
-        if (naffle.naffleType == NaffleTypes.NaffleType.UNLIMITED) {
+        if (naffle.naffleType == NaffleTypes.NaffleType.UNLIMITED && (naffle.numberOfPaidTickets != 0 || naffle.numberOfOpenEntries != 0)) {
             revert InvalidNaffleType(naffle.naffleType);
         }
 
