@@ -64,6 +64,16 @@ module.exports = {
     hardhat: {
       zksync: true,
     },
+    mainnet: {
+        url: "https://mainnet.infura.io/v3/" + INFURA_API_KEY,
+        accounts: [PRIVATE_KEY]
+    },
+    zkSyncMainnet: {
+        url: "https://mainnet.era.zksync.io",
+        ethNetwork: "mainnet",
+        zksync: true,
+        verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
+    },
     zksynclocalhost: {
         url: "http://localhost:3050",
         ethNetwork: "hardhat",
