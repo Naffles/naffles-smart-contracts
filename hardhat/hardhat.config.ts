@@ -52,6 +52,7 @@ require("./tasks/polygon/vrf/draw_random_number")
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const PRIVATE_KEY = process.env.PRIVATE_KEY
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
+const POLYGON_ETHERSCAN_API_KEY = process.env.POLYGON_ETHERSCAN_API_KEY
 
 module.exports = {
   zksolc: {
@@ -99,7 +100,13 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
+    apiKey: {
+      mainnet: ETHERSCAN_API_KEY,
+      goerli: ETHERSCAN_API_KEY,
+      polygon: POLYGON_ETHERSCAN_API_KEY,
+      mumbai: POLYGON_ETHERSCAN_API_KEY,
+      polygonMumbai: POLYGON_ETHERSCAN_API_KEY,
+    },
     customChains: [
       {
         network: "polygonMumbai",
