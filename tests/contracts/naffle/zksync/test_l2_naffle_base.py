@@ -887,6 +887,57 @@ def test_owner_cancel_naffle_invalid_type(
         l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
 
 
+def test_owner_cancel_naffle_success(
+    address,
+    from_address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    end_time = get_end_time()
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        naffle_type=STANDARD_NAFFLE_TYPE,
+        number_of_tickets=200,
+        end_time=end_time,
+    )
+    chain.sleep(100001)
+    l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
+
+
+def test_owner_cancel_naffle_success_unlimited_naffle(
+    address,
+    from_address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    end_time = get_end_time()
+    token_info = (
+        deployed_erc721a_mock.address,
+        NFT_ID,
+        1,
+        ERC721,
+    )
+    l2_diamonds.naffle_base_facet.createNaffle(
+        (
+            token_info,
+            address,
+            NAFFLE_ID,
+            200,
+            TICKET_PRICE,
+            end_time,
+            UNLIMITED_NAFFLE_TYPE,
+        ),
+        from_admin,
+    )
+    chain.sleep(100001)
+    l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
+
+
 def test_refund_tickets_invalid_naffle_id(
     address, from_address, admin, from_admin, l2_diamonds, deployed_erc721a_mock
 ):
