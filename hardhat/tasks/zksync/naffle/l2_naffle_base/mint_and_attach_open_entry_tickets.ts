@@ -32,7 +32,6 @@ task("mint-and-attach-open-entry-tickets", "Creates naffle on l2 as test")
       }
     });
 
-    return; 
     console.log("attaching tickets..")
     const attachTicketsTranscation = await l2ContractInstance.connect(walletL2).useOpenEntryTickets(
       ticketIds,

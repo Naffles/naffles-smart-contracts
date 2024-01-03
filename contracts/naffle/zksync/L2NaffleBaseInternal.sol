@@ -255,6 +255,10 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
             revert NotAllowed();
         }
 
+        if (naffle.endTime > block.timestamp) {
+            revert NaffleNotEndedYet(naffle.endTime);
+        }
+
         if (naffle.naffleType == NaffleTypes.NaffleType.UNLIMITED) {
             revert InvalidNaffleType(naffle.naffleType);
         }
@@ -303,7 +307,7 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
     }
 
      /**
-      * @notice draw a winner for a naffle.
+      * @notice draw a winner for a naffle .
      * @dev if an invalid naffle id is passed an InvalidNaffleId error is thrown.
      * @dev if the naffle is in an invalid state an InvalidNaffleStatus error is thrown.
      * @dev if the naffle is not finished a NaffleNotEndedYet error is thrown.
@@ -311,14 +315,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
      * @dev if the funds can't get send to the owner a UnableToSendFunds error is thrown.
      * @param _naffleId the id of the naffle.
      */
-    function _drawWinner(uint256 _naffleId) internal {
+    function _adminDrawWinner(uint256 _naffleId) internal {
         L2NaffleBaseStorage.Layout storage layout = L2NaffleBaseStorage.layout();
         NaffleTypes.L2Naffle storage naffle = layout.naffles[_naffleId];
-
-        // only owners can draw winners pre end time when not all tickets are sold.
-        if (naffle.endTime > block.timestamp && naffle.paidTicketSpots != naffle.numberOfPaidTickets) {
-            revert NaffleNotEndedYet(naffle.endTime);
-        }
 
         _drawWinnerInternal(naffle);
     }
@@ -527,6 +526,9 @@ abstract contract L2NaffleBaseInternal is IL2NaffleBaseInternal, AccessControlIn
         }
         if (naffle.status != NaffleTypes.NaffleStatus.ACTIVE) {
             revert InvalidNaffleStatus(naffle.status);
+        }
+        if (naffle.endTime > block.timestamp) {
+            revert NaffleNotEndedYet(naffle.endTime);
         }
         if (naffle.owner != msg.sender) {
             revert NotNaffleOwner(naffle.owner);

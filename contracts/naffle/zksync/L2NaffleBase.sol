@@ -104,14 +104,6 @@ contract L2NaffleBase is IL2NaffleBase, L2NaffleBaseInternal, AccessControl {
         );
     }
 
-    /**
-     * @inheritdoc IL2NaffleBase
-     */
-    function drawWinner(uint256 _naffleId) external {
-        _drawWinner(
-            _naffleId
-        );
-    }
 
     /**
      * @inheritdoc IL2NaffleBase

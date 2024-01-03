@@ -594,6 +594,28 @@ def test_postpone_naffle_success(
     assert naffle[10] == 1  # postponed
 
 
+def test_postpone_naffle_not_finished(
+    address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+    deployed_l1_messenger_mock,
+    from_address,
+):
+    end_time = get_end_time()
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=50,
+        end_time=end_time,
+    )
+
+    with brownie.reverts(get_error_message("NaffleNotEndedYet", ["uint256"], [int(end_time)])):
+        l2_diamonds.naffle_base_facet.postponeNaffle(1, end_time, from_address)
+
+
 def test_owner_cancel_naffle_not_allowed(
     address,
     from_admin,
@@ -633,28 +655,6 @@ def test_draw_winner_not_owner(
         l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_admin)
 
 
-def test_draw_winner_naffle_not_ended_yet(
-    address,
-    from_address,
-    from_admin,
-    l2_diamonds,
-    deployed_erc721a_mock,
-):
-    end_time = get_end_time()
-    create_naffle_and_mint_tickets(
-        address,
-        from_admin,
-        l2_diamonds,
-        deployed_erc721a_mock,
-        number_of_tickets=200,
-        end_time=end_time
-    )
-
-    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
-
-    with brownie.reverts(get_error_message("NaffleNotEndedYet", ["uint256"], [int(end_time)])):
-        l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
-
 
 def test_draw_winner_number_invalid_naffle_status(
     admin,
@@ -673,7 +673,7 @@ def test_draw_winner_number_invalid_naffle_status(
     chain.sleep(100001)
 
     with brownie.reverts(get_error_message("InvalidNaffleStatus", ["uint8"], [3])):
-        l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
+        l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_address)
 
 
 def test_draw_winner_does_not_revert(
@@ -681,6 +681,7 @@ def test_draw_winner_does_not_revert(
     from_admin,
     l2_diamonds,
     deployed_erc721a_mock,
+    from_address
 ):
     create_naffle_and_mint_tickets(
         address,
@@ -688,10 +689,11 @@ def test_draw_winner_does_not_revert(
         l2_diamonds,
         deployed_erc721a_mock,
         number_of_tickets=100,
+        end_time=get_end_time()
     )
     chain.sleep(100001)
 
-    l2_diamonds.naffle_base_facet.drawWinner(NAFFLE_ID, from_admin)
+    l2_diamonds.naffle_base_facet.ownerDrawWinner(NAFFLE_ID, from_address)
 
 
 def test_owner_cancel_naffle_not_ended_yet(

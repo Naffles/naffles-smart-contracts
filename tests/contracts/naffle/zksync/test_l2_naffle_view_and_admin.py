@@ -42,6 +42,48 @@ def test_admin_facet_deployment(
     assert len(deployed_l2_naffle_diamond.facets()) == start_facet_number + 1
 
 
+def test_draw_winner_naffle_admin(
+    address,
+    from_address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    end_time = get_end_time()
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
+        end_time=end_time
+    )
+
+    l2_diamonds.naffle_admin_facet.adminDrawWinner(NAFFLE_ID, from_admin)
+
+
+def test_draw_winner_naffle_admin_no_admin(
+    address,
+    from_address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    end_time = get_end_time()
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        number_of_tickets=200,
+        end_time=end_time
+    )
+
+    naffle = l2_diamonds.naffle_view_facet.getNaffleById(1)
+
+    with brownie.reverts():
+        l2_diamonds.naffle_admin_facet.adminDrawWinner(NAFFLE_ID, from_address)
+
 def test_get_and_set_platform_fee(
     from_admin,
     deployed_l2_naffle_diamond,

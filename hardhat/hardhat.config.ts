@@ -30,6 +30,7 @@ require("./tasks/zksync/naffle/l2_naffle_base/refund_tickets");
 require("./tasks/zksync/naffle/l2_naffle_view/read_l2_naffle_variables");
 
 require("./tasks/zksync/naffle/l2_naffle_admin/set_l1_naffle_contract");
+require("./tasks/zksync/naffle/l2_naffle_admin/set_open_entry_ratio");
 require("./tasks/zksync/naffle/l2_naffle_admin/set_l2_ticket_contracts");
 require("./tasks/zksync/naffle/l2_naffle_admin/cancel_naffle");
 
@@ -94,7 +95,7 @@ module.exports = {
         network: "polygonMumbai",
         chainId: 80001,
         urls: {
-          apiURL: "https://api-testnet.polygonscan.com",
+          apiURL: "https://api-testnet.polygonscan.com/api",
           browserURL: "https://mumbai.polygonscan.com"
         }
       }
