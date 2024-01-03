@@ -908,6 +908,28 @@ def test_owner_cancel_naffle_success(
     l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
 
 
+def test_owner_cancel_naffle_failure_unlimited(
+    address,
+    from_address,
+    from_admin,
+    l2_diamonds,
+    deployed_erc721a_mock,
+):
+    end_time = get_end_time()
+    create_naffle_and_mint_tickets(
+        address,
+        from_admin,
+        l2_diamonds,
+        deployed_erc721a_mock,
+        naffle_type=UNLIMITED_NAFFLE_TYPE,
+        number_of_tickets=200,
+        end_time=end_time,
+    )
+    chain.sleep(100001)
+    with brownie.reverts(get_error_message("InvalidNaffleType", ["uint8"], [1])):
+        l2_diamonds.naffle_base_facet.ownerCancelNaffle(1, from_address)
+
+
 def test_owner_cancel_naffle_success_unlimited_naffle(
     address,
     from_address,
